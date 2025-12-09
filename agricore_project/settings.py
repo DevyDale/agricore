@@ -1,8 +1,9 @@
 import os
-from pathlib import Path
 from datetime import timedelta
 import environ
 from urllib.parse import urlparse
+import dj_database_url
+from pathlib import Path
 
 # ==================== BASE DIR ====================
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,33 +18,24 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # ==================== SECURITY ====================
 SECRET_KEY = env('SECRET_KEY')
-DEBUG = env('DEBUG')
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
+DEBUG = env.bool('DEBUG', default=False)
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 
-SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=False)
-SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', default=False)
-CSRF_COOKIE_SECURE = env.bool('CSRF_COOKIE_SECURE', default=False)
+SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=True)
+SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', default=True)
+CSRF_COOKIE_SECURE = env.bool('CSRF_COOKIE_SECURE', default=True)
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # ==================== DATABASE ====================
-DATABASE_URL = env('DATABASE_URL')
-url = urlparse(DATABASE_URL)
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': url.path[1:],
-        'USER': url.username,
-        'PASSWORD': url.password,
-        'HOST': url.hostname,
-        'PORT': url.port or 5432,
-        'OPTIONS': {
-            'sslmode': 'require'
-        },
-        'CONN_MAX_AGE': 60,
-    }
+    'default': dj_database_url.config(
+        default=env('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
+
 # ==================== PASSWORD VALIDATION ====================
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -80,7 +72,8 @@ INSTALLED_APPS = [
 # ==================== MIDDLEWARE ====================
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
