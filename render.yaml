@@ -4,8 +4,8 @@ services:
   - type: web
     name: agricore-api
     env: python
-    region: singapore                  # Same region as your Supabase & Upstash = fastest
-    plan: starter                       # Change to starter_plus or pro later if needed
+    region: singapore
+    plan: starter
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
@@ -17,24 +17,24 @@ services:
     envVars:
       # Django
       DEBUG: "False"
-      SECRET_KEY: "django-insecure-change-this-to-a-real-80-char-secret-1234567890"  # ← CHANGE THIS!
+      SECRET_KEY: "REPLACE_WITH_REAL_SECRET_KEY"
       ALLOWED_HOSTS: "*.onrender.com,localhost,127.0.0.1"
 
-      # Supabase Database (direct connection string – works perfectly)
-      DATABASE_URL: "***REMOVED***postgres.sfpnywjgxygbalfbqpod:Matthew!$2005@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres"
+      # Supabase Database
+      DATABASE_URL: "REPLACE_WITH_REAL_DB_URL"
 
       # Supabase general
-      SUPABASE_URL: "https://sfpnywjgxygbalfbqpod.supabase.co"
-      SUPABASE_ANON_KEY: "sb_publishable_VCnL9O66_-XUCrP7VyNi8A_I7-PgeQA"
-      SUPABASE_SERVICE_ROLE_KEY: "sb_secret_L_XvndknS6QOwc6eLpwI3Q_8vpnvK_7"
+      SUPABASE_URL: "REPLACE_WITH_REAL_SUPABASE_URL"
+      SUPABASE_ANON_KEY: "REPLACE_WITH_REAL_ANON_KEY"
+      SUPABASE_SERVICE_ROLE_KEY: "REPLACE_WITH_REAL_SERVICE_ROLE_KEY"
 
       # Groq AI
-      GROQ_API_KEY: "***REMOVED***NN6VnZWgqUH3H36nj5HqWGdyb3FYrNXmOElLy6ad7PTZBbMgAwdX"
+      GROQ_API_KEY: "REPLACE_WITH_REAL_GROQ_KEY"
 
-      # Upstash Redis (Channels + Celery) — paste your full ***REMOVED*** URL here
-      REDIS_URL: "***REMOVED***default:YOUR_FULL_UPSTASH_PASSWORD_HERE@comic-piranha-46027.upstash.io:6379"
-      CELERY_BROKER_URL: "***REMOVED***default:YOUR_FULL_UPSTASH_PASSWORD_HERE@comic-piranha-46027.upstash.io:6379"
-      CELERY_RESULT_BACKEND: "***REMOVED***default:YOUR_FULL_UPSTASH_PASSWORD_HERE@comic-piranha-46027.upstash.io:6379"
+      # Upstash Redis (Channels + Celery)
+      REDIS_URL: "REPLACE_WITH_REAL_REDIS_URL"
+      CELERY_BROKER_URL: "REPLACE_WITH_REAL_REDIS_URL"
+      CELERY_RESULT_BACKEND: "REPLACE_WITH_REAL_REDIS_URL"
 
       # Channels
       CHANNEL_LAYERS_BACKEND: "channels_redis.core.RedisChannelLayer"
@@ -53,10 +53,10 @@ services:
     autoDeploy: true
 
     envVars:
-      DATABASE_URL: "***REMOVED***postgres.sfpnywjgxygbalfbqpod:Matthew!$2005@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres"
-      SUPABASE_URL: "https://sfpnywjgxygbalfbqpod.supabase.co"
-      SUPABASE_SERVICE_ROLE_KEY: "sb_secret_L_XvndknS6QOwc6eLpwI3Q_8vpnvK_7"
-      GROQ_API_KEY: "***REMOVED***NN6VnZWgqUH3H36nj5HqWGdyb3FYrNXmOElLy6ad7PTZBbMgAwdX"
-      REDIS_URL: "***REMOVED***default:YOUR_FULL_UPSTASH_PASSWORD_HERE@comic-piranha-46027.upstash.io:6379"
-      CELERY_BROKER_URL: "***REMOVED***default:YOUR_FULL_UPSTASH_PASSWORD_HERE@comic-piranha-46027.upstash.io:6379"
-      CELERY_RESULT_BACKEND: "***REMOVED***default:YOUR_FULL_UPSTASH_PASSWORD_HERE@comic-piranha-46027.upstash.io:6379"
+      DATABASE_URL: "REPLACE_WITH_REAL_DB_URL"
+      SUPABASE_URL: "REPLACE_WITH_REAL_SUPABASE_URL"
+      SUPABASE_SERVICE_ROLE_KEY: "REPLACE_WITH_REAL_SERVICE_ROLE_KEY"
+      GROQ_API_KEY: "REPLACE_WITH_REAL_GROQ_KEY"
+      REDIS_URL: "REPLACE_WITH_REAL_REDIS_URL"
+      CELERY_BROKER_URL: "REPLACE_WITH_REAL_REDIS_URL"
+      CELERY_RESULT_BACKEND: "REPLACE_WITH_REAL_REDIS_URL"
