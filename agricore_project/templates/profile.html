@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Profile - Agricore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            font-family: 'Inter', sans-serif;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .profile-input:focus {
+            border-color: #10b981;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="glass shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="marketplace.html" class="text-2xl font-black text-emerald-700">
+                        <i class="fas fa-leaf mr-2"></i>Agricore
+                    </a>
+                </div>
+                <a href="workforce.html" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 font-semibold">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to Network
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-12 max-w-4xl">
+        <div class="glass rounded-3xl p-8 shadow-2xl">
+            <div class="mb-8">
+                <h1 class="text-4xl font-black text-gray-800 mb-2">
+                    <i class="fas fa-user-circle text-emerald-600 mr-3"></i>
+                    Professional Profile
+                </h1>
+                <p class="text-gray-600">Build your professional presence in the agricultural network</p>
+            </div>
+
+            <form id="profile-form" class="space-y-8">
+                <!-- Profile Image -->
+                <div class="text-center">
+                    <div class="inline-block relative">
+                        <img id="profile-preview" src="https://via.placeholder.com/150/10b981/ffffff?text=Photo" 
+                             class="w-32 h-32 rounded-full object-cover border-4 border-emerald-500 mb-4">
+                        <label for="profile-image-input" class="absolute bottom-4 right-0 bg-emerald-600 text-white p-2 rounded-full cursor-pointer hover:bg-emerald-700">
+                            <i class="fas fa-camera"></i>
+                        </label>
+                        <input type="file" id="profile-image-input" accept="image/*" class="hidden">
+                    </div>
+                </div>
+
+                <!-- Basic Information -->
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-emerald-600"></i>
+                        Basic Information
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                            <input type="tel" id="phone-input" placeholder="+1 234 567 8900" 
+                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Location *</label>
+                            <input type="text" id="location-input" placeholder="City, Country" required
+                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Bio/Summary</label>
+                        <textarea id="bio-input" rows="3" maxlength="500" placeholder="Brief introduction about yourself and your expertise..."
+                                  class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl"></textarea>
+                        <p class="text-sm text-gray-500 mt-1">Max 500 characters</p>
+                    </div>
+                </div>
+
+                <!-- Professional Details -->
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-briefcase text-emerald-600"></i>
+                        Professional Details
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Specialty *</label>
+                            <select id="specialty-input" required class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                                <option value="">Select Specialty</option>
+                                <option value="agronomist">Agronomist</option>
+                                <option value="veterinarian">Veterinarian</option>
+                                <option value="mechanic">Mechanic</option>
+                                <option value="chemist">Agricultural Chemist</option>
+                                <option value="farm_manager">Farm Manager</option>
+                                <option value="agricultural_engineer">Agricultural Engineer</option>
+                                <option value="soil_scientist">Soil Scientist</option>
+                                <option value="crop_consultant">Crop Consultant</option>
+                                <option value="pest_control">Pest Control Specialist</option>
+                                <option value="livestock_handler">Livestock Handler</option>
+                                <option value="irrigation_specialist">Irrigation Specialist</option>
+                                <option value="agricultural_economist">Agricultural Economist</option>
+                                <option value="horticulturist">Horticulturist</option>
+                                <option value="agricultural_technician">Agricultural Technician</option>
+                                <option value="food_safety">Food Safety Specialist</option>
+                                <option value="data_analyst">Agricultural Data Analyst</option>
+                                <option value="farm_laborer">Farm Laborer</option>
+                                <option value="equipment_operator">Equipment Operator</option>
+                                <option value="harvester">Harvester</option>
+                                <option value="planting_specialist">Planting Specialist</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Years of Experience *</label>
+                            <input type="number" id="experience-input" min="0" required placeholder="e.g., 5"
+                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Hourly Rate ($) *</label>
+                            <input type="number" id="rate-input" min="0" step="0.01" required placeholder="e.g., 25.00"
+                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Availability *</label>
+                            <select id="availability-input" required class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                                <option value="available">Available Now</option>
+                                <option value="full_time">Full-Time</option>
+                                <option value="part_time">Part-Time</option>
+                                <option value="contract">Contract</option>
+                                <option value="seasonal">Seasonal</option>
+                                <option value="not_available">Not Available</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education & Experience -->
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-graduation-cap text-emerald-600"></i>
+                        Education & Experience
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Education</label>
+                            <textarea id="education-input" rows="4" placeholder="e.g., Bachelor's in Agriculture, XYZ University, 2015"
+                                      class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Work Experience</label>
+                            <textarea id="work-experience-input" rows="4" placeholder="Describe your relevant work experience, roles, and responsibilities..."
+                                      class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Notable Projects</label>
+                            <textarea id="projects-input" rows="4" placeholder="Describe significant projects you've worked on..."
+                                      class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills & Certifications -->
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-certificate text-emerald-600"></i>
+                        Skills & Certifications
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Skills (comma-separated)</label>
+                            <input type="text" id="skills-input" placeholder="e.g., Crop rotation, Soil testing, Pest management"
+                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                            <p class="text-sm text-gray-500 mt-1">Separate skills with commas</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Certifications (comma-separated)</label>
+                            <input type="text" id="certifications-input" placeholder="e.g., Certified Crop Advisor, Organic Farming Certificate"
+                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Languages (comma-separated)</label>
+                            <input type="text" id="languages-input" placeholder="e.g., English, Spanish, French"
+                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Information -->
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-link text-emerald-600"></i>
+                        Additional Information
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">LinkedIn Profile</label>
+                            <input type="url" id="linkedin-input" placeholder="https://linkedin.com/in/yourprofile"
+                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Portfolio URL</label>
+                            <input type="url" id="portfolio-input" placeholder="https://yourportfolio.com"
+                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Response Time</label>
+                            <input type="text" id="response-time-input" placeholder="e.g., Within 24 hours"
+                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Resume (PDF/DOC)</label>
+                            <input type="file" id="resume-input" accept=".pdf,.doc,.docx"
+                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-4 pt-6">
+                    <button type="submit" class="flex-1 px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-lg rounded-xl hover:shadow-lg">
+                        <i class="fas fa-save mr-2"></i>Save Profile
+                    </button>
+                    <a href="workforce.html" class="px-8 py-4 bg-gray-200 text-gray-800 font-bold text-lg rounded-xl hover:bg-gray-300">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-emerald-600 text-white px-6 py-4 rounded-xl shadow-2xl transform translate-x-full transition-transform z-50">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-check-circle text-xl"></i>
+            <span id="toast-message"></span>
+        </div>
+    </div>
+
+    <script>
+        let profileImageFile = null;
+        let resumeFile = null;
+
+        // Load existing profile
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/professional-profiles/me/', {
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                    }
+                });
+
+                if (response.ok) {
+                    const profile = await response.json();
+                    populateForm(profile);
+                } else if (response.status === 404) {
+                    // No profile yet, that's okay
+                    console.log('No existing profile found');
+                } else {
+                    showToast('Failed to load profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        // Populate form with existing data
+        function populateForm(profile) {
+            const profileImg = profile.profile_image_display || profile.profile_image_url || profile.profile_image;
+            if (profileImg) {
+                document.getElementById('profile-preview').src = profileImg;
+            }
+            document.getElementById('phone-input').value = profile.phone || '';
+            document.getElementById('location-input').value = profile.location || '';
+            document.getElementById('bio-input').value = profile.bio || '';
+            document.getElementById('specialty-input').value = profile.specialty || '';
+            document.getElementById('experience-input').value = profile.years_experience || '';
+            document.getElementById('rate-input').value = profile.hourly_rate || '';
+            document.getElementById('availability-input').value = profile.availability || 'available';
+            document.getElementById('education-input').value = profile.education || '';
+            document.getElementById('work-experience-input').value = profile.work_experience || '';
+            document.getElementById('projects-input').value = profile.notable_projects || '';
+            document.getElementById('skills-input').value = profile.skills ? profile.skills.join(', ') : '';
+            document.getElementById('certifications-input').value = profile.certifications ? profile.certifications.join(', ') : '';
+            document.getElementById('languages-input').value = profile.languages ? profile.languages.join(', ') : '';
+            document.getElementById('linkedin-input').value = profile.linkedin_url || '';
+            document.getElementById('portfolio-input').value = profile.portfolio_url || '';
+            document.getElementById('response-time-input').value = profile.response_time || '';
+        }
+
+        // Profile image preview
+        document.getElementById('profile-image-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                profileImageFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('profile-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Resume file
+        document.getElementById('resume-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                resumeFile = file;
+            }
+        });
+
+        // Save profile
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            
+            // Basic info
+            const phone = document.getElementById('phone-input').value;
+            if (phone) formData.append('phone', phone);
+            
+            formData.append('location', document.getElementById('location-input').value);
+            formData.append('bio', document.getElementById('bio-input').value);
+            formData.append('specialty', document.getElementById('specialty-input').value);
+            formData.append('years_experience', document.getElementById('experience-input').value);
+            formData.append('hourly_rate', document.getElementById('rate-input').value);
+            formData.append('availability', document.getElementById('availability-input').value);
+            formData.append('education', document.getElementById('education-input').value);
+            formData.append('work_experience', document.getElementById('work-experience-input').value);
+            formData.append('notable_projects', document.getElementById('projects-input').value);
+            
+            // Skills & certifications (convert comma-separated strings to JSON arrays)
+            const skills = document.getElementById('skills-input').value
+                .split(',')
+                .map(s => s.trim())
+                .filter(s => s);
+            formData.append('skills', JSON.stringify(skills));
+            
+            const certifications = document.getElementById('certifications-input').value
+                .split(',')
+                .map(c => c.trim())
+                .filter(c => c);
+            formData.append('certifications', JSON.stringify(certifications));
+            
+            const languages = document.getElementById('languages-input').value
+                .split(',')
+                .map(l => l.trim())
+                .filter(l => l);
+            formData.append('languages', JSON.stringify(languages));
+            
+            // URLs
+            const linkedin = document.getElementById('linkedin-input').value;
+            if (linkedin) formData.append('linkedin_url', linkedin);
+            
+            const portfolio = document.getElementById('portfolio-input').value;
+            if (portfolio) formData.append('portfolio_url', portfolio);
+            
+            const responseTime = document.getElementById('response-time-input').value;
+            if (responseTime) formData.append('response_time', responseTime);
+            
+            // Files
+            if (profileImageFile) {
+                formData.append('profile_image', profileImageFile);
+            }
+            if (resumeFile) {
+                formData.append('resume', resumeFile);
+            }
+
+            try {
+                const response = await fetch('/api/professional-profiles/update_me/', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    showToast('Profile saved successfully!');
+                    setTimeout(() => {
+                        window.location.href = 'workforce.html';
+                    }, 1500);
+                } else {
+                    const error = await response.json();
+                    showToast('Failed to save profile: ' + JSON.stringify(error), 'error');
+                }
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                showToast('Error saving profile', 'error');
+            }
+        });
+
+        // Show toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toast.className = `fixed bottom-6 right-6 px-6 py-4 rounded-xl shadow-2xl transform transition-transform z-50 ${
+                type === 'error' ? 'bg-red-600' : 'bg-emerald-600'
+            } text-white`;
+            
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-x-full');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        // Initialize
+        loadProfile();
+    </script>
+</body>
+</html>

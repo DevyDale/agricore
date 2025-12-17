@@ -1,0 +1,203 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agricore Solutions - Splash</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+    rel="stylesheet"
+  />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script>
+
+  <style>
+    /* --- NEW COLOR PALETTE & FONTS --- */
+    :root {
+        --color-primary-green: #00704A; /* Richer, deeper corporate green */
+        --color-light-text: #E8F5E9; /* Very light green for better contrast */
+        --color-button-text: #ffffff;
+        --color-button-bg: #00704A;
+        --color-button-border: #00704A;
+        --color-hover-bg: #ffffff;
+        --color-hover-text: #00704A;
+    }
+
+    /* Background image served from static folder */
+    body {
+      font-family: 'Poppins', sans-serif; /* Consistent body font */
+      min-height: 100vh;
+      overflow: hidden;
+      /* Background image with darker overlay */
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                  url("{% static 'images/tea-plantation.jpeg' %}") no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    /* Primary container for vertical centering */
+    .splash-wrapper {
+      display: flex;
+      justify-content: center; /* horizontally center */
+      align-items: center;     /* vertically center */
+      height: 100vh;
+      width: 100%;
+      padding: 2rem;
+    }
+
+    /* Container for branding and CTA */
+    .splash-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--color-light-text);
+      max-width: 700px;
+      height: 100%;
+    }
+
+    .lottie-box {
+      width: 280px;
+      height: 280px;
+      margin: 0 auto 1.5rem;
+      filter: drop-shadow(0 0 50px rgba(200, 230, 201, 0.9)) brightness(1.2);
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        filter: drop-shadow(0 0 50px rgba(200, 230, 201, 0.9)) brightness(1.2);
+      }
+      50% {
+        filter: drop-shadow(0 0 70px rgba(200, 230, 201, 1)) brightness(1.3);
+      }
+    }
+
+    .brand-title {
+      font-family: 'Orbitron', sans-serif; /* Consistent high-tech title font */
+      font-size: 3rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0;
+      text-decoration: none; /* Removing underline for Orbitron for cleaner look */
+      text-shadow: 
+        0 0 10px rgba(200, 230, 201, 0.8),
+        0 0 20px rgba(200, 230, 201, 0.6),
+        0 0 30px rgba(200, 230, 201, 0.4),
+        0 0 40px rgba(16, 185, 129, 0.3);
+      animation: shine 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes shine {
+      from {
+        text-shadow: 
+          0 0 10px rgba(200, 230, 201, 0.8),
+          0 0 20px rgba(200, 230, 201, 0.6),
+          0 0 30px rgba(200, 230, 201, 0.4),
+          0 0 40px rgba(16, 185, 129, 0.3);
+      }
+      to {
+        text-shadow: 
+          0 0 15px rgba(200, 230, 201, 1),
+          0 0 30px rgba(200, 230, 201, 0.8),
+          0 0 45px rgba(200, 230, 201, 0.6),
+          0 0 60px rgba(16, 185, 129, 0.5);
+      }
+    }
+
+    .tagline {
+      font-family: 'Poppins', sans-serif; /* Consistent body font */
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--color-light-text);
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+      max-width: 750px; /* Stretched for wider text container */
+    }
+
+    .get-started-btn {
+      font-family: 'Poppins', sans-serif; /* Consistent button font */
+      width: 100%;
+      max-width: 360px;
+      background: var(--color-button-bg);
+      color: var(--color-button-text);
+      padding: 1rem 0;
+      border-radius: 9999px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
+      border: 2px solid var(--color-button-border);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: block;
+      text-align: center;
+      margin: 0;
+    }
+
+    .get-started-btn:hover {
+      background: var(--color-hover-bg);
+      color: var(--color-hover-text);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+      transform: translateY(-3px);
+    }
+
+    .fade-out {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 1s ease-out, transform 1s ease-out;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1024px) {
+      .brand-title { font-size: 2.5rem; }
+      .tagline { font-size: 1.1rem; line-height: 1.4; }
+      .lottie-box { width: 240px; height: 240px; }
+    }
+    @media (max-width: 768px) {
+      .splash-wrapper { padding: 1.5rem 1rem; }
+      .brand-title { font-size: 2.25rem; }
+      .tagline { font-size: 1rem; margin-bottom: 1.5rem; line-height: 1.4; }
+      .lottie-box { width: 200px; height: 200px; }
+      .get-started-btn { font-size: 1.125rem; }
+    }
+    @media (max-width: 480px) {
+      .splash-wrapper { padding: 1rem 0.5rem; }
+      .brand-title { font-size: 2rem; }
+      .tagline { font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.3; }
+      .lottie-box { width: 170px; height: 170px; }
+      .get-started-btn { font-size: 1rem; padding: 0.75rem 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="splash-wrapper">
+    <div class="splash-content">
+      <dotlottie-wc class="lottie-box" src="https://lottie.host/2c27ca81-5cda-4281-92e8-d4f0407b5cab/doZJqbW664.lottie" autoplay loop></dotlottie-wc>
+      <h1 class="brand-title">Agricore Dynamics.</h1>
+      <p class="tagline">
+        Your complete agricultural marketplace platform. Connect farms with buyers, sell produce in a dynamic market system, hire agricultural professionals, and get AI-powered insights—all in one place.
+      </p>
+
+      <button class="get-started-btn" onclick="redirectToOnboarding()">
+        Get Started
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function redirectToOnboarding() {
+      const splash = document.querySelector('.splash-wrapper');
+      // Add slight delay before starting fade-out
+      setTimeout(() => {
+        splash.classList.add('fade-out');
+      }, 50);
+      setTimeout(() => {
+        window.location.href = 'onboarding.html'; 
+      }, 1050);
+    }
+  </script>
+</body>
+</html>

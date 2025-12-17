@@ -1,0 +1,22 @@
+# Python virtual environment
+venv/
+
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Celery beat schedules
+celerybeat-schedule
+celerybeat-schedule-shm
+celerybeat-schedule-wal
+
+# Django static files
+staticfiles/
+
+# OS & IDE files
+.DS_Store
+.idea/
+*.iml

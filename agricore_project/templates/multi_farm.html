@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Farms - Agricore Solutions</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styling Enhancements */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e6f4ea 0%, #c7e8d5 100%);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        /* Utility Classes for components */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 32px;
+            border-radius: 16px;
+            width: 95%;
+            max-width: 650px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+        .fab {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: linear-gradient(to right, #10b981, #059669);
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 35px rgba(16,185,129,0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .fab:hover {
+            transform: scale(1.2);
+            box-shadow: 0 15px 45px rgba(16,185,129,0.8);
+        }
+        .farm-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.4s ease;
+            border-left: 5px solid #10b981;
+        }
+        .farm-card:hover {
+            transform: translateY(-16px);
+            box-shadow: 0 30px 60px rgba(16,185,129,0.25);
+        }
+        .input-field {
+            border: 1px solid #e5e7eb; /* Lighter border */
+            border-radius: 8px;
+            padding: 12px; /* Slightly more padding */
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+        }
+        .input-field:focus {
+            border-color: #10b981; /* Emerald focus color */
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+        .header-btn {
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 10px 16px; /* Standardized button padding */
+        }
+        .header-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .farms-container {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="shadow-2xl sticky top-0 z-50" style="background: linear-gradient(to right, #059669, #10b981);">
+        <div class="container mx-auto px-4 py-5 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-tractor text-4xl text-white drop-shadow-lg"></i>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight drop-shadow-md">Agricore <span class="text-emerald-200">Farms</span></h1>
+            </div>
+            <div class="flex items-center space-x-2 md:space-x-3 text-sm">
+                <a href="marketplace.html" class="header-btn bg-white/10 backdrop-blur text-white hover:bg-white/20 flex items-center">
+                    <i class="fas fa-store mr-2"></i> Marketplace
+                </a>
+                <a href="digitalstores.html" class="header-btn bg-white/10 backdrop-blur text-white hover:bg-white/20 flex items-center">
+                    <i class="fas fa-shopping-cart mr-2"></i> My Stores
+                </a>
+                <button onclick="window.location.href='digitalstores.html'" class="header-btn bg-white/10 backdrop-blur text-white hover:bg-white/20 flex items-center">
+                    <i class="fas fa-store-alt mr-2"></i> Stores
+                </button>
+                <button onclick="window.location.href='chats.html'" class="header-btn bg-emerald-600 text-white hover:bg-emerald-700 flex items-center shadow-md">
+                    <i class="fas fa-comments mr-2"></i> Chats
+                </button>
+                <a href="workforce.html" class="header-btn bg-white/10 backdrop-blur text-white hover:bg-white/20 flex items-center">
+                    <i class="fas fa-briefcase mr-2"></i> Workforce
+                </a>
+                <button id="logout-btn" class="header-btn bg-white text-gray-800 hover:bg-gray-100 flex items-center shadow-md font-semibold">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-10 flex-grow">
+
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8">
+            <div class="rounded-2xl shadow-lg p-6 flex-1 min-w-0 border border-emerald-100" style="background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.6);">
+                <div class="flex flex-col md:flex-row gap-4 w-full">
+                    <input type="text" id="farm-search" placeholder="Search farms by name or location..." class="input-field flex-1">
+                    <select id="farm-filter" class="input-field max-w-full md:max-w-xs">
+                        <option value="">All Farm Types</option>
+                        <option value="crop">Crop</option>
+                        <option value="livestock">Livestock</option>
+                        <option value="mixed">Mixed</option>
+                    </select>
+                    <button id="create-farm-btn"
+                        class="px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300
+                               text-base font-semibold transition-all duration-200 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-plus mr-2 text-white"></i>
+                        <span class="text-white">Add New Farm</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="farms-container">
+            <h2 class="text-3xl font-extrabold text-gray-800 mb-8 pb-3 border-b-2 border-gray-200 flex items-center gap-3">
+                <i class="fas fa-seedling text-slate-600"></i> Your Connected Farms
+            </h2>
+            <div id="loading-spinner" class="w-full flex justify-center py-16 hidden">
+                <div class="animate-spin rounded-full h-16 w-16 border-4 border-emerald-500 border-t-transparent"></div>
+            </div>
+            <div id="farms-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                </div>
+        </div>
+    </main>
+    
+    <div class="fab" id="dale-ai-btn" title="Ask Dale AI">
+        <i class="fas fa-robot text-3xl animate-pulse"></i>
+    </div>
+
+    <div id="ai-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-3xl font-extrabold text-slate-700 mb-6 pb-3 border-b-2 border-gray-200 flex items-center gap-3">
+                <i class="fas fa-robot text-4xl"></i> Ask Dale AI
+            </h2>
+            <input type="text" id="ai-input" class="input-field w-full mb-4" placeholder="Ask for planting advice, market trends, or equipment recommendations...">
+            <div id="ai-response" class="text-base text-gray-700 mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px] overflow-y-auto">
+                <p class="text-gray-400 italic">Your AI-powered agricultural insights will appear here.</p>
+            </div>
+            <div class="flex justify-end">
+                <button id="ai-close-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm font-medium">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="farm-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="farm-modal-title" class="text-3xl font-extrabold text-slate-700 mb-6 pb-3 border-b-2 border-gray-200">Create New Farm</h2>
+            <form id="farm-form">
+                <div id="farm-form-error" role="alert" class="text-sm text-red-600 mb-4 hidden"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="farm-name" class="block text-sm font-medium text-gray-700 mb-1">Farm Name *</label>
+                        <input type="text" id="farm-name" class="input-field" placeholder="e.g., Green Acres">
+                    </div>
+                    <div>
+                        <label for="farm-type" class="block text-sm font-medium text-gray-700 mb-1">Farm Type *</label>
+                        <select id="farm-type" class="input-field">
+                            <option value="">Select farm type</option>
+                            <option value="crops">Crop</option>
+                            <option value="livestock">Livestock</option>
+                            <option value="mixed">Mixed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="farm-total-size" class="block text-sm font-medium text-gray-700 mb-1">Total Size *</label>
+                        <input type="number" step="0.01" id="farm-total-size" class="input-field" placeholder="e.g., 100.50">
+                    </div>
+                    <div>
+                        <label for="farm-size-unit" class="block text-sm font-medium text-gray-700 mb-1">Size Unit *</label>
+                        <select id="farm-size-unit" class="input-field">
+                            <option value="acres">Acres</option>
+                            <option value="hectares">Hectares</option>
+                            <option value="square_meters">Square Meters</option>
+                        </select>
+                    </div>
+                    <div class="col-span-full sm:col-span-1">
+                        <label for="farm-country" class="block text-sm font-medium text-gray-700 mb-1">Country *</label>
+                        <input type="text" id="farm-country" class="input-field" placeholder="Country">
+                    </div>
+                    <div class="col-span-full sm:col-span-1">
+                        <label for="farm-state" class="block text-sm font-medium text-gray-700 mb-1">State (Optional)</label>
+                        <input type="text" id="farm-state" class="input-field" placeholder="State/Province">
+                    </div>
+                    <div>
+                        <label for="farm-city" class="block text-sm font-medium text-gray-700 mb-1">City *</label>
+                        <input type="text" id="farm-city" class="input-field" placeholder="City">
+                    </div>
+                    <div>
+                        <label for="farm-address" class="block text-sm font-medium text-gray-700 mb-1">Address (Optional)</label>
+                        <input type="text" id="farm-address" class="input-field" placeholder="Street Address">
+                    </div>
+                    
+                    <div class="col-span-full">
+                        <label for="farm-additional-notes" class="block text-sm font-medium text-gray-700 mb-1">Additional Notes (Optional)</label>
+                        <textarea id="farm-additional-notes" class="input-field w-full" placeholder="Details about soil type, main crops, or livestock..." rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
+                    <button type="button" id="farm-cancel-btn" class="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm font-medium">Cancel</button>
+                    <button type="submit" id="farm-save-btn" class="px-5 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium shadow-md">Save Farm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('access_token');
+
+        if (!token) {
+            alert('Please login first');
+            window.location.href = 'authentication.html';
+        }
+
+        let editingId = null;
+
+        async function loadFarms() {
+            const container = document.getElementById('farms-list');
+            document.getElementById('loading-spinner').classList.remove('hidden');
+            container.innerHTML = '';
+
+            try {
+                // NOTE: Replaced placeholder URL with the one used in your script for demonstration.
+                // In a real application, you should use the correct API endpoint.
+                const res = await fetch('http://127.0.0.1:8000/api/farms/', { 
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.status === 401) {
+                    document.getElementById('loading-spinner').classList.add('hidden');
+                    alert('Session expired');
+                    localStorage.clear();
+                    window.location.href = 'authentication.html';
+                    return;
+                }
+
+                const farms = await res.json();
+
+                if (farms.length === 0) {
+                    document.getElementById('loading-spinner').classList.add('hidden');
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-20 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                            <i class="fas fa-leaf text-8xl text-gray-300 mb-6"></i>
+                            <h3 class="text-2xl font-semibold text-gray-700">You have no farms yet</h3>
+                            <p class="text-gray-500 mt-2">Click **Add New Farm** to register your first one and start managing.</p>
+                        </div>`;
+                    return;
+                }
+
+                document.getElementById('loading-spinner').classList.add('hidden');
+                container.innerHTML = farms.map(farm => {
+                    const type = farm.type?.toLowerCase();
+                    let typeClass = '';
+                    let accentColor = '';
+
+                    if (type === 'crops') {
+                        typeClass = 'bg-green-50 text-green-700 border-green-200';
+                        accentColor = '#16a34a';
+                    } else if (type === 'livestock') {
+                        typeClass = 'bg-orange-50 text-orange-700 border-orange-200';
+                        accentColor = '#ea580c';
+                    } else if (type === 'mixed') {
+                        typeClass = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+                        accentColor = '#4f46e5';
+                    } else {
+                        typeClass = 'bg-gray-50 text-gray-700 border-gray-200';
+                        accentColor = '#64748b';
+                    }
+
+                    return `
+                    <div class="farm-card p-6 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between" style="border-left: 5px solid ${accentColor};">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-xl font-bold text-gray-800">${farm.name}</h3>
+                                <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold ${typeClass} whitespace-nowrap">
+                                    ${farm.type ? farm.type : 'FARM'}
+                                </span>
+                            </div>
+                            <div class="space-y-2 text-sm text-gray-600">
+                                <p><i class="fas fa-map-marker-alt w-5 text-center text-gray-400 mr-2"></i>${farm.city}, ${farm.country}</p>
+                                <p><i class="fas fa-ruler-combined w-5 text-center text-gray-400 mr-2"></i>${farm.total_size} ${farm.size_unit}</p>
+                            </div>
+                            ${farm.additional_notes ? `<p class="text-sm text-gray-500 italic mt-3 border-t pt-3 overflow-hidden text-ellipsis whitespace-nowrap">${farm.additional_notes}</p>` : ''}
+                        </div>
+                        <div class="flex flex-row gap-3 mt-6 pt-4 border-t border-gray-100">
+                            <button onclick="event.stopPropagation(); editFarm(${farm.id})" class="flex-1 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 text-sm font-medium transition-all duration-200 flex items-center justify-center">
+                                <i class="fas fa-edit mr-2"></i> Edit
+                            </button>
+                            <button onclick="event.stopPropagation(); window.location.href='individual_farm.html?id=${farm.id}'" class="flex-1 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium transition-all duration-200 flex items-center justify-center">
+                                <i class="fas fa-seedling mr-2"></i> Manage
+                            </button>
+                            <button onclick="event.stopPropagation(); deleteFarm(${farm.id})" class="flex-1 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 text-sm font-medium transition-all duration-200 flex items-center justify-center">
+                                <i class="fas fa-trash-alt mr-2"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                document.getElementById('loading-spinner').classList.add('hidden');
+                container.innerHTML = `<div class="col-span-full text-center text-red-600 p-8 bg-red-50 rounded-lg border border-red-200">
+                    <i class="fas fa-exclamation-triangle mr-2"></i> Failed to load farms. Please check your network connection or API service.
+                </div>`;
+            }
+        }
+
+        // --- JavaScript Event Listeners (Retained and slightly modified) ---
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const farmModal = document.getElementById('farm-modal');
+
+            document.getElementById('create-farm-btn').addEventListener('click', () => {
+                editingId = null;
+                document.getElementById('farm-modal-title').textContent = 'Add New Farm';
+                document.getElementById('farm-form').reset(); // Reset form fields
+                document.getElementById('farm-size-unit').value = 'acres';
+                document.getElementById('farm-form-error').classList.add('hidden');
+                farmModal.classList.add('show');
+            });
+
+                document.getElementById('farm-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const totalSizeInput = document.getElementById('farm-total-size').value;
+                let totalSize = parseFloat(totalSizeInput);
+                if (totalSizeInput.trim() === "" || isNaN(totalSize)) {
+                    totalSize = null;
+                }
+                
+                const data = {
+                    name: document.getElementById('farm-name').value.trim(),
+                    type: document.getElementById('farm-type').value.trim(),
+                    country: document.getElementById('farm-country').value.trim(),
+                    state: document.getElementById('farm-state').value.trim(),
+                    city: document.getElementById('farm-city').value.trim(),
+                    address: document.getElementById('farm-address').value.trim(),
+                    total_size: totalSize,
+                    size_unit: document.getElementById('farm-size-unit').value,
+                    additional_notes: document.getElementById('farm-additional-notes').value.trim()
+                };
+
+                // Normalize type and size_unit
+                if (typeof data.type === 'string') {
+                    data.type = data.type.toLowerCase();
+                    if (data.type === 'crop') data.type = 'crops';
+                }
+                if (!data.size_unit) {
+                    data.size_unit = 'acres';
+                }
+
+                // Basic validation for required fields
+                // Note: We check `totalSize` explicitly rather than `data.total_size` since 0 would evaluate as falsy
+                if (!data.name || !data.type || !data.country || !data.city || totalSize === null || Number.isNaN(totalSize)) {
+                    alert('Please fill all fields marked with *');
+                    return;
+                }
+
+                const method = editingId ? 'PATCH' : 'POST';
+                // NOTE: Use the full URL for the API endpoint as specified in your original script
+                const url = editingId ? `http://127.0.0.1:8000/api/farms/${editingId}/` : 'http://127.0.0.1:8000/api/farms/';
+
+                try {
+                    console.debug('Creating farm with payload:', data);
+                    const res = await fetch(url, {
+                        method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const text = await res.text();
+                    let jsonResponse = null;
+                    try { jsonResponse = text ? JSON.parse(text) : null; } catch (e) { /* Not JSON */ }
+
+                    if (!res.ok) {
+                        console.error('Save Farm Response Error:', res.status, text, jsonResponse);
+                        // If the server sent back field errors, show them in an alert so the user can correct the form
+                        if (jsonResponse && typeof jsonResponse === 'object') {
+                            // Create a friendly message from the error response
+                            const messages = Object.entries(jsonResponse).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('\n');
+                            // Show inline on the form, and also pop up an alert
+                            const errDiv = document.getElementById('farm-form-error');
+                            errDiv.innerText = messages;
+                            errDiv.classList.remove('hidden');
+                            alert('Failed to save farm:\n' + messages);
+                        } else {
+                            const errDiv = document.getElementById('farm-form-error');
+                            errDiv.innerText = res.statusText || text;
+                            errDiv.classList.remove('hidden');
+                            alert('Failed to save farm: ' + (res.statusText || text));
+                        }
+                        return; // Do not proceed to close the modal or reload the farms
+                    }
+                } catch (error) {
+                    console.error('Save Farm Error:', error);
+                    const errDiv = document.getElementById('farm-form-error');
+                    errDiv.innerText = 'Failed to save farm. See console for details.';
+                    errDiv.classList.remove('hidden');
+                    alert('Failed to save farm. See console for details.');
+                    return;
+                }
+                // Clear any prior form error on success
+                document.getElementById('farm-form-error').classList.add('hidden');
+
+
+                farmModal.classList.remove('show');
+                loadFarms();
+            });
+
+            document.getElementById('farm-cancel-btn').addEventListener('click', () => {
+                farmModal.classList.remove('show');
+            });
+
+            document.getElementById('ai-close-btn').addEventListener('click', () => {
+                document.getElementById('ai-modal').classList.remove('show');
+            });
+
+            document.getElementById('dale-ai-btn').addEventListener('click', () => {
+                document.getElementById('ai-modal').classList.add('show');
+            });
+
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = 'authentication.html';
+            });
+        });
+
+        window.editFarm = async (id) => {
+            event.stopPropagation();
+            const farmModal = document.getElementById('farm-modal');
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/farms/${id}/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const farm = await res.json();
+                editingId = id;
+                document.getElementById('farm-modal-title').textContent = 'Edit Farm: ' + farm.name;
+                document.getElementById('farm-name').value = farm.name;
+                document.getElementById('farm-type').value = farm.type;
+                document.getElementById('farm-country').value = farm.country;
+                document.getElementById('farm-state').value = farm.state || '';
+                document.getElementById('farm-city').value = farm.city;
+                document.getElementById('farm-address').value = farm.address || '';
+                document.getElementById('farm-total-size').value = farm.total_size || '';
+                document.getElementById('farm-size-unit').value = farm.size_unit;
+                document.getElementById('farm-additional-notes').value = farm.additional_notes || '';
+                document.getElementById('farm-form-error').classList.add('hidden');
+                farmModal.classList.add('show');
+            } catch (error) {
+                console.error('Fetch Farm Error:', error);
+                alert('Failed to load farm details for editing.');
+            }
+        };
+
+        window.onload = loadFarms;
+
+        // --- Delete with Undo ---
+        let lastDeletedFarm = null;
+        let undoTimer = null;
+
+        async function deleteFarm(id) {
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/farms/${id}/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const farm = await res.json();
+                lastDeletedFarm = { id, data: farm };
+
+                // Optimistically remove from UI
+                const cardSelector = `.farm-card button[onclick*='deleteFarm(${id})']`;
+                const btn = document.querySelector(cardSelector);
+                const card = btn ? btn.closest('.farm-card') : null;
+                if (card) card.remove();
+
+                // Perform DELETE
+                const del = await fetch(`http://127.0.0.1:8000/api/farms/${id}/`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                // Show undo snackbar
+                showUndoSnackbar(`Farm "${farm.name}" deleted`, async () => {
+                    if (!lastDeletedFarm) return;
+                    const payload = { ...lastDeletedFarm.data };
+                    delete payload.id; // let server assign id
+                    const restore = await fetch('http://127.0.0.1:8000/api/farms/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    lastDeletedFarm = null;
+                    clearTimeout(undoTimer);
+                    loadFarms();
+                });
+
+                // Auto finalize after 10s
+                undoTimer = setTimeout(() => { lastDeletedFarm = null; }, 10000);
+            } catch (e) {
+                console.error('Delete Farm Error:', e);
+                alert('Failed to delete farm.');
+                loadFarms();
+            }
+        }
+
+        function showUndoSnackbar(message, onUndo) {
+            let bar = document.getElementById('undo-snackbar');
+            if (!bar) {
+                bar = document.createElement('div');
+                bar.id = 'undo-snackbar';
+                bar.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-4 z-50';
+                document.body.appendChild(bar);
+            }
+            bar.innerHTML = `<span class="text-sm">${message}</span>
+                <button class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 rounded text-sm">Undo</button>`;
+            bar.style.display = 'flex';
+            const undoBtn = bar.querySelector('button');
+            undoBtn.onclick = () => {
+                onUndo && onUndo();
+                bar.style.display = 'none';
+            };
+            setTimeout(() => { bar.style.display = 'none'; }, 10000);
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js" defer></script>
+    <script src="/static/js/dale.js" defer></script>
+</body>
+</html>

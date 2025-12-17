@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agricore — Welcome Back</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Raleway:wght@400;500;600&family=Poppins:wght@400;500;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet"/>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script>
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --green: #10b981;
+      --emerald: #34d399;
+      --cyan: #06d6a0;
+      --text: #0a1a0f;
+      --muted: #4ade80;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #e6f4ea 0%, #c7e8d5 100%);
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      padding: 40px 20px;
+    }
+
+    .stars, .particles {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star, .particle {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      animation: twinkle linear infinite;
+    }
+
+    .particle {
+      background: var(--emerald);
+      box-shadow: 0 0 15px var(--cyan);
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50% { opacity: 0.9; transform: scale(1.3); }
+    }
+
+    .app-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--green), var(--emerald));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
+      z-index: 20;
+    }
+
+    .app-subtitle {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #166534;
+      text-align: center;
+      max-width: 600px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+      z-index: 20;
+    }
+
+    .container {
+      position: relative;
+      width: 720px;
+      height: 520px;
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 0 30px 100px rgba(0,0,0,0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      z-index: 10;
+    }
+
+    .form-container {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      transition: all 0.6s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .sign-in-container { left: 0; z-index: 2; }
+    .sign-up-container { left: 0; opacity: 0; z-index: 1; }
+
+    .container.right-panel-active .sign-in-container { transform: translateX(100%); opacity: 0; }
+    .container.right-panel-active .sign-up-container { transform: translateX(100%); opacity: 1; z-index: 5; }
+
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      background: linear-gradient(to right, var(--green), var(--emerald));
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #166534;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .input-icon-wrapper {
+      position: relative;
+      width: 100%;
+      margin: 16px 0;
+    }
+
+    .input-icon-wrapper i {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--green);
+      font-size: 1.3rem;
+    }
+
+    .input-icon-wrapper input {
+      width: 100%;
+      background: rgba(16, 185, 129, 0.08);
+      border: 2px solid transparent;
+      padding: 18px 20px 18px 60px;
+      border-radius: 20px;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .input-icon-wrapper input:focus {
+      outline: none;
+      border-color: var(--green);
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 20px;
+      background: linear-gradient(to right, var(--green), var(--emerald));
+      color: white;
+      font-size: 1.3rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+      position: relative;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
+    }
+
+    button.ghost {
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      margin-top: 20px;
+    }
+
+    .overlay-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+      transition: transform 0.6s ease-in-out;
+      z-index: 100;
+    }
+
+    .container.right-panel-active .overlay-container { transform: translateX(-100%); }
+
+    .overlay {
+      background: linear-gradient(135deg, var(--green), var(--emerald));
+      position: relative;
+      left: -100%;
+      height: 100%;
+      width: 200%;
+      transform: translateX(0);
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .container.right-panel-active .overlay { transform: translateX(50%); }
+
+    .overlay-panel {
+      position: absolute;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 0 40px;
+      height: 100%;
+      width: 50%;
+      text-align: center;
+      color: white;
+    }
+
+    .overlay-left { transform: translateX(-20%); }
+    .container.right-panel-active .overlay-left { transform: translateX(0); }
+    .overlay-right { right: 0; transform: translateX(0); }
+    .container.right-panel-active .overlay-right { transform: translateX(20%); }
+
+    .overlay-panel h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      margin: 20px 0 10px;
+      font-weight: 700;
+    }
+
+    .overlay-panel p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    dotlottie-wc {
+      width: 140px;
+      height: 140px;
+      filter: drop-shadow(0 0 40px rgba(255,255,255,0.8));
+    }
+
+    .spinner {
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top: 3px solid white;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin { 
+      to { transform: translate(-50%, -50%) rotate(360deg); } 
+    }
+
+    button.loading .button-content { opacity: 0; }
+    button.loading .spinner { display: block; }
+
+    #snackbar {
+      visibility: hidden;
+      min-width: 300px;
+      padding: 16px;
+      background: #ef4444;
+      color: white;
+      text-align: center;
+      border-radius: 12px;
+      position: fixed;
+      z-index: 9999;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      font-size: 1.1rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: all 0.4s ease;
+      opacity: 0;
+    }
+
+    #snackbar.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    #snackbar.success {
+      background: #10b981;
+    }
+
+    .fade-out {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stars" id="stars"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="app-title">Agricore Dynamics</div>
+  <div class="app-subtitle">Revolutionizing Agriculture with Smart Technology, Seamless Marketplaces, and AI-Powered Growth</div>
+
+  <div id="app">
+    <div class="container" id="container">
+      <!-- Sign Up Panel -->
+      <div class="form-container sign-up-container">
+        <form @submit.prevent="register">
+          <h2>Create Account</h2>
+          <span class="subtitle">Join the agricultural revolution</span>
+          <div class="input-icon-wrapper">
+            <i class="fas fa-user"></i>
+            <input type="text" placeholder="Username" v-model="signup.username" required />
+          </div>
+          <div class="input-icon-wrapper">
+            <i class="fas fa-envelope"></i>
+            <input type="email" placeholder="Email" v-model="signup.email" required />
+          </div>
+          <div class="input-icon-wrapper">
+            <i class="fas fa-lock"></i>
+            <input type="password" placeholder="Password" v-model="signup.password" required />
+          </div>
+          <button type="submit" :class="{ 'loading': isSigningUp }">
+            <span class="button-content">Sign Up</span>
+            <div class="spinner"></div>
+          </button>
+        </form>
+      </div>
+
+      <!-- Sign In Panel -->
+      <div class="form-container sign-in-container">
+        <form @submit.prevent="handleLogin">
+          <h2>Welcome Back!</h2>
+          <span class="subtitle">Log in to your farm dashboard</span>
+          <div class="input-icon-wrapper">
+            <i class="fas fa-user"></i>
+            <input type="text" placeholder="Username" v-model="login.username" required />
+          </div>
+          <div class="input-icon-wrapper">
+            <i class="fas fa-lock"></i>
+            <input type="password" placeholder="Password" v-model="login.password" required />
+          </div>
+          <button type="submit" :class="{ 'loading': isLoggingIn }">
+            <span class="button-content">Sign In</span>
+            <div class="spinner"></div>
+          </button>
+        </form>
+      </div>
+
+      <!-- Overlay -->
+      <div class="overlay-container">
+        <div class="overlay">
+          <div class="overlay-panel overlay-left">
+            <dotlottie-wc src="https://lottie.host/2c27ca81-5cda-4281-92e8-d4f0407b5cab/doZJqbW664.lottie" autoplay loop></dotlottie-wc>
+            <h1>Welcome Back!</h1>
+            <p>Continue managing your farms, livestock, and marketplace</p>
+            <button class="ghost" id="signIn">Sign In</button>
+          </div>
+          <div class="overlay-panel overlay-right">
+            <dotlottie-wc src="https://lottie.host/2c27ca81-5cda-4281-92e8-d4f0407b5cab/doZJqbW664.lottie" autoplay loop></dotlottie-wc>
+            <h1>Hello There!</h1>
+            <p>Join Agricore and unlock AI-powered farming</p>
+            <button class="ghost" id="signUp">Sign Up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Snackbar -->
+  <div id="snackbar"></div>
+
+  <script>
+    // Background particles
+    document.addEventListener('DOMContentLoaded', () => {
+      const stars = document.getElementById('stars');
+      const particles = document.getElementById('particles');
+      for (let i = 0; i < 120; i++) {
+        const el = document.createElement('div');
+        el.className = i < 80 ? 'star' : 'particle';
+        el.style.width = el.style.height = (Math.random() * 3 + 2) + 'px';
+        el.style.top = Math.random() * 100 + '%';
+        el.style.left = Math.random() * 100 + '%';
+        el.style.animationDelay = Math.random() * 6 + 's';
+        el.style.animationDuration = (Math.random() * 4 + 3) + 's';
+        (i < 80 ? stars : particles).appendChild(el);
+      }
+
+      // Initialize Vue app
+      const { createApp } = Vue;
+
+      const app = createApp({
+        data() {
+          return {
+            signup: { username: '', email: '', password: '' },
+            login: { username: '', password: '' },
+            isSigningUp: false,
+            isLoggingIn: false
+          }
+        },
+        methods: {
+          showToast(msg, success = false) {
+            const snackbar = document.getElementById('snackbar');
+            snackbar.textContent = msg;
+            snackbar.className = success ? 'show success' : 'show';
+            setTimeout(() => {
+              snackbar.className = '';
+            }, 4000);
+          },
+
+          async register() {
+            this.isSigningUp = true;
+            try {
+              // Create user account
+              await axios.post('http://127.0.0.1:8000/api/users/', {
+                username: this.signup.username,
+                email: this.signup.email,
+                password: this.signup.password
+              });
+
+              // Get authentication tokens
+              const tokenResponse = await axios.post('http://127.0.0.1:8000/api/auth/token/', {
+                username: this.signup.username,
+                password: this.signup.password
+              });
+
+              localStorage.setItem('access_token', tokenResponse.data.access);
+              localStorage.setItem('refresh_token', tokenResponse.data.refresh);
+
+              this.showToast('Account created successfully!', true);
+
+              const container = document.getElementById('container');
+              container.classList.add('fade-out');
+              setTimeout(() => {
+                window.location.href = 'multi_farm.html';
+              }, 800);
+
+            } catch (error) {
+              console.error('Registration error:', error);
+              const errorMessage = error.response?.data
+                ? Object.values(error.response.data).flat().join(', ')
+                : 'Registration failed. Try another username/email.';
+              this.showToast(errorMessage);
+            } finally {
+              this.isSigningUp = false;
+            }
+          },
+
+          async handleLogin() {
+            console.log('Login handler called');
+            console.log('Login credentials:', this.login);
+            
+            if (!this.login.username || !this.login.password) {
+              this.showToast('Please enter username and password');
+              return;
+            }
+
+            this.isLoggingIn = true;
+
+            try {
+              console.log('Sending login request...');
+              const response = await axios.post('http://127.0.0.1:8000/api/auth/token/', {
+                username: this.login.username,
+                password: this.login.password
+              });
+
+              console.log('Login response:', response);
+
+              localStorage.setItem('access_token', response.data.access);
+              localStorage.setItem('refresh_token', response.data.refresh);
+
+              this.showToast('Welcome back!', true);
+
+              const container = document.getElementById('container');
+              container.classList.add('fade-out');
+              setTimeout(() => {
+                window.location.href = 'multi_farm.html';
+              }, 800);
+
+            } catch (error) {
+              console.error('Login error:', error);
+              const errorMessage = error.response?.data?.detail || 'Invalid username or password';
+              this.showToast(errorMessage);
+            } finally {
+              this.isLoggingIn = false;
+            }
+          }
+        }
+      });
+
+      app.mount('#app');
+
+      // Panel switching
+      document.getElementById('signUp').onclick = () => 
+        document.getElementById('container').classList.add('right-panel-active');
+      document.getElementById('signIn').onclick = () => 
+        document.getElementById('container').classList.remove('right-panel-active');
+    });
+  </script>
+</body>
+</html>

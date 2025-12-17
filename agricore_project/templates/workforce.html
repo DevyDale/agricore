@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Network - Agricore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            font-family: 'Inter', sans-serif;
+        }
+        .hero-container {
+            background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.65)), url('https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
+            border-radius: 20px;
+            outline: 5px solid #10b981;
+            outline-offset: -5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .professional-card {
+            transition: all 0.3s ease;
+        }
+        .professional-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(16,185,129,0.2);
+        }
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active {
+            background: linear-gradient(to right, #10b981, #059669);
+            color: white;
+        }
+        .rating-stars {
+            color: #fbbf24;
+        }
+        /* Subtle farm/work themed background pattern */
+        /* remove inline pattern; hero uses photo background like marketplace */
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="glass shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="marketplace.html" class="text-2xl font-black text-emerald-700">
+                        <i class="fas fa-leaf mr-2"></i>Agricore
+                    </a>
+                    <span class="text-gray-400">|</span>
+                    <h1 class="text-xl font-bold text-gray-800">Professional Network</h1>
+                </div>
+                <nav class="flex items-center gap-4">
+                    <a href="marketplace.html" class="px-4 py-2 text-gray-700 hover:text-emerald-600 font-semibold">
+                        <i class="fas fa-store mr-2"></i>Marketplace
+                    </a>
+                    <a href="multi_farm.html" class="px-4 py-2 text-gray-700 hover:text-emerald-600 font-semibold">
+                        <i class="fas fa-tractor mr-2"></i>My Farms
+                    </a>
+                    <button id="profile-btn" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700">
+                        <i class="fas fa-user mr-2"></i>My Profile
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="container mx-auto px-6 pt-6 mb-10">
+        <div class="hero-container text-white py-16 md:py-24 px-6 flex items-center justify-center">
+            <div class="w-full max-w-4xl flex flex-col items-center text-center">
+                <h2 class="text-4xl md:text-6xl font-black mb-4 drop-shadow-2xl whitespace-nowrap">
+                    Agricore Professional Network
+                </h2>
+                <p class="text-xl md:text-2xl mb-10 opacity-95 drop-shadow-lg">Connect with skilled professionals to power your farm work</p>
+                <!-- Search Bar -->
+                <div class="max-w-3xl mx-auto w-full">
+                    <div class="flex flex-row gap-4 bg-white/90 rounded-3xl overflow-hidden shadow-2xl p-3 items-center">
+                        <input type="text" id="search-input" placeholder="Search by name, skills, or location..." class="flex-1 px-6 py-4 text-gray-800 text-lg focus:outline-none">
+                        <button id="search-btn" class="px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-lg hover:from-emerald-700 hover:to-teal-700 transition rounded-2xl whitespace-nowrap">
+                            <i class="fas fa-search mr-2"></i> Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters & Stats -->
+    <section class="container mx-auto px-6 mb-8">
+        <div class="glass rounded-3xl p-6 shadow-xl">
+            <div class="flex flex-wrap items-center gap-4 mb-6">
+                <h3 class="text-lg font-bold text-gray-800">Filter by Specialty:</h3>
+                <button class="filter-btn active px-4 py-2 bg-gray-100 rounded-xl font-semibold" data-specialty="all">
+                    All
+                </button>
+                <button class="filter-btn px-4 py-2 bg-gray-100 rounded-xl font-semibold" data-specialty="agronomist">
+                    Agronomists
+                </button>
+                <button class="filter-btn px-4 py-2 bg-gray-100 rounded-xl font-semibold" data-specialty="veterinarian">
+                    Veterinarians
+                </button>
+                <button class="filter-btn px-4 py-2 bg-gray-100 rounded-xl font-semibold" data-specialty="mechanic">
+                    Mechanics
+                </button>
+                <button class="filter-btn px-4 py-2 bg-gray-100 rounded-xl font-semibold" data-specialty="farm_manager">
+                    Farm Managers
+                </button>
+                <button class="filter-btn px-4 py-2 bg-gray-100 rounded-xl font-semibold" data-specialty="livestock_handler">
+                    Livestock Handlers
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Minimum Rating</label>
+                    <select id="rating-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="">Any Rating</option>
+                        <option value="4.5">4.5+ stars</option>
+                        <option value="4.0">4.0+ stars</option>
+                        <option value="3.5">3.5+ stars</option>
+                        <option value="3.0">3.0+ stars</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Max Hourly Rate ($)</label>
+                    <input type="number" id="rate-filter" placeholder="e.g., 50" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Min Experience (years)</label>
+                    <input type="number" id="experience-filter" placeholder="e.g., 5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Availability</label>
+                    <select id="availability-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="">All</option>
+                        <option value="available">Available Now</option>
+                        <option value="full_time">Full-Time</option>
+                        <option value="part_time">Part-Time</option>
+                        <option value="contract">Contract</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Professionals Grid -->
+    <section class="container mx-auto px-6 pb-12">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-2xl font-bold text-gray-800">
+                <span id="professional-count">0</span> Professionals Available
+            </h3>
+            <select id="sort-select" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <option value="-average_rating">Highest Rated</option>
+                <option value="hourly_rate">Lowest Rate</option>
+                <option value="-hourly_rate">Highest Rate</option>
+                <option value="-years_experience">Most Experienced</option>
+                <option value="-created_at">Newest</option>
+            </select>
+        </div>
+
+        <div id="professionals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Populated by JavaScript -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden text-center py-16">
+            <i class="fas fa-users text-gray-300 text-6xl mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-600 mb-2">No professionals found</h3>
+            <p class="text-gray-500">Try adjusting your filters</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Skeleton cards -->
+        </div>
+    </section>
+
+    <!-- Professional Detail Modal -->
+    <div id="detail-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 p-6 overflow-y-auto">
+        <div class="glass rounded-3xl shadow-2xl max-w-4xl w-full mx-auto my-8">
+            <div class="p-8">
+                <div class="flex justify-between items-start mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800">Professional Details</h2>
+                    <button id="close-modal" class="text-gray-600 hover:text-gray-900 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="modal-content">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-emerald-600 text-white px-6 py-4 rounded-xl shadow-2xl transform translate-x-full transition-transform z-50">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-check-circle text-xl"></i>
+            <span id="toast-message"></span>
+        </div>
+    </div>
+
+    <script>
+        let professionals = [];
+        let currentFilters = {
+            specialty: 'all',
+            search: '',
+            minRating: '',
+            maxRate: '',
+            minExperience: '',
+            availability: '',
+            ordering: '-average_rating'
+        };
+
+        // Ensure auth token is present; redirect if missing
+        function ensureAuth() {
+            const token = localStorage.getItem('access_token');
+            if (!token || token === 'null' || token === 'undefined') {
+                showToast('Please log in to view professionals');
+                setTimeout(() => {
+                    window.location.href = 'authentication.html';
+                }, 800);
+                return false;
+            }
+            return true;
+        }
+
+        // Load professionals from API
+        async function loadProfessionals() {
+            if (!ensureAuth()) return;
+            showLoading();
+            try {
+                const params = new URLSearchParams();
+                
+                if (currentFilters.specialty !== 'all') {
+                    params.append('specialty', currentFilters.specialty);
+                }
+                if (currentFilters.search) {
+                    params.append('search', currentFilters.search);
+                }
+                if (currentFilters.minRating) {
+                    params.append('min_rating', currentFilters.minRating);
+                }
+                if (currentFilters.maxRate) {
+                    params.append('max_rate', currentFilters.maxRate);
+                }
+                if (currentFilters.minExperience) {
+                    params.append('min_experience', currentFilters.minExperience);
+                }
+                if (currentFilters.availability) {
+                    params.append('availability', currentFilters.availability);
+                }
+                params.append('ordering', currentFilters.ordering);
+
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`/api/professional-profiles/?${params}`, {
+                    headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+                });
+
+                if (response.ok) {
+                    professionals = await response.json();
+                    renderProfessionals();
+                } else {
+                    showToast('Failed to load professionals');
+                    renderProfessionals(); // Show empty state
+                }
+            } catch (error) {
+                console.error('Error loading professionals:', error);
+                showToast('Error loading professionals');
+                renderProfessionals();
+            }
+            hideLoading();
+        }
+
+        // Render professionals grid
+        function renderProfessionals() {
+            const grid = document.getElementById('professionals-grid');
+            const emptyState = document.getElementById('empty-state');
+            const countElement = document.getElementById('professional-count');
+
+            countElement.textContent = professionals.length;
+
+            if (professionals.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            grid.innerHTML = professionals.map(pro => {
+                const profileImg = pro.profile_image_display || pro.profile_image_url || pro.profile_image;
+                const fallbackIcon = `<div class="w-full h-48 bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white">
+                    <i class="fas fa-user text-6xl"></i>
+                </div>`;
+                
+                return `
+                <div class="professional-card glass rounded-2xl overflow-hidden shadow-lg cursor-pointer" onclick="showDetails(${pro.id})">
+                    <div class="relative">
+                        ${profileImg 
+                            ? `<img src="${profileImg}" alt="${pro.user_name}" class="w-full h-48 object-cover" onerror="this.parentElement.innerHTML='${fallbackIcon.replace(/'/g, "&apos;")}'+ this.parentElement.innerHTML.match(/(<span.*?span>)/g).join('');">`
+                            : fallbackIcon
+                        }
+                        ${pro.is_verified ? '<span class="absolute top-3 right-3 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold"><i class="fas fa-check-circle mr-1"></i>Verified</span>' : ''}
+                        ${pro.featured ? '<span class="absolute top-3 left-3 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold"><i class="fas fa-star mr-1"></i>Featured</span>' : ''}
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">${pro.user_name}</h3>
+                        <p class="text-emerald-600 font-semibold mb-3">${pro.specialty_display}</p>
+                        
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="rating-stars">
+                                ${renderStars(pro.average_rating)}
+                            </div>
+                            <span class="text-gray-600 text-sm">${(pro.average_rating || 0).toFixed(1)} (${pro.total_reviews || 0} reviews)</span>
+                        </div>
+
+                        <div class="space-y-2 text-sm text-gray-600 mb-4">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-map-marker-alt text-emerald-600"></i>
+                                <span>${pro.location}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-clock text-emerald-600"></i>
+                                <span>${pro.years_experience} years experience</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-dollar-sign text-emerald-600"></i>
+                                <span>$${pro.hourly_rate}/hour</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-briefcase text-emerald-600"></i>
+                                <span>${pro.availability_display}</span>
+                            </div>
+                        </div>
+
+                        ${pro.bio ? `<p class="text-gray-600 text-sm mb-4 line-clamp-2">${pro.bio}</p>` : ''}
+
+                        <div class="flex gap-2">
+                            <button onclick="event.stopPropagation(); showDetails(${pro.id})" class="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700">
+                                View Profile
+                            </button>
+                            <button onclick="event.stopPropagation(); contactProfessional(${pro.id})" class="px-4 py-2 border-2 border-emerald-600 text-emerald-600 rounded-xl font-semibold hover:bg-emerald-50">
+                                <i class="fas fa-envelope"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // Render star rating
+        function renderStars(rating) {
+            rating = Number(rating || 0);
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star"></i>';
+            }
+            return stars;
+        }
+
+        // Show professional details
+        async function showDetails(id) {
+            const modal = document.getElementById('detail-modal');
+            const content = document.getElementById('modal-content');
+            
+            modal.classList.remove('hidden');
+            content.innerHTML = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-4xl text-emerald-600"></i></div>';
+
+            try {
+                const response = await fetch(`/api/professional-profiles/${id}/`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                });
+
+                if (response.ok) {
+                    const pro = await response.json();
+                    renderDetailModal(pro);
+                } else {
+                    content.innerHTML = '<p class="text-red-600">Failed to load details</p>';
+                }
+            } catch (error) {
+                console.error('Error loading details:', error);
+                content.innerHTML = '<p class="text-red-600">Error loading details</p>';
+            }
+        }
+
+        // Render detail modal
+        function renderDetailModal(pro) {
+            const content = document.getElementById('modal-content');
+            const profileImg = pro.profile_image_display || pro.profile_image_url || pro.profile_image;
+            const fallbackIcon = `<div class="w-32 h-32 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white">
+                <i class="fas fa-user text-4xl"></i>
+            </div>`;
+            
+            content.innerHTML = `
+                <div class="space-y-6">
+                    <div class="flex items-start gap-6">
+                        ${profileImg 
+                            ? `<img src="${profileImg}" alt="${pro.user_name}" class="w-32 h-32 rounded-2xl object-cover" onerror="this.outerHTML='${fallbackIcon.replace(/'/g, "&apos;")}';">`
+                            : fallbackIcon
+                        }
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <h3 class="text-2xl font-bold text-gray-800">${pro.user_name}</h3>
+                                ${pro.is_verified ? '<span class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold"><i class="fas fa-check-circle mr-1"></i>Verified</span>' : ''}
+                            </div>
+                            <p class="text-emerald-600 font-semibold text-lg mb-3">${pro.specialty_display}</p>
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="rating-stars text-xl">${renderStars(pro.average_rating)}</div>
+                                <span class="text-gray-600">${(pro.average_rating || 0).toFixed(1)} (${pro.total_reviews || 0} reviews)</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-600">Location:</span>
+                                    <span class="font-semibold ml-2">${pro.location}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">Experience:</span>
+                                    <span class="font-semibold ml-2">${pro.years_experience} years</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">Rate:</span>
+                                    <span class="font-semibold ml-2">$${pro.hourly_rate}/hour</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">Availability:</span>
+                                    <span class="font-semibold ml-2">${pro.availability_display}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${pro.bio ? `
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">About</h4>
+                            <p class="text-gray-700">${pro.bio}</p>
+                        </div>
+                    ` : ''}
+
+                    ${pro.skills && pro.skills.length > 0 ? `
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Skills</h4>
+                            <div class="flex flex-wrap gap-2">
+                                ${pro.skills.map(skill => `<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold">${skill}</span>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${pro.certifications && pro.certifications.length > 0 ? `
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Certifications</h4>
+                            <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                ${pro.certifications.map(cert => `<li>${cert}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+
+                    ${pro.education ? `
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Education</h4>
+                            <p class="text-gray-700 whitespace-pre-line">${pro.education}</p>
+                        </div>
+                    ` : ''}
+
+                    ${pro.work_experience ? `
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Work Experience</h4>
+                            <p class="text-gray-700 whitespace-pre-line">${pro.work_experience}</p>
+                        </div>
+                    ` : ''}
+
+                    <!-- Reviews Section -->
+                    <div>
+                        <h4 class="font-bold text-lg mb-4">Reviews (${pro.total_reviews})</h4>
+                        <div id="reviews-container" class="space-y-4">
+                            ${pro.reviews && pro.reviews.length > 0 ? pro.reviews.map(review => `
+                                <div class="bg-gray-50 rounded-xl p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div>
+                                            <span class="font-semibold">${review.reviewer_name || review.reviewer_username}</span>
+                                            <div class="rating-stars text-sm">${renderStars(review.rating)}</div>
+                                        </div>
+                                        <span class="text-sm text-gray-500">${new Date(review.created_at).toLocaleDateString()}</span>
+                                    </div>
+                                    <p class="font-semibold text-gray-800 mb-1">${review.title}</p>
+                                    <p class="text-gray-700">${review.comment}</p>
+                                    ${review.response ? `
+                                        <div class="mt-3 pl-4 border-l-2 border-emerald-500">
+                                            <p class="text-sm text-gray-600 mb-1">Response from professional:</p>
+                                            <p class="text-gray-700">${review.response}</p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `).join('') : '<p class="text-gray-500">No reviews yet</p>'}
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 pt-4">
+                        <button onclick="contactProfessional(${pro.id})" class="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700">
+                            <i class="fas fa-envelope mr-2"></i>Contact Professional
+                        </button>
+                        <button onclick="leaveReview(${pro.id})" class="px-6 py-3 border-2 border-emerald-600 text-emerald-600 rounded-xl font-bold hover:bg-emerald-50">
+                            <i class="fas fa-star mr-2"></i>Leave Review
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Contact professional
+        function contactProfessional(id) {
+            showToast('Opening chat...');
+            // TODO: Implement chat functionality
+            window.location.href = 'chats.html';
+        }
+
+        // Leave review
+        function leaveReview(id) {
+            showToast('Review feature coming soon!');
+            // TODO: Implement review modal
+        }
+
+        // Filter event listeners
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilters.specialty = btn.dataset.specialty;
+                loadProfessionals();
+            });
+        });
+
+        document.getElementById('search-btn').addEventListener('click', () => {
+            currentFilters.search = document.getElementById('search-input').value;
+            loadProfessionals();
+        });
+
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                currentFilters.search = e.target.value;
+                loadProfessionals();
+            }
+        });
+
+        document.getElementById('rating-filter').addEventListener('change', (e) => {
+            currentFilters.minRating = e.target.value;
+            loadProfessionals();
+        });
+
+        document.getElementById('rate-filter').addEventListener('change', (e) => {
+            currentFilters.maxRate = e.target.value;
+            loadProfessionals();
+        });
+
+        document.getElementById('experience-filter').addEventListener('change', (e) => {
+            currentFilters.minExperience = e.target.value;
+            loadProfessionals();
+        });
+
+        document.getElementById('availability-filter').addEventListener('change', (e) => {
+            currentFilters.availability = e.target.value;
+            loadProfessionals();
+        });
+
+        document.getElementById('sort-select').addEventListener('change', (e) => {
+            currentFilters.ordering = e.target.value;
+            loadProfessionals();
+        });
+
+        // Modal controls
+        document.getElementById('close-modal').addEventListener('click', () => {
+            document.getElementById('detail-modal').classList.add('hidden');
+        });
+
+        document.getElementById('detail-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'detail-modal') {
+                document.getElementById('detail-modal').classList.add('hidden');
+            }
+        });
+
+        // Profile button
+        document.getElementById('profile-btn').addEventListener('click', () => {
+            if (!ensureAuth()) return;
+            window.location.href = 'profile.html';
+        });
+
+        // Show/hide loading
+        function showLoading() {
+            document.getElementById('loading-state').classList.remove('hidden');
+            document.getElementById('professionals-grid').classList.add('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-state').classList.add('hidden');
+        }
+
+        // Show toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        // Initialize
+        loadProfessionals();
+    </script>
+    <script src="/static/js/dale.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agricore Solutions - Chat Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .fab {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background-color: #34d399;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+        }
+        .modal.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="p-6">
+    <h2 class="text-2xl font-semibold">Chat Detail</h2>
+    <div id="messages-list" class="mt-4 space-y-4">
+        <!-- Populated by API -->
+    </div>
+    <div class="mt-4 flex">
+        <input type="text" id="message-input" placeholder="Type a message..." class="flex-1 p-2 border rounded">
+        <button id="send-message-btn" class="ml-2 px-4 py-2 bg-green-500 text-white rounded">Send</button>
+    </div>
+    <div class="fab" id="dale-ai-btn">AI</div>
+    <div id="ai-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-semibold">Dale AI</h2>
+            <input type="text" id="ai-input" class="w-full p-2 border rounded mt-4" placeholder="Ask for advice...">
+            <div id="ai-response" class="mt-4 text-gray-600"></div>
+            <button id="ai-close-btn" class="mt-4 px-4 py-2 bg-gray-300 text-gray-800 rounded">Close</button>
+        </div>
+    </div>
+    <nav class="fixed bottom-0 w-full bg-white shadow p-4 flex justify-around">
+        <button id="nav-farms" class="text-gray-600">Farms</button>
+        <button id="nav-switch-role" class="text-gray-600">Switch Role</button>
+        <button id="nav-marketplace" class="text-gray-600">Marketplace</button>
+        <button id="nav-workforce" class="text-gray-600">Workforce</button>
+        <button id="nav-chats" class="text-green-500">Chats</button>
+    </nav>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const convId = urlParams.get('id');
+        async function loadMessages() {
+            try {
+                const response = await fetch(`/api/communications/messages/?conversation=${convId}`, {
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+                });
+                const messages = await response.json();
+                const list = document.getElementById('messages-list');
+                list.innerHTML = messages.map(msg => `
+                    <div class="p-2 bg-gray-100 rounded">
+                        <p class="text-gray-800">${msg.content}</p>
+                        <p class="text-gray-500 text-sm">From: ${msg.sender} at ${msg.created_at}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
+        }
+        document.getElementById('send-message-btn').addEventListener('click', async () => {
+            const content = document.getElementById('message-input').value;
+            if (content) {
+                try {
+                    await fetch('/api/communications/messages/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                        body: JSON.stringify({ conversation: convId, content }),
+                    });
+                    document.getElementById('message-input').value = '';
+                    loadMessages();
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                }
+            }
+        });
+        document.getElementById('nav-farms').addEventListener('click', () => window.location.href = 'multi-farm.html');
+        document.getElementById('nav-switch-role').addEventListener('click', () => window.location.href = 'role-selection.html');
+        document.getElementById('nav-marketplace').addEventListener('click', () => window.location.href = 'marketplace.html');
+        document.getElementById('nav-workforce').addEventListener('click', () => window.location.href = 'workforce.html');
+        document.getElementById('nav-chats').addEventListener('click', () => window.location.href = 'chats.html');
+        document.getElementById('dale-ai-btn').addEventListener('click', () => {
+            document.getElementById('ai-modal').classList.add('show');
+        });
+        document.getElementById('ai-close-btn').addEventListener('click', () => {
+            document.getElementById('ai-modal').classList.remove('show');
+        });
+        document.getElementById('ai-input').addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const query = e.target.value;
+                document.getElementById('ai-response').textContent = 'Processing...';
+                try {
+                    const response = await fetch('/api/ai/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                        body: JSON.stringify({ prompt: query }),
+                    });
+                    const data = await response.json();
+                    document.getElementById('ai-response').textContent = data.response || 'No response';
+                } catch (error) {
+                    document.getElementById('ai-response').textContent = 'Error: ' + error.message;
+                }
+            }
+        });
+        window.onload = loadMessages;
+    </script>
+</body>
+</html>

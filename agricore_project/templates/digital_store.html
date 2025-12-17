@@ -1,0 +1,2823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agricore Solutions - Digital Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            min-height: 100vh;
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 24px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+        .section-content {
+            display: none;
+            background-color: white;
+            border-radius: 20px;
+            padding: 32px;
+            min-height: calc(100vh - 140px);
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.12);
+        }
+        .section-content.active {
+            display: block;
+        }
+        .sidebar-nav-item {
+            cursor: pointer;
+            padding: 16px 24px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #6b7280;
+            border-left: 4px solid transparent;
+            border-radius: 0 8px 8px 0;
+            margin: 2px 0;
+        }
+        .sidebar-nav-item:hover:not(.active) {
+            background-color: #f9fafb;
+            border-left-color: #d1d5db;
+            color: #374151;
+        }
+        .sidebar-nav-item.active {
+            background: #ffffff;
+            color: #059669;
+            border-left-color: #10b981;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+        }
+        .sidebar-header {
+            padding: 0 24px 24px;
+            border-bottom: 2px solid #f0fdfa;
+            margin-bottom: 16px;
+        }
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+        .sidebar-section-title {
+            padding: 8px 24px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #9ca3af;
+            letter-spacing: 0.05em;
+        }
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .stats-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.1);
+            transition: all 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-6px);
+        }
+        .product-card {
+            transition: all 0.3s ease;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.15);
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #10b981, #059669);
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 240px;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobile-menu-btn">
+        <i class="fas fa-bars text-emerald-600 text-xl"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-store text-3xl text-emerald-600"></i>
+                <div>
+                    <h1 class="text-xl font-bold text-emerald-800">Digital Store</h1>
+                    <p class="text-xs text-gray-500" id="sidebar-store-name">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Main</div>
+                <div class="sidebar-nav-item active" data-section="store-info">
+                    <i class="fas fa-info-circle text-lg"></i>
+                    <span>Store Information</span>
+                </div>
+                <div class="sidebar-nav-item" data-section="products">
+                    <i class="fas fa-box text-lg"></i>
+                    <span>Products</span>
+                </div>
+                <div class="sidebar-nav-item" data-section="sales-stats">
+                    <i class="fas fa-chart-line text-lg"></i>
+                    <span>Sales Statistics</span>
+                </div>
+                <div class="sidebar-nav-item" data-section="product-performance">
+                    <i class="fas fa-tachometer-alt text-lg"></i>
+                    <span>Product Performance</span>
+                </div>
+                <div class="sidebar-nav-item" data-section="conversion-funnel">
+                    <i class="fas fa-filter text-lg"></i>
+                    <span>Conversion Funnel</span>
+                </div>
+                <div class="sidebar-nav-item" data-section="orders">
+                    <i class="fas fa-shopping-bag text-lg"></i>
+                    <span>Orders</span>
+                </div>
+                <div class="sidebar-nav-item" data-section="create-advertisement">
+                    <i class="fas fa-bullhorn text-lg"></i>
+                    <span>Create Advertisement</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Management</div>
+                <div class="sidebar-nav-item" data-section="ratings">
+                    <i class="fas fa-star text-lg"></i>
+                    <span>Ratings & Reviews</span>
+                </div>
+                <div class="sidebar-nav-item" data-section="wallet" id="sidebar-wallet">
+                    <i class="fas fa-wallet text-lg"></i>
+                    <span>Manage Wallet</span>
+                </div>
+            </div>
+
+        </nav>
+
+        <div class="px-4 pt-4 mt-auto border-t border-emerald-100 space-y-3">
+            <button id="sidebar-farms" class="w-full py-3 px-4 bg-white border-2 border-teal-600 text-teal-700 font-semibold rounded-xl shadow-sm hover:bg-teal-50 transition flex items-center justify-center gap-2">
+                <i class="fas fa-tractor"></i>
+                Your Farms
+            </button>
+            <button id="sidebar-chat" class="w-full py-3 px-4 bg-white border-2 border-emerald-600 text-emerald-700 font-semibold rounded-xl shadow-sm hover:bg-emerald-50 transition flex items-center justify-center gap-2">
+                <i class="fas fa-comments"></i>
+                Chats
+            </button>
+            <button id="sidebar-marketplace" class="w-full py-3 px-4 text-white font-semibold rounded-xl shadow-md transition flex items-center justify-center gap-2" style="background: linear-gradient(to right, #10b981, #059669);">
+                <i class="fas fa-arrow-left"></i>
+                Back to Marketplace
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <main class="p-6">
+            <!-- Store Information Section -->
+            <section id="store-info" class="section-content active">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-emerald-800 mb-2">Store Information</h2>
+                    <p class="text-gray-600">View and manage your store details</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white border border-emerald-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Revenue</p>
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                                <i class="fas fa-money-bill-wave text-white"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900 mb-1">₦0</p>
+                        <p class="text-xs text-gray-500">vs prev. period</p>
+                    </div>
+                    <div class="bg-white border border-blue-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Orders</p>
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                                <i class="fas fa-shopping-cart text-white"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900 mb-1">0</p>
+                        <p class="text-xs text-gray-500">Pending / Completed</p>
+                    </div>
+                    <div class="bg-white border border-purple-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Products Live</p>
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
+                                <i class="fas fa-box text-white"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900 mb-1">0</p>
+                        <p class="text-xs text-gray-500">Published items</p>
+                    </div>
+                    <div class="bg-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Store Rating</p>
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                                <i class="fas fa-star text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <p class="text-3xl font-bold text-gray-900" id="store-info-rating">0.0</p>
+                            <i class="fas fa-star text-yellow-400"></i>
+                        </div>
+                        <p class="text-xs text-gray-500">Customer reviews</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                    <h3 class="font-bold text-lg text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-store text-emerald-600"></i>
+                        Store Details
+                    </h3>
+                    <div id="store-details" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-4">
+                        <!-- Dynamically populated store details here -->
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-store text-emerald-600 w-4"></i>
+                            <div><span class="text-gray-500">Store:</span> <span id="store-name-detail" class="font-medium text-gray-800 ml-1">Loading...</span></div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-user text-emerald-600 w-4"></i>
+                            <div><span class="text-gray-500">Owner:</span> <span id="store-owner" class="font-medium text-gray-800 ml-1">Loading...</span></div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-envelope text-emerald-600 w-4"></i>
+                            <div><span class="text-gray-500">Email:</span> <span id="store-email" class="text-gray-800 ml-1">Loading...</span></div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-phone text-emerald-600 w-4"></i>
+                            <div><span class="text-gray-500">Contact:</span> <span id="store-phone" class="text-gray-800 ml-1">Loading...</span></div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-globe text-emerald-600 w-4"></i>
+                            <div><span class="text-gray-500">Countries:</span> <span id="store-countries" class="text-gray-800 ml-1">Loading...</span></div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-check-circle text-emerald-600 w-4"></i>
+                            <div><span class="text-gray-500">Status:</span> <span id="store-verified" class="text-gray-800 ml-1">Loading...</span></div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-dollar-sign text-emerald-600 w-4"></i>
+                            <div><span class="text-gray-500">Value:</span> <span id="store-value" class="font-semibold text-emerald-700 ml-1">Loading...</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <div class="flex items-start gap-2">
+                            <i class="fas fa-info-circle text-emerald-600 w-4 mt-0.5 flex-shrink-0"></i>
+                            <div class="flex-1">
+                                <span class="text-gray-600 font-medium text-sm">Description:</span>
+                                <p id="store-description" class="text-gray-800 text-sm mt-1 leading-relaxed">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h3 class="font-semibold text-xl text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-tractor text-emerald-600"></i>
+                        Attached Farms
+                    </h3>
+                    <div id="attached-farms" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Dynamically populated farm cards here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products Section -->
+            <section id="products" class="section-content">
+                <div class="flex flex-col gap-4 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <div>
+                            <h2 class="text-3xl font-bold text-emerald-800 mb-1">My Products</h2>
+                            <p class="text-gray-600">Manage inventory, pricing, and availability</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">All</button>
+                            <button class="px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Low Stock</button>
+                            <button class="px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Draft</button>
+                            <button id="add-product" class="px-5 py-2.5 btn-primary text-white rounded-xl shadow-lg flex items-center gap-2">
+                                <i class="fas fa-plus"></i> Add Product
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white border border-emerald-100 rounded-xl p-4 shadow-sm">
+                            <p class="text-xs uppercase tracking-wide text-gray-500">Live Products</p>
+                            <p class="text-2xl font-bold text-emerald-700">0</p>
+                            <p class="text-xs text-gray-500">Currently visible</p>
+                        </div>
+                        <div class="bg-white border border-amber-100 rounded-xl p-4 shadow-sm">
+                            <p class="text-xs uppercase tracking-wide text-amber-600">Low Stock</p>
+                            <p class="text-2xl font-bold text-amber-700">0</p>
+                            <p class="text-xs text-gray-500">Need restock</p>
+                        </div>
+                        <div class="bg-white border border-blue-100 rounded-xl p-4 shadow-sm">
+                            <p class="text-xs uppercase tracking-wide text-blue-600">Drafts</p>
+                            <p class="text-2xl font-bold text-blue-700">0</p>
+                            <p class="text-xs text-gray-500">Not published</p>
+                        </div>
+                        <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+                            <p class="text-xs uppercase tracking-wide text-gray-500">Categories</p>
+                            <p class="text-2xl font-bold text-emerald-700">0</p>
+                            <p class="text-xs text-gray-500">Across catalog</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="store-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Products loaded here -->
+                </div>
+            </section>
+
+            <!-- Sales Statistics Section -->
+            <section id="sales-stats" class="section-content">
+            <div class="mb-6 flex items-center justify-between">
+                <div>
+                    <h3 class="text-2xl font-bold text-emerald-800 mb-2">Sales Statistics</h3>
+                    <p class="text-gray-600">Track revenue, orders, and performance</p>
+                </div>
+                <!-- Filter Controls -->
+                <div class="flex gap-2">
+                    <select id="date-range-filter" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                        <option>Last 7 Days</option>
+                        <option>Last 30 Days</option>
+                        <option>Last 90 Days</option>
+                        <option>This Year</option>
+                    </select>
+                    <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Key Performance Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <!-- Total Revenue -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Total Revenue</p>
+                        <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center">
+                            <i class="fas fa-money-bill-wave text-emerald-600"></i>
+                        </div>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900 mb-1">₦0</p>
+                    <p class="text-sm text-gray-500">vs previous period</p>
+                </div>
+
+                <!-- Total Orders -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Total Orders</p>
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                            <i class="fas fa-shopping-cart text-blue-600"></i>
+                        </div>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900 mb-1">0</p>
+                    <p class="text-sm text-gray-500">0 pending • 0 completed</p>
+                </div>
+
+                <!-- Average Order Value -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Avg Order Value</p>
+                        <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+                            <i class="fas fa-chart-line text-purple-600"></i>
+                        </div>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900 mb-1">₦0</p>
+                    <p class="text-sm text-gray-500">Per transaction</p>
+                </div>
+
+                <!-- Conversion Rate -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Conversion Rate</p>
+                        <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
+                            <i class="fas fa-percentage text-amber-600"></i>
+                        </div>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900 mb-1">0%</p>
+                    <p class="text-sm text-gray-500">Visits to purchases</p>
+                </div>
+            </div>
+
+            <!-- Sales Chart -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h4 class="text-lg font-bold text-gray-800">Revenue Trend</h4>
+                        <p class="text-sm text-gray-500">Performance over time</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="px-3 py-2 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-semibold hover:bg-emerald-100 transition">Daily</button>
+                        <button class="px-3 py-2 bg-gray-50 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-100 transition">Weekly</button>
+                        <button class="px-3 py-2 bg-gray-50 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-100 transition">Monthly</button>
+                    </div>
+                </div>
+                <div class="h-80 border-t border-gray-100 pt-4">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+
+            </section>
+
+            <!-- Product Performance Section -->
+            <section id="product-performance" class="section-content">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-2xl font-bold text-emerald-800 mb-2">Product Performance</h3>
+                        <p class="text-gray-600">Deep dive into product-level metrics</p>
+                    </div>
+                    <div class="flex gap-2 text-sm">
+                        <button class="px-3 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Top Sellers</button>
+                        <button class="px-3 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Low Stock</button>
+                        <button class="px-3 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">High Margin</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white border border-emerald-100 rounded-xl p-4 shadow-sm">
+                        <p class="text-xs uppercase tracking-wide text-gray-500">Top Product</p>
+                        <p class="text-lg font-semibold text-emerald-700">—</p>
+                        <p class="text-xs text-gray-500">Highest revenue</p>
+                    </div>
+                    <div class="bg-white border border-blue-100 rounded-xl p-4 shadow-sm">
+                        <p class="text-xs uppercase tracking-wide text-blue-600">Units Sold</p>
+                        <p class="text-2xl font-bold text-blue-700">0</p>
+                        <p class="text-xs text-gray-500">Past 30 days</p>
+                    </div>
+                    <div class="bg-white border border-orange-100 rounded-xl p-4 shadow-sm">
+                        <p class="text-xs uppercase tracking-wide text-orange-600">Avg Margin</p>
+                        <p class="text-2xl font-bold text-orange-700">0%</p>
+                        <p class="text-xs text-gray-500">Estimated</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 border border-emerald-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-lg font-bold text-gray-800">Performance Table</h4>
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="px-2 py-1 rounded-lg bg-gray-100 text-gray-700">Sort: Revenue</span>
+                            <span class="px-2 py-1 rounded-lg bg-gray-100 text-gray-700">Window: 30d</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Product</th>
+                                    <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Units Sold</th>
+                                    <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Revenue</th>
+                                    <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Stock Level</th>
+                                    <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="product-performance-table">
+                                <tr>
+                                    <td colspan="5" class="text-center py-8 text-gray-500">
+                                        <i class="fas fa-inbox text-4xl mb-2 opacity-50"></i>
+                                        <p>No sales data available yet</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ratings & Reviews Section -->
+            <section id="ratings" class="section-content">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                    <div>
+                        <h3 class="text-3xl font-bold text-emerald-800">Ratings & Reviews</h3>
+                        <p class="text-gray-600">Understand sentiment, highlight strengths, and address issues fast.</p>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-800 rounded-lg text-sm font-semibold hover:bg-gray-50 transition">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-800 rounded-lg text-sm font-semibold hover:bg-gray-50 transition">
+                            <i class="fas fa-star"></i> Only 4★+
+                        </button>
+                        <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gradient-to-br from-emerald-600 to-teal-600 text-white rounded-2xl p-6 shadow-xl lg:col-span-2">
+                        <div class="flex flex-col md:flex-row md:items-center gap-6">
+                            <div class="text-center md:text-left">
+                                <div class="text-5xl font-extrabold" id="avg-rating">0.0</div>
+                                <div class="flex items-center justify-center md:justify-start gap-1 mt-1 text-yellow-300">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
+                                <p class="text-sm mt-1 opacity-90" id="total-reviews">0 reviews</p>
+                            </div>
+                            <div class="flex-1 space-y-2" id="rating-bars">
+                                <!-- Rating bars injected -->
+                            </div>
+                        </div>
+                        <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                            <div class="bg-white/10 rounded-xl p-3 backdrop-blur">
+                                <p class="text-xs uppercase tracking-wide opacity-80">Response Rate</p>
+                                <p class="text-lg font-bold">—</p>
+                            </div>
+                            <div class="bg-white/10 rounded-xl p-3 backdrop-blur">
+                                <p class="text-xs uppercase tracking-wide opacity-80">Avg Response Time</p>
+                                <p class="text-lg font-bold">—</p>
+                            </div>
+                            <div class="bg-white/10 rounded-xl p-3 backdrop-blur">
+                                <p class="text-xs uppercase tracking-wide opacity-80">5★ Share</p>
+                                <p class="text-lg font-bold">—</p>
+                            </div>
+                            <div class="bg-white/10 rounded-xl p-3 backdrop-blur">
+                                <p class="text-xs uppercase tracking-wide opacity-80">Latest Review</p>
+                                <p class="text-lg font-bold">—</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-emerald-100">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2 text-emerald-800">
+                                <i class="fas fa-user-friends"></i>
+                                <h4 class="text-lg font-bold">Customer Insights</h4>
+                            </div>
+                            <span class="text-xs text-emerald-700">Store-wide</span>
+                        </div>
+                        <div class="space-y-3 text-sm text-gray-800">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">New Customers</span>
+                                <span class="font-semibold" id="insight-new-customers">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Returning Customers</span>
+                                <span class="font-semibold" id="insight-returning-customers">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Repeat Purchase Rate</span>
+                                <span class="font-semibold text-emerald-700" id="insight-repeat-rate">0%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Avg Spend per Customer</span>
+                                <span class="font-semibold" id="insight-avg-spend">₦0</span>
+                            </div>
+                            <div class="pt-3 border-t border-emerald-100 mt-2">
+                                <p class="text-xs font-semibold text-gray-600 mb-1">Top Customer Locations</p>
+                                <div id="insight-top-locations" class="text-xs text-gray-700">No data available</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 flex flex-col gap-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="text-xl font-bold text-gray-900">Store Reviews</h4>
+                                <p class="text-sm text-gray-500">Voice of your customers</p>
+                            </div>
+                            <span class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full">Store</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 text-xs mb-2">
+                            <span class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">Recent</span>
+                            <span class="px-2 py-1 rounded-full bg-gray-50 text-gray-700 border border-gray-200">Most Helpful</span>
+                            <span class="px-2 py-1 rounded-full bg-gray-50 text-gray-700 border border-gray-200">With Photos</span>
+                        </div>
+                        <div id="store-reviews-list" class="space-y-4">
+                            <!-- Store reviews dynamically loaded here -->
+                            <div class="hidden review-card-template">
+                                <div class="p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-semibold">A</div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <p class="font-semibold text-gray-900">Reviewer Name</p>
+                                                    <p class="text-xs text-gray-500">2 days ago</p>
+                                                </div>
+                                                <div class="flex items-center gap-1 text-amber-400 text-sm">
+                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                                                </div>
+                                            </div>
+                                            <p class="text-sm text-gray-700 mt-2">Review content goes here.</p>
+                                            <div class="flex flex-wrap gap-2 mt-2 text-xs text-gray-500">
+                                                <span class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">Service</span>
+                                                <span class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">Delivery</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center text-sm text-gray-500" id="store-reviews-empty">
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-2">
+                                <i class="fas fa-comments text-gray-400"></i>
+                            </div>
+                            <p>No store reviews yet.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 flex flex-col gap-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="text-xl font-bold text-gray-900">Product Reviews</h4>
+                                <p class="text-sm text-gray-500">Across all products</p>
+                            </div>
+                            <span class="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full">Products</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 text-xs mb-2">
+                            <span class="px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Recent</span>
+                            <span class="px-2 py-1 rounded-full bg-gray-50 text-gray-700 border border-gray-200">With Photos</span>
+                            <span class="px-2 py-1 rounded-full bg-gray-50 text-gray-700 border border-gray-200">Low to High</span>
+                        </div>
+                        <div id="product-reviews-list" class="space-y-4">
+                            <!-- Product reviews dynamically loaded here -->
+                            <div class="hidden review-card-template">
+                                <div class="p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center font-semibold">B</div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <p class="font-semibold text-gray-900">Reviewer Name</p>
+                                                    <p class="text-xs text-gray-500">Product • 3 days ago</p>
+                                                </div>
+                                                <div class="flex items-center gap-1 text-amber-400 text-sm">
+                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                                                </div>
+                                            </div>
+                                            <p class="text-sm text-gray-700 mt-2">Review content goes here.</p>
+                                            <div class="flex flex-wrap gap-2 mt-2 text-xs text-gray-500">
+                                                <span class="px-2 py-1 rounded-full bg-blue-50 text-blue-700">Quality</span>
+                                                <span class="px-2 py-1 rounded-full bg-blue-50 text-blue-700">Packaging</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center text-sm text-gray-500" id="product-reviews-empty">
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-2">
+                                <i class="fas fa-clipboard-list text-gray-400"></i>
+                            </div>
+                            <p>No product reviews yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Conversion Funnel Section -->
+            <section id="conversion-funnel" class="section-content">
+                <div class="mb-6">
+                    <h3 class="text-2xl font-bold text-emerald-800 mb-2">Conversion Funnel</h3>
+                    <p class="text-gray-600">Customer journey from visit to purchase</p>
+                </div>
+
+                <!-- Key Metrics Summary -->
+                <div class="mb-4">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Key Metrics</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-white rounded-xl shadow-sm border border-emerald-100 p-5 text-center">
+                            <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">Overall Conversion Rate</p>
+                            <p class="text-3xl font-bold text-emerald-600">0%</p>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm border border-amber-100 p-5 text-center">
+                            <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">Cart Abandonment Rate</p>
+                            <p class="text-3xl font-bold text-amber-600">0%</p>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm border border-blue-100 p-5 text-center">
+                            <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">Average Order Value</p>
+                            <p class="text-3xl font-bold text-blue-600">₦0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Funnel Visualization -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-6 uppercase tracking-wide">Customer Journey Steps</h4>
+                    <div class="flex items-center gap-3 overflow-x-auto pb-4">
+                        <!-- Step 1: Store Visits -->
+                        <div class="flex-1 min-w-[180px]">
+                            <div class="bg-emerald-50 rounded-lg p-5 border border-emerald-100 text-center">
+                                <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-white border-2 border-emerald-500 flex items-center justify-center">
+                                    <i class="fas fa-eye text-emerald-600 text-xl"></i>
+                                </div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Step 1</p>
+                                <p class="text-sm font-semibold text-emerald-900 mb-1">Store Visits</p>
+                                <p class="text-2xl font-bold text-emerald-700">0</p>
+                                <p class="text-xs text-gray-500 mt-1">100% of total</p>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="flex-shrink-0 text-gray-300">
+                            <i class="fas fa-chevron-right text-2xl"></i>
+                        </div>
+
+                        <!-- Step 2: Product Views -->
+                        <div class="flex-1 min-w-[180px]">
+                            <div class="bg-blue-50 rounded-lg p-5 border border-blue-100 text-center">
+                                <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-white border-2 border-blue-500 flex items-center justify-center">
+                                    <i class="fas fa-mouse-pointer text-blue-600 text-xl"></i>
+                                </div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Step 2</p>
+                                <p class="text-sm font-semibold text-blue-900 mb-1">Product Views</p>
+                                <p class="text-2xl font-bold text-blue-700">0</p>
+                                <p class="text-xs text-gray-500 mt-1">0% of visits</p>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="flex-shrink-0 text-gray-300">
+                            <i class="fas fa-chevron-right text-2xl"></i>
+                        </div>
+
+                        <!-- Step 3: Add to Cart -->
+                        <div class="flex-1 min-w-[180px]">
+                            <div class="bg-purple-50 rounded-lg p-5 border border-purple-100 text-center">
+                                <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-white border-2 border-purple-500 flex items-center justify-center">
+                                    <i class="fas fa-shopping-cart text-purple-600 text-xl"></i>
+                                </div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Step 3</p>
+                                <p class="text-sm font-semibold text-purple-900 mb-1">Add to Cart</p>
+                                <p class="text-2xl font-bold text-purple-700">0</p>
+                                <p class="text-xs text-gray-500 mt-1">0% of visits</p>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="flex-shrink-0 text-gray-300">
+                            <i class="fas fa-chevron-right text-2xl"></i>
+                        </div>
+
+                        <!-- Step 4: Checkout -->
+                        <div class="flex-1 min-w-[180px]">
+                            <div class="bg-orange-50 rounded-lg p-5 border border-orange-100 text-center">
+                                <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-white border-2 border-orange-500 flex items-center justify-center">
+                                    <i class="fas fa-credit-card text-orange-600 text-xl"></i>
+                                </div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Step 4</p>
+                                <p class="text-sm font-semibold text-orange-900 mb-1">Checkout</p>
+                                <p class="text-2xl font-bold text-orange-700">0</p>
+                                <p class="text-xs text-gray-500 mt-1">0% of visits</p>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="flex-shrink-0 text-gray-300">
+                            <i class="fas fa-chevron-right text-2xl"></i>
+                        </div>
+
+                        <!-- Step 5: Purchase Complete -->
+                        <div class="flex-1 min-w-[180px]">
+                            <div class="bg-green-50 rounded-lg p-5 border border-green-100 text-center">
+                                <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-white border-2 border-green-500 flex items-center justify-center">
+                                    <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                                </div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Step 5</p>
+                                <p class="text-sm font-semibold text-green-900 mb-1">Purchase Complete</p>
+                                <p class="text-2xl font-bold text-green-700">0</p>
+                                <p class="text-xs text-gray-500 mt-1">0% of visits</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Wallet Management Section -->
+            <section id="wallet" class="section-content">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-emerald-800">Wallet Management</h2>
+                        <p class="text-gray-600">See balances, cash out quickly, and keep payouts organized.</p>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-800 rounded-lg text-sm font-semibold hover:bg-gray-50 transition">
+                            <i class="fas fa-plus"></i> Add Funds
+                        </button>
+                        <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
+                            <i class="fas fa-arrow-down"></i> Withdraw
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Wallet Balance Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-sm font-medium opacity-90">Available Balance</p>
+                                <p class="text-xs opacity-75">Ready to withdraw</p>
+                            </div>
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-wallet text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-4xl font-bold mb-2">₦0.00</p>
+                        <div class="flex items-center gap-2 text-sm opacity-80">
+                            <i class="fas fa-arrow-up"></i> <span>+0% vs last 7 days</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-amber-100 rounded-2xl p-6 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-800">Pending Balance</p>
+                                <p class="text-xs text-gray-500">Payouts in progress</p>
+                            </div>
+                            <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center">
+                                <i class="fas fa-clock text-amber-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900 mb-2">₦0.00</p>
+                        <p class="text-xs text-gray-500">Typical processing 2–5 business days</p>
+                    </div>
+
+                    <div class="bg-white border border-blue-100 rounded-2xl p-6 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-800">Total Earnings</p>
+                                <p class="text-xs text-gray-500">All-time</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
+                                <i class="fas fa-chart-line text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900 mb-2">₦0.00</p>
+                        <p class="text-xs text-emerald-600 font-medium"><i class="fas fa-arrow-up"></i> +0% this month</p>
+                    </div>
+                </div>
+
+                <!-- Card Management Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                    <h3 class="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-credit-card text-emerald-600"></i>
+                        Payment Methods
+                    </h3>
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-800 mb-4">Add Card</h4>
+                        <form id="card-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="col-span-full">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Cardholder Name</label>
+                                <input type="text" id="cardholder-name" placeholder="John Doe" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <div class="col-span-full">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Card Number</label>
+                                <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Expiry Date</label>
+                                <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">CVV</label>
+                                <input type="text" id="card-cvv" placeholder="123" maxlength="4" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <div class="col-span-full">
+                                <button type="submit" class="w-full px-4 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-plus"></i> Add Card
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-4">Your Cards</h4>
+                        <div id="cards-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 border border-gray-200 rounded-lg text-center text-gray-500 col-span-full">
+                                <i class="fas fa-inbox text-2xl mb-2"></i>
+                                <p>No cards added yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                    <h3 class="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-bolt text-amber-500"></i>
+                        Quick Actions
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <button class="p-4 border border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center"><i class="fas fa-money-bill-transfer"></i></span>
+                                <div>
+                                    <p class="font-semibold text-gray-900">Transfer</p>
+                                    <p class="text-xs text-gray-500">Move funds between wallets</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="p-4 border border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition text-left">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center"><i class="fas fa-building-columns"></i></span>
+                                <div>
+                                    <p class="font-semibold text-gray-900">Add Bank</p>
+                                    <p class="text-xs text-gray-500">Link payout destination</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="p-4 border border-gray-200 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition text-left">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="w-10 h-10 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center"><i class="fas fa-receipt"></i></span>
+                                <div>
+                                    <p class="font-semibold text-gray-900">Export</p>
+                                    <p class="text-xs text-gray-500">Statements & receipts</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="p-4 border border-gray-200 rounded-xl hover:border-orange-500 hover:bg-orange-50 transition text-left">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="w-10 h-10 rounded-lg bg-orange-50 text-orange-700 flex items-center justify-center"><i class="fas fa-sliders-h"></i></span>
+                                <div>
+                                    <p class="font-semibold text-gray-900">Preferences</p>
+                                    <p class="text-xs text-gray-500">Notifications & limits</p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Transaction History -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                                <i class="fas fa-history text-emerald-600"></i>
+                                Transaction History
+                            </h3>
+                            <p class="text-sm text-gray-500">Your latest wallet activity.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                                <option>All</option>
+                                <option>Credits</option>
+                                <option>Debits</option>
+                                <option>Withdrawals</option>
+                            </select>
+                            <button class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-200 transition">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-gray-100">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr class="border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                                    <th class="text-left py-3 px-4">Date</th>
+                                    <th class="text-left py-3 px-4">Transaction ID</th>
+                                    <th class="text-left py-3 px-4">Description</th>
+                                    <th class="text-left py-3 px-4">Type</th>
+                                    <th class="text-right py-3 px-4">Amount</th>
+                                    <th class="text-center py-3 px-4">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-list" class="text-sm">
+                                <tr>
+                                    <td colspan="6" class="py-12 text-center">
+                                        <div class="flex flex-col items-center gap-2 text-gray-500">
+                                            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-receipt text-gray-400"></i>
+                                            </div>
+                                            <p class="font-medium">No transactions yet</p>
+                                            <p class="text-xs text-gray-400">Activity will appear here as soon as it happens.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Bank Accounts -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-8">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                                <i class="fas fa-building-columns text-emerald-600"></i>
+                                Linked Bank Accounts
+                            </h3>
+                            <p class="text-sm text-gray-500">Where we send your payouts.</p>
+                        </div>
+                        <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
+                            <i class="fas fa-plus"></i> Add Account
+                        </button>
+                    </div>
+
+                    <div id="bank-accounts-list" class="space-y-4">
+                        <div class="border-2 border-dashed border-gray-200 rounded-xl p-10 text-center">
+                            <div class="w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-building-columns text-gray-400 text-xl"></i>
+                            </div>
+                            <p class="text-gray-700 font-semibold mb-1">No bank accounts linked</p>
+                            <p class="text-sm text-gray-500 mb-3">Connect a bank to receive withdrawals.</p>
+                            <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
+                                <i class="fas fa-plus"></i> Link First Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="orders" class="section-content">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-emerald-800">Order Management</h2>
+                        <p class="text-gray-600">Monitor incoming orders, your purchases, and shipments.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-800 rounded-lg text-sm font-semibold hover:bg-gray-50 transition">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                        <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white border border-emerald-100 rounded-xl p-5 shadow-sm hover:shadow-md transition" id="orders-incoming-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-semibold text-emerald-700">Incoming</span>
+                            <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                                <i class="fas fa-inbox"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900" id="orders-incoming-count">0</p>
+                        <p class="text-xs text-gray-500">Orders placed by customers</p>
+                    </div>
+
+                    <div class="bg-white border border-blue-100 rounded-xl p-5 shadow-sm hover:shadow-md transition" id="orders-purchases-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-semibold text-blue-700">My Purchases</span>
+                            <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900" id="orders-purchases-count">0</p>
+                        <p class="text-xs text-gray-500">Orders you placed on other stores</p>
+                    </div>
+
+                    <div class="bg-white border border-teal-100 rounded-xl p-5 shadow-sm hover:shadow-md transition" id="orders-outgoing-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-semibold text-teal-700">Outgoing</span>
+                            <div class="w-10 h-10 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center">
+                                <i class="fas fa-shipping-fast"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900" id="orders-outgoing-count">0</p>
+                        <p class="text-xs text-gray-500">Orders currently being fulfilled</p>
+                    </div>
+
+                    <div class="bg-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition" id="orders-issues-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-semibold text-amber-700">Needs Attention</span>
+                            <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900" id="orders-issues-count">0</p>
+                        <p class="text-xs text-gray-500">Refunds, cancellations, or delays</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Incoming Orders -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-emerald-500 to-teal-600 text-white">
+                            <div>
+                                <h4 class="text-lg font-bold">Incoming Orders</h4>
+                                <p class="text-sm opacity-90">Orders placed by your customers</p>
+                            </div>
+                            <span class="text-sm bg-white/20 px-3 py-1 rounded-full" id="incoming-orders-pill">0 open</span>
+                        </div>
+                        <div id="incoming-orders-list" class="p-6">
+                            <div class="text-center py-10 text-gray-400">
+                                <i class="fas fa-shopping-bag text-4xl mb-2"></i>
+                                <p class="font-semibold text-gray-700">No incoming orders</p>
+                                <p class="text-sm">Orders will show up here once customers start buying.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- My Purchases -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                            <div>
+                                <h4 class="text-lg font-bold">My Purchases</h4>
+                                <p class="text-sm opacity-90">Orders you have placed elsewhere</p>
+                            </div>
+                            <span class="text-sm bg-white/20 px-3 py-1 rounded-full" id="my-orders-pill">0 active</span>
+                        </div>
+                        <div id="my-orders-list" class="p-6">
+                            <div class="text-center py-10 text-gray-400">
+                                <i class="fas fa-receipt text-4xl mb-2"></i>
+                                <p class="font-semibold text-gray-700">No purchases yet</p>
+                                <p class="text-sm">Your purchase history will appear here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outgoing Orders Tracking -->
+                <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
+                        <div>
+                            <h4 class="text-lg font-bold">Outgoing Orders</h4>
+                            <p class="text-sm opacity-90">Track shipments and delivery steps</p>
+                        </div>
+                        <span class="text-sm bg-white/20 px-3 py-1 rounded-full" id="outgoing-orders-pill">0 in progress</span>
+                    </div>
+                    <div id="outgoing-orders-list" class="p-6">
+                        <div class="text-center py-10 text-gray-400">
+                            <i class="fas fa-route text-4xl mb-2"></i>
+                            <p class="font-semibold text-gray-700">No outgoing orders</p>
+                            <p class="text-sm">When you dispatch orders, progress will appear here.</p>
+                        </div>
+                        <div class="hidden space-y-4" id="outgoing-orders-tracker-sample">
+                            <div class="flex items-start gap-4 p-4 border border-emerald-100 rounded-lg">
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <p class="font-semibold text-gray-800">Order #1234 • Farm Supplies</p>
+                                        <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">In Transit</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mb-3">Placed 2h ago • ETA: 3 days</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-5 gap-2 text-xs font-semibold text-gray-700">
+                                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-50 border border-emerald-100">
+                                            <i class="fas fa-check-circle text-emerald-600"></i> Confirmed
+                                        </div>
+                                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-50 border border-emerald-100">
+                                            <i class="fas fa-box text-emerald-600"></i> Packed
+                                        </div>
+                                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-50 border border-emerald-100">
+                                            <i class="fas fa-truck-loading text-emerald-600"></i> Shipped
+                                        </div>
+                                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-100 text-amber-700">
+                                            <i class="fas fa-shipping-fast"></i> Out for Delivery
+                                        </div>
+                                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-500">
+                                            <i class="fas fa-flag-checkered"></i> Delivered
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Create Advertisement Section -->
+            <section id="create-advertisement" class="section-content">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-emerald-800 mb-2">Create Marketplace Advertisement</h2>
+                    <p class="text-gray-600">Design your ad and choose how long you want it displayed</p>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Live Preview Section -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-eye text-emerald-600"></i>
+                            Live Preview
+                        </h3>
+                        <div class="border border-gray-300 rounded-lg overflow-hidden">
+                            <div id="ad-preview" class="relative min-h-[400px] flex flex-col items-center justify-center p-8 text-center transition-all duration-300" style="background-color: #10b981; color: #ffffff;">
+                                <div id="ad-preview-image-container" class="hidden mb-4">
+                                    <img id="ad-preview-image" src="" alt="Ad Preview" class="max-w-full h-48 object-cover rounded-lg shadow-lg">
+                                </div>
+                                <h3 id="ad-preview-title" class="text-3xl font-bold mb-3">Your Ad Title Here</h3>
+                                <p id="ad-preview-description" class="text-lg mb-6 opacity-90">Your ad description will appear here...</p>
+                                <button id="ad-preview-cta" class="px-8 py-3 bg-white rounded-lg font-bold shadow-lg hover:shadow-xl transition" style="color: #10b981;">Shop Now</button>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-sm text-gray-600">
+                            <p><i class="fas fa-info-circle mr-2"></i>This is how your ad will appear in the marketplace</p>
+                        </div>
+                    </div>
+
+                    <!-- Ad Design Section -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-palette text-emerald-600"></i>
+                            Design Your Ad
+                        </h3>
+                        <form id="create-ad-form-page" class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Ad Title *</label>
+                                <input type="text" id="ad-title" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Seed Week Mega Sale" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Ad Description *</label>
+                                <textarea id="ad-description" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Catchy description for your ad" required></textarea>
+                            </div>
+
+                            <!-- Typography Controls -->
+                            <div class="border-t pt-5 mt-5">
+                                <h4 class="text-lg font-bold text-gray-800 mb-3">Typography</h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Font Family</label>
+                                        <select id="ad-font-family" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                            <option value="Inter, sans-serif">Inter</option>
+                                            <option value="Arial, sans-serif">Arial</option>
+                                            <option value="Georgia, serif">Georgia</option>
+                                            <option value="'Playfair Display', serif">Playfair Display</option>
+                                            <option value="Roboto, sans-serif">Roboto</option>
+                                            <option value="'Times New Roman', serif">Times New Roman</option>
+                                            <option value="'Courier New', monospace">Courier New</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Title Font Size (px)</label>
+                                        <input type="number" id="ad-title-size" min="12" max="72" value="30" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Description Font Size (px)</label>
+                                        <input type="number" id="ad-description-size" min="12" max="48" value="18" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Image Upload & Controls -->
+                            <div class="border-t pt-5 mt-5">
+                                <h4 class="text-lg font-bold text-gray-800 mb-3">Image Settings</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Ad Image</label>
+                                        <input type="file" id="ad-image" accept="image/*" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <p class="text-xs text-gray-500 mt-1">Recommended: 1200x628px (JPG, PNG)</p>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">Image Fit</label>
+                                            <select id="ad-image-fit" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                                <option value="cover">Cover</option>
+                                                <option value="contain">Contain</option>
+                                                <option value="fill">Fill</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">Image Position</label>
+                                            <select id="ad-image-position" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                                <option value="center">Center</option>
+                                                <option value="top">Top</option>
+                                                <option value="bottom">Bottom</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Image Brightness (%)</label>
+                                        <input type="range" id="ad-image-brightness" min="50" max="150" value="100" class="w-full">
+                                        <p class="text-xs text-gray-500 mt-1">Current: <span id="brightness-value">100</span>%</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Colors -->
+                            <div class="border-t pt-5 mt-5">
+                                <h4 class="text-lg font-bold text-gray-800 mb-3">Colors</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Background Color</label>
+                                        <div class="flex gap-2 items-center">
+                                            <input type="color" id="ad-bg-color" value="#10b981" class="w-16 h-10 border border-gray-300 rounded cursor-pointer">
+                                            <input type="text" id="ad-bg-color-hex" value="#10b981" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="#10b981">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Text Color</label>
+                                        <div class="flex gap-2 items-center">
+                                            <input type="color" id="ad-text-color" value="#ffffff" class="w-16 h-10 border border-gray-300 rounded cursor-pointer">
+                                            <input type="text" id="ad-text-color-hex" value="#ffffff" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="#ffffff">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Audio -->
+                            <div class="border-t pt-5 mt-5">
+                                <h4 class="text-lg font-bold text-gray-800 mb-3">Audio (Optional)</h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Background Sound</label>
+                                        <input type="file" id="ad-audio" accept="audio/*" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <p class="text-xs text-gray-500 mt-1">MP3, WAV (max 5MB) - plays when ad is displayed</p>
+                                    </div>
+                                    <div id="audio-preview-container" class="hidden">
+                                        <audio id="audio-preview" controls class="w-full"></audio>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Call to Action Button Text</label>
+                                <input type="text" id="ad-cta-text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Shop Now, Learn More" value="Shop Now">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Link URL (Optional)</label>
+                                <input type="url" id="ad-link" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="https://yourstore.com/product">
+                            </div>
+
+                            <!-- Display Duration & Pricing -->
+                            <div class="border-t pt-5 mt-5">
+                                <h4 class="text-lg font-bold text-gray-800 mb-3">Display Duration & Pricing</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="ad-duration" value="1" data-price="500" class="w-5 h-5 text-emerald-600" required>
+                                            <div>
+                                                <p class="font-semibold text-gray-900">1 Day</p>
+                                                <p class="text-xs text-gray-500">24 hours of visibility</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-lg font-bold text-emerald-600">₦500</span>
+                                    </label>
+                                    <label class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="ad-duration" value="7" data-price="3000" class="w-5 h-5 text-emerald-600">
+                                            <div>
+                                                <p class="font-semibold text-gray-900">1 Week</p>
+                                                <p class="text-xs text-gray-500">7 days of visibility</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-lg font-bold text-emerald-600">₦3,000</span>
+                                    </label>
+                                    <label class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="ad-duration" value="30" data-price="10000" class="w-5 h-5 text-emerald-600">
+                                            <div>
+                                                <p class="font-semibold text-gray-900">1 Month</p>
+                                                <p class="text-xs text-gray-500">30 days of visibility</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-lg font-bold text-emerald-600">₦10,000</span>
+                                    </label>
+                                </div>
+                                <div class="mt-4 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-semibold text-gray-800">Total Cost:</span>
+                                        <span id="ad-total-cost" class="text-2xl font-bold text-emerald-600">₦0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-3 pt-4">
+                                <button type="submit" class="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-rocket"></i> Launch Advertisement
+                                </button>
+                                <button type="reset" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition">
+                                    Clear
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Create Advertisement Modal (Legacy) -->
+    <div id="create-ad-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
+    <div id="create-ad-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-lg w-full mx-6 max-h-[85vh] overflow-y-auto">
+            <h2 class="text-2xl font-bold text-emerald-700 mb-4">Create Marketplace Advertisement</h2>
+            <form id="create-ad-form" class="space-y-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <input type="text" id="ad-title" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="e.g., Seed Week Mega Sale" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea id="ad-description" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Short promo copy" required></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                    <input type="url" id="ad-image" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="https://..." required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">CTA Label</label>
+                    <input type="text" id="ad-cta" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Shop Now" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">CTA Link</label>
+                    <input type="url" id="ad-link" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="https://... or internal page" required>
+                </div>
+                <div class="flex justify-end gap-3 pt-3 border-t border-gray-200">
+                    <button type="button" id="cancel-create-ad" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
+                    <button type="submit" id="submit-create-ad" class="px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white">Publish Ad</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Add Product Modal -->
+    <div id="add-product-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-lg w-full mx-6 max-h-[85vh] overflow-y-auto">
+            <h2 class="text-2xl font-bold text-emerald-700 mb-4">Add New Product</h2>
+            <form id="add-product-form" class="space-y-3">
+                <div>
+                    <label for="product-title" class="block text-sm font-semibold text-gray-700 mb-1">Product Title *</label>
+                    <input type="text" id="product-title" name="title" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Fresh Tomatoes">
+                </div>
+                
+                <div>
+                    <label for="product-description" class="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+                    <textarea id="product-description" name="description" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Describe your product..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="product-category" class="block text-sm font-semibold text-gray-700 mb-1">Category *</label>
+                        <select id="product-category" name="category" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="">Select category</option>
+                            <option value="Crops">Crops</option>
+                            <option value="Livestock">Livestock</option>
+                            <option value="Produce">Produce</option>
+                            <option value="Equipment">Equipment</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="product-price" class="block text-sm font-semibold text-gray-700 mb-1">Price *</label>
+                        <input type="number" id="product-price" name="price" required step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="0.00">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="product-quantity" class="block text-sm font-semibold text-gray-700 mb-1">Stock Quantity *</label>
+                        <input type="number" id="product-quantity" name="stock_quantity" required step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="0">
+                    </div>
+                    
+                    <div>
+                        <label for="product-unit" class="block text-sm font-semibold text-gray-700 mb-1">Unit *</label>
+                        <select id="product-unit" name="unit" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="">Select unit</option>
+                            <option value="kg">Kilograms (kg)</option>
+                            <option value="g">Grams (g)</option>
+                            <option value="lbs">Pounds (lbs)</option>
+                            <option value="pcs">Pieces (pcs)</option>
+                            <option value="boxes">Boxes</option>
+                            <option value="bags">Bags</option>
+                            <option value="liters">Liters</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="product-expiration" class="block text-sm font-semibold text-gray-700 mb-1">Expiration Date</label>
+                    <input type="date" id="product-expiration" name="expiration_date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Product Image</label>
+                    <div class="flex gap-2">
+                        <input type="file" id="product-image" name="image" accept="image/*" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                    </div>
+                    <p class="text-xs text-gray-500">Or provide an image URL:</p>
+                    <input type="url" id="product-image-url" name="image_url" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="https://example.com/image.jpg">
+                    <div id="image-preview" class="hidden mt-2">
+                        <img id="preview-img" class="w-full h-32 object-cover rounded-lg" alt="Preview">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="product-dropship" name="is_dropshippable" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
+                    <label for="product-dropship" class="text-sm font-semibold text-gray-700">Is Dropshippable</label>
+                </div>
+
+                <div id="add-product-error" class="hidden text-red-600 text-sm p-2 bg-red-50 rounded-lg"></div>
+
+                <div class="flex justify-end gap-3 pt-3 border-t border-gray-200">
+                    <button type="button" id="cancel-add-product" class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition text-sm">
+                        Cancel
+                    </button>
+                    <button type="submit" id="submit-add-product" class="px-4 py-2 btn-primary text-white rounded-lg shadow-lg flex items-center gap-2 text-sm">
+                        <i class="fas fa-plus"></i> Add Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ratings & Reviews Modal -->
+    <div id="ratings-reviews-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
+        <div class="glass rounded-3xl shadow-2xl p-10 max-w-4xl w-full mx-6">
+            <h2 class="text-4xl font-bold text-emerald-700 mb-8">Ratings & Reviews</h2>
+            <div id="ratings-reviews-content" class="space-y-6 max-h-[60vh] overflow-y-auto">
+                <!-- Reviews dynamically populated here -->
+            </div>
+            <div class="flex justify-end mt-8">
+                <button id="close-ratings-reviews-modal" class="px-6 py-3 rounded-xl border border-gray-300 hover:bg-gray-100">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('=== SCRIPT START ===');
+        console.log('Location:', window.location.href);
+        console.log('URL Params:', new URLSearchParams(window.location.search).get('id'));
+        
+        // Your original script logic remains the same
+        // Just added a few visual enhancements
+        // Sidebar Navigation
+        document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(navItem => {
+            navItem.addEventListener('click', () => {
+                // Remove active class from all nav items
+                document.querySelectorAll('.sidebar-nav-item').forEach(item => item.classList.remove('active'));
+                // Hide all sections
+                document.querySelectorAll('.section-content').forEach(section => section.classList.remove('active'));
+                // Add active class to clicked nav item
+                navItem.classList.add('active');
+                // Show corresponding section
+                const sectionId = navItem.dataset.section;
+                document.getElementById(sectionId)?.classList.add('active');
+                if (sectionId === 'ratings') {
+                    loadRatingsAndReviews();
+                }
+                // Close mobile menu if open
+                if (window.innerWidth < 768) {
+                    document.getElementById('sidebar').classList.remove('open');
+                }
+            });
+
+                // Mobile menu toggle
+                document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.toggle('open');
+                });
+
+                // Sidebar management buttons
+                document.getElementById('sidebar-ratings')?.addEventListener('click', () => {
+                    document.getElementById('view-ratings-modal')?.classList.remove('hidden');
+                });
+
+                document.getElementById('sidebar-wallet')?.addEventListener('click', () => {
+                    showSection('wallet');
+                });
+
+                document.getElementById('sidebar-farms')?.addEventListener('click', () => {
+                    window.location.href = 'multi_farm.html';
+                });
+
+                document.getElementById('sidebar-marketplace')?.addEventListener('click', () => {
+                    window.location.href = 'marketplace.html';
+                });
+        });
+
+        // Ratings & Reviews Mock (reviews may still be mocked for now)
+
+        const storeReviews = [
+            {user: "Alice", rating: 5, comment: "Great products and fast delivery!"},
+            {user: "Bob", rating: 4, comment: "Good quality but shipping took a bit longer."},
+            {user: "Charlie", rating: 5, comment: "Excellent customer service and fresh produce."},
+            {user: "Diana", rating: 4.5, comment: "Very satisfied with the variety and quality."}
+        ];
+
+        // The 'attached-farms' area is populated dynamically using API data in `loadAttachedFarmsUI`.
+        // We do not populate it with placeholder data so that the UI only reflects real store/farm links.
+
+        // Ratings & Reviews Modal open/close handlers (Removed - now handled in DOMContentLoaded below)
+
+        document.getElementById('your-farms-btn')?.addEventListener('click', () => {
+            window.location.href = 'multi_farm.html';
+        });
+
+        document.getElementById('back-to-marketplace')?.addEventListener('click', () => {
+            window.location.href = 'marketplace.html';
+        });
+
+        // Revenue Trend Chart (always renders a line, even with zero values)
+        let salesChartInstance = null;
+        function initSalesChart() {
+            const canvas = document.getElementById('salesChart');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const labels = Array.from({ length: 7 }, (_, i) => `Day ${i + 1}`);
+            const values = [0, 0, 0, 0, 0, 0, 0]; // placeholder zero data to keep the line visible
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(16, 185, 129, 0.18)');
+            gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+
+            if (salesChartInstance) salesChartInstance.destroy();
+
+            salesChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Revenue',
+                        data: values,
+                        borderColor: '#10b981',
+                        backgroundColor: gradient,
+                        fill: true,
+                        tension: 0.35,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: (ctx) => `₦${ctx.parsed.y}`,
+                            },
+                        },
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#6b7280' },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#e5e7eb' },
+                            ticks: {
+                                color: '#6b7280',
+                                callback: (value) => `₦${value}`,
+                            },
+                        },
+                    },
+                },
+            });
+        }
+
+        initSalesChart();
+
+        // Keep all your existing load functions, API calls, etc.
+        // ... (paste your original script here)
+        
+        // ----- STORE / PRODUCT LOAD & DETECTION -----
+        const API_BASE = 'http://127.0.0.1:8000/api';
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            alert('Session expired');
+            window.location.href = 'authentication.html';
+        }
+
+        // Utility to render product cards
+        function renderProducts(products) {
+            const container = document.getElementById('store-products');
+            if (container) {
+                container.style.minHeight = 'calc(100vh - 280px)';
+            }
+            container.innerHTML = '';
+            if (!products || products.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full w-full h-full relative border border-dashed border-emerald-200 rounded-2xl bg-gradient-to-br from-emerald-50 via-white to-emerald-50 shadow-sm flex items-center justify-center text-center px-8 overflow-hidden" style="min-height: calc(100vh - 280px);">
+                        <div class="absolute inset-0 pointer-events-none opacity-40" style="background-image: radial-gradient(circle at 20% 20%, rgba(16,185,129,0.08) 0, rgba(16,185,129,0) 50%), radial-gradient(circle at 80% 30%, rgba(6,95,70,0.08) 0, rgba(6,95,70,0) 45%);"></div>
+                        <div class="relative space-y-3">
+                            <div class="mx-auto w-16 h-16 rounded-2xl bg-white shadow-md flex items-center justify-center border border-emerald-100">
+                                <i class="fas fa-box-open text-3xl text-emerald-500"></i>
+                            </div>
+                            <p class="text-xl font-bold text-emerald-900">No products found in your store yet.</p>
+                            <p class="text-sm text-gray-600">Add your first product to start selling.</p>
+                        </div>
+                    </div>`;
+                return;
+            }
+            products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-lg overflow-hidden product-card border border-gray-100';
+                
+                // Image handling with fallback to initials
+                const imageUrl = p.image_display || p.image || p.image_url;
+                const getInitials = (title) => {
+                    if (!title) return 'P';
+                    const words = title.trim().split(/\s+/);
+                    if (words.length >= 2) {
+                        return (words[0][0] + words[1][0]).toUpperCase();
+                    }
+                    return title.substring(0, 2).toUpperCase();
+                };
+                const initials = getInitials(p.title);
+                
+                // Create a visually appealing gradient placeholder with category icon
+                const categoryIcons = {
+                    'Crops': 'fa-seedling',
+                    'Livestock': 'fa-horse',
+                    'Produce': 'fa-apple-alt',
+                    'Equipment': 'fa-tools',
+                    'Other': 'fa-box'
+                };
+                const categoryGradients = {
+                    'Crops': 'linear-gradient(135deg, #34d399 0%, #059669 100%)',
+                    'Livestock': 'linear-gradient(135deg, #fbbf24 0%, #ea580c 100%)',
+                    'Produce': 'linear-gradient(135deg, #f87171 0%, #ec4899 100%)',
+                    'Equipment': 'linear-gradient(135deg, #9ca3af 0%, #475569 100%)',
+                    'Other': 'linear-gradient(135deg, #60a5fa 0%, #4f46e5 100%)'
+                };
+                const icon = categoryIcons[p.category] || categoryIcons['Other'];
+                const gradient = categoryGradients[p.category] || categoryGradients['Other'];
+                
+                card.innerHTML = `
+                    <div class="relative h-48 flex items-center justify-center" style="background: ${gradient};">
+                        ${imageUrl 
+                            ? `<img src="${imageUrl}" alt="${p.title}" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                               <div class="absolute inset-0 hidden flex-col items-center justify-center text-white" style="background: ${gradient};">
+                                   <div class="text-6xl font-bold mb-2">${initials}</div>
+                               </div>`
+                            : `<div class="text-center text-white px-4">
+                                   <div class="text-6xl font-bold mb-3">${initials}</div>
+                                   <p class="text-lg font-bold">${p.title}</p>
+                               </div>`
+                        }
+                        ${p.is_dropshippable ? `<span class="absolute top-3 left-3 px-2 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">Dropship</span>` : ''}
+                        <button class="absolute top-3 right-3 px-3 py-1.5 bg-white text-emerald-700 rounded-lg shadow-md hover:bg-emerald-50 transition text-sm font-semibold">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <h3 class="font-bold text-lg text-gray-800 line-clamp-2">${p.title}</h3>
+                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-full ml-2">${p.category || 'Other'}</span>
+                        </div>
+                        ${p.description ? `<p class="text-sm text-gray-600 mb-3 line-clamp-2">${p.description}</p>` : ''}
+                        ${p.source_produce_info ? `
+                            <div class="flex items-center gap-2 mb-3 p-2 bg-gray-50 rounded-lg">
+                                <i class="fas fa-tractor text-emerald-600"></i>
+                                <a href="individual_farm.html?id=${p.source_produce_info.farm_id}" class="text-sm text-emerald-700 hover:underline font-medium">
+                                    ${p.source_produce_info.farm_name || 'Farm'}
+                                </a>
+                            </div>` : ''}
+                        <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                            <div>
+                                <div class="text-2xl font-bold text-emerald-700">₦${Number(p.price || 0).toLocaleString()}</div>
+                                <div class="text-sm text-gray-500 mt-1">
+                                    <i class="fas fa-box"></i> ${p.stock_quantity || 0} ${p.unit || ''}
+                                </div>
+                                ${p.expiration_date ? `<div class="text-xs text-orange-500 mt-1"><i class="fas fa-calendar"></i> Exp: ${p.expiration_date}</div>` : ''}
+                            </div>
+                            <button class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg shadow-md hover:shadow-lg transition text-sm font-semibold">
+                                <i class="fas fa-bullhorn"></i> Promote
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function getUserStores() {
+            // Fetch all stores for the current user (paginated or not)
+            try {
+                const res = await fetch(`${API_BASE}/stores/`, { headers: { 'Authorization': 'Bearer ' + (token || '') } });
+                if (res.status === 401) {
+                    window.location.href = 'authentication.html';
+                    return [];
+                }
+                if (!res.ok) {
+                    console.warn('Failed to fetch stores', res.status);
+                    return [];
+                }
+                const stores = await res.json();
+                if (Array.isArray(stores)) return stores;
+                if (stores && stores.results && Array.isArray(stores.results)) return stores.results;
+                return [];
+            } catch (err) {
+                console.error('Error fetching stores', err);
+                return [];
+            }
+        }
+
+        async function loadStoreProducts(storeId) {
+            if (!storeId) return renderProducts([]);
+            try {
+                const res = await fetch(`${API_BASE}/products/?store=${storeId}`, { headers: { 'Authorization': 'Bearer ' + (token || '') } });
+                if (res.status === 401) {
+                    window.location.href = 'authentication.html';
+                    return;
+                }
+                if (!res.ok) {
+                    console.warn('Failed to fetch products for store', storeId, res.status);
+                    return renderProducts([]);
+                }
+                const data = await res.json();
+                const products = Array.isArray(data) ? data : (data.results || []);
+                renderProducts(products);
+            } catch (err) {
+                console.error('Failed to load store products', err);
+                renderProducts([]);
+            }
+        }
+
+        // Detect transfers: listen to storage changes and BroadcastChannel messages from other tabs
+        window.addEventListener('storage', async (e) => {
+            if (e.key === 'last_product_created') {
+                try {
+                    const data = JSON.parse(e.newValue || '{}');
+                    const store = await getUserStore();
+                    if (store && data && Number(data.storeId) === Number(store.id)) {
+                        // refresh products for this store
+                        await loadStoreProducts(store.id);
+                    }
+                } catch (err) { console.warn('Error parsing last_product_created', err); }
+            }
+            if (e.key === 'last_store_connected') {
+                try {
+                    const payload = JSON.parse(e.newValue || '{}');
+                    // Reload UI if this store belongs to the user (re-init everything)
+                    await initStore();
+                } catch (err) { console.warn('Error parsing last_store_connected', err); }
+            }
+        });
+
+        const bcProducts = ('BroadcastChannel' in window) ? new BroadcastChannel('products') : null;
+        const bcStores = ('BroadcastChannel' in window) ? new BroadcastChannel('stores') : null;
+        if (bcProducts) {
+            bcProducts.onmessage = async (msg) => {
+                try {
+                    const { type, storeId } = msg.data || {};
+                    if (type === 'created') {
+                        const store = await getUserStore();
+                        if (store && Number(store.id) === Number(storeId)) {
+                            await loadStoreProducts(storeId);
+                        }
+                    }
+                } catch (err) { /* ignore */ }
+            };
+        }
+        if (bcStores) {
+            bcStores.onmessage = async (msg) => {
+                try {
+                    const { type } = msg.data || {};
+                    if (type === 'connected') {
+                        await initStore();
+                    }
+                } catch (err) { /* ignore */ }
+            };
+        }
+
+        // Add Product Modal handlers
+        let currentStoreId = null; // Store the current store ID globally
+        
+        document.getElementById('add-product')?.addEventListener('click', () => {
+            document.getElementById('add-product-modal').classList.remove('hidden');
+            document.getElementById('add-product-form').reset();
+            document.getElementById('add-product-error').classList.add('hidden');
+        });
+
+        // Image preview handlers
+        document.getElementById('product-image')?.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('preview-img').src = e.target.result;
+                    document.getElementById('image-preview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+                document.getElementById('product-image-url').value = ''; // Clear URL if file selected
+            }
+        });
+
+        document.getElementById('product-image-url')?.addEventListener('input', (e) => {
+            const url = e.target.value;
+            if (url) {
+                document.getElementById('preview-img').src = url;
+                document.getElementById('image-preview').classList.remove('hidden');
+                document.getElementById('product-image').value = ''; // Clear file if URL entered
+            } else {
+                document.getElementById('image-preview').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('cancel-add-product')?.addEventListener('click', () => {
+            document.getElementById('add-product-modal').classList.add('hidden');
+        });
+
+        document.getElementById('add-product-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            const submitBtn = document.getElementById('submit-add-product');
+            const errorDiv = document.getElementById('add-product-error');
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            errorDiv.classList.add('hidden');
+            
+            try {
+                // Get the current store ID
+                const urlParams = new URLSearchParams(location.search);
+                const storeId = currentStoreId || urlParams.get('id');
+                
+                if (!storeId) {
+                    throw new Error('No store selected. Please ensure you have a store.');
+                }
+                
+                // Collect form data
+                const formData = new FormData(form);
+                
+                // Check if image file or URL is provided
+                const imageFile = document.getElementById('product-image').files[0];
+                const imageUrl = document.getElementById('product-image-url').value;
+                
+                if (imageFile) {
+                    formData.append('image', imageFile);
+                } else if (imageUrl) {
+                    formData.append('image_url', imageUrl);
+                }
+                
+                // Add other fields
+                formData.append('store', storeId);
+                formData.append('total_value', parseFloat(formData.get('price')) * parseFloat(formData.get('stock_quantity')));
+                
+                console.log('[Add Product] Submitting with image...');
+                
+                // Submit to API with FormData (handles file upload)
+                const response = await fetch(`${API_BASE}/products/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to add product');
+                }
+                
+                const newProduct = await response.json();
+                console.log('[Add Product] Success:', newProduct);
+                
+                // Broadcast to other tabs
+                try {
+                    localStorage.setItem('last_product_created', JSON.stringify({ 
+                        storeId: storeId, 
+                        timestamp: Date.now() 
+                    }));
+                    if (window.BroadcastChannel) {
+                        const bc = new BroadcastChannel('products');
+                        bc.postMessage({ type: 'created', storeId: storeId });
+                    }
+                } catch (err) { /* ignore */ }
+                
+                // Close modal and refresh products
+                document.getElementById('add-product-modal').classList.add('hidden');
+                await loadStoreProducts(storeId);
+                
+            } catch (error) {
+                console.error('[Add Product] Error:', error);
+                errorDiv.textContent = error.message || 'Failed to add product. Please try again.';
+                errorDiv.classList.remove('hidden');
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Product';
+            }
+        });
+
+        // Run on page load
+        async function loadAttachedFarmsUI(stores) {
+            const farmsContainer = document.getElementById('attached-farms');
+            farmsContainer.innerHTML = '';
+            if (!stores || !Array.isArray(stores) || stores.length === 0) return;
+            for (const s of stores) {
+                if (!s.farm) continue;
+                // store.farm might be an id; fetch farm details
+                try {
+                    const res = await fetch(`${API_BASE}/farms/${s.farm}/`, { headers: { 'Authorization': 'Bearer ' + (token || '') } });
+                    if (res.ok) {
+                        const farm = await res.json();
+                        const div = document.createElement('div');
+                        div.classList.add('bg-white', 'px-4', 'py-2', 'border-2', 'border-emerald-600', 'rounded-lg', 'text-center', 'shadow-sm', 'hover:shadow-md', 'transition-shadow');
+                        div.innerHTML = `<p class="font-semibold text-emerald-700 whitespace-nowrap">${farm.name || 'Unnamed Farm'}</p>`;
+                        farmsContainer.appendChild(div);
+                    }
+                } catch (err) { console.warn('Failed to load farm details', err); }
+            }
+            if (farmsContainer.children.length === 0) {
+                farmsContainer.innerHTML = `<div class="text-sm text-gray-500">No farms attached to this store yet.</div>`;
+            }
+        }
+
+        // Helper - normalize countries_of_operation to an array regardless of representation
+        function normCountries(c) {
+            if (!c) return [];
+            if (Array.isArray(c)) return c;
+            if (typeof c === 'string') {
+                // Check if it's a JSON string first
+                if (c.startsWith('[')) {
+                    try {
+                        const parsed = JSON.parse(c);
+                        return Array.isArray(parsed) ? parsed : [c];
+                    } catch (e) {
+                        // If JSON parsing fails, treat as single country
+                        return [c];
+                    }
+                }
+                // If it contains commas, split by comma
+                if (c.includes(',')) {
+                    return c.split(',').map(s => s.trim()).filter(Boolean);
+                }
+                // Otherwise, it's a single country name
+                return [c];
+            }
+            return [];
+        }
+
+        function populateStoreDetails(store) {
+            if (!store) {
+                console.error('[populateStoreDetails] No store provided');
+                return;
+            }
+            
+            console.log('[populateStoreDetails] Populating with store:', store);
+            
+            // Populate store details with safe fallbacks
+            const nameEl = document.getElementById('store-name-detail');
+            if (nameEl) nameEl.textContent = store.name || 'N/A';
+            
+                        // Update sidebar store name
+                        const sidebarNameEl = document.getElementById('sidebar-store-name');
+                        if (sidebarNameEl) sidebarNameEl.textContent = store.name || 'Loading...';
+            
+            const ownerEl = document.getElementById('store-owner');
+            if (ownerEl) ownerEl.textContent = store.owner_name || 'N/A';
+            
+            const emailEl = document.getElementById('store-email');
+            if (emailEl) emailEl.textContent = store.owner_email || 'N/A';
+            
+            const phoneEl = document.getElementById('store-phone');
+            if (phoneEl) phoneEl.textContent = store.owner_phone || 'N/A';
+            
+            const countries = normCountries(store.countries_of_operation);
+            const countriesEl = document.getElementById('store-countries');
+            if (countriesEl) countriesEl.textContent = countries.join(', ') || 'No countries specified';
+            
+            const verifiedEl = document.getElementById('store-verified');
+            if (verifiedEl) {
+                if (store.is_verified) {
+                    verifiedEl.innerHTML = '<span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full font-semibold flex items-center gap-1 inline-flex"><i class="fas fa-check-circle"></i>Verified</span>';
+                } else {
+                    verifiedEl.innerHTML = '<span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full font-semibold inline-flex">Pending</span>';
+                }
+            }
+            
+            const totalValue = typeof store.total_value !== 'undefined' ? store.total_value : 0;
+            const valueEl = document.getElementById('store-value');
+            if (valueEl) valueEl.textContent = '$' + totalValue.toLocaleString();
+            
+            const descEl = document.getElementById('store-description');
+            if (descEl) descEl.textContent = store.description || 'No description provided';
+            
+            console.log('[populateStoreDetails] Store details populated successfully');
+        }
+
+        async function getUserStore() {
+            const stores = await getUserStores();
+            return stores.length ? stores[0] : null;
+        }
+
+        async function fetchStoreById(id) {
+            try {
+                const res = await fetch(`${API_BASE}/stores/${id}/`, { headers: { 'Authorization': 'Bearer ' + (token || '') } });
+                if (res.status === 401) {
+                    window.location.href = 'authentication.html';
+                    return null;
+                }
+                if (!res.ok) return null;
+                return await res.json();
+            } catch (err) {
+                console.warn('Failed to fetch store by id', err);
+                return null;
+            }
+        }
+
+        async function initStore() {
+            console.log('[INIT] Starting store initialization...');
+
+            // Require auth token for API calls — mirror multi_farm session handling
+            if (!token) {
+                alert('Session expired');
+                window.location.href = 'authentication.html';
+                return;
+            }
+            // If an id query param is provided, try to use that specific store
+            const urlParams = new URLSearchParams(location.search);
+            const forcedId = urlParams.get('id');
+            console.log('[INIT] Store ID from URL:', forcedId);
+            
+            let store = null;
+            let stores = null;
+            
+            if (forcedId) {
+                console.log('[INIT] Fetching store by ID:', forcedId);
+                store = await fetchStoreById(forcedId);
+                console.log('[INIT] Fetched store:', store);
+                // If the forced store is not found or not owned by the user, fall back to first store
+                if (!store) {
+                    console.log('[INIT] Store not found, fetching user stores...');
+                    stores = await getUserStores();
+                    console.log('[INIT] User stores:', stores);
+                    store = stores.length ? stores[0] : null;
+                }
+            } else {
+                console.log('[INIT] No store ID in URL, fetching user stores...');
+                stores = await getUserStores();
+                console.log('[INIT] User stores:', stores);
+                store = stores.length ? stores[0] : null;
+            }
+
+            console.log('[INIT] Final store to display:', store);
+
+            if (!store) {
+                console.warn('[INIT] No store available');
+                window.location.href = 'digitalstores.html';
+                return;
+            }
+            
+            // Store the current store ID globally for use in add product form
+            currentStoreId = store.id;
+            console.log('[INIT] Set currentStoreId to:', currentStoreId);
+            
+            console.log('[INIT] Populating store details...');
+            populateStoreDetails(store);
+            
+            console.log('[INIT] Loading store products...');
+            await loadStoreProducts(store.id);
+            
+            // If we didn't fetch farms list yet, fetch user's stores to build attachment UI
+            if (!stores) {
+                console.log('[INIT] Fetching stores for farm attachment...');
+                stores = await getUserStores();
+            }
+            
+            console.log('[INIT] Loading attached farms UI...');
+            await loadAttachedFarmsUI(stores);
+            
+            console.log('[INIT] Store initialization complete!');
+        }
+
+        async function loadRatingsAndReviews() {
+            console.log('[Ratings] Loading reviews...');
+            const storeReviewsContainer = document.getElementById('store-reviews-list');
+            const productReviewsContainer = document.getElementById('product-reviews-list');
+            const avgRatingEl = document.getElementById('avg-rating');
+            const totalReviewsEl = document.getElementById('total-reviews');
+            const ratingBarsContainer = document.getElementById('rating-bars');
+
+            const loadingHtml = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-emerald-600"></i><p class="mt-2 text-gray-500">Loading reviews...</p></div>';
+
+            if (storeReviewsContainer) storeReviewsContainer.innerHTML = loadingHtml;
+            if (productReviewsContainer) productReviewsContainer.innerHTML = loadingHtml;
+
+            try {
+                const urlParams = new URLSearchParams(location.search);
+                const storeId = urlParams.get('id');
+
+                if (!storeId) {
+                    if (storeReviewsContainer) storeReviewsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">No store selected</div>';
+                    if (productReviewsContainer) productReviewsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">No products found</div>';
+                    return;
+                }
+
+                // Fetch store reviews
+                const res = await fetch(`${API_BASE}/store-reviews/?store=${storeId}`, {
+                    headers: { 'Authorization': 'Bearer ' + (token || '') }
+                });
+
+                if (!res.ok) {
+                    if (storeReviewsContainer) storeReviewsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">Unable to load store reviews</div>';
+                } else {
+                    const data = await res.json();
+                    const reviews = Array.isArray(data) ? data : (data.results || []);
+
+                    if (reviews.length > 0) {
+                        const totalRating = reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
+                        const avgRating = (totalRating / reviews.length).toFixed(1);
+                        if (avgRatingEl) avgRatingEl.textContent = avgRating;
+                        if (totalReviewsEl) totalReviewsEl.textContent = `${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
+
+                        // Calculate rating distribution
+                        const ratingCounts = [0, 0, 0, 0, 0];
+                        reviews.forEach(r => {
+                            const rating = Math.floor(r.rating || 0);
+                            if (rating >= 1 && rating <= 5) {
+                                ratingCounts[rating - 1]++;
+                            }
+                        });
+
+                        // Render rating bars
+                        if (ratingBarsContainer) {
+                            ratingBarsContainer.innerHTML = ratingCounts.map((count, index) => {
+                                const stars = 5 - index;
+                                const percentage = reviews.length > 0 ? (count / reviews.length * 100) : 0;
+                                return `
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm text-gray-600 w-8">${stars} <i class="fas fa-star text-yellow-400 text-xs"></i></span>
+                                        <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-yellow-400 h-2 rounded-full" style="width: ${percentage}%"></div>
+                                        </div>
+                                        <span class="text-sm text-gray-600 w-8">${count}</span>
+                                    </div>
+                                `;
+                            }).reverse().join('');
+                        }
+
+                        // Render store reviews
+                        if (storeReviewsContainer) {
+                            storeReviewsContainer.innerHTML = reviews.map(review => `
+                                <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-user text-emerald-600"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-semibold text-gray-800">${review.user_name || 'Anonymous'}</p>
+                                                <div class="flex items-center gap-1">
+                                                    ${Array(5).fill(0).map((_, i) => 
+                                                        `<i class="fas fa-star ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'} text-sm"></i>`
+                                                    ).join('')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="text-xs text-gray-500">${new Date(review.created_at || Date.now()).toLocaleDateString()}</span>
+                                    </div>
+                                    <p class="text-gray-700 text-sm">${review.comment || 'No comment provided'}</p>
+                                </div>
+                            `).join('');
+                        }
+                    } else {
+                        if (avgRatingEl) avgRatingEl.textContent = '0.0';
+                        if (totalReviewsEl) totalReviewsEl.textContent = '0 reviews';
+                        if (ratingBarsContainer) ratingBarsContainer.innerHTML = '';
+                        if (storeReviewsContainer) {
+                            storeReviewsContainer.innerHTML = `
+                                <div class="text-center py-12 text-gray-500">
+                                    <i class="fas fa-star text-6xl text-gray-300 mb-4"></i>
+                                    <p class="text-lg">No store reviews yet</p>
+                                    <p class="text-sm">Be the first to review this store!</p>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+
+                // Fetch product reviews
+                const prodRes = await fetch(`${API_BASE}/products/?store=${storeId}`, {
+                    headers: { 'Authorization': 'Bearer ' + (token || '') }
+                });
+
+                if (!prodRes.ok) {
+                    if (productReviewsContainer) productReviewsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">Unable to load product reviews</div>';
+                    return;
+                }
+
+                const prodData = await prodRes.json();
+                const products = Array.isArray(prodData) ? prodData : (prodData.results || []);
+
+                if (!products.length) {
+                    if (productReviewsContainer) {
+                        productReviewsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">No products found</div>';
+                    }
+                    return;
+                }
+
+                const limitedProducts = products.slice(0, 8); // limit to reduce requests
+                const productReviews = [];
+
+                for (const product of limitedProducts) {
+                    try {
+                        const pr = await fetch(`${API_BASE}/product-reviews/?product=${product.id}`, {
+                            headers: { 'Authorization': 'Bearer ' + (token || '') }
+                        });
+                        if (!pr.ok) continue;
+                        const prData = await pr.json();
+                        const reviews = Array.isArray(prData) ? prData : (prData.results || []);
+                        if (reviews.length) {
+                            productReviews.push({ product, reviews });
+                        }
+                    } catch (err) {
+                        console.warn('Failed to fetch product reviews for product', product.id, err);
+                    }
+                }
+
+                if (productReviewsContainer) {
+                    if (!productReviews.length) {
+                        productReviewsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">No product reviews yet</div>';
+                    } else {
+                        productReviewsContainer.innerHTML = productReviews.map(({ product, reviews }) => {
+                            const total = reviews.reduce((s, r) => s + (r.rating || 0), 0);
+                            const avg = (total / reviews.length).toFixed(1);
+                            const firstReview = reviews[0];
+                            return `
+                                <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div>
+                                            <p class="font-semibold text-gray-800">${product.title || 'Product'}</p>
+                                            <div class="flex items-center gap-2 text-sm text-gray-600">
+                                                <span class="font-bold text-emerald-700">${avg}</span>
+                                                <span class="flex items-center gap-1">${Array(5).fill(0).map((_, i) => `<i class="fas fa-star ${i < Math.round(avg) ? 'text-yellow-400' : 'text-gray-300'} text-xs"></i>`).join('')}</span>
+                                                <span class="text-gray-500">(${reviews.length})</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-xs text-gray-500">ID: ${product.id}</span>
+                                    </div>
+                                    <p class="text-gray-700 text-sm line-clamp-3">${(firstReview && firstReview.comment) ? firstReview.comment : 'No review text provided'}</p>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to load reviews', err);
+                if (storeReviewsContainer) storeReviewsContainer.innerHTML = '<div class="text-center py-8 text-red-500">Error loading reviews</div>';
+                if (productReviewsContainer) productReviewsContainer.innerHTML = '<div class="text-center py-8 text-red-500">Error loading reviews</div>';
+            }
+        }
+
+        // Multiple initialization approaches to ensure it runs
+        console.log('[INIT] Script loaded, document.readyState:', document.readyState);
+        
+        // Approach 1: If DOM already ready
+        if (document.readyState === 'loading') {
+            console.log('[INIT] Waiting for DOMContentLoaded...');
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('[INIT] DOMContentLoaded fired');
+                initStore();
+            });
+        } else {
+            console.log('[INIT] DOM already ready, initializing immediately');
+            initStore();
+        }
+        
+        // Approach 2: Also try on window load as backup
+        window.addEventListener('load', function() {
+            console.log('[INIT] Window load event fired');
+            // Only init if we haven't already (check if store name is still "Loading...")
+            const storeName = document.getElementById('store-name-detail');
+            if (storeName && storeName.textContent.includes('Loading')) {
+                console.log('[INIT] Store not loaded yet, retrying from window.onload');
+                initStore();
+            }
+        });
+
+        // ---- Payment Card Management ----
+        async function loadPaymentCards() {
+            const cardsList = document.getElementById('cards-list');
+            if (!cardsList) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/payment-cards/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch cards');
+
+                const cards = await response.json();
+                const cardsArray = Array.isArray(cards) ? cards : (cards.results || []);
+
+                if (cardsArray.length === 0) {
+                    cardsList.innerHTML = `
+                        <div class="p-4 border border-gray-200 rounded-lg text-center text-gray-500 col-span-full">
+                            <i class="fas fa-inbox text-2xl mb-2"></i>
+                            <p>No cards added yet</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                cardsList.innerHTML = cardsArray.map(card => `
+                    <div class="p-4 border-2 ${card.is_default ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200'} rounded-lg">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-credit-card text-2xl ${card.is_default ? 'text-emerald-600' : 'text-gray-400'}"></i>
+                                <div>
+                                    <p class="font-semibold text-gray-900">${card.card_brand || 'Card'}</p>
+                                    <p class="text-sm text-gray-600">•••• ${card.card_number_last4}</p>
+                                </div>
+                            </div>
+                            ${card.is_default ? '<span class="px-2 py-1 bg-emerald-600 text-white text-xs rounded-full">Default</span>' : ''}
+                        </div>
+                        <p class="text-xs text-gray-500 mb-3">${card.cardholder_name}</p>
+                        <p class="text-xs text-gray-500 mb-3">Expires: ${card.expiry_month.toString().padStart(2, '0')}/${card.expiry_year}</p>
+                        <div class="flex gap-2">
+                            ${!card.is_default ? `<button onclick="setDefaultCard(${card.id})" class="flex-1 px-3 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition">Set Default</button>` : ''}
+                            <button onclick="deleteCard(${card.id})" class="flex-1 px-3 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition">Remove</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading cards:', error);
+                cardsList.innerHTML = `
+                    <div class="p-4 border border-red-200 rounded-lg text-center text-red-500 col-span-full">
+                        <i class="fas fa-exclamation-circle text-2xl mb-2"></i>
+                        <p>Failed to load cards</p>
+                    </div>
+                `;
+            }
+        }
+
+        window.setDefaultCard = async function(cardId) {
+            try {
+                const response = await fetch(`${API_BASE}/payment-cards/${cardId}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ is_default: true })
+                });
+
+                if (!response.ok) throw new Error('Failed to set default card');
+
+                await loadPaymentCards();
+            } catch (error) {
+                console.error('Error setting default card:', error);
+                alert('Failed to set default card');
+            }
+        };
+
+        window.deleteCard = async function(cardId) {
+            if (!confirm('Are you sure you want to remove this card?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/payment-cards/${cardId}/`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to delete card');
+
+                await loadPaymentCards();
+            } catch (error) {
+                console.error('Error deleting card:', error);
+                alert('Failed to delete card');
+            }
+        };
+
+        // Card form submission
+        document.getElementById('card-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+
+            try {
+                const cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
+                const expiry = document.getElementById('card-expiry').value.split('/');
+                
+                if (expiry.length !== 2) {
+                    throw new Error('Invalid expiry date format. Use MM/YY');
+                }
+
+                const cardData = {
+                    cardholder_name: document.getElementById('cardholder-name').value.trim(),
+                    card_number: cardNumber,
+                    expiry_month: parseInt(expiry[0]),
+                    expiry_year: parseInt('20' + expiry[1]),
+                    cvv: document.getElementById('card-cvv').value,
+                    is_default: false
+                };
+
+                const response = await fetch(`${API_BASE}/payment-cards/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(cardData)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to add card');
+                }
+
+                alert('Card added successfully!');
+                e.target.reset();
+                await loadPaymentCards();
+            } catch (error) {
+                console.error('Error adding card:', error);
+                alert('Error: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        // Load cards when wallet section is shown
+        document.querySelector('[data-section="wallet"]')?.addEventListener('click', loadPaymentCards);
+
+        // ---- Advertisement Preview Updates ----
+        const adModal = document.getElementById('create-ad-modal');
+        document.addEventListener('click', (e) => {
+            if (e.target && e.target.id === 'cancel-create-ad') {
+                adModal.classList.add('hidden');
+            }
+            if (e.target === adModal) {
+                adModal.classList.add('hidden');
+            }
+        });
+
+        function getAds() {
+            try {
+                const raw = localStorage.getItem('agricore_ads');
+                const parsed = raw ? JSON.parse(raw) : [];
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) { return []; }
+        }
+
+        function setAds(list) {
+            try { localStorage.setItem('agricore_ads', JSON.stringify(list)); } catch (e) { /* noop */ }
+        }
+
+        const bcAds = ('BroadcastChannel' in window) ? new BroadcastChannel('ads') : null;
+
+        // Live preview updates for ad creation
+        const adPreview = document.getElementById('ad-preview');
+        const adPreviewTitle = document.getElementById('ad-preview-title');
+        const adPreviewDescription = document.getElementById('ad-preview-description');
+        const adPreviewCta = document.getElementById('ad-preview-cta');
+        const adPreviewImage = document.getElementById('ad-preview-image');
+        const adPreviewImageContainer = document.getElementById('ad-preview-image-container');
+        const adTotalCost = document.getElementById('ad-total-cost');
+
+        // Update title
+        document.getElementById('ad-title')?.addEventListener('input', (e) => {
+            adPreviewTitle.textContent = e.target.value || 'Your Ad Title Here';
+        });
+
+        // Update description
+        document.getElementById('ad-description')?.addEventListener('input', (e) => {
+            adPreviewDescription.textContent = e.target.value || 'Your ad description will appear here...';
+        });
+
+        // Update CTA button text
+        document.getElementById('ad-cta-text')?.addEventListener('input', (e) => {
+            adPreviewCta.textContent = e.target.value || 'Shop Now';
+        });
+
+        // Update background color
+        const bgColorPicker = document.getElementById('ad-bg-color');
+        const bgColorHex = document.getElementById('ad-bg-color-hex');
+        bgColorPicker?.addEventListener('input', (e) => {
+            bgColorHex.value = e.target.value;
+            adPreview.style.backgroundColor = e.target.value;
+            adPreviewCta.style.color = e.target.value;
+        });
+        bgColorHex?.addEventListener('input', (e) => {
+            if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                bgColorPicker.value = e.target.value;
+                adPreview.style.backgroundColor = e.target.value;
+                adPreviewCta.style.color = e.target.value;
+            }
+        });
+
+        // Update text color
+        const textColorPicker = document.getElementById('ad-text-color');
+        const textColorHex = document.getElementById('ad-text-color-hex');
+        textColorPicker?.addEventListener('input', (e) => {
+            textColorHex.value = e.target.value;
+            adPreview.style.color = e.target.value;
+        });
+        textColorHex?.addEventListener('input', (e) => {
+            if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                textColorPicker.value = e.target.value;
+                adPreview.style.color = e.target.value;
+            }
+        });
+
+        // Update font family
+        document.getElementById('ad-font-family')?.addEventListener('change', (e) => {
+            adPreviewTitle.style.fontFamily = e.target.value;
+            adPreviewDescription.style.fontFamily = e.target.value;
+        });
+
+        // Update title font size
+        document.getElementById('ad-title-size')?.addEventListener('input', (e) => {
+            adPreviewTitle.style.fontSize = e.target.value + 'px';
+        });
+
+        // Update description font size
+        document.getElementById('ad-description-size')?.addEventListener('input', (e) => {
+            adPreviewDescription.style.fontSize = e.target.value + 'px';
+        });
+
+        // Update image preview
+        document.getElementById('ad-image')?.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    adPreviewImage.src = event.target.result;
+                    adPreviewImageContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                adPreviewImageContainer.classList.add('hidden');
+            }
+        });
+
+        // Update image fit
+        document.getElementById('ad-image-fit')?.addEventListener('change', (e) => {
+            adPreviewImage.style.objectFit = e.target.value;
+        });
+
+        // Update image position
+        document.getElementById('ad-image-position')?.addEventListener('change', (e) => {
+            adPreviewImage.style.objectPosition = e.target.value;
+        });
+
+        // Update image brightness
+        const brightnessSlider = document.getElementById('ad-image-brightness');
+        const brightnessValue = document.getElementById('brightness-value');
+        brightnessSlider?.addEventListener('input', (e) => {
+            brightnessValue.textContent = e.target.value;
+            adPreviewImage.style.filter = `brightness(${e.target.value}%)`;
+        });
+
+        // Update audio preview
+        document.getElementById('ad-audio')?.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const audioPreviewContainer = document.getElementById('audio-preview-container');
+            const audioPreview = document.getElementById('audio-preview');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    audioPreview.src = event.target.result;
+                    audioPreviewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                audioPreviewContainer.classList.add('hidden');
+            }
+        });
+
+        // Update pricing based on duration selection
+        document.querySelectorAll('input[name="ad-duration"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const price = e.target.getAttribute('data-price');
+                adTotalCost.textContent = '₦' + parseInt(price).toLocaleString();
+            });
+        });
+
+        // Advertisement form submission with backend integration
+        document.getElementById('create-ad-form-page')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing...';
+
+            try {
+                const storeId = new URLSearchParams(window.location.search).get('id');
+                if (!storeId) {
+                    throw new Error('Store ID not found');
+                }
+
+                const formData = new FormData();
+                formData.append('store', storeId);
+                formData.append('title', document.getElementById('ad-title').value.trim());
+                formData.append('description', document.getElementById('ad-description').value.trim());
+                formData.append('background_color', document.getElementById('ad-bg-color').value);
+                formData.append('text_color', document.getElementById('ad-text-color').value);
+                formData.append('cta_text', document.getElementById('ad-cta-text').value.trim());
+                formData.append('link_url', document.getElementById('ad-link').value.trim());
+                formData.append('font_family', document.getElementById('ad-font-family').value);
+                formData.append('title_font_size', document.getElementById('ad-title-size').value);
+                formData.append('description_font_size', document.getElementById('ad-description-size').value);
+                formData.append('image_fit', document.getElementById('ad-image-fit').value);
+                formData.append('image_position', document.getElementById('ad-image-position').value);
+                formData.append('image_brightness', document.getElementById('ad-image-brightness').value);
+
+                const imageFile = document.getElementById('ad-image').files[0];
+                if (imageFile) {
+                    formData.append('image', imageFile);
+                }
+
+                const audioFile = document.getElementById('ad-audio').files[0];
+                if (audioFile) {
+                    formData.append('audio', audioFile);
+                }
+
+                const durationInput = document.querySelector('input[name="ad-duration"]:checked');
+                if (!durationInput) {
+                    throw new Error('Please select a duration');
+                }
+                const durationDays = parseInt(durationInput.value);
+                const pricePaid = parseInt(durationInput.getAttribute('data-price'));
+                formData.append('duration_days', durationDays);
+                formData.append('price_paid', pricePaid);
+                formData.append('is_active', 'true');
+
+                const response = await fetch(`${API_BASE}/advertisements/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to create advertisement');
+                }
+
+                const ad = await response.json();
+                alert('Advertisement published successfully! It will appear in the marketplace.');
+                e.target.reset();
+                // Reset preview
+                adPreviewTitle.textContent = 'Your Ad Title Here';
+                adPreviewDescription.textContent = 'Your ad description will appear here...';
+                adPreviewCta.textContent = 'Shop Now';
+                adPreviewImageContainer.classList.add('hidden');
+                adPreview.style.backgroundColor = '#10b981';
+                adPreview.style.color = '#ffffff';
+                adTotalCost.textContent = '₦0';
+            } catch (error) {
+                console.error('Error creating advertisement:', error);
+                alert('Error: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+    </script>
+    <script src="/static/js/dale.js" defer></script>
+</body>
+</html>

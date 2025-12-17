@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agricore Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            font-family: 'Inter', sans-serif;
+        }
+        .hero-container {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
+            border-radius: 20px;
+            outline: 5px solid #10b981;
+            outline-offset: -5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .product-card {
+            transition: all 0.4s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-16px);
+            box-shadow: 0 30px 60px rgba(16,185,129,0.25);
+        }
+        .category-tab {
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        .category-tab.active {
+            background: linear-gradient(to right, #10b981, #059669);
+            color: white;
+            box-shadow: 0 12px 35px rgba(16,185,129,0.4);
+            transform: translateY(-4px);
+        }
+        .category-tab:hover:not(.active) {
+            background: #d1fae5;
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(16,185,129,0.15);
+        }
+        .fab {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: linear-gradient(to right, #10b981, #059669);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            box-shadow: 0 10px 35px rgba(16,185,129,0.6);
+            transition: all 0.3s ease;
+        }
+        .fab:hover {
+            transform: scale(1.2);
+            box-shadow: 0 15px 45px rgba(16,185,129,0.8);
+        }
+        .top-nav-btn {
+            transition: all 0.3s;
+            border-radius: 1rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+        }
+        .top-nav-btn:hover {
+            background: #d1fae5;
+            transform: translateY(-2px);
+        }
+        .search-bar {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Hero Container - Isolated with Green Outline -->
+    <div class="container mx-auto px-6 pt-6">
+        <div class="hero-container text-white py-16 md:py-24 px-6">
+            <!-- Top Navigation Buttons (Top Right) -->
+            <div class="absolute top-6 right-6 flex flex-wrap justify-end gap-3">
+                <a href="multi_farm.html" class="top-nav-btn bg-white/20 backdrop-blur text-white hover:bg-white/30">
+                    <i class="fas fa-tractor mr-2"></i> My Farms
+                </a>
+                <a href="digitalstores.html" class="top-nav-btn bg-white/20 backdrop-blur text-white hover:bg-white/30">
+                    <i class="fas fa-store mr-2"></i> My Stores
+                </a>
+                <a href="workforce.html" class="top-nav-btn bg-white/20 backdrop-blur text-white hover:bg-white/30">
+                    <i class="fas fa-users mr-2"></i> Professional Network
+                </a>
+                <a href="chats.html" class="top-nav-btn bg-white/20 backdrop-blur text-white hover:bg-white/30">
+                    <i class="fas fa-comments mr-2"></i> Chats
+                </a>
+                <a href="cart.html" class="top-nav-btn bg-white/20 backdrop-blur text-white hover:bg-white/30 relative">
+                    <i class="fas fa-shopping-cart mr-2"></i> Cart
+                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">3</span>
+                </a>
+                <button class="top-nav-btn bg-white/20 backdrop-blur text-white hover:bg-white/30">
+                    <i class="fas fa-wallet mr-2"></i> $250.00
+                </button>
+            </div>
+
+            <!-- Centered Title, Slogan, and Search -->
+            <div class="text-center max-w-4xl mx-auto pt-8">
+                <h1 class="text-5xl md:text-7xl font-black mb-4 drop-shadow-2xl">Agricore Marketplace</h1>
+                <p class="text-xl md:text-2xl mb-10 opacity-95 drop-shadow-lg">Your One-Stop Shop for Everything Farming</p>
+                
+                <!-- Search Bar -->
+                <div class="max-w-3xl mx-auto">
+                    <div class="flex flex-col md:flex-row gap-4 search-bar bg-white rounded-full overflow-hidden shadow-2xl">
+                        <input type="text" id="search-input" placeholder="Search seeds, livestock, tractors, fertilizers..." class="flex-1 px-8 py-5 text-gray-800 text-lg focus:outline-none">
+                        <button class="px-10 py-5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-lg hover:from-emerald-700 hover:to-teal-700 transition">
+                            <i class="fas fa-search mr-2"></i> Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Refine Results - Horizontal Layout -->
+    <section class="container mx-auto px-6 mb-8 mt-16">
+        <div class="glass rounded-3xl p-6 shadow-lg border border-emerald-100">
+            <h3 class="text-xl font-bold text-emerald-800 mb-4">Refine Results</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Category Filter -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Category</p>
+                    <select name="filter-category-select" id="filter-category-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="all">All</option>
+                        <option value="Livestock and Animal Products">Livestock</option>
+                        <option value="Crops and Agricultural Produce">Crops</option>
+                        <option value="Agricultural Machinery and Equipment">Machinery</option>
+                        <option value="Agricultural Chemicals and Inputs">Chemicals</option>
+                    </select>
+                </div>
+                <!-- Price Range -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Price Range</p>
+                    <div class="flex items-center gap-2">
+                        <input id="price-min" type="number" class="w-20 px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Min">
+                        <span class="text-gray-500">-</span>
+                        <input id="price-max" type="number" class="w-20 px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Max">
+                        <button id="price-apply" class="px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-semibold">Apply</button>
+                    </div>
+                </div>
+                <!-- Rating -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Minimum Rating</p>
+                    <select id="filter-rating-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="">Any Rating</option>
+                        <option value="4.5">4.5+ stars</option>
+                        <option value="4.0">4.0+ stars</option>
+                        <option value="3.5">3.5+ stars</option>
+                    </select>
+                </div>
+                <!-- Deals -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Deals</p>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="filter-deals" class="w-5 h-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
+                        <span class="text-sm text-gray-700">Show only discounted items</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content: Product Grid -->
+    <div class="container mx-auto px-6 pb-24 mt-12">
+        <div class="glass rounded-3xl p-6 md:p-8 shadow-2xl">
+                    <div class="flex items-center justify-between mb-6 md:mb-8">
+                        <h2 class="text-2xl md:text-3xl font-bold text-emerald-800">Available Products</h2>
+                        <div class="flex items-center gap-3">
+                            <select id="sort-select" class="px-3 py-2 rounded-xl bg-white border border-emerald-200 text-sm">
+                                <option value="relevance">Sort: Relevance</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                                <option value="rating">Top Rated</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" id="product-grid-all"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-12 border-t">
+        <div class="container mx-auto px-6 py-10 text-sm text-gray-600 flex flex-col md:flex-row justify-between">
+            <p>© ${new Date().getFullYear ? new Date().getFullYear() : ''} Agricore — Grow smart, trade better.</p>
+            <div class="flex gap-4">
+                <a href="#" class="hover:text-emerald-700">Privacy</a>
+                <a href="#" class="hover:text-emerald-700">Terms</a>
+                <a href="#" class="hover:text-emerald-700">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AI FAB -->
+    <button class="fab text-white text-4xl flex items-center justify-center" id="dale-ai-btn">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <!-- AI Modal -->
+    <div id="ai-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50">
+        <div class="glass rounded-3xl shadow-2xl p-12 max-w-3xl w-full mx-6">
+            <h2 class="text-5xl font-bold text-emerald-700 mb-10 flex items-center gap-6">
+                <i class="fas fa-robot text-6xl text-emerald-600"></i> Dale AI Assistant
+            </h2>
+            <input type="text" id="ai-input" class="w-full p-8 text-xl rounded-3xl border-4 border-emerald-300 focus:border-emerald-600 focus:outline-none mb-8" placeholder="Ask about products, prices, or farming tips...">
+            <div id="ai-response" class="p-10 bg-emerald-50 rounded-3xl min-h-64 text-gray-700 text-xl"></div>
+            <button id="ai-close-btn" class="mt-10 w-full py-6 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-2xl font-bold rounded-3xl shadow-2xl hover:shadow-3xl transition">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Cart Drawer -->
+    <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full sm:w-[420px] bg-white shadow-2xl transform translate-x-full transition-transform z-50 flex flex-col">
+        <div class="p-4 border-b flex items-center justify-between">
+            <h3 class="text-lg font-bold flex items-center gap-2">
+                <i class="fas fa-shopping-cart text-emerald-600"></i>
+                Your Cart (<span data-cart-count>0</span>)
+            </h3>
+            <button id="cart-close" class="text-gray-600 hover:text-gray-900"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+        <div class="p-4 border-t">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-gray-600">Subtotal</span>
+                <span id="cart-subtotal" class="font-bold">₦0.00</span>
+            </div>
+            <button onclick="goToCart()" class="w-full py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all">
+                <i class="fas fa-shopping-bag mr-2"></i>View Cart & Checkout
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Backend-integrated marketplace: fetch products/ads, apply filters, open chat
+        const API_BASE = 'http://127.0.0.1:8000/api';
+        const token = localStorage.getItem('token') || localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = 'authentication.html';
+        }
+
+        const wsScheme = location.protocol === 'https:' ? 'wss' : 'ws';
+
+        let products = [];
+        let filteredProducts = [];
+        let ads = [];
+        const filters = { q: '', category: 'all', min: null, max: null, rating: null, sort: 'relevance' };
+
+        // Toast helper
+        function showToast(message) {
+            let t = document.getElementById('toast');
+            if (!t) {
+                t = document.createElement('div');
+                t.id = 'toast';
+                t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl z-50';
+                document.body.appendChild(t);
+            }
+            t.textContent = message;
+            t.style.opacity = '0';
+            t.style.display = 'block';
+            setTimeout(() => { t.style.transition = 'opacity 200ms'; t.style.opacity = '1'; }, 10);
+            setTimeout(() => { t.style.opacity = '0'; }, 1800);
+            setTimeout(() => { t.style.display = 'none'; }, 2200);
+        }
+
+        function ratingStars(avg) {
+            const r = Math.round(avg || 0);
+            return '★★★★★'.split('').map((s, i) => `<span class="${i < r ? 'text-yellow-500' : 'text-gray-300'}">★</span>`).join('');
+        }
+
+        function getProductInitials(title) {
+            if (!title) return 'P';
+            const words = title.trim().split(/\s+/);
+            if (words.length >= 2) {
+                return (words[0][0] + words[1][0]).toUpperCase();
+            }
+            return title.substring(0, 2).toUpperCase();
+        }
+
+        function renderCard(p) {
+            const priceDisplay = parseFloat(p.price || 0).toFixed(2);
+            const tag = p.tag || 'Deal';
+            const rating = p.average_rating || 0;
+            const reviewCount = p.reviews_count || 0;
+            const imageUrl = p.image_display || p.image || p.image_url;
+            const initials = getProductInitials(p.title);
+            
+            return `
+                <div class="product-card glass rounded-3xl overflow-hidden animate-[fadeIn_0.5s_ease]">
+                    <div class="h-60 md:h-72 bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center relative">
+                        ${imageUrl 
+                            ? `<img src="${imageUrl}" alt="${p.title}" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                               <div class="absolute inset-0 flex items-center justify-center text-6xl font-bold text-emerald-700" style="display:none;">${initials}</div>`
+                            : `<div class="text-6xl font-bold text-emerald-700">${initials}</div>`
+                        }
+                        <span class="absolute top-4 left-4 badge bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-semibold">${tag}</span>
+                        <div class="absolute top-4 right-4 flex items-center gap-2">
+                            <button onclick="addToCart(${p.id}, '${p.title.replace(/'/g, "\\'")}', '${priceDisplay}', '${p.unit || ''}', '${imageUrl || ''}', ${p.stock_quantity || 0})" class="bg-white/90 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold hover:bg-emerald-50" title="Add to Cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                            <button onclick="toggleWishlist(${p.id})" class="bg-white/90 text-red-500 px-3 py-1 rounded-full text-xs font-semibold hover:bg-red-50" title="Favorite">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                        <span class="absolute bottom-4 left-4 bg-white/90 text-gray-800 px-3 py-1 rounded-full text-xs font-semibold">${p.category || 'General'}</span>
+                    </div>
+                    <div class="p-6 md:p-8 min-h-[280px] flex flex-col">
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-2">${p.title}</h3>
+                        <div class="flex items-center gap-2 mb-3 text-sm text-gray-600">
+                            <span class="flex items-center gap-1">${ratingStars(rating)}</span>
+                            <span>(${rating.toFixed(1)} • ${reviewCount} reviews)</span>
+                        </div>
+                        <p class="text-gray-600 mb-3 text-sm line-clamp-3">${p.description || 'Quality assured, delivered safely to your location'}</p>
+                        <p class="text-xs text-gray-500 mb-4">Store: ${p.store_name || 'Unknown'}${p.store_verified ? ' ✅' : ''}</p>
+                        <div class="mt-auto">
+                            <div class="mb-4">
+                                <p class="text-2xl md:text-3xl font-bold text-emerald-700">₦${priceDisplay}</p>
+                                <p class="text-gray-500 text-xs md:text-sm">${p.unit || ''}</p>
+                                <p class="text-xs text-gray-500 mt-1">Stock: ${p.stock_quantity || 0} ${p.unit || 'units'}</p>
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <button onclick="addToCart(${p.id}, '${p.title.replace(/'/g, "\\'")}', '${priceDisplay}', '${p.unit || ''}', '${imageUrl || ''}', ${p.stock_quantity || 0})" class="flex-1 px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl text-sm md:text-base whitespace-nowrap transition-all"><i class="fas fa-cart-plus mr-1"></i>Add to Cart</button>
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <button onclick="startChat(${p.id})" class="flex-1 min-w-[120px] px-4 py-2.5 bg-white text-emerald-700 border border-emerald-300 rounded-2xl font-semibold hover:bg-emerald-50 text-sm md:text-base whitespace-nowrap"><i class="fas fa-comments mr-1"></i>Chat</button>
+                                <button onclick="goToDetail(${p.id})" class="flex-1 min-w-[120px] px-4 py-2.5 bg-white text-emerald-700 border border-emerald-300 rounded-2xl font-semibold hover:bg-emerald-50 text-sm md:text-base whitespace-nowrap"><i class="fas fa-eye mr-1"></i>View</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function populateGrid(list) {
+            const pageList = paginate(list);
+            document.getElementById('product-grid-all').innerHTML = pageList.length ? pageList.map(renderCard).join('') : '<div class="col-span-full text-center text-gray-600 py-10">No products match your filters.</div>';
+            renderPagination(list.length);
+        }
+
+        // Skeleton shimmer while loading
+        function skeletonCard() {
+            return `
+                <div class="glass rounded-3xl overflow-hidden">
+                    <div class="h-60 md:h-72 bg-gray-200 animate-pulse"></div>
+                    <div class="p-6 md:p-8">
+                        <div class="h-6 w-2/3 bg-gray-200 rounded animate-pulse mb-3"></div>
+                        <div class="h-4 w-1/2 bg-gray-200 rounded animate-pulse mb-5"></div>
+                        <div class="h-8 w-full bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                </div>`;
+        }
+
+        function setStats(list) {
+            const animateCount = (el, target) => {
+                const duration = 600; const steps = 30; let cur = 0;
+                const inc = target / steps;
+                const timer = setInterval(() => { cur += inc; el.textContent = Math.round(cur); if (cur >= target) { el.textContent = target; clearInterval(timer); } }, duration / steps);
+            };
+            animateCount(document.getElementById('stats-products'), list.length);
+            animateCount(document.getElementById('stats-sellers'), Math.max(10, Math.min(99, Math.round(list.length * 2))));
+            animateCount(document.getElementById('stats-deals'), list.filter(p => ['Best Seller','Trending','Limited','New','Eco','Value','Premium'].includes(p.tag)).length);
+            animateCount(document.getElementById('stats-cart'), cartCount);
+        }
+
+        // Pagination
+        let page = 1; const perPage = 8;
+        function paginate(list) {
+            const start = (page - 1) * perPage; return list.slice(start, start + perPage);
+        }
+
+        function renderPagination(total) {
+            let pager = document.getElementById('pager');
+            if (!pager) {
+                pager = document.createElement('div');
+                pager.id = 'pager';
+                pager.className = 'flex items-center justify-center gap-2 mt-6';
+                document.getElementById('product-grid-all').after(pager);
+            }
+            const pages = Math.max(1, Math.ceil(total / perPage));
+            pager.innerHTML = `
+                <button ${page<=1?'disabled':''} class="px-3 py-1 border rounded" id="prev-page">Prev</button>
+                <span class="px-3 py-1">Page ${page} of ${pages}</span>
+                <button ${page>=pages?'disabled':''} class="px-3 py-1 border rounded" id="next-page">Next</button>
+            `;
+            document.getElementById('prev-page').onclick = () => { if (page>1) { page--; applyFiltersAndRender(); } };
+            document.getElementById('next-page').onclick = () => { if (page<pages) { page++; applyFiltersAndRender(); } };
+        }
+
+        // Initial loading shimmer then render
+        const gridEl = document.getElementById('product-grid-all');
+        gridEl.innerHTML = Array.from({length: 8}).map(skeletonCard).join('');
+
+        let cartCount = 0;
+        const cart = new Map();
+        function addToCart(id) {
+            const item = products.find(p => p.id === id);
+            if (!item) return;
+            const prev = cart.get(id) || { ...item, qty: 0 };
+            prev.qty += 1; cart.set(id, prev);
+            cartCount++;
+            updateCartUI();
+            showToast('Added to cart');
+            const badge = document.querySelector('.top-nav-btn .bg-red-500');
+            if (badge) badge.textContent = cartCount;
+            document.getElementById('stats-cart').textContent = cartCount;
+            openCart();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items');
+            const items = Array.from(cart.values());
+            container.innerHTML = items.length ? items.map(i => `
+                <div class="flex items-center gap-3">
+                    <img src="${i.image}" class="w-14 h-14 rounded object-cover"/>
+                    <div class="flex-1">
+                        <p class="font-semibold">${i.title || i.name}</p>
+                        <p class="text-sm text-gray-600">₦${parseFloat(i.price).toFixed(2)} × ${i.qty}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="changeQty(${i.id}, -1)" class="px-2 py-1 border rounded">-</button>
+                        <button onclick="changeQty(${i.id}, 1)" class="px-2 py-1 border rounded">+</button>
+                        <button onclick="removeItem(${i.id})" class="px-2 py-1 text-red-600">Remove</button>
+                    </div>
+                </div>
+            `).join('') : '<p class="text-gray-600">Your cart is empty.</p>';
+            const subtotal = items.reduce((s,i)=> s + (parseFloat(i.price) || 0) * i.qty, 0);
+            document.getElementById('cart-subtotal').textContent = `₦${subtotal.toFixed(2)}`;
+        }
+
+        function changeQty(id, delta) {
+            const i = cart.get(id); if (!i) return;
+            i.qty += delta; if (i.qty <= 0) { cart.delete(id); }
+            cartCount = Array.from(cart.values()).reduce((s,it)=> s + it.qty, 0);
+            updateCartUI();
+            const badge = document.querySelector('.top-nav-btn .bg-red-500');
+            if (badge) badge.textContent = cartCount;
+            document.getElementById('stats-cart').textContent = cartCount;
+        }
+
+        function removeItem(id) {
+            const i = cart.get(id); if (!i) return;
+            cart.delete(id);
+            cartCount = Array.from(cart.values()).reduce((s,it)=> s + it.qty, 0);
+            updateCartUI();
+            const badge = document.querySelector('.top-nav-btn .bg-red-500');
+            if (badge) badge.textContent = cartCount;
+            document.getElementById('stats-cart').textContent = cartCount;
+        }
+
+        function openCart() {
+            document.getElementById('cart-drawer').classList.remove('translate-x-full');
+        }
+        document.getElementById('cart-close').addEventListener('click', () => {
+            document.getElementById('cart-drawer').classList.add('translate-x-full');
+        });
+
+        const wishlist = new Set();
+        function toggleWishlist(id) {
+            if (wishlist.has(id)) { wishlist.delete(id); showToast('Removed from wishlist'); }
+            else { wishlist.add(id); showToast('Saved to wishlist'); }
+        }
+
+        // Filtering helpers
+        function applyFiltersAndRender() {
+            let list = [...products];
+            if (filters.q) list = list.filter(p => (p.title || '').toLowerCase().includes(filters.q.toLowerCase()));
+            if (filters.category && filters.category !== 'all') list = list.filter(p => (p.category || '').toLowerCase() === filters.category.toLowerCase());
+            if (filters.min) list = list.filter(p => parseFloat(p.price || 0) >= parseFloat(filters.min));
+            if (filters.max) list = list.filter(p => parseFloat(p.price || 0) <= parseFloat(filters.max));
+            if (filters.rating) list = list.filter(p => (p.average_rating || 0) >= filters.rating);
+            if (filters.sort === 'price-asc') list.sort((a,b)=>a.price-b.price);
+            if (filters.sort === 'price-desc') list.sort((a,b)=>b.price-a.price);
+            if (filters.sort === 'newest') list.sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
+            filteredProducts = list;
+            populateGrid(list);
+            setStats(list);
+        }
+
+        // Event bindings
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                filters.category = tab.dataset.category;
+                page = 1;
+                applyFiltersAndRender();
+            });
+        });
+
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                filters.q = e.target.value;
+                page = 1;
+                applyFiltersAndRender();
+            });
+        }
+
+        const categorySelect = document.getElementById('filter-category-select');
+        if (categorySelect) {
+            categorySelect.addEventListener('change', (e) => {
+                filters.category = e.target.value;
+                page = 1;
+                applyFiltersAndRender();
+            });
+        }
+
+        document.getElementById('price-apply').addEventListener('click', () => {
+            const min = document.getElementById('price-min').value;
+            const max = document.getElementById('price-max').value;
+            filters.min = min || null;
+            filters.max = max || null;
+            page = 1;
+            applyFiltersAndRender();
+        });
+
+        const ratingSelect = document.getElementById('filter-rating-select');
+        if (ratingSelect) {
+            ratingSelect.addEventListener('change', (e) => {
+                const v = e.target.value;
+                filters.rating = v ? parseInt(v) : null;
+                page = 1;
+                applyFiltersAndRender();
+            });
+        }
+
+        document.getElementById('sort-select').addEventListener('change', (e) => {
+            const v = e.target.value;
+            filters.sort = v === 'price-asc' ? 'price-asc' : v === 'price-desc' ? 'price-desc' : 'newest';
+            page = 1;
+            applyFiltersAndRender();
+        });
+
+        // Data fetching
+        async function loadProductsFromApi() {
+            try {
+                const params = new URLSearchParams();
+                if (filters.category && filters.category !== 'all') params.append('category', filters.category);
+                if (filters.q) params.append('q', filters.q);
+                if (filters.min) params.append('min_price', filters.min);
+                if (filters.max) params.append('max_price', filters.max);
+                const res = await fetch(`${API_BASE}/products/?${params.toString()}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                products = Array.isArray(data) ? data : (data.results || []);
+                applyFiltersAndRender();
+            } catch (err) {
+                console.error('Failed to load products', err);
+                document.getElementById('product-grid-all').innerHTML = '<div class="col-span-full text-center text-red-500 py-10">Failed to load products.</div>';
+            }
+        }
+
+        async function loadAds() {
+            try {
+                const res = await fetch(`${API_BASE}/advertisements/active/`);
+                ads = await res.json();
+                renderAds();
+            } catch (err) {
+                console.warn('Failed to load ads', err);
+            }
+        }
+
+        function renderAds() {
+            if (!ads.length) return;
+            const hero = document.querySelector('.hero-container');
+            if (!hero) return;
+            const bar = document.createElement('div');
+            bar.className = 'mt-4 grid grid-cols-1 md:grid-cols-3 gap-4';
+            bar.innerHTML = ads.slice(0,3).map(ad => `
+                <div class="p-4 rounded-2xl shadow-lg border border-emerald-100" style="background:${ad.background_color || '#10b981'}; color:${ad.text_color || '#fff'}">
+                    <p class="text-sm opacity-90 mb-1">${ad.store?.name || 'Store Ad'}</p>
+                    <h4 class="text-lg font-bold">${ad.title}</h4>
+                    <p class="text-sm mb-3">${ad.description || ''}</p>
+                    <div class="flex items-center gap-2">
+                        <button onclick="window.open('${ad.link_url || '#'}','_blank')" class="px-3 py-2 bg-white text-emerald-700 rounded-lg text-sm font-semibold">${ad.cta_text || 'Shop'}</button>
+                        <span class="text-xs opacity-80">${ad.duration_days || 1} day(s)</span>
+                    </div>
+                </div>
+            `).join('');
+            hero.appendChild(bar);
+        }
+
+        // Product detail navigation
+        function goToDetail(id) {
+            window.location.href = `product_detail.html?id=${id}`;
+        }
+
+        // Realtime chat modal
+        const chatModal = document.createElement('div');
+        chatModal.id = 'chat-modal';
+        chatModal.className = 'fixed inset-0 bg-black/60 hidden items-center justify-center z-50';
+        chatModal.innerHTML = `
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl p-6 flex flex-col gap-4 max-h-[80vh]">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-gray-800">Chat with seller</h3>
+                    <button id="chat-close" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+                </div>
+                <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 bg-gray-50 p-3 rounded-xl"></div>
+                <div class="flex gap-2">
+                    <input id="chat-input" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Type a message..." />
+                    <button id="chat-send" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold">Send</button>
+                </div>
+            </div>`;
+        document.body.appendChild(chatModal);
+
+        let chatSocket = null;
+        let activeConversationId = null;
+
+        document.getElementById('chat-close')?.addEventListener('click', () => {
+            chatModal.classList.add('hidden');
+            if (chatSocket) chatSocket.close();
+        });
+
+        document.getElementById('chat-send')?.addEventListener('click', sendChatMessage);
+        document.getElementById('chat-input')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
+
+        function appendMessage(text, mine=false) {
+            const box = document.getElementById('chat-messages');
+            const row = document.createElement('div');
+            row.className = `flex ${mine ? 'justify-end' : 'justify-start'}`;
+            row.innerHTML = `<div class="px-3 py-2 rounded-xl ${mine ? 'bg-emerald-600 text-white' : 'bg-white border'} max-w-[75%] text-sm">${text}</div>`;
+            box.appendChild(row);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text || !chatSocket) return;
+            chatSocket.send(JSON.stringify({ content: text }));
+            appendMessage(text, true);
+            input.value = '';
+        }
+
+        async function startChat(productId) {
+            try {
+                const res = await fetch(`${API_BASE}/conversations/start-product-chat/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ product: productId })
+                });
+                if (!res.ok) throw new Error('Unable to start chat');
+                const convo = await res.json();
+                activeConversationId = convo.id;
+                openChatSocket(convo.id);
+            } catch (err) {
+                console.error(err);
+                showToast('Unable to start chat');
+            }
+        }
+
+        function openChatSocket(conversationId) {
+            if (chatSocket) chatSocket.close();
+            chatModal.classList.remove('hidden');
+            document.getElementById('chat-messages').innerHTML = '';
+            const url = `${wsScheme}://${location.host}/ws/chat/${conversationId}/?token=${token}`;
+            chatSocket = new WebSocket(url);
+            chatSocket.onmessage = (event) => {
+                try {
+                    const payload = JSON.parse(event.data);
+                    if (payload.message) {
+                        appendMessage(payload.message.content || payload.message, false);
+                    }
+                } catch (err) { console.warn('WS parse', err); }
+            };
+            chatSocket.onclose = () => console.log('Chat closed');
+        }
+
+        // AI Modal
+        document.getElementById('dale-ai-btn').onclick = () => document.getElementById('ai-modal').classList.remove('hidden');
+        document.getElementById('ai-close-btn').onclick = () => document.getElementById('ai-modal').classList.add('hidden');
+        document.getElementById('ai-modal').onclick = (e) => {
+            if (e.target === document.getElementById('ai-modal')) document.getElementById('ai-modal').classList.add('hidden');
+        };
+
+        // Cart Management
+        function getCart() {
+            try {
+                const saved = localStorage.getItem('agricore_cart');
+                return saved ? JSON.parse(saved) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem('agricore_cart', JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            const cart = getCart();
+            const totalItems = Object.values(cart).reduce((sum, item) => sum + (item.qty || 1), 0);
+            cartCount = totalItems;
+            const badge = document.querySelector('[data-cart-count]');
+            if (badge) badge.textContent = totalItems;
+            document.getElementById('stats-cart').textContent = totalItems;
+        }
+
+        function addToCart(id, name, price, unit, image, stock) {
+            const cart = getCart();
+            const key = String(id);
+            
+            if (cart[key]) {
+                if (cart[key].qty >= stock) {
+                    showToast('Cannot add more - stock limit reached');
+                    return;
+                }
+                cart[key].qty += 1;
+                showToast(`Updated ${name} quantity in cart`);
+            } else {
+                cart[key] = {
+                    id: id,
+                    name: name,
+                    price: parseFloat(price),
+                    unit: unit,
+                    image: image,
+                    stock: stock,
+                    qty: 1
+                };
+                showToast(`${name} added to cart!`);
+            }
+            
+            saveCart(cart);
+        }
+
+        function goToCart() {
+            window.location.href = 'cart.html';
+        }
+
+        // Bootstrap
+        async function initMarketplace() {
+            updateCartCount();
+            await Promise.all([loadProductsFromApi(), loadAds()]);
+        }
+
+        initMarketplace();
+    </script>
+    <script src="/static/js/dale.js" defer></script>
+</body>
+</html>

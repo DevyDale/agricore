@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Agricore Dynamics - Smart Farming Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 50%, #a7f3d0 100%);
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(16, 185, 129, 0.25);
+        }
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .cta-button {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(16, 185, 129, 0.4);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+
+        body.fade-out {
+            animation: fadeOut 0.6s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- What is Agricore Section -->
+    <section class="py-20 bg-gradient-to-br from-emerald-700 to-emerald-600 text-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6" style="font-family: 'Orbitron', sans-serif; color: #ffffff; text-shadow: 0 0 10px rgba(200, 230, 201, 0.6), 0 0 20px rgba(16, 185, 129, 0.5);">Welcome to Agricore Dynamics</h2>
+                <p class="text-xl text-emerald-50 max-w-3xl mx-auto opacity-90">
+                    Agricore Dynamics is an all-in-one digital platform designed to revolutionize agriculture. 
+                    From farm management to marketplace trading, professional networking to AI-powered insights—everything you need in one place.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="feature-card rounded-3xl p-8 border-2 border-gray-100">
+                    <div class="text-5xl mb-3">🍎</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3" style="font-family: 'Orbitron', sans-serif;">Produce Management</h3>
+                    <p class="text-gray-600">
+                        Organize and list your harvest, manage batches and availability, set pricing, and prepare produce for buyers in the marketplace.
+                    </p>
+                </div>
+
+                <div class="feature-card rounded-3xl p-8 border-2 border-gray-100">
+                    <div class="text-5xl mb-3">🛒</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3" style="font-family: 'Orbitron', sans-serif;">Digital Marketplace</h3>
+                    <p class="text-gray-600">
+                        Sell produce directly to verified buyers with transparent pricing, offers, and orders in a dynamic market system.
+                    </p>
+                </div>
+
+                <div class="feature-card rounded-3xl p-8 border-2 border-gray-100">
+                    <div class="text-5xl mb-3">🤝</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3" style="font-family: 'Orbitron', sans-serif;">Professional Network</h3>
+                    <p class="text-gray-600">
+                        Hire skilled agricultural professionals for logistics, processing, quality control, and more—when you need them.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-gradient-to-br from-emerald-50 to-teal-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black gradient-text mb-6" style="font-family: 'Orbitron', sans-serif;">Everything You Can Do</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Explore the powerful features designed to make your agricultural journey easier and more profitable.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                <!-- Feature 1 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition">
+                    <div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-tractor text-2xl text-emerald-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2" style="font-family: 'Orbitron', sans-serif;">Multi-Farm Produce Management</h3>
+                    <p class="text-gray-600 text-sm">
+                        Create unlimited farms and manage their produce individually with complete control over inventory and sales.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition">
+                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-tags text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2" style="font-family: 'Orbitron', sans-serif;">Dynamic Offers & Bids</h3>
+                    <p class="text-gray-600 text-sm">
+                        List produce with asking prices, receive buyer offers, negotiate transparently, and close deals in real time.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition">
+                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-store text-2xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2" style="font-family: 'Orbitron', sans-serif;">Create Your Digital Store</h3>
+                    <p class="text-gray-600 text-sm">
+                        Create your online store and link it to any of your farms, then transfer produce from there to your store's product list.
+                    </p>
+                </div>
+
+                <!-- Feature 3b: Store Management -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition">
+                    <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-sliders-h text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2" style="font-family: 'Orbitron', sans-serif;">Manage Your Store</h3>
+                    <p class="text-gray-600 text-sm">
+                        Control your products, track sales performance, manage orders, handle payments, and respond to customer reviews.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition">
+                    <div class="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-shopping-cart text-2xl text-orange-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2" style="font-family: 'Orbitron', sans-serif;">Buy Agricultural Products</h3>
+                    <p class="text-gray-600 text-sm">
+                        Browse thousands of products—seeds, fertilizers, equipment, livestock—and purchase directly from verified sellers.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition">
+                    <div class="w-14 h-14 bg-teal-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-users text-2xl text-teal-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2" style="font-family: 'Orbitron', sans-serif;">Connect with Professionals</h3>
+                    <p class="text-gray-600 text-sm">
+                        Network with agricultural professionals across medicine, labour, transport, and more to support your business needs.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition">
+                    <div class="w-14 h-14 bg-pink-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-briefcase text-2xl text-pink-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2" style="font-family: 'Orbitron', sans-serif;">Find Work Opportunities</h3>
+                    <p class="text-gray-600 text-sm">
+                        Create your professional profile, showcase your skills, apply for jobs, and grow your agricultural career.
+                    </p>
+                </div>
+
+                <!-- Feature 7 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition">
+                    <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-robot text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2" style="font-family: 'Orbitron', sans-serif;">AI-Powered Insights with Dale</h3>
+                    <p class="text-gray-600 text-sm">
+                        Dale AI oversees your entire operation, providing smart suggestions on decisions and teaching you how to maximize the system.
+                    </p>
+                </div>
+
+                <!-- Feature 8 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition">
+                    <div class="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-comments text-2xl text-yellow-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2" style="font-family: 'Orbitron', sans-serif;">Real-Time Chat</h3>
+                    <p class="text-gray-600 text-sm">
+                        Communicate instantly with buyers, sellers, professionals, and team members through our integrated chat system.
+                    </p>
+                </div>
+
+                <!-- Feature 9 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition">
+                    <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-line text-2xl text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2" style="font-family: 'Orbitron', sans-serif;">Analytics & Performance Tracking</h3>
+                    <p class="text-gray-600 text-sm">
+                        Monitor sales revenue, order volume, conversion rates, and track trends to make data-driven business decisions in real time.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black gradient-text mb-6" style="font-family: 'Orbitron', sans-serif;">How It Works</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Getting started with Agricore Dynamics is simple. Follow these steps to unlock the full potential of smart farming.
+                </p>
+            </div>
+
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col lg:flex-row items-stretch justify-between gap-6">
+                    <!-- Step 1 -->
+                    <div class="flex-1 bg-white rounded-3xl p-8 shadow-lg border-2 border-gray-100 flex flex-col items-center min-w-0">
+                        <div class="bg-gradient-to-br from-emerald-600 to-emerald-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-xl font-bold mb-3 shadow-lg flex-shrink-0">1</div>
+                        <h3 class="text-base font-bold text-gray-800 mb-2 text-center whitespace-nowrap" style="font-family: 'Orbitron', sans-serif;">Create Your Account</h3>
+                        <p class="text-gray-600 text-xs text-center mb-3 whitespace-nowrap">
+                            Sign up and choose your role
+                        </p>
+                        <ul class="text-gray-600 text-xs space-y-1 text-left">
+                            <li class="flex items-start gap-1 whitespace-nowrap">
+                                <span class="text-emerald-600 font-bold flex-shrink-0">•</span>
+                                <span>Email verification</span>
+                            </li>
+                            <li class="flex items-start gap-1 whitespace-nowrap">
+                                <span class="text-emerald-600 font-bold flex-shrink-0">•</span>
+                                <span>Choose your role</span>
+                            </li>
+                            <li class="flex items-start gap-1 whitespace-nowrap">
+                                <span class="text-emerald-600 font-bold flex-shrink-0">•</span>
+                                <span>Set up profile</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Arrow (hidden on mobile) -->
+                    <div class="hidden lg:flex items-center justify-center text-3xl text-emerald-600 font-bold px-2">→</div>
+
+                    <!-- Step 2 -->
+                    <div class="flex-1 bg-white rounded-3xl p-8 shadow-lg border-2 border-gray-100 flex flex-col items-center min-w-0">
+                        <div class="bg-gradient-to-br from-emerald-600 to-emerald-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-xl font-bold mb-3 shadow-lg flex-shrink-0">2</div>
+                        <h3 class="text-base font-bold text-gray-800 mb-2 text-center whitespace-nowrap" style="font-family: 'Orbitron', sans-serif;">Register Farms</h3>
+                        <p class="text-gray-600 text-xs text-center mb-3 whitespace-nowrap">
+                            Add your farms & produce
+                        </p>
+                        <ul class="text-gray-600 text-xs space-y-1 text-left">
+                            <li class="flex items-start gap-1 whitespace-nowrap">
+                                <span class="text-emerald-600 font-bold flex-shrink-0">•</span>
+                                <span>Add farms</span>
+                            </li>
+                            <li class="flex items-start gap-1 whitespace-nowrap">
+                                <span class="text-emerald-600 font-bold flex-shrink-0">•</span>
+                                <span>List produce</span>
+                            </li>
+                            <li class="flex items-start gap-1 whitespace-nowrap">
+                                <span class="text-emerald-600 font-bold flex-shrink-0">•</span>
+                                <span>Upload images</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Arrow (hidden on mobile) -->
+                    <div class="hidden lg:flex items-center justify-center text-3xl text-emerald-600 font-bold px-2">→</div>
+
+                    <!-- Step 3 -->
+                    <div class="flex-1 bg-white rounded-3xl p-8 shadow-lg border-2 border-gray-100 flex flex-col items-center min-w-0">
+                        <div class="bg-gradient-to-br from-emerald-600 to-emerald-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-xl font-bold mb-3 shadow-lg flex-shrink-0">3</div>
+                        <h3 class="text-base font-bold text-gray-800 mb-2 text-center whitespace-nowrap" style="font-family: 'Orbitron', sans-serif;">Create Your Store</h3>
+                        <p class="text-gray-600 text-xs text-center mb-3 whitespace-nowrap">
+                            Link farms & market produce
+                        </p>
+                        <ul class="text-gray-600 text-xs space-y-1 text-left">
+                            <li class="flex items-start gap-1 whitespace-nowrap">
+                                <span class="text-emerald-600 font-bold flex-shrink-0">•</span>
+                                <span>Set store branding</span>
+                            </li>
+                            <li class="flex items-start gap-1 whitespace-nowrap">
+                                <span class="text-emerald-600 font-bold flex-shrink-0">•</span>
+                                <span>Configure pricing</span>
+                            </li>
+                            <li class="flex items-start gap-1 whitespace-nowrap">
+                                <span class="text-emerald-600 font-bold flex-shrink-0">•</span>
+                                <span>Link verified farms</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Arrow (hidden on mobile) -->
+                    <div class="hidden lg:flex items-center justify-center text-3xl text-emerald-600 font-bold px-2">→</div>
+
+                    <!-- Step 4 -->
+                    <div class="flex-1 bg-white rounded-3xl p-8 shadow-lg border-2 border-gray-100 flex flex-col items-center min-w-0">
+                        <div class="bg-gradient-to-br from-emerald-600 to-emerald-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-xl font-bold mb-3 shadow-lg flex-shrink-0">4</div>
+                        <h3 class="text-base font-bold text-gray-800 mb-2 text-center whitespace-nowrap" style="font-family: 'Orbitron', sans-serif;">Manage & Grow</h3>
+                        <p class="text-gray-600 text-xs text-center mb-3 whitespace-nowrap">
+                            Process orders with Dale AI
+                        </p>
+                        <ul class="text-gray-600 text-xs space-y-1 text-left">
+                            <li class="flex items-start gap-1 whitespace-nowrap">
+                                <span class="text-emerald-600 font-bold flex-shrink-0">•</span>
+                                <span>AI-powered recommendations</span>
+                            </li>
+                            <li class="flex items-start gap-1 whitespace-nowrap">
+                                <span class="text-emerald-600 font-bold flex-shrink-0">•</span>
+                                <span>Real-time inventory</span>
+                            </li>
+                            <li class="flex items-start gap-1 whitespace-nowrap">
+                                <span class="text-emerald-600 font-bold flex-shrink-0">•</span>
+                                <span>Sales analytics</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-br from-emerald-600 to-teal-600 text-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl md:text-5xl font-black mb-6" style="font-family: 'Orbitron', sans-serif;">Ready to Transform Your Farming?</h2>
+            <p class="text-xl mb-10 max-w-2xl mx-auto opacity-95">
+                Start your journey today and unlock the full potential of smart farming with AI-powered insights, marketplace opportunities, and professional tools.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="handleAuthClick()" class="px-10 py-5 bg-white text-emerald-600 rounded-full text-lg font-bold shadow-2xl hover:shadow-3xl transition transform hover:-translate-y-1">
+                    <i class="fas fa-rocket mr-2"></i> Get Authenticated
+                </button>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
+
+<script>
+    function handleAuthClick() {
+        document.body.classList.add('fade-out');
+        setTimeout(() => {
+            window.location.href = 'authentication.html';
+        }, 600);
+    }
+</script>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <div class="container mx-auto px-4 py-8">
+        <a href="marketplace.html" class="text-emerald-700 font-semibold mb-4 inline-flex items-center gap-2"><i class="fas fa-arrow-left"></i> Back to marketplace</a>
+
+        <div id="detail-shell" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow p-6">
+                <div class="aspect-video bg-gray-100 rounded-xl mb-4 overflow-hidden">
+                    <img id="product-image" class="w-full h-full object-cover" src="https://via.placeholder.com/1200x800?text=Product" alt="Product">
+                </div>
+                <h1 id="product-title" class="text-3xl font-bold mb-2">Loading...</h1>
+                <p id="product-description" class="text-gray-700 mb-4"></p>
+                <div class="flex items-center gap-3 mb-4">
+                    <div id="product-rating" class="flex items-center gap-1 text-yellow-500"></div>
+                    <span id="product-reviews" class="text-sm text-gray-600"></span>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Price</p>
+                        <p id="product-price" class="text-3xl font-bold text-emerald-700">₦0.00</p>
+                        <p id="product-unit" class="text-sm text-gray-500"></p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="chat-btn" class="px-4 py-3 bg-white text-emerald-700 border border-emerald-300 rounded-xl font-semibold hover:bg-emerald-50"><i class="fas fa-comments mr-2"></i>Chat with seller</button>
+                        <button id="add-cart-btn" class="px-5 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white rounded-2xl shadow p-5">
+                    <h3 class="text-lg font-bold mb-3">Store</h3>
+                    <p id="store-name" class="text-xl font-semibold">Loading...</p>
+                    <p id="store-owner" class="text-sm text-gray-600"></p>
+                    <p id="store-verified" class="text-sm text-gray-500"></p>
+                    <button id="view-store-btn" class="mt-3 px-3 py-2 text-sm bg-emerald-100 text-emerald-800 rounded-lg">View Store</button>
+                </div>
+                <div class="bg-white rounded-2xl shadow p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-bold">Product Reviews</h3>
+                        <span id="reviews-count" class="text-sm text-gray-500"></span>
+                    </div>
+                    <div id="product-reviews-list" class="space-y-3 text-sm text-gray-700"></div>
+                </div>
+                <div class="bg-white rounded-2xl shadow p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-bold">Store Reviews</h3>
+                        <span id="store-reviews-count" class="text-sm text-gray-500"></span>
+                    </div>
+                    <div id="store-reviews-list" class="space-y-3 text-sm text-gray-700"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="chat-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl p-6 flex flex-col gap-4 max-h-[80vh]">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-800">Chat with seller</h3>
+                <button id="chat-close" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 bg-gray-50 p-3 rounded-xl"></div>
+            <div class="flex gap-2">
+                <input id="chat-input" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Type a message..." />
+                <button id="chat-send" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000/api';
+        const token = localStorage.getItem('access_token');
+        if (!token) window.location.href = 'authentication.html';
+        const wsScheme = location.protocol === 'https:' ? 'wss' : 'ws';
+
+        const params = new URLSearchParams(window.location.search);
+        const productId = params.get('id');
+        if (!productId) window.location.href = 'marketplace.html';
+
+        let productData = null;
+        let chatSocket = null;
+
+        function ratingStars(avg) {
+            const r = Math.round(avg || 0);
+            return '★★★★★'.split('').map((s, i) => `<span class="${i < r ? 'text-yellow-500' : 'text-gray-300'}">★</span>`).join('');
+        }
+
+        function appendMessage(text, mine=false) {
+            const box = document.getElementById('chat-messages');
+            const row = document.createElement('div');
+            row.className = `flex ${mine ? 'justify-end' : 'justify-start'}`;
+            row.innerHTML = `<div class="px-3 py-2 rounded-xl ${mine ? 'bg-emerald-600 text-white' : 'bg-white border'} max-w-[75%] text-sm">${text}</div>`;
+            box.appendChild(row);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function openChatSocket(conversationId) {
+            if (chatSocket) chatSocket.close();
+            document.getElementById('chat-messages').innerHTML = '';
+            document.getElementById('chat-modal').classList.remove('hidden');
+            chatSocket = new WebSocket(`${wsScheme}://${location.host}/ws/chat/${conversationId}/?token=${token}`);
+            chatSocket.onmessage = (event) => {
+                try {
+                    const payload = JSON.parse(event.data);
+                    if (payload.message) appendMessage(payload.message.content || payload.message, false);
+                } catch (err) { console.warn('WS parse', err); }
+            };
+        }
+
+        async function startChat() {
+            try {
+                const res = await fetch(`${API_BASE}/conversations/start-product-chat/`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product: productId })
+                });
+                if (!res.ok) throw new Error('Unable to start chat');
+                const convo = await res.json();
+                openChatSocket(convo.id);
+            } catch (err) {
+                alert('Unable to start chat');
+            }
+        }
+
+        async function loadProduct() {
+            const res = await fetch(`${API_BASE}/products/${productId}/`, { headers: { 'Authorization': `Bearer ${token}` } });
+            productData = await res.json();
+            document.getElementById('product-title').textContent = productData.title;
+            document.getElementById('product-description').textContent = productData.description || '';
+            document.getElementById('product-image').src = productData.image || 'https://via.placeholder.com/1200x800?text=Product';
+            document.getElementById('product-price').textContent = `₦${parseFloat(productData.price || 0).toFixed(2)}`;
+            document.getElementById('product-unit').textContent = productData.unit || '';
+            document.getElementById('product-rating').innerHTML = ratingStars(productData.average_rating || 0);
+            document.getElementById('product-reviews').textContent = `${(productData.average_rating || 0).toFixed(1)} • ${productData.reviews_count || 0} reviews`;
+            document.getElementById('store-name').textContent = productData.store_name || 'Store';
+            document.getElementById('store-owner').textContent = productData.store_owner_name ? `Owner: ${productData.store_owner_name}` : '';
+            document.getElementById('store-verified').textContent = productData.store_verified ? 'Verified store' : 'Unverified store';
+        }
+
+        async function loadProductReviews() {
+            try {
+                const res = await fetch(`${API_BASE}/reviews/?product=${productId}`);
+                const reviews = await res.json();
+                document.getElementById('reviews-count').textContent = `${reviews.length} review(s)`;
+                document.getElementById('product-reviews-list').innerHTML = reviews.length ? reviews.map(r => `<div class="border rounded-lg p-3"><p class="font-semibold">${r.reviewer_name || 'User'}</p><p class="text-xs text-gray-500">${r.rating} ★</p><p>${r.comment || ''}</p></div>`).join('') : '<p class="text-gray-500">No reviews yet.</p>';
+            } catch (err) {
+                document.getElementById('product-reviews-list').innerHTML = '<p class="text-gray-500">Unable to load reviews.</p>';
+            }
+        }
+
+        async function loadStoreReviews(storeId) {
+            if (!storeId) return;
+            try {
+                const res = await fetch(`${API_BASE}/reviews/?store=${storeId}`);
+                const reviews = await res.json();
+                document.getElementById('store-reviews-count').textContent = `${reviews.length} review(s)`;
+                document.getElementById('store-reviews-list').innerHTML = reviews.length ? reviews.map(r => `<div class="border rounded-lg p-3"><p class="font-semibold">${r.reviewer_name || 'User'}</p><p class="text-xs text-gray-500">${r.rating} ★</p><p>${r.comment || ''}</p></div>`).join('') : '<p class="text-gray-500">No reviews yet.</p>';
+            } catch (err) {
+                document.getElementById('store-reviews-list').innerHTML = '<p class="text-gray-500">Unable to load reviews.</p>';
+            }
+        }
+
+        document.getElementById('chat-close').addEventListener('click', () => {
+            document.getElementById('chat-modal').classList.add('hidden');
+            if (chatSocket) chatSocket.close();
+        });
+        document.getElementById('chat-send').addEventListener('click', () => {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text || !chatSocket) return;
+            chatSocket.send(JSON.stringify({ content: text }));
+            appendMessage(text, true);
+            input.value = '';
+        });
+        document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('chat-send').click(); });
+        document.getElementById('chat-btn').addEventListener('click', startChat);
+        document.getElementById('add-cart-btn').addEventListener('click', () => alert('Added to cart (stub)'));
+
+        (async () => {
+            await loadProduct();
+            await loadProductReviews();
+            await loadStoreReviews(productData.store);
+        })();
+    </script>
+</body>
+</html>
