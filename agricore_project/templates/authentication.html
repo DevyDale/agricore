@@ -10,7 +10,8 @@
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script>
-
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+oper
   <style>
     :root {
       --bg: #ffffff;
@@ -32,9 +33,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      overflow-y: auto;
       position: relative;
-      padding: 40px 20px;
+      padding: 60px 20px;
     }
 
     .stars, .particles {
@@ -92,8 +93,8 @@
 
     .container {
       position: relative;
-      width: 720px;
-      height: 520px;
+      width: 960px;
+      height: 680px;
       background: rgba(255, 255, 255, 0.92);
       border-radius: 32px;
       overflow: hidden;
@@ -291,6 +292,61 @@
     button.loading .button-content { opacity: 0; }
     button.loading .spinner { display: block; }
 
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 20px 0;
+      color: #166534;
+      font-size: 0.9rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .divider::before {
+      margin-right: 12px;
+    }
+
+    .divider::after {
+      margin-left: 12px;
+    }
+
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 16px;
+      margin-top: 0;
+      background: white;
+      border: 2px solid rgba(16, 185, 129, 0.3);
+      border-radius: 20px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      color: var(--text);
+    }
+
+    .google-btn:hover {
+      background: #f8f9fa;
+      border-color: var(--green);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .google-btn img {
+      width: 24px;
+      height: 24px;
+      margin-right: 12px;
+    }
+
     #snackbar {
       visibility: hidden;
       min-width: 300px;
@@ -356,6 +412,11 @@
             <span class="button-content">Sign Up</span>
             <div class="spinner"></div>
           </button>
+          <div class="divider">OR</div>
+          <button type="button" class="google-btn" @click="handleGoogleSignUp">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+            Sign up with Google
+          </button>
         </form>
       </div>
 
@@ -375,6 +436,11 @@
           <button type="submit" :class="{ 'loading': isLoggingIn }">
             <span class="button-content">Sign In</span>
             <div class="spinner"></div>
+          </button>
+          <div class="divider">OR</div>
+          <button type="button" class="google-btn" @click="handleGoogleSignIn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+            Sign in with Google
           </button>
         </form>
       </div>
@@ -427,8 +493,12 @@
             signup: { username: '', email: '', password: '' },
             login: { username: '', password: '' },
             isSigningUp: false,
-            isLoggingIn: false
+            isLoggingIn: false,
+            googleClientId: ''
           }
+        },
+        mounted() {
+          this.initializeGoogleSignIn();
         },
         methods: {
           showToast(msg, success = false) {
@@ -515,6 +585,57 @@
               this.showToast(errorMessage);
             } finally {
               this.isLoggingIn = false;
+            }
+          },
+
+          initializeGoogleSignIn() {
+            // Initialize Google Sign-In
+            if (window.google) {
+              window.google.accounts.id.initialize({
+                client_id: '488596909366-vd5s2k861kn6g1v8e8f3u81eig3h2q2c.apps.googleusercontent.com',
+                callback: this.handleGoogleCredentialResponse
+              });
+            }
+          },
+
+          handleGoogleSignIn() {
+            if (window.google) {
+              window.google.accounts.id.prompt();
+            } else {
+              this.showToast('Google Sign-In not loaded. Please refresh.');
+            }
+          },
+
+          handleGoogleSignUp() {
+            if (window.google) {
+              window.google.accounts.id.prompt();
+            } else {
+              this.showToast('Google Sign-In not loaded. Please refresh.');
+            }
+          },
+
+          async handleGoogleCredentialResponse(response) {
+            try {
+              // Send the Google ID token to your backend
+              const result = await axios.post('http://127.0.0.1:8000/api/auth/google/', {
+                token: response.credential
+              });
+
+              localStorage.setItem('access_token', result.data.access);
+              localStorage.setItem('refresh_token', result.data.refresh);
+
+              this.showToast('Welcome!', true);
+
+              const container = document.getElementById('container');
+              container.classList.add('fade-out');
+              setTimeout(() => {
+                window.location.href = 'multi_farm.html';
+              }, 800);
+
+            } catch (error) {
+              console.error('Google auth error:', error);
+              const errorMessage = error.response?.data?.detail || 'Google authentication failed';
+              this.showToast(errorMessage);
             }
           }
         }

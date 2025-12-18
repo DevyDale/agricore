@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from rest_framework.routers import DefaultRouter
-from rest_framework_nested.routers import NestedSimpleRouter # pyright: ignore[reportMissingImports]
+from rest_framework_nested.routers import NestedSimpleRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from accounts.api.views import SPAView
@@ -16,6 +16,7 @@ from accounts.api.views import (
     SpecializedProfessionalViewSet,
     ReviewViewSet,
     OnboardingProgressViewSet,
+    GoogleAuthView,
 )
 
 from farms.api.views import FarmViewSet
@@ -184,6 +185,7 @@ urlpatterns = [
     # JWT Auth
     path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/auth/google/', GoogleAuthView.as_view(), name='google_auth'),
 
     # Current user (place before router so it doesn't get captured by users/<pk>/)
     path('api/users/me/', CurrentUserView.as_view(), name='current_user'),
