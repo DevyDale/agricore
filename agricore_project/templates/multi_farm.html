@@ -6,422 +6,1391 @@
     <title>Your Farms - Agricore Solutions</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* General Styling Enhancements */
-        body {
+        * {
+            box-sizing: border-box;
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #e6f4ea 0%, #c7e8d5 100%);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
             margin: 0;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            overflow-x: hidden;
         }
-        /* Utility Classes for components */
-        .modal {
+
+        /* Header */
+        .header-gradient {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-content h1 {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            line-height: 1.1;
+            color: white;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+        
+        /* Navigation */
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.625rem 1.125rem;
+            border-radius: 0.875rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .nav-btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Mobile menu */
+        .mobile-menu-btn {
+            display: none;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.625rem;
+            border-radius: 0.875rem;
+            cursor: pointer;
+        }
+        
+        .nav-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background-color: rgba(0, 0, 0, 0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 0.3s ease;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
         }
-        .modal-content {
-            background-color: white;
-            padding: 32px;
-            border-radius: 16px;
-            width: 95%;
-            max-width: 650px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+        
+        .nav-overlay.show {
+            display: block;
         }
-        .modal.show {
-            display: flex;
-            opacity: 1;
-        }
-        .modal.show .modal-content {
-            transform: scale(1);
-        }
-        .fab {
-            position: fixed;
-            bottom: 40px;
-            right: 40px;
-            background: linear-gradient(to right, #10b981, #059669);
-            color: white;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 35px rgba(16,185,129,0.6);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        .fab:hover {
-            transform: scale(1.2);
-            box-shadow: 0 15px 45px rgba(16,185,129,0.8);
-        }
-        .farm-card {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            transition: all 0.4s ease;
-            border-left: 5px solid #10b981;
-        }
-        .farm-card:hover {
-            transform: translateY(-16px);
-            box-shadow: 0 30px 60px rgba(16,185,129,0.25);
-        }
-        .input-field {
-            border: 1px solid #e5e7eb; /* Lighter border */
-            border-radius: 8px;
-            padding: 12px; /* Slightly more padding */
-            font-size: 0.95rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
-        }
-        .input-field:focus {
-            border-color: #10b981; /* Emerald focus color */
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-        }
-        .header-btn {
-            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-            border-radius: 8px;
-            font-weight: 500;
-            padding: 10px 16px; /* Standardized button padding */
-        }
-        .header-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+        
+        /* Main container */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
+            padding: 2rem 1.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
         }
+
+        /* Glassmorphic container */
         .farms-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Search section */
+        .search-container {
+            background: #fafafa;
+            border: 2px solid #f1f5f9;
+            border-radius: 1.25rem;
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        
+        .search-controls {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 0.75rem;
+            align-items: stretch;
+        }
+        
+        .input-field {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #1e293b;
+            border-radius: 1rem;
+            padding: 0.875rem 1.125rem;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+        }
+
+        .input-field::placeholder {
+            color: #94a3b8;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #10b981;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .search-input {
             flex: 1;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            padding: 40px;
+            min-width: 0;
+        }
+        
+        .filter-select {
+            width: auto;
+            flex-shrink: 0;
+        }
+
+        /* CTA button */
+        .create-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-weight: 700;
+            padding: 0.875rem 1.75rem;
+            border-radius: 1rem;
+            border: none;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .create-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Farm cards grid */
+        .farms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        /* Farm cards */
+        .farm-card {
+            background: white;
+            border: 2.5px solid #10b981;
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .farm-card:hover {
+            transform: translateY(-8px);
+            border-color: #10b981;
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15);
+        }
+
+        .farm-card h3 {
+            color: #1e293b;
+            font-size: 1.375rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .farm-card .type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .farm-card p {
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            margin-bottom: 0.625rem;
+        }
+
+        .farm-card p i {
+            color: #10b981;
+            width: 1.25rem;
+        }
+        
+        /* Card action buttons */
+        .card-actions {
+            display: flex;
+            gap: 0.625rem;
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid #f1f5f9;
+            flex-wrap: wrap;
+        }
+        
+        .card-btn {
+            flex: 1;
+            min-width: 70px;
+            padding: 0.625rem 0.875rem;
+            border-radius: 0.75rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .card-btn i {
+            margin-right: 0.375rem;
+        }
+        
+        .btn-edit {
+            background: #f1f5f9;
+            color: #475569;
+            border-color: #e2e8f0;
+        }
+        
+        .btn-edit:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+        }
+        
+        .btn-manage {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .btn-manage:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-delete {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+        
+        .btn-delete:hover {
+            background: #fecaca;
+            border-color: #fca5a5;
+            transform: translateY(-2px);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
             overflow-y: auto;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            margin: auto;
+        }
+
+        .modal-content h2 {
+            color: #1e293b;
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .modal-content label {
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .modal-content textarea.input-field {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        #farm-form-error {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #dc2626;
+            border-radius: 1rem;
+            padding: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .form-grid .col-full {
+            grid-column: 1 / -1;
+        }
+        
+        /* Modal footer buttons */
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+            flex-wrap: wrap;
+        }
+        
+        .modal-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 1rem;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            min-width: 100px;
+        }
+        
+        .modal-btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .modal-btn-cancel:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+        
+        .modal-btn-save {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+        
+        .modal-btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        /* FAB Button */
+        .fab {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 100;
+            font-size: 1.5rem;
+        }
+        
+        .fab:hover {
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
+        }
+        
+        /* Snackbar */
+        #undo-snackbar {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #1e293b;
+            padding: 1rem 1.25rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1001;
+            max-width: 90%;
+        }
+
+        #undo-snackbar button {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #undo-snackbar button:hover {
+            transform: scale(1.05);
+        }
+        
+        /* AI Chat Modal */
+        .ai-chat-modal {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 24px;
+            z-index: 1100;
+            width: 420px;
+            max-width: calc(100vw - 48px);
+        }
+        
+        .ai-chat-modal.show {
+            display: block;
+            animation: ai-pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @keyframes ai-pop-in {
+            0% { transform: scale(0.8) translateY(20px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        
+        .ai-chat-pointer {
+            position: absolute;
+            bottom: -14px;
+            right: 28px;
+            width: 28px;
+            height: 14px;
+        }
+        
+        .ai-chat-pointer::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 0;
+            width: 0;
+            height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 14px solid white;
+        }
+        
+        .ai-chat-content {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .ai-chat-header {
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-chat-header i {
+            color: #10b981;
+        }
+
+        .ai-chat-header span {
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .ai-chat-header #ai-user-greeting {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        .ai-chat-close-x {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #f1f5f9;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .ai-chat-close-x:hover {
+            background: #e2e8f0;
+            color: #10b981;
+        }
+        
+        .ai-chat-messages {
+            min-height: 180px;
+            max-height: 320px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 8px 4px;
+            margin-bottom: 12px;
+        }
+        
+        .ai-chat-messages::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .ai-chat-messages::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        
+        .ai-chat-messages::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        .ai-chat-message {
+            display: flex;
+            align-items: flex-end;
+        }
+        
+        .ai-chat-message-user {
+            justify-content: flex-end;
+        }
+        
+        .ai-chat-bubble {
+            display: inline-block;
+            padding: 12px 16px;
+            border-radius: 1.125rem;
+            font-size: 0.9375rem;
+            max-width: 85%;
+            word-break: break-word;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+        
+        .ai-chat-message-ai .ai-chat-bubble {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #dcfce7;
+            border-bottom-left-radius: 0.25rem;
+        }
+        
+        .ai-chat-message-user .ai-chat-bubble {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+        
+        .ai-chat-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+        }
+        
+        .ai-chat-input {
+            flex: 1;
+            min-width: 0;
+            background: #fafafa;
+            border: 2px solid #e2e8f0;
+            color: #1e293b;
+            border-radius: 1.25rem;
+            padding: 12px 18px;
+            font-size: 0.9375rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .ai-chat-input::placeholder {
+            color: #94a3b8;
+        }
+        
+        .ai-chat-input:focus {
+            border-color: #10b981;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .ai-chat-send-btn {
+            flex-shrink: 0;
+            padding: 12px 20px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border-radius: 1.25rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            min-width: 90px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+        
+        .ai-chat-send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+        }
+        
+        /* Loading spinner */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            padding: 3rem 0;
+        }
+        
+        .loading-spinner.hidden {
+            display: none !important;
+        }
+        
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 3px solid #e2e8f0;
+            border-top-color: #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: #fafafa;
+            border-radius: 1.25rem;
+            border: 2px dashed #e2e8f0;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            color: #1e293b;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #64748b;
+        }
+        
+        /* Scrollbar */
+        .farms-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .farms-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        .farms-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        .farms-container::-webkit-scrollbar-thumb:hover {
+            background: #10b981;
+        }
+
+        /* Type badges */
+        .bg-green-100 {
+            background: #dcfce7 !important;
+            border: 1px solid #bbf7d0;
+        }
+
+        .text-green-800 {
+            color: #166534 !important;
+        }
+
+        .bg-yellow-100 {
+            background: #fef3c7 !important;
+            border: 1px solid #fde68a;
+        }
+
+        .text-yellow-800 {
+            color: #92400e !important;
+        }
+
+        .bg-blue-100 {
+            background: #dbeafe !important;
+            border: 1px solid #bfdbfe;
+        }
+
+        .text-blue-800 {
+            color: #1e40af !important;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+            }
+            
+            .header-nav {
+                position: fixed;
+                top: 0;
+                left: -280px;
+                width: 280px;
+                height: 100vh;
+                background: linear-gradient(180deg, #10b981, #059669);
+                flex-direction: column;
+                align-items: stretch;
+                padding: 5rem 1rem 1rem;
+                gap: 0.625rem;
+                transition: left 0.3s ease;
+                z-index: 999;
+                box-shadow: 2px 0 20px rgba(0, 0, 0, 0.2);
+                overflow-y: auto;
+            }
+            
+            .header-nav.open {
+                left: 0;
+            }
+            
+            .header-nav .nav-btn {
+                justify-content: flex-start;
+                width: 100%;
+                padding: 0.875rem 1rem;
+            }
+            
+            .header-nav .nav-btn span {
+                display: inline;
+            }
+            
+            .header-nav .nav-btn i {
+                margin-right: 0.75rem;
+                width: 20px;
+                text-align: center;
+            }
+            
+            .farms-grid {
+                grid-template-columns: 1fr;
+            }
+
+            main {
+                padding: 1.5rem 1rem;
+            }
+
+            .farms-container {
+                padding: 1.5rem;
+            }
+            
+            .search-controls {
+                gap: 0.5rem;
+            }
+            
+            .create-btn span {
+                display: none;
+            }
+            
+            .create-btn i {
+                margin-right: 0;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-footer {
+                flex-direction: column-reverse;
+            }
+            
+            .modal-btn {
+                width: 100%;
+            }
+            
+            .fab {
+                width: 56px;
+                height: 56px;
+                bottom: 1rem;
+                right: 1rem;
+            }
+            
+            .ai-chat-modal {
+                right: 12px;
+                left: 12px;
+                width: auto;
+                max-width: none;
+                bottom: 80px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .farms-container {
+                padding: 1rem;
+                border-radius: 1.25rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+                border-radius: 1.25rem;
+            }
+            
+            .input-field {
+                font-size: 16px;
+            }
+            
+            #undo-snackbar {
+                bottom: 5rem;
+                left: 0.75rem;
+                right: 0.75rem;
+                transform: none;
+                max-width: none;
+            }
         }
     </style>
 </head>
+<link rel="stylesheet" href="/static/dale_ai.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <body>
-    <header class="shadow-2xl sticky top-0 z-50" style="background: linear-gradient(to right, #059669, #10b981);">
-        <div class="container mx-auto px-4 py-5 flex justify-between items-center">
+    <!-- Navigation Overlay -->
+    <div class="nav-overlay" id="nav-overlay"></div>
+    
+    <!-- Header -->
+    <header class="header-gradient shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 header-content">
             <div class="flex items-center space-x-3">
-                <i class="fas fa-tractor text-4xl text-white drop-shadow-lg"></i>
-                <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight drop-shadow-md">Agricore <span class="text-emerald-200">Farms</span></h1>
+                <i class="fas fa-tractor text-2xl md:text-3xl text-white"></i>
+                <h1>
+                    Agricore <span style="opacity: 0.9;">Farms</span>
+                </h1>
             </div>
-            <div class="flex items-center space-x-2 md:space-x-3 text-sm">
-                <a href="marketplace.html" class="header-btn bg-white/10 backdrop-blur text-white hover:bg-white/20 flex items-center">
-                    <i class="fas fa-store mr-2"></i> Marketplace
-                </a>
-                <a href="digitalstores.html" class="header-btn bg-white/10 backdrop-blur text-white hover:bg-white/20 flex items-center">
-                    <i class="fas fa-shopping-cart mr-2"></i> My Stores
-                </a>
-                <button onclick="window.location.href='digitalstores.html'" class="header-btn bg-white/10 backdrop-blur text-white hover:bg-white/20 flex items-center">
-                    <i class="fas fa-store-alt mr-2"></i> Stores
+            
+            <div class="flex items-center gap-2">
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <i class="fas fa-bars text-lg"></i>
                 </button>
-                <button onclick="window.location.href='chats.html'" class="header-btn bg-emerald-600 text-white hover:bg-emerald-700 flex items-center shadow-md">
-                    <i class="fas fa-comments mr-2"></i> Chats
+                <button id="logout-btn-topbar" class="nav-btn" style="background: linear-gradient(135deg, #f87171, #ef4444); color: white; font-weight: 700; border: none;">
+                    <i class="fas fa-sign-out-alt"></i> Log Out
                 </button>
-                <a href="workforce.html" class="header-btn bg-white/10 backdrop-blur text-white hover:bg-white/20 flex items-center">
-                    <i class="fas fa-briefcase mr-2"></i> Workforce
-                </a>
-                <button id="logout-btn" class="header-btn bg-white text-gray-800 hover:bg-gray-100 flex items-center shadow-md font-semibold">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                </button>
+                
+                <nav class="header-nav" id="header-nav">
+                    <button id="marketplace-btn" class="nav-btn">
+                        <i class="fas fa-store"></i>
+                        <span>Marketplace</span>
+                    </button>
+                    <button id="my-stores-btn" class="nav-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>My Stores</span>
+                    </button>
+                    <button id="chats-btn" class="nav-btn">
+                        <i class="fas fa-comments"></i>
+                        <span>Chats</span>
+                    </button>
+                    <button id="workforce-btn" class="nav-btn">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Professional Network</span>
+                    </button>
+                    <button id="settings-btn" class="nav-btn">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </button>
+                    <!-- Settings Modal (Modern, Sectioned) -->
+                    <div id="settings-modal" class="modal">
+                        <div class="modal-content" style="max-width: 400px; background: #fff; border-radius: 18px; border: 1.5px solid #e5e7eb; box-shadow: 0 8px 32px rgba(30,41,59,0.10); padding: 18px 20px; display: flex; flex-direction: column; align-items: stretch;">
+                            <h2 class="text-lg font-extrabold text-gray-800 tracking-tight mb-3 text-center">Settings</h2>
+                            <div class="flex flex-col gap-3">
+                              
+                                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-2 shadow-sm">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fas fa-moon text-gray-500 text-base"></i>
+                                        <span class="text-gray-700 text-xs">Dark Mode</span>
+                                    </div>
+                                    <label class="inline-flex relative items-center cursor-pointer">
+                                        <input type="checkbox" id="theme-switch" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-400 rounded-full peer peer-checked:bg-emerald-500 transition-all"></div>
+                                        <span class="ml-2 text-xs text-gray-500"></span>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-2 shadow-sm">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fas fa-language text-green-500 text-base"></i>
+                                        <span class="text-gray-700 text-xs">Language</span>
+                                    </div>
+                                    <select id="settings-language" class="input-field bg-white border border-gray-200 rounded-lg px-3 py-1 text-gray-700 focus:ring-emerald-400 focus:border-emerald-400 text-xs">
+                                        <option value="en">English</option>
+                                        <option value="fr">Français</option>
+                                        <option value="es">Español</option>
+                                        <option value="pt">Português</option>
+                                        <option value="sw">Kiswahili</option>
+                                        <option value="ar">العربية</option>
+                                        <option value="zh">中文 (Chinese)</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-2 shadow-sm">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fas fa-coins text-yellow-500 text-base"></i>
+                                        <span class="text-gray-700 text-xs">Currency</span>
+                                    </div>
+                                    <select id="settings-currency" class="input-field bg-white border border-gray-200 rounded-lg px-3 py-1 text-gray-700 focus:ring-emerald-400 focus:border-emerald-400 text-xs">
+                                        <option value="USD">USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="KES">KES (Ksh)</option>
+                                        <option value="NGN">NGN (₦)</option>
+                                        <option value="GHS">GHS (₵)</option>
+                                        <option value="ZAR">ZAR (R)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
             </div>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-10 flex-grow">
-
-        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8">
-            <div class="rounded-2xl shadow-lg p-6 flex-1 min-w-0 border border-emerald-100" style="background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.6);">
-                <div class="flex flex-col md:flex-row gap-4 w-full">
-                    <input type="text" id="farm-search" placeholder="Search farms by name or location..." class="input-field flex-1">
-                    <select id="farm-filter" class="input-field max-w-full md:max-w-xs">
-                        <option value="">All Farm Types</option>
-                        <option value="crop">Crop</option>
+    <!-- Main Content -->
+    <main>
+        <div class="farms-container">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-seedling" style="color: #10b981; font-size: 1.5rem;"></i>
+                    <span style="font-size: clamp(1.5rem, 4vw, 2rem); color: #1e293b; font-weight: 800;">Your Connected Farms</span>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                    <input type="text" id="farm-search" placeholder="Search farms..." class="input-field search-input w-full sm:w-auto">
+                    <select id="farm-filter" class="input-field filter-select w-full sm:w-auto">
+                        <option value="">All Types</option>
+                        <option value="crops">Crop</option>
                         <option value="livestock">Livestock</option>
                         <option value="mixed">Mixed</option>
                     </select>
-                    <button id="create-farm-btn"
-                        class="px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300
-                               text-base font-semibold transition-all duration-200 flex items-center justify-center shadow-lg">
-                        <i class="fas fa-plus mr-2 text-white"></i>
-                        <span class="text-white">Add New Farm</span>
+                    <button id="create-farm-btn" class="create-btn w-full sm:w-auto">
+                        <i class="fas fa-plus"></i>
+                        <span>Add New Farm</span>
                     </button>
                 </div>
             </div>
-        </div>
 
-        <div class="farms-container">
-            <h2 class="text-3xl font-extrabold text-gray-800 mb-8 pb-3 border-b-2 border-gray-200 flex items-center gap-3">
-                <i class="fas fa-seedling text-slate-600"></i> Your Connected Farms
-            </h2>
-            <div id="loading-spinner" class="w-full flex justify-center py-16 hidden">
-                <div class="animate-spin rounded-full h-16 w-16 border-4 border-emerald-500 border-t-transparent"></div>
+            <div id="loading-spinner" class="loading-spinner hidden">
+                <div class="spinner"></div>
             </div>
-            <div id="farms-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                </div>
+            <div id="farms-list" class="farms-grid"></div>
         </div>
     </main>
-    
-    <div class="fab" id="dale-ai-btn" title="Ask Dale AI">
-        <i class="fas fa-robot text-3xl animate-pulse"></i>
-    </div>
 
-    <div id="ai-modal" class="modal">
-        <div class="modal-content">
-            <h2 class="text-3xl font-extrabold text-slate-700 mb-6 pb-3 border-b-2 border-gray-200 flex items-center gap-3">
-                <i class="fas fa-robot text-4xl"></i> Ask Dale AI
-            </h2>
-            <input type="text" id="ai-input" class="input-field w-full mb-4" placeholder="Ask for planting advice, market trends, or equipment recommendations...">
-            <div id="ai-response" class="text-base text-gray-700 mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px] overflow-y-auto">
-                <p class="text-gray-400 italic">Your AI-powered agricultural insights will appear here.</p>
+    <!-- AI Modal -->
+    <div id="ai-modal" class="ai-chat-modal">
+        <div class="ai-chat-pointer"></div>
+        <div class="ai-chat-content">
+            <div class="ai-chat-header">
+                <i class="fas fa-robot text-xl"></i>
+                <span class="text-lg">Dale AI</span>
+                <span id="ai-user-greeting" class="ml-auto"></span>
+                <button id="ai-close-btn" class="ai-chat-close-x" title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="flex justify-end">
-                <button id="ai-close-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm font-medium">Close</button>
+            <div id="ai-chat-messages" class="ai-chat-messages">
+                <div class="ai-chat-message ai-chat-message-ai">
+                    <span class="ai-chat-bubble" id="ai-welcome-message">Hi! I'm Dale, your AI-powered agricultural assistant. Ask me anything about farming, crops, livestock, or your farm management!</span>
+                </div>
+            </div>
+            <div class="ai-chat-input-row">
+                <input type="text" id="ai-input" class="ai-chat-input" placeholder="Type your question...">
+                <button id="ai-send-btn" class="ai-chat-send-btn">
+                    <i class="fas fa-paper-plane mr-1"></i> Send
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Farm Modal -->
     <div id="farm-modal" class="modal">
         <div class="modal-content">
-            <h2 id="farm-modal-title" class="text-3xl font-extrabold text-slate-700 mb-6 pb-3 border-b-2 border-gray-200">Create New Farm</h2>
+            <h2 id="farm-modal-title">Create New Farm</h2>
             <form id="farm-form">
-                <div id="farm-form-error" role="alert" class="text-sm text-red-600 mb-4 hidden"></div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div id="farm-form-error" role="alert" class="hidden"></div>
+                
+                <div class="form-grid">
                     <div>
-                        <label for="farm-name" class="block text-sm font-medium text-gray-700 mb-1">Farm Name *</label>
+                        <label for="farm-name">Farm Name *</label>
                         <input type="text" id="farm-name" class="input-field" placeholder="e.g., Green Acres">
                     </div>
                     <div>
-                        <label for="farm-type" class="block text-sm font-medium text-gray-700 mb-1">Farm Type *</label>
+                        <label for="farm-type">Farm Type *</label>
                         <select id="farm-type" class="input-field">
-                            <option value="">Select farm type</option>
-                            <option value="crops">Crop</option>
+                            <option value="">Select Type</option>
+                            <option value="crops">Crops</option>
                             <option value="livestock">Livestock</option>
                             <option value="mixed">Mixed</option>
                         </select>
                     </div>
                     <div>
-                        <label for="farm-total-size" class="block text-sm font-medium text-gray-700 mb-1">Total Size *</label>
-                        <input type="number" step="0.01" id="farm-total-size" class="input-field" placeholder="e.g., 100.50">
-                    </div>
-                    <div>
-                        <label for="farm-size-unit" class="block text-sm font-medium text-gray-700 mb-1">Size Unit *</label>
-                        <select id="farm-size-unit" class="input-field">
-                            <option value="acres">Acres</option>
-                            <option value="hectares">Hectares</option>
-                            <option value="square_meters">Square Meters</option>
-                        </select>
-                    </div>
-                    <div class="col-span-full sm:col-span-1">
-                        <label for="farm-country" class="block text-sm font-medium text-gray-700 mb-1">Country *</label>
+                        <label for="farm-country">Country *</label>
                         <input type="text" id="farm-country" class="input-field" placeholder="Country">
                     </div>
-                    <div class="col-span-full sm:col-span-1">
-                        <label for="farm-state" class="block text-sm font-medium text-gray-700 mb-1">State (Optional)</label>
-                        <input type="text" id="farm-state" class="input-field" placeholder="State/Province">
+                    <div>
+                        <label for="farm-state">State/Province *</label>
+                        <input type="text" id="farm-state" class="input-field" placeholder="State or Province">
                     </div>
                     <div>
-                        <label for="farm-city" class="block text-sm font-medium text-gray-700 mb-1">City *</label>
+                        <label for="farm-city">City *</label>
                         <input type="text" id="farm-city" class="input-field" placeholder="City">
                     </div>
                     <div>
-                        <label for="farm-address" class="block text-sm font-medium text-gray-700 mb-1">Address (Optional)</label>
+                        <label for="farm-address">Address (Optional)</label>
                         <input type="text" id="farm-address" class="input-field" placeholder="Street Address">
                     </div>
-                    
-                    <div class="col-span-full">
-                        <label for="farm-additional-notes" class="block text-sm font-medium text-gray-700 mb-1">Additional Notes (Optional)</label>
-                        <textarea id="farm-additional-notes" class="input-field w-full" placeholder="Details about soil type, main crops, or livestock..." rows="3"></textarea>
+                    <div>
+                        <label for="farm-total-size">Total Size (Optional)</label>
+                        <input type="number" id="farm-total-size" class="input-field" placeholder="e.g., 150" step="0.01" min="0">
+                    </div>
+                    <div>
+                        <label for="farm-size-unit">Size Unit (Optional)</label>
+                        <input type="text" id="farm-size-unit" class="input-field" placeholder="e.g., acres, hectares, etc.">
+                    </div>
+                    <div class="col-full" style="grid-column: 1 / -1;">
+                        <label for="farm-additional-notes">Additional Notes (Optional)</label>
+                        <textarea id="farm-additional-notes" class="input-field" placeholder="Details about soil type, main crops, or livestock..." rows="4" style="width: 100%; min-width: 0;"></textarea>
                     </div>
                 </div>
-                <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
-                    <button type="button" id="farm-cancel-btn" class="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm font-medium">Cancel</button>
-                    <button type="submit" id="farm-save-btn" class="px-5 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium shadow-md">Save Farm</button>
+                
+                <div class="modal-footer">
+                    <button type="button" id="farm-cancel-btn" class="modal-btn modal-btn-cancel">Cancel</button>
+                    <button type="submit" id="farm-save-btn" class="modal-btn modal-btn-save">Save Farm</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Undo Snackbar -->
+    <div id="undo-snackbar"></div>
+
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.11/dist/dotlottie-wc.js" type="module"></script>
     <script>
         const token = localStorage.getItem('access_token');
-
-        if (!token) {
-            alert('Please login first');
-            window.location.href = 'authentication.html';
+        
+        function decodeJWT(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error('Failed to decode JWT:', e);
+                return null;
+            }
         }
-
+        
+        let currentUser = {
+            name: 'Guest',
+            email: '',
+            id: null,
+            username: ''
+        };
+        
+        if (token) {
+            const decoded = decodeJWT(token);
+            if (decoded) {
+                currentUser = {
+                    name: decoded.name || decoded.full_name || decoded.first_name || decoded.username || 'User',
+                    email: decoded.email || '',
+                    id: decoded.user_id || decoded.sub || decoded.id || null,
+                    username: decoded.username || decoded.preferred_username || ''
+                };
+                console.log('User identified:', currentUser.name);
+            }
+        }
+        
+        if (!token) {
+            console.log('No token found - running in demo mode');
+        }
+        
         let editingId = null;
+        
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const headerNav = document.getElementById('header-nav');
+        const navOverlay = document.getElementById('nav-overlay');
+        
+        mobileMenuBtn?.addEventListener('click', () => {
+            headerNav.classList.toggle('open');
+            navOverlay.classList.toggle('show');
+        });
+        
+        navOverlay?.addEventListener('click', () => {
+            headerNav.classList.remove('open');
+            navOverlay.classList.remove('show');
+        });
+        
+        headerNav?.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    headerNav.classList.remove('open');
+                    navOverlay.classList.remove('show');
+                }
+            });
+        });
+        
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                headerNav.classList.remove('open');
+                navOverlay.classList.remove('show');
+            }
+        });
 
+        const demoFarms = [
+            { id: 1, name: 'Green Valley Farm', type: 'crops', city: 'Springfield', country: 'USA', total_size: 150, size_unit: 'acres', additional_notes: 'Main crops: wheat, corn, soybeans' },
+            { id: 2, name: 'Highland Ranch', type: 'livestock', city: 'Denver', country: 'USA', total_size: 500, size_unit: 'acres', additional_notes: 'Cattle and sheep farming' },
+            { id: 3, name: 'Sunrise Mixed Farm', type: 'mixed', city: 'Austin', country: 'USA', total_size: 200, size_unit: 'acres', additional_notes: 'Vegetables and poultry' },
+        ];
+            window.userFarmsContext = demoFarms; // Initialize userFarmsContext with demoFarms
+        window.daleUserName = currentUser.name;
+        
         async function loadFarms() {
             const container = document.getElementById('farms-list');
-            document.getElementById('loading-spinner').classList.remove('hidden');
-            container.innerHTML = '';
-
             try {
-                // NOTE: Replaced placeholder URL with the one used in your script for demonstration.
-                // In a real application, you should use the correct API endpoint.
-                const res = await fetch('http://127.0.0.1:8000/api/farms/', { 
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (res.status === 401) {
-                    document.getElementById('loading-spinner').classList.add('hidden');
-                    alert('Session expired');
-                    localStorage.clear();
-                    window.location.href = 'authentication.html';
-                    return;
-                }
-
-                const farms = await res.json();
-
-                if (farms.length === 0) {
-                    document.getElementById('loading-spinner').classList.add('hidden');
-                    container.innerHTML = `
-                        <div class="col-span-full text-center py-20 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-                            <i class="fas fa-leaf text-8xl text-gray-300 mb-6"></i>
-                            <h3 class="text-2xl font-semibold text-gray-700">You have no farms yet</h3>
-                            <p class="text-gray-500 mt-2">Click **Add New Farm** to register your first one and start managing.</p>
-                        </div>`;
-                    return;
-                }
-
-                document.getElementById('loading-spinner').classList.add('hidden');
-                container.innerHTML = farms.map(farm => {
-                    const type = farm.type?.toLowerCase();
-                    let typeClass = '';
-                    let accentColor = '';
-
-                    if (type === 'crops') {
-                        typeClass = 'bg-green-50 text-green-700 border-green-200';
-                        accentColor = '#16a34a';
-                    } else if (type === 'livestock') {
-                        typeClass = 'bg-orange-50 text-orange-700 border-orange-200';
-                        accentColor = '#ea580c';
-                    } else if (type === 'mixed') {
-                        typeClass = 'bg-indigo-50 text-indigo-700 border-indigo-200';
-                        accentColor = '#4f46e5';
-                    } else {
-                        typeClass = 'bg-gray-50 text-gray-700 border-gray-200';
-                        accentColor = '#64748b';
+                var farms = demoFarms;
+                var spinner = document.getElementById('loading-spinner');
+                spinner.classList.remove('hidden');
+                container.innerHTML = '';
+                if (token) {
+                    const res = await fetch('http://127.0.0.1:8000/api/farms/', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (res.status === 401) {
+                        spinner.classList.add('hidden');
+                        alert('Session expired');
+                        localStorage.clear();
+                        window.location.href = 'authentication.html';
+                        return;
                     }
+                    if (res.ok) {
+                        farms = await res.json();
+                    }
+                }
+                window.userFarmsContext = farms;
 
-                    return `
-                    <div class="farm-card p-6 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between" style="border-left: 5px solid ${accentColor};">
-                        <div>
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-xl font-bold text-gray-800">${farm.name}</h3>
-                                <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold ${typeClass} whitespace-nowrap">
-                                    ${farm.type ? farm.type : 'FARM'}
-                                </span>
+                // --- FILTERING LOGIC ---
+                var searchValue = document.getElementById('farm-search').value.trim().toLowerCase();
+                var filterValue = document.getElementById('farm-filter').value;
+                var filteredFarms = farms;
+                if (searchValue) {
+                    filteredFarms = filteredFarms.filter(function(farm) {
+                        return (farm.name || '').toLowerCase().includes(searchValue);
+                    });
+                }
+                if (filterValue) {
+                    filteredFarms = filteredFarms.filter(function(farm) {
+                        return (farm.type || '').toLowerCase() === filterValue.toLowerCase();
+                    });
+                }
+
+                if (!filteredFarms.length) {
+                    container.innerHTML = '<div class="empty-state flex flex-col items-center justify-center py-16" style="grid-column: 1 / -1;">' +
+                        '<i class="fas fa-tractor text-7xl text-gray-300 mb-6"></i>' +
+                        '<h3 class="text-2xl font-bold text-gray-600 mb-2">No Farms Found</h3>' +
+                        '<p class="text-gray-500 mb-6">Try adjusting your search or filter.</p>' +
+                    '</div>';
+                } else {
+                    container.innerHTML = filteredFarms.map(function(farm) {
+                        var typeClass = farm.type === 'crops' ? 'bg-green-100 text-green-800' : farm.type === 'livestock' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800';
+                        // Use a Details button that passes the farm object to showFarmDetails
+                        return `
+                        <div class="farm-card" style="position:relative;">
+                            <button class="card-btn btn-delete" onclick="deleteFarm(${farm.id})" title="Delete Farm" style="position:absolute;top:1rem;right:1rem;z-index:2;background:#fee2e2;color:#dc2626;border:none;padding:0.5rem 0.7rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);border-radius:0.75rem;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <span class="type-badge ${typeClass}">
+                                <i class="fas fa-leaf"></i> ${farm.type ? farm.type.charAt(0).toUpperCase() + farm.type.slice(1) : ''}
+                            </span>
+                            <h3>${farm.name || ''}</h3>
+                            <p><i class="fas fa-map-marker-alt"></i> ${farm.city || ''}, ${farm.country || ''}</p>
+                            <p><i class="fas fa-ruler-combined"></i> ${farm.total_size || ''} ${farm.size_unit || ''}</p>
+                            ${farm.additional_notes ? `
+                                <div class="farm-description-box" style="background:#f0fdf4; border-left:4px solid #10b981; border-radius:0.75rem; padding:0.75rem 1rem; margin:0.75rem 0; color:#166534; font-size:0.97rem;">
+                                    <i class='fas fa-info-circle' style="margin-right:0.5rem;"></i>
+                                    <span>${farm.additional_notes}</span>
+                                </div>
+                            ` : ''}
+                            <div class="card-actions">
+                                <button class="card-btn btn-edit" onclick="editFarm(${farm.id})"><i class="fas fa-edit"></i>Edit</button>
+                                <button class="card-btn btn-manage" onclick="window.location.href='/auth/individual_farm.html?id=${farm.id}'"><i class="fas fa-cog"></i>Manage</button>
                             </div>
-                            <div class="space-y-2 text-sm text-gray-600">
-                                <p><i class="fas fa-map-marker-alt w-5 text-center text-gray-400 mr-2"></i>${farm.city}, ${farm.country}</p>
-                                <p><i class="fas fa-ruler-combined w-5 text-center text-gray-400 mr-2"></i>${farm.total_size} ${farm.size_unit}</p>
-                            </div>
-                            ${farm.additional_notes ? `<p class="text-sm text-gray-500 italic mt-3 border-t pt-3 overflow-hidden text-ellipsis whitespace-nowrap">${farm.additional_notes}</p>` : ''}
                         </div>
-                        <div class="flex flex-row gap-3 mt-6 pt-4 border-t border-gray-100">
-                            <button onclick="event.stopPropagation(); editFarm(${farm.id})" class="flex-1 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 text-sm font-medium transition-all duration-200 flex items-center justify-center">
-                                <i class="fas fa-edit mr-2"></i> Edit
-                            </button>
-                            <button onclick="event.stopPropagation(); window.location.href='individual_farm.html?id=${farm.id}'" class="flex-1 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium transition-all duration-200 flex items-center justify-center">
-                                <i class="fas fa-seedling mr-2"></i> Manage
-                            </button>
-                            <button onclick="event.stopPropagation(); deleteFarm(${farm.id})" class="flex-1 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 text-sm font-medium transition-all duration-200 flex items-center justify-center">
-                                <i class="fas fa-trash-alt mr-2"></i> Delete
-                            </button>
-                        </div>
-                    </div>
-                    `;
-                }).join('');
+                        `;
+                    }).join('');
+                        // Global function to show farm details in the modal
+                        window.showFarmDetails = function(farm) {
+                            const content = `
+                                <div style="margin-bottom:1rem;">
+                                    <strong>Name:</strong> ${farm.name || ''}<br>
+                                    <strong>Type:</strong> ${farm.type || ''}<br>
+                                    <strong>Country:</strong> ${farm.country || ''}<br>
+                                    <strong>State:</strong> ${farm.state || ''}<br>
+                                    <strong>City:</strong> ${farm.city || ''}<br>
+                                    <strong>Address:</strong> ${farm.address || ''}<br>
+                                    <strong>Total Size:</strong> ${farm.total_size || ''} ${farm.size_unit || ''}<br>
+                                    <strong>Notes:</strong> ${farm.additional_notes || ''}
+                                </div>
+                            `;
+                            document.getElementById('farm-details-content').innerHTML = content;
+                            document.getElementById('farm-details-modal').classList.add('show');
+                        };
+
+                        document.getElementById('farm-details-close-btn').addEventListener('click', function() {
+                            document.getElementById('farm-details-modal').classList.remove('show');
+                        });
+                }
+                spinner.classList.add('hidden');
             } catch (err) {
-                document.getElementById('loading-spinner').classList.add('hidden');
-                container.innerHTML = `<div class="col-span-full text-center text-red-600 p-8 bg-red-50 rounded-lg border border-red-200">
-                    <i class="fas fa-exclamation-triangle mr-2"></i> Failed to load farms. Please check your network connection or API service.
-                </div>`;
+                spinner.classList.add('hidden');
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1; background: #fee2e2; border-color: #fca5a5;">
+                        <i class="fas fa-exclamation-triangle" style="color: #dc2626;"></i>
+                        <h3>Failed to load farms</h3>
+                        <p>Please check your network connection and try again.</p>
+                    </div>
+                `;
             }
         }
 
-        // --- JavaScript Event Listeners (Retained and slightly modified) ---
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            const farmModal = document.getElementById('farm-modal');
+        document.getElementById('farm-search').addEventListener('input', loadFarms);
+        document.getElementById('farm-filter').addEventListener('change', loadFarms);
 
-            document.getElementById('create-farm-btn').addEventListener('click', () => {
-                editingId = null;
-                document.getElementById('farm-modal-title').textContent = 'Add New Farm';
-                document.getElementById('farm-form').reset(); // Reset form fields
-                document.getElementById('farm-size-unit').value = 'acres';
-                document.getElementById('farm-form-error').classList.add('hidden');
-                farmModal.classList.add('show');
-            });
+        document.getElementById('create-farm-btn').addEventListener('click', () => {
+            editingId = null;
+            document.getElementById('farm-modal-title').textContent = 'Add New Farm';
+            document.getElementById('farm-form').reset();
+            document.getElementById('farm-size-unit').value = 'acres';
+            document.getElementById('farm-form-error').classList.add('hidden');
+            document.getElementById('farm-modal').classList.add('show');
+        });
 
-                document.getElementById('farm-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const totalSizeInput = document.getElementById('farm-total-size').value;
-                let totalSize = parseFloat(totalSizeInput);
-                if (totalSizeInput.trim() === "" || isNaN(totalSize)) {
-                    totalSize = null;
-                }
-                
-                const data = {
-                    name: document.getElementById('farm-name').value.trim(),
-                    type: document.getElementById('farm-type').value.trim(),
-                    country: document.getElementById('farm-country').value.trim(),
-                    state: document.getElementById('farm-state').value.trim(),
-                    city: document.getElementById('farm-city').value.trim(),
-                    address: document.getElementById('farm-address').value.trim(),
-                    total_size: totalSize,
-                    size_unit: document.getElementById('farm-size-unit').value,
-                    additional_notes: document.getElementById('farm-additional-notes').value.trim()
-                };
+        document.getElementById('farm-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-                // Normalize type and size_unit
-                if (typeof data.type === 'string') {
-                    data.type = data.type.toLowerCase();
-                    if (data.type === 'crop') data.type = 'crops';
-                }
-                if (!data.size_unit) {
-                    data.size_unit = 'acres';
-                }
+            const totalSizeInput = document.getElementById('farm-total-size').value;
+            let totalSize = parseFloat(totalSizeInput);
+            if (totalSizeInput.trim() === '' || isNaN(totalSize)) {
+                totalSize = null;
+            }
 
-                // Basic validation for required fields
-                // Note: We check `totalSize` explicitly rather than `data.total_size` since 0 would evaluate as falsy
-                if (!data.name || !data.type || !data.country || !data.city || totalSize === null || Number.isNaN(totalSize)) {
-                    alert('Please fill all fields marked with *');
+            const data = {
+                name: document.getElementById('farm-name').value.trim(),
+                type: document.getElementById('farm-type').value.trim(),
+                country: document.getElementById('farm-country').value.trim(),
+                state: document.getElementById('farm-state').value.trim(),
+                city: document.getElementById('farm-city').value.trim(),
+                address: document.getElementById('farm-address').value.trim(),
+                total_size: totalSizeInput.trim() === '' || isNaN(totalSize) ? null : totalSize,
+                size_unit: document.getElementById('farm-size-unit').value.trim(),
+                additional_notes: document.getElementById('farm-additional-notes').value.trim()
+            };
+
+            if (typeof data.type === 'string') {
+                data.type = data.type.toLowerCase();
+                if (data.type === 'crop') data.type = 'crops';
+            }
+
+            if (!data.size_unit) {
+                data.size_unit = '';
+            }
+
+            if (!data.name || !data.type || !data.country || !data.city || totalSize === null) {
+                const errDiv = document.getElementById('farm-form-error');
+                if (!data.name || !data.type || !data.country || !data.city || !data.state) {
+                    errDiv.textContent = 'Please fill all fields marked with *';
+                    errDiv.classList.remove('hidden');
                     return;
                 }
+            }
 
-                const method = editingId ? 'PATCH' : 'POST';
-                // NOTE: Use the full URL for the API endpoint as specified in your original script
-                const url = editingId ? `http://127.0.0.1:8000/api/farms/${editingId}/` : 'http://127.0.0.1:8000/api/farms/';
+            try {
+                if (token) {
+                    const method = editingId ? 'PATCH' : 'POST';
+                    const url = editingId 
+                        ? `http://127.0.0.1:8000/api/farms/${editingId}/`
+                        : 'http://127.0.0.1:8000/api/farms/';
 
-                try {
-                    console.debug('Creating farm with payload:', data);
                     const res = await fetch(url, {
                         method,
                         headers: {
@@ -431,163 +1400,479 @@
                         body: JSON.stringify(data)
                     });
 
-                    const text = await res.text();
-                    let jsonResponse = null;
-                    try { jsonResponse = text ? JSON.parse(text) : null; } catch (e) { /* Not JSON */ }
-
                     if (!res.ok) {
-                        console.error('Save Farm Response Error:', res.status, text, jsonResponse);
-                        // If the server sent back field errors, show them in an alert so the user can correct the form
+                        const text = await res.text();
+                        let jsonResponse = null;
+                        try { jsonResponse = JSON.parse(text); } catch (e) {}
+
+                        const errDiv = document.getElementById('farm-form-error');
                         if (jsonResponse && typeof jsonResponse === 'object') {
-                            // Create a friendly message from the error response
-                            const messages = Object.entries(jsonResponse).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('\n');
-                            // Show inline on the form, and also pop up an alert
-                            const errDiv = document.getElementById('farm-form-error');
-                            errDiv.innerText = messages;
-                            errDiv.classList.remove('hidden');
-                            alert('Failed to save farm:\n' + messages);
+                            const messages = Object.entries(jsonResponse)
+                                .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+                                .join('\n');
+                            errDiv.textContent = messages;
                         } else {
-                            const errDiv = document.getElementById('farm-form-error');
-                            errDiv.innerText = res.statusText || text;
-                            errDiv.classList.remove('hidden');
-                            alert('Failed to save farm: ' + (res.statusText || text));
+                            errDiv.textContent = res.statusText || text;
                         }
-                        return; // Do not proceed to close the modal or reload the farms
+                        errDiv.classList.remove('hidden');
+                        return;
                     }
-                } catch (error) {
-                    console.error('Save Farm Error:', error);
-                    const errDiv = document.getElementById('farm-form-error');
-                    errDiv.innerText = 'Failed to save farm. See console for details.';
-                    errDiv.classList.remove('hidden');
-                    alert('Failed to save farm. See console for details.');
-                    return;
                 }
-                // Clear any prior form error on success
+
                 document.getElementById('farm-form-error').classList.add('hidden');
-
-
-                farmModal.classList.remove('show');
+                document.getElementById('farm-modal').classList.remove('show');
                 loadFarms();
-            });
 
-            document.getElementById('farm-cancel-btn').addEventListener('click', () => {
-                farmModal.classList.remove('show');
-            });
+            } catch (error) {
+                console.error('Save Farm Error:', error);
+                const errDiv = document.getElementById('farm-form-error');
+                errDiv.textContent = 'Failed to save farm. Please try again.';
+                errDiv.classList.remove('hidden');
+            }
+        });
 
-            document.getElementById('ai-close-btn').addEventListener('click', () => {
-                document.getElementById('ai-modal').classList.remove('show');
-            });
-
-            document.getElementById('dale-ai-btn').addEventListener('click', () => {
-                document.getElementById('ai-modal').classList.add('show');
-            });
-
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                localStorage.clear();
-                window.location.href = 'authentication.html';
-            });
+        document.getElementById('farm-cancel-btn').addEventListener('click', () => {
+            document.getElementById('farm-modal').classList.remove('show');
         });
 
         window.editFarm = async (id) => {
-            event.stopPropagation();
-            const farmModal = document.getElementById('farm-modal');
-            try {
-                const res = await fetch(`http://127.0.0.1:8000/api/farms/${id}/`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const farm = await res.json();
+            event?.stopPropagation();
+
+            let farm = demoFarms.find(f => f.id === id);
+
+            if (token) {
+                try {
+                    const res = await fetch(`http://127.0.0.1:8000/api/farms/${id}/`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (res.ok) {
+                        farm = await res.json();
+                    }
+                } catch (e) {
+                    console.error('Failed to fetch farm:', e);
+                }
+            }
+
+            if (farm) {
                 editingId = id;
                 document.getElementById('farm-modal-title').textContent = 'Edit Farm: ' + farm.name;
-                document.getElementById('farm-name').value = farm.name;
-                document.getElementById('farm-type').value = farm.type;
-                document.getElementById('farm-country').value = farm.country;
+                document.getElementById('farm-name').value = farm.name || '';
+                document.getElementById('farm-type').value = farm.type || '';
+                document.getElementById('farm-country').value = farm.country || '';
                 document.getElementById('farm-state').value = farm.state || '';
-                document.getElementById('farm-city').value = farm.city;
+                document.getElementById('farm-city').value = farm.city || '';
                 document.getElementById('farm-address').value = farm.address || '';
                 document.getElementById('farm-total-size').value = farm.total_size || '';
-                document.getElementById('farm-size-unit').value = farm.size_unit;
+                document.getElementById('farm-size-unit').value = farm.size_unit || 'acres';
                 document.getElementById('farm-additional-notes').value = farm.additional_notes || '';
                 document.getElementById('farm-form-error').classList.add('hidden');
-                farmModal.classList.add('show');
-            } catch (error) {
-                console.error('Fetch Farm Error:', error);
-                alert('Failed to load farm details for editing.');
+                document.getElementById('farm-modal').classList.add('show');
             }
         };
 
-        window.onload = loadFarms;
-
-        // --- Delete with Undo ---
         let lastDeletedFarm = null;
         let undoTimer = null;
 
-        async function deleteFarm(id) {
+        window.deleteFarm = async (id) => {
+            event?.stopPropagation();
+            if (!confirm('Are you sure you want to delete this farm?')) return;
+            const farmsList = window.userFarmsContext || [];
+            const farm = farmsList.find(f => f.id === id);
+            if (!token) {
+                alert('You must be logged in to delete a farm.');
+                return;
+            }
             try {
                 const res = await fetch(`http://127.0.0.1:8000/api/farms/${id}/`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const farm = await res.json();
-                lastDeletedFarm = { id, data: farm };
-
-                // Optimistically remove from UI
-                const cardSelector = `.farm-card button[onclick*='deleteFarm(${id})']`;
-                const btn = document.querySelector(cardSelector);
-                const card = btn ? btn.closest('.farm-card') : null;
-                if (card) card.remove();
-
-                // Perform DELETE
-                const del = await fetch(`http://127.0.0.1:8000/api/farms/${id}/`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
-                // Show undo snackbar
-                showUndoSnackbar(`Farm "${farm.name}" deleted`, async () => {
-                    if (!lastDeletedFarm) return;
-                    const payload = { ...lastDeletedFarm.data };
-                    delete payload.id; // let server assign id
-                    const restore = await fetch('http://127.0.0.1:8000/api/farms/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify(payload)
-                    });
-                    lastDeletedFarm = null;
-                    clearTimeout(undoTimer);
+                if (res.ok) {
+                    lastDeletedFarm = { id, data: farm };
                     loadFarms();
-                });
-
-                // Auto finalize after 10s
-                undoTimer = setTimeout(() => { lastDeletedFarm = null; }, 10000);
+                    showUndoSnackbar(`Farm "${farm?.name || 'Unknown'}" deleted`, async () => {
+                        if (!lastDeletedFarm) return;
+                        // Undo logic: re-create farm
+                        if (!token) {
+                            // Demo mode: re-add to demoFarms
+                            demoFarms.push(lastDeletedFarm.data);
+                            window.userFarmsContext = demoFarms;
+                            loadFarms();
+                        } else {
+                            // API mode: POST to /api/farms/
+                            const farmData = Object.assign({}, lastDeletedFarm.data);
+                            delete farmData.id; // Let backend assign new id
+                            try {
+                                await fetch('http://127.0.0.1:8000/api/farms/', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer ${token}`
+                                    },
+                                    body: JSON.stringify(farmData)
+                                });
+                                loadFarms();
+                            } catch (e) {
+                                alert('Failed to restore farm.');
+                            }
+                        }
+                        lastDeletedFarm = null;
+                        clearTimeout(undoTimer);
+                    });
+                    undoTimer = setTimeout(() => { lastDeletedFarm = null; }, 10000);
+                } else {
+                    const errMsg = await res.text();
+                    alert('Failed to delete farm: ' + (errMsg || res.status));
+                }
             } catch (e) {
-                console.error('Delete Farm Error:', e);
-                alert('Failed to delete farm.');
-                loadFarms();
+                console.error('Delete error:', e);
+                alert('Error deleting farm.');
             }
-        }
+        };
 
         function showUndoSnackbar(message, onUndo) {
-            let bar = document.getElementById('undo-snackbar');
-            if (!bar) {
-                bar = document.createElement('div');
-                bar.id = 'undo-snackbar';
-                bar.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-4 z-50';
-                document.body.appendChild(bar);
-            }
-            bar.innerHTML = `<span class="text-sm">${message}</span>
-                <button class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 rounded text-sm">Undo</button>`;
+            const bar = document.getElementById('undo-snackbar');
+            bar.innerHTML = `
+                <span style="font-size: 0.9375rem;">${message}</span>
+                <button>Undo</button>`;
             bar.style.display = 'flex';
+
             const undoBtn = bar.querySelector('button');
             undoBtn.onclick = () => {
                 onUndo && onUndo();
                 bar.style.display = 'none';
             };
+
             setTimeout(() => { bar.style.display = 'none'; }, 10000);
         }
+
+        const aiModal = document.getElementById('ai-modal');
+        const aiInput = document.getElementById('ai-input');
+        const aiSendBtn = document.getElementById('ai-send-btn');
+        const aiCloseBtn = document.getElementById('ai-close-btn');
+        const aiMessages = document.getElementById('ai-chat-messages');
+        const aiUserGreeting = document.getElementById('ai-user-greeting');
+        const aiWelcomeMessage = document.getElementById('ai-welcome-message');
+
+        if (currentUser.name && currentUser.name !== 'Guest') {
+            aiUserGreeting.textContent = `Hi, ${currentUser.name}!`;
+            aiWelcomeMessage.textContent = `Hello ${currentUser.name}! 👋 I'm Dale, your AI-powered agricultural assistant. I can help you with farming advice, crop management, livestock care, and insights about your farms. What would you like to know?`;
+        }
+
+        function addAiMessage(text, isUser = false) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'ai-chat-message' + (isUser ? ' ai-chat-message-user' : ' ai-chat-message-ai');
+            const bubble = document.createElement('span');
+            bubble.className = 'ai-chat-bubble';
+            bubble.textContent = text;
+            msgDiv.appendChild(bubble);
+            aiMessages.appendChild(msgDiv);
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+            return bubble;
+        }
+
+        aiSendBtn.addEventListener('click', async () => {
+            const question = aiInput.value.trim();
+            if (!question) return;
+            addAiMessage(question, true);
+            aiInput.value = '';
+            const thinkingBubble = addAiMessage('Thinking...', false);
+            try {
+                const res = await fetch('/api/ai/dale/ask/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({
+                        prompt: question,
+                        context: {
+                            type: 'multi_farm',
+                            farms: window.userFarmsContext,
+                            user: { name: window.daleUserName }
+                        }
+                    })
+                });
+                const data = await res.json();
+                thinkingBubble.textContent = data.reply || 'Sorry, I did not understand.';
+            } catch (err) {
+                thinkingBubble.textContent = 'Error: Could not reach Dale AI.';
+            }
+        });
+
+        aiInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') aiSendBtn.click();
+        });
+
+        // Settings Modal logic
+        const settingsBtn = document.getElementById('settings-btn');
+        const settingsModal = document.getElementById('settings-modal');
+        const settingsCloseBtn = document.getElementById('settings-close-btn');
+        const logoutBtnModal = document.getElementById('logout-btn-modal');
+        if (settingsBtn && settingsModal) {
+            settingsBtn.addEventListener('click', () => {
+                settingsModal.classList.add('show');
+            });
+        }
+        if (settingsCloseBtn && settingsModal) {
+            settingsCloseBtn.addEventListener('click', () => {
+                settingsModal.classList.remove('show');
+            });
+        }
+        if (logoutBtnModal) {
+            logoutBtnModal.addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = 'authentication.html';
+            });
+        }
+        // Optional: Theme switching logic (simple demo)
+        // Unified theme switching logic for toggle and buttons
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('preferred_theme', 'dark');
+                if (themeSwitch) themeSwitch.checked = true;
+            } else if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('preferred_theme', 'light');
+                if (themeSwitch) themeSwitch.checked = false;
+            } else {
+                // system/default
+                document.documentElement.classList.remove('dark');
+                localStorage.removeItem('preferred_theme');
+                if (themeSwitch) themeSwitch.checked = false;
+            }
+        }
+        document.getElementById('theme-light')?.addEventListener('click', () => setTheme('light'));
+        document.getElementById('theme-dark')?.addEventListener('click', () => setTheme('dark'));
+        document.getElementById('theme-system')?.addEventListener('click', () => setTheme('system'));
+
+        // Navigation button handlers
+        document.getElementById('marketplace-btn')?.addEventListener('click', () => {
+            window.location.href = 'marketplace.html';
+        });
+        document.getElementById('my-stores-btn')?.addEventListener('click', () => {
+            window.location.href = 'digitalstores.html';
+        });
+        document.getElementById('chats-btn')?.addEventListener('click', () => {
+            window.location.href = 'chats.html';
+        });
+        document.getElementById('workforce-btn')?.addEventListener('click', () => {
+            window.location.href = 'workforce.html';
+        });
+
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        });
+
+        window.onload = loadFarms;
+
+
+            // --- Theme, Language & Currency Settings Logic ---
+            const languageSelect = document.getElementById('settings-language');
+            const currencySelect = document.getElementById('settings-currency');
+            const themeSwitch = document.getElementById('theme-switch');
+
+
+            // --- User Settings: Fetch, Apply, Sync ---
+            async function fetchUserSettings() {
+                try {
+                    const res = await fetch('/api/user/settings/', { credentials: 'include' });
+                    if (!res.ok) throw new Error('No user settings');
+                    return await res.json();
+                } catch {
+                    return null;
+                }
+            }
+
+            async function loadPreferences() {
+                let settings = await fetchUserSettings();
+                // Fallback to localStorage if backend fails
+                const lang = (settings && settings.language) || localStorage.getItem('preferred_language') || 'en';
+                const curr = (settings && settings.currency) || localStorage.getItem('preferred_currency') || 'NGN';
+                const theme = (settings && settings.theme) || localStorage.getItem('preferred_theme') || 'system';
+                if (languageSelect) languageSelect.value = lang;
+                if (currencySelect) currencySelect.value = curr;
+                if (themeSwitch) themeSwitch.checked = (theme === 'dark');
+                localStorage.setItem('preferred_language', lang);
+                localStorage.setItem('preferred_currency', curr);
+                localStorage.setItem('preferred_theme', theme);
+                applyLanguage(lang);
+                applyCurrency(curr);
+                applyTheme(theme);
+            }
+
+            function syncUserSettings() {
+                const data = {
+                    language: languageSelect?.value,
+                    currency: currencySelect?.value,
+                    theme: themeSwitch?.checked ? 'dark' : 'light',
+                };
+                // Save to localStorage for instant UI
+                localStorage.setItem('preferred_language', data.language);
+                localStorage.setItem('preferred_currency', data.currency);
+                localStorage.setItem('preferred_theme', data.theme);
+                // Save to backend for persistence
+                fetch('/api/user/settings/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                    credentials: 'include',
+                });
+            }
+
+            languageSelect?.addEventListener('change', function() {
+                applyLanguage(this.value);
+                syncUserSettings();
+            });
+            currencySelect?.addEventListener('change', function() {
+                applyCurrency(this.value);
+                syncUserSettings();
+            });
+            themeSwitch?.addEventListener('change', function() {
+                const mode = this.checked ? 'dark' : 'light';
+                applyTheme(mode);
+                localStorage.setItem('preferred_theme', mode);
+                // Optionally sync to backend
+                syncUserSettings();
+            });
+
+            function applyLanguage(lang) {
+                // Example: update main heading and settings modal
+                const mainHeading = document.querySelector('.farms-container .flex.items-center.gap-3 span');
+                if (mainHeading && window.i18n) mainHeading.textContent = i18n.t('Your Connected Farms');
+                // Settings modal title
+                document.querySelectorAll('.settings-modal-content span').forEach(el => {
+                    if (el.textContent.trim() === 'Settings' && window.i18n) {
+                        el.textContent = i18n.t('Settings');
+                    }
+                });
+                // Add more UI translations as needed
+            }
+
+            function applyCurrency(curr) {
+                // Update all currency displays using i18n.formatCurrency
+                document.querySelectorAll('[data-currency-amount]').forEach(el => {
+                    const amount = parseFloat(el.getAttribute('data-currency-amount'));
+                    if (!isNaN(amount) && window.i18n) {
+                        el.textContent = i18n.formatCurrency(amount);
+                    }
+                });
+            }
+
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    if (themeSwitch) themeSwitch.checked = true;
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    if (themeSwitch) themeSwitch.checked = false;
+                }
+            }
+
+            // Listen for theme changes in other tabs/pages and sync
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'preferred_theme') {
+                    applyTheme(e.newValue);
+                    if (themeSwitch) themeSwitch.checked = (e.newValue === 'dark');
+                }
+            });
+            
+
+            // On page load
+            // On page load, apply theme from localStorage or default
+            const initialTheme = localStorage.getItem('preferred_theme') || 'light';
+            applyTheme(initialTheme);
+            loadPreferences();
+
+            function applyLanguage(lang) {
+                // Example: update main heading and settings modal
+                const mainHeading = document.querySelector('.farms-container .flex.items-center.gap-3 span');
+                if (mainHeading && translations[lang] && translations[lang]['Your Connected Farms']) {
+                    mainHeading.textContent = translations[lang]['Your Connected Farms'];
+                }
+                // Settings modal title
+                document.querySelectorAll('.settings-modal-content span').forEach(el => {
+                    if (el.textContent.trim() === 'Settings' && translations[lang]['Settings']) {
+                        el.textContent = translations[lang]['Settings'];
+                    }
+                });
+                // Add more UI translations as needed
+            }
+
+            function applyCurrency(curr) {
+                // Example: update all currency symbols in farm cards (if any)
+                // Expand this logic as needed for your UI
+            }
+
+            // Initialize on load
+            loadPreferences();
+            // --- End Language & Currency Settings Logic ---
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js" defer></script>
-    <script src="/static/js/dale.js" defer></script>
+
+    <!-- Farm Details Modal (single instance, outside the loop) -->
+    <div id="farm-details-modal" class="modal">
+                        <div class="modal-content settings-modal-content" style="max-width: 420px; background: rgba(255,255,255,0.97); box-shadow: 0 8px 32px rgba(16,185,129,0.10); border-radius: 1.5rem; border: 1.5px solid #e2e8f0; max-height: 70vh; overflow-y: auto;">
+                            <style>
+                                .settings-modal-content .modal-btn { padding: 0.5rem 1rem; font-size: 0.85rem; min-width: 70px; }
+                            </style>
+                            <div style="height: 2.5rem; margin-bottom: 1.5rem;"></div>
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="font-weight: 600; color: #475569; font-size: 0.95rem; margin-bottom: 0.5rem; display: block;">Language</label>
+                                <select id="settings-language" class="input-field" style="width: 100%;">
+                                    <option value="en">English</option>
+                                    <option value="fr">Français</option>
+                                    <option value="es">Español</option>
+                                    <option value="pt">Português</option>
+                                    <option value="sw">Kiswahili</option>
+                                    <option value="ar">العربية</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="font-weight: 600; color: #475569; font-size: 0.95rem; margin-bottom: 0.5rem; display: block;">Currency</label>
+                                <select id="settings-currency" class="input-field" style="width: 100%;">
+                                    <option value="NGN">Nigerian Naira (₦)</option>
+                                    <option value="USD">US Dollar ($)</option>
+                                    <option value="EUR">Euro (€)</option>
+                                    <option value="GBP">British Pound (£)</option>
+                                    <option value="KES">Kenyan Shilling (KSh)</option>
+                                    <option value="ZAR">South African Rand (R)</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="font-weight: 600; color: #475569; font-size: 0.95rem; margin-bottom: 0.5rem; display: block;">Theme</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button id="theme-light" class="modal-btn" style="background: #f1f5f9; color: #1e293b; border: 1.5px solid #e2e8f0;">Light</button>
+                                    <button id="theme-dark" class="modal-btn" style="background: #1e293b; color: #fff; border: 1.5px solid #1e293b;">Dark</button>
+                                    <button id="theme-system" class="modal-btn" style="background: #fff; color: #10b981; border: 1.5px solid #10b981;">System</button>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="font-weight: 600; color: #475569; font-size: 0.95rem; margin-bottom: 0.5rem; display: block;">Account</label>
+                                <div style="background: #f8fafc; border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem;">
+                                    <i class="fas fa-user-circle text-emerald-500" style="font-size: 2rem;"></i>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 700; color: #1e293b; font-size: 1.05rem;">{{ currentUser.name|default:'User' }}</div>
+                                        <div style="color: #64748b; font-size: 0.93rem;">{{ currentUser.email|default:'' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 1.5rem;">
+                                <!-- Security section removed -->
+                            </div>
+                            <div style="text-align: right;">
+                                <!-- Close button removed -->
+                            </div>
+                        </div>
+            <div class="modal-footer">
+                <button type="button" id="farm-details-close-btn" class="modal-btn modal-btn-cancel">Close</button>
+            </div>
+        </div>
+    </div>
 </body>
+<script src="/static/dale_ai.js"></script>
 </html>
