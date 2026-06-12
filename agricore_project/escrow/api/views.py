@@ -6,9 +6,9 @@ from rest_framework.response import Response
 from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from escrow.models import Escrow, PaymentTransaction
+from escrow.models import Escrow, PaymentTransaction, PayoutAccount
 from utils import flutterwave
-from .serializers import EscrowSerializer
+from .serializers import EscrowSerializer, PayoutAccountSerializer
 
 
 class EscrowViewSet(viewsets.ModelViewSet):
@@ -110,7 +110,8 @@ class EscrowViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def release(self, request, pk=None):
-        """Buyer confirms delivery and releases funds to the seller."""
+        """Buyer confirms delivery -> pay the seller. The escrow flips to
+        'released' only when Flutterwave confirms the payout (via webhook)."""
         escrow = self.get_object()
         if escrow.buyer != request.user:
             return Response(
@@ -122,10 +123,56 @@ class EscrowViewSet(viewsets.ModelViewSet):
                 {"detail": f"Cannot release from status: {escrow.status}."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        escrow.status = "released"
-        escrow.released_at = timezone.now()
-        escrow.save()
-        return Response(self.get_serializer(escrow).data)
+        if escrow.transactions.filter(kind="payout", status__in=["pending", "successful"]).exists():
+            return Response(
+                {"detail": "A payout for this escrow is already in progress."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        seller = escrow.order.store.owner
+        payout_account = getattr(seller, "payout_account", None)
+        if payout_account is None:
+            return Response(
+                {"detail": "The seller has not set up a payout account yet."},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        tx_ref = flutterwave.new_tx_ref(f"pay{escrow.pk}")
+        txn = PaymentTransaction.objects.create(
+            escrow=escrow,
+            kind="payout",
+            tx_ref=tx_ref,
+            amount=escrow.amount,
+            fee=0,
+            currency=escrow.currency,
+        )
+        try:
+            resp = flutterwave.initiate_transfer(
+                amount=float(escrow.amount),
+                currency=escrow.currency,
+                account_bank=payout_account.account_bank,
+                account_number=payout_account.account_number,
+                beneficiary_name=payout_account.account_name,
+                reference=tx_ref,
+                narration=f"Agricore order #{escrow.order_id}",
+            )
+        except flutterwave.FlutterwaveError as e:
+            txn.status = "failed"
+            txn.raw = {"error": str(e)}
+            txn.save()
+            return Response(
+                {"detail": f"Could not start payout: {e}"},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+
+        txn.flw_id = str((resp.get("data") or {}).get("id") or "")
+        txn.raw = resp
+        txn.save()
+        return Response({
+            "detail": "Payout initiated. The escrow will show 'released' once it completes.",
+            "transfer_status": (resp.get("data") or {}).get("status"),
+            "tx_ref": tx_ref,
+        })
 
 
 class FlutterwaveWebhookView(APIView):
@@ -145,7 +192,7 @@ class FlutterwaveWebhookView(APIView):
 
         payload = request.data or {}
         data = payload.get("data") or {}
-        tx_ref = data.get("tx_ref")
+        tx_ref = data.get("tx_ref") or data.get("reference")
         flw_id = data.get("id")
         if not tx_ref:
             return Response({"detail": "no tx_ref"}, status=status.HTTP_200_OK)
@@ -158,6 +205,30 @@ class FlutterwaveWebhookView(APIView):
         # Idempotent: ignore repeat deliveries of an already-settled payment.
         if txn.status == "successful":
             return Response({"detail": "already processed"}, status=status.HTTP_200_OK)
+
+        # Payout (transfer) events finalize a release.
+        if txn.kind == "payout":
+            try:
+                vt = flutterwave.verify_transfer(flw_id)
+            except flutterwave.FlutterwaveError as e:
+                return Response({"detail": f"verify failed: {e}"}, status=status.HTTP_200_OK)
+            tstatus = ((vt.get("data") or {}).get("status") or "").upper()
+            if tstatus == "SUCCESSFUL":
+                txn.status = "successful"
+                txn.flw_id = str(flw_id or "")
+                txn.raw = vt
+                txn.save()
+                escrow = txn.escrow
+                if escrow.status == "held":
+                    escrow.status = "released"
+                    escrow.released_at = timezone.now()
+                    escrow.save()
+                return Response({"detail": "payout ok"}, status=status.HTTP_200_OK)
+            if tstatus in ("FAILED", "ERROR"):
+                txn.status = "failed"
+                txn.raw = vt
+                txn.save()
+            return Response({"detail": f"payout {tstatus.lower() or 'pending'}"}, status=status.HTTP_200_OK)
 
         # 2) Never trust the webhook body alone — verify with Flutterwave directly.
         try:
@@ -184,3 +255,19 @@ class FlutterwaveWebhookView(APIView):
         txn.raw = verified
         txn.save()
         return Response({"detail": "not successful"}, status=status.HTTP_200_OK)
+
+
+class PayoutAccountViewSet(viewsets.ModelViewSet):
+    """A seller manages their own payout destination (one per user)."""
+
+    serializer_class = PayoutAccountSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return PayoutAccount.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        if PayoutAccount.objects.filter(user=self.request.user).exists():
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError("You already have a payout account; update it instead.")
+        serializer.save(user=self.request.user)

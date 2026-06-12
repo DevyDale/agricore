@@ -83,3 +83,34 @@ def verify_transaction(flw_tx_id):
     except requests.RequestException as e:
         raise FlutterwaveError(str(e))
     return _handle(resp)
+
+
+def initiate_transfer(amount, currency, account_bank, account_number,
+                      beneficiary_name, reference, narration="Agricore payout", meta=None):
+    """Send a payout (Transfer). For mobile money use account_bank="MPS" and
+    account_number = the recipient's phone in international format."""
+    payload = {
+        "account_bank": account_bank,
+        "account_number": account_number,
+        "amount": amount,
+        "currency": currency,
+        "beneficiary_name": beneficiary_name,
+        "reference": reference,
+        "narration": narration,
+    }
+    if meta:
+        payload["meta"] = meta
+    try:
+        resp = requests.post(f"{FLW_BASE}/transfers", json=payload, headers=_headers(), timeout=30)
+    except requests.RequestException as e:
+        raise FlutterwaveError(str(e))
+    return _handle(resp)
+
+
+def verify_transfer(transfer_id):
+    """Check a payout's status by its Flutterwave transfer id."""
+    try:
+        resp = requests.get(f"{FLW_BASE}/transfers/{transfer_id}", headers=_headers(), timeout=30)
+    except requests.RequestException as e:
+        raise FlutterwaveError(str(e))
+    return _handle(resp)

@@ -20,3 +20,6 @@ staticfiles/
 .DS_Store
 .idea/
 *.iml
+complete_payments.py
+.pay_complete_backup_*/
+.phase1_backups*/

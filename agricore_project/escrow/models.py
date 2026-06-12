@@ -68,3 +68,31 @@ class PaymentTransaction(models.Model):
 
     def __str__(self):
         return f"{self.kind} {self.tx_ref} ({self.status})"
+
+
+class PayoutAccount(models.Model):
+    """Where a seller receives their money (mobile money or bank)."""
+
+    METHOD_CHOICES = [("momo", "Mobile Money"), ("bank", "Bank")]
+
+    user = models.OneToOneField(
+        CustomUser, on_delete=models.CASCADE, related_name="payout_account"
+    )
+    method = models.CharField(max_length=10, choices=METHOD_CHOICES, default="momo")
+    account_bank = models.CharField(
+        max_length=20, default="MPS",
+        help_text='"MPS" for mobile money, or a bank code for bank payouts',
+    )
+    account_number = models.CharField(
+        max_length=40,
+        help_text="Mobile number (international format) for MoMo, or bank account number",
+    )
+    account_name = models.CharField(max_length=120)
+    network = models.CharField(
+        max_length=20, blank=True, help_text="MTN or AIRTEL (mobile money only)"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Payout for {self.user} ({self.method})"

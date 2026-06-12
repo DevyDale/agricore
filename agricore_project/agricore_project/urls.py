@@ -110,7 +110,7 @@ from logistics.api.views import (
     TransportRequestViewSet,
     TransportBidViewSet,
 )
-from escrow.api.views import EscrowViewSet
+from escrow.api.views import EscrowViewSet, FlutterwaveWebhookView, PayoutAccountViewSet
 from expenses.api.views import (
     ExpenseCategoryViewSet,
     ExpenseViewSet,
@@ -193,6 +193,7 @@ router.register(r'vehicles', VehicleViewSet, basename='vehicle')
 router.register(r'transport-requests', TransportRequestViewSet, basename='transportrequest')
 router.register(r'transport-bids', TransportBidViewSet, basename='transportbid')
 router.register(r'escrows', EscrowViewSet, basename='escrow')
+router.register(r'payout-accounts', PayoutAccountViewSet, basename='payoutaccount')
 
 # Expenses
 router.register(r'expense-categories', ExpenseCategoryViewSet, basename='expensecategory')
@@ -252,6 +253,7 @@ urlpatterns = [
 
     # API routes
     path('api/', include(router.urls)),
+    path('api/payments/flutterwave/webhook/', FlutterwaveWebhookView.as_view(), name='flw_webhook'),
     path('api/', include(farms_router.urls)),
 
     # Dale AI chat

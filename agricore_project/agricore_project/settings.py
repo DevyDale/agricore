@@ -185,3 +185,11 @@ SUPABASE_SERVICE_ROLE_KEY = env('SUPABASE_SERVICE_ROLE_KEY', default='')
 CLOUDINARY_CLOUD_NAME = env('CLOUDINARY_CLOUD_NAME', default='')
 CLOUDINARY_API_KEY = env('CLOUDINARY_API_KEY', default='')
 CLOUDINARY_API_SECRET = env('CLOUDINARY_API_SECRET', default='')
+
+# ==================== FLUTTERWAVE (Payments) ====================
+FLW_PUBLIC_KEY = env('FLW_PUBLIC_KEY', default='')
+FLW_SECRET_KEY = env('FLW_SECRET_KEY', default='')
+FLW_SECRET_HASH = env('FLW_SECRET_HASH', default='')  # same value as the Flutterwave dashboard webhook hash
+DEFAULT_CURRENCY = env('DEFAULT_CURRENCY', default='UGX')
+PLATFORM_FEE_PERCENT = env.float('PLATFORM_FEE_PERCENT', default=2.5)
+PAYMENT_REDIRECT_URL = env('PAYMENT_REDIRECT_URL', default='https://agricore-frontend.vercel.app/payment/callback')
