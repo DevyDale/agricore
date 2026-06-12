@@ -156,6 +156,16 @@ class DaleAIChatView(APIView):
 
         messages = [{'role': 'system', 'content': system_msg}]
 
+        # Ground the assistant in real platform data (prices, buyers, transport, produce).
+        # Wrapped so a data hiccup can never break the chat.
+        try:
+            from .agri_tools import build_grounding
+            grounding = build_grounding(request.user, prompt, context)
+            if grounding:
+                messages.append({'role': 'system', 'content': grounding})
+        except Exception:
+            pass
+
         # Thread a short memory from last 5 logs for this user and page
         recent = (
             AILog.objects.filter(user=request.user, context_type=page or context_type)
