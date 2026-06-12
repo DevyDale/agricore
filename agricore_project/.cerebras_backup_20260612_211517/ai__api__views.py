@@ -4,7 +4,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
 from .gemini_client import GeminiClient
-from .cerebras_client import CerebrasClient
 from rest_framework.parsers import MultiPartParser, FormParser
 import json
 import re
@@ -192,11 +191,11 @@ class DaleAIChatView(APIView):
         # Only use context-only answers for strict fact queries (see above)
         action = None
 
-        client = CerebrasClient(getattr(settings, 'CEREBRAS_API_KEY', ''), getattr(settings, 'CEREBRAS_MODEL', 'gpt-oss-120b'))
+        client = GeminiClient(api_key=getattr(settings, 'GEMINI_API_KEY', ''), model=getattr(settings, 'GEMINI_MODEL', 'gemini-2.0-flash'))
         try:
             completion = client.chat(
                 messages=messages,
-                model=getattr(settings, 'CEREBRAS_MODEL', 'gpt-oss-120b'),
+                model=getattr(settings, 'GEMINI_MODEL', 'gemini-2.0-flash'),
                 temperature=0.2,
                 max_tokens=700,
             )
@@ -213,7 +212,7 @@ class DaleAIChatView(APIView):
             context_id=context_id or 0,
             prompt=prompt,
             response=reply,
-            model=getattr(settings, 'CEREBRAS_MODEL', 'gpt-oss-120b'),
+            model=getattr(settings, 'GEMINI_MODEL', 'gemini-2.0-flash'),
             tokens_used=tokens_used or 0,
         )
 

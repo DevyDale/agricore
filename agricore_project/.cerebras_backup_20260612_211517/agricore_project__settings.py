@@ -172,10 +172,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
  # ==================== KEYS ====================
 OLLAMA_MODEL = env('OLLAMA_MODEL', default='mistral')
 OLLAMA_BASE_URL = env('OLLAMA_BASE_URL', default='http://localhost:11434/v1/chat/completions')
-
-# ==================== CEREBRAS (Dale AI) ====================
-CEREBRAS_API_KEY = env('CEREBRAS_API_KEY', default='')
-CEREBRAS_MODEL = env('CEREBRAS_MODEL', default='gpt-oss-120b')
 GEMINI_API_KEY = env('GEMINI_API_KEY', default='')
 GEMINI_MODEL = env('GEMINI_MODEL', default='gemini-2.0-flash')
 SUPABASE_URL = env('SUPABASE_URL', default='')

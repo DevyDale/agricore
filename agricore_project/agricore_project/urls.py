@@ -90,6 +90,7 @@ from ai.api.views import (
     AILogViewSet,
     AlertViewSet,
     DaleAIChatView,
+    CropDiagnosisView,
 )
 
 from analytics.api.views import (
@@ -255,6 +256,7 @@ urlpatterns = [
 
     # Dale AI chat
     path('api/ai/dale/ask/', DaleAIChatView.as_view(), name='dale_ai_ask'),
+    path('api/ai/diagnose-crop/', CropDiagnosisView.as_view(), name='crop_diagnosis'),
 
     # SPA Routes
     re_path(r'^$', SPAView.as_view()),

@@ -102,3 +102,4 @@ ai_data_aware.py
 seed_market.py
 fast_seed.py
 market_breadth.py
+use_cerebras.py
