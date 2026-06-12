@@ -31,3 +31,6 @@ add_api_docs.py
 fix_api_issues.py
 
 polish_api_docs.py
+
+add_weather.py
+.weather_backup_*/

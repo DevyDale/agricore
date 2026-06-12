@@ -8,6 +8,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_nested.routers import NestedSimpleRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+from weather.api.views import FarmWeatherView
 
 from accounts.api.views import SPAView
 from accounts.views import (
@@ -255,6 +256,9 @@ urlpatterns = [
 
     # Current user (place before router so it doesn't get captured by users/<pk>/)
     path('api/users/me/', CurrentUserView.as_view(), name='current_user'),
+
+    # Weather (per-farm, Open-Meteo)
+    path('api/weather/', FarmWeatherView.as_view(), name='farm-weather'),
 
     # API routes
     path('api/', include(router.urls)),

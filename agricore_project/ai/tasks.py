@@ -39,7 +39,12 @@ def generate_daily_predictions():
     client = _llm()
     created = 0
     for farm in Farm.objects.all():
-        inputs = {"temperature": 25, "rainfall": 10}  # TODO: pull latest EnvironmentalData
+        try:
+            from weather.services import weather_summary_for_ai
+            _w = weather_summary_for_ai(farm)
+            inputs = _w if _w else {"temperature": 25, "rainfall": 10}
+        except Exception:
+            inputs = {"temperature": 25, "rainfall": 10}
         prompt = (
             f"Predict the yield outlook for farm {farm.id} given {inputs}. "
             'Respond ONLY with JSON like {"value": <number>, "unit": "<string>", "summary": "<short string>"}.'

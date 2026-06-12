@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'utils.apps.UtilsConfig',
     'expenses.apps.ExpensesConfig',
     'notifications.apps.NotificationsConfig',
+    'weather.apps.WeatherConfig',
 ]
 
 MIDDLEWARE = [
@@ -218,3 +219,7 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+
+# --- Weather (Open-Meteo) snapshot cache TTL in minutes ---
+WEATHER_CACHE_MINUTES = env.int('WEATHER_CACHE_MINUTES', default=60)
