@@ -103,3 +103,4 @@ seed_market.py
 fast_seed.py
 market_breadth.py
 use_cerebras.py
+fix_tasks.py
