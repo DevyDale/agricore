@@ -1,654 +1,837 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Agricore — Welcome Back</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Agricore Solutions — Welcome Back</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Raleway:wght@400;500;600&family=Poppins:wght@400;500;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet"/>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-oper
-  <style>
-    :root {
-      --bg: #ffffff;
-      --green: #10b981;
-      --emerald: #34d399;
-      --cyan: #06d6a0;
-      --text: #0a1a0f;
-      --muted: #4ade80;
-    }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet"/>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Inter', sans-serif;
+        }
 
-    body {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #e6f4ea 0%, #c7e8d5 100%);
-      color: var(--text);
-      font-family: 'Poppins', sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow-y: auto;
-      position: relative;
-      padding: 60px 20px;
-    }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
 
-    .stars, .particles {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      pointer-events: none;
-      z-index: 0;
-    }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            position: relative;
+            padding: 40px 20px;
+        }
 
-    .star, .particle {
-      position: absolute;
-      background: white;
-      border-radius: 50%;
-      opacity: 0;
-      animation: twinkle linear infinite;
-    }
+        /* Animated background elements */
+        .background-orbs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
 
-    .particle {
-      background: var(--emerald);
-      box-shadow: 0 0 15px var(--cyan);
-    }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.06;
+            animation: float 8s ease-in-out infinite;
+        }
 
-    @keyframes twinkle {
-      0%, 100% { opacity: 0; transform: scale(0.5); }
-      50% { opacity: 0.9; transform: scale(1.3); }
-    }
+        .orb-1 {
+            top: -10%;
+            right: -5%;
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            animation-delay: 0s;
+        }
 
-    .app-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 3rem;
-      font-weight: 700;
-      background: linear-gradient(to right, var(--green), var(--emerald));
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-align: center;
-      margin-bottom: 8px;
-      letter-spacing: 2px;
-      text-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
-      z-index: 20;
-    }
+        .orb-2 {
+            bottom: -15%;
+            left: -10%;
+            width: 800px;
+            height: 800px;
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            animation-delay: 2s;
+        }
 
-    .app-subtitle {
-      font-family: 'Raleway', sans-serif;
-      font-size: 1rem;
-      font-weight: 500;
-      color: #166534;
-      text-align: center;
-      max-width: 600px;
-      line-height: 1.6;
-      margin-bottom: 20px;
-      letter-spacing: 0.5px;
-      z-index: 20;
-    }
+        .orb-3 {
+            top: 30%;
+            left: 20%;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            animation-delay: 4s;
+        }
 
-    .container {
-      position: relative;
-      width: 960px;
-      height: 680px;
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: 32px;
-      overflow: hidden;
-      box-shadow: 0 30px 100px rgba(0,0,0,0.15);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      z-index: 10;
-    }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
 
-    .form-container {
-      position: absolute;
-      top: 0;
-      height: 100%;
-      width: 50%;
-      transition: all 0.6s ease-in-out;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
-    }
+        /* Center wrapper */
+        .center-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 100%;
+            position: relative;
+            z-index: 1;
+        }
 
-    .sign-in-container { left: 0; z-index: 2; }
-    .sign-up-container { left: 0; opacity: 0; z-index: 1; }
+        /* App branding */
+        .app-branding {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
 
-    .container.right-panel-active .sign-in-container { transform: translateX(100%); opacity: 0; }
-    .container.right-panel-active .sign-up-container { transform: translateX(100%); opacity: 1; z-index: 5; }
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    form {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+        .app-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        }
 
-    h2 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.5rem;
-      background: linear-gradient(to right, var(--green), var(--emerald));
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      margin-bottom: 10px;
-    }
+        .app-icon i {
+            font-size: 2rem;
+            color: white;
+        }
 
-    .subtitle {
-      font-size: 1rem;
-      color: #166534;
-      margin-bottom: 20px;
-      text-align: center;
-    }
+        .app-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
 
-    .input-icon-wrapper {
-      position: relative;
-      width: 100%;
-      margin: 16px 0;
-    }
+        .app-subtitle {
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            font-weight: 500;
+            color: #64748b;
+            max-width: 600px;
+            line-height: 1.6;
+        }
 
-    .input-icon-wrapper i {
-      position: absolute;
-      left: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--green);
-      font-size: 1.3rem;
-    }
+        /* Main container */
+        .container {
+            position: relative;
+            width: 960px;
+            max-width: 95vw;
+            height: 600px;
+            max-height: 80vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-radius: clamp(1.5rem, 3vw, 2rem);
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            animation: slideUp 0.8s ease-out 0.2s both;
+        }
 
-    .input-icon-wrapper input {
-      width: 100%;
-      background: rgba(16, 185, 129, 0.08);
-      border: 2px solid transparent;
-      padding: 18px 20px 18px 60px;
-      border-radius: 20px;
-      font-size: 1.1rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    .input-icon-wrapper input:focus {
-      outline: none;
-      border-color: var(--green);
-      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
-    }
+        /* Form containers */
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            overflow-y: auto;
+        }
 
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 20px;
-      background: linear-gradient(to right, var(--green), var(--emerald));
-      color: white;
-      font-size: 1.3rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
-      position: relative;
-    }
+        .sign-in-container { 
+            left: 0; 
+            z-index: 2; 
+        }
+        
+        .sign-up-container { 
+            left: 0; 
+            opacity: 0; 
+            z-index: 1; 
+        }
 
-    button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
-    }
+        .container.right-panel-active .sign-in-container { 
+            transform: translateX(100%); 
+            opacity: 0; 
+        }
+        
+        .container.right-panel-active .sign-up-container { 
+            transform: translateX(100%); 
+            opacity: 1; 
+            z-index: 5; 
+        }
 
-    button.ghost {
-      background: transparent;
-      border: 2px solid white;
-      color: white;
-      margin-top: 20px;
-    }
+        /* Forms */
+        form {
+            width: 100%;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .overlay-container {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      width: 50%;
-      height: 100%;
-      overflow: hidden;
-      transition: transform 0.6s ease-in-out;
-      z-index: 100;
-    }
+        h2 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
 
-    .container.right-panel-active .overlay-container { transform: translateX(-100%); }
+        .subtitle {
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            color: #64748b;
+            margin-bottom: clamp(1.5rem, 3vw, 2rem);
+            text-align: center;
+            font-weight: 500;
+        }
 
-    .overlay {
-      background: linear-gradient(135deg, var(--green), var(--emerald));
-      position: relative;
-      left: -100%;
-      height: 100%;
-      width: 200%;
-      transform: translateX(0);
-      transition: transform 0.6s ease-in-out;
-    }
+        /* Input fields */
+        .input-icon-wrapper {
+            position: relative;
+            width: 100%;
+            margin: clamp(0.5rem, 1.5vw, 0.75rem) 0;
+        }
 
-    .container.right-panel-active .overlay { transform: translateX(50%); }
+        .input-icon-wrapper i {
+            position: absolute;
+            left: clamp(1rem, 2vw, 1.25rem);
+            top: 50%;
+            transform: translateY(-50%);
+            color: #10b981;
+            font-size: clamp(1rem, 2vw, 1.125rem);
+        }
 
-    .overlay-panel {
-      position: absolute;
-      top: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 0 40px;
-      height: 100%;
-      width: 50%;
-      text-align: center;
-      color: white;
-    }
+        .input-icon-wrapper input {
+            width: 100%;
+            background: white;
+            border: 2px solid #e2e8f0;
+            padding: clamp(0.875rem, 2vw, 1rem) clamp(1rem, 2vw, 1.25rem) clamp(0.875rem, 2vw, 1rem) clamp(3rem, 6vw, 3.5rem);
+            border-radius: clamp(0.75rem, 2vw, 1rem);
+            font-size: clamp(0.9375rem, 2vw, 1rem);
+            color: #1e293b;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
 
-    .overlay-left { transform: translateX(-20%); }
-    .container.right-panel-active .overlay-left { transform: translateX(0); }
-    .overlay-right { right: 0; transform: translateX(0); }
-    .container.right-panel-active .overlay-right { transform: translateX(20%); }
+        .input-icon-wrapper input::placeholder {
+            color: #94a3b8;
+        }
 
-    .overlay-panel h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.2rem;
-      margin: 20px 0 10px;
-      font-weight: 700;
-    }
+        .input-icon-wrapper input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
 
-    .overlay-panel p {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      margin-bottom: 30px;
-      opacity: 0.9;
-    }
+        /* Buttons */
+        button {
+            margin-top: clamp(1rem, 2vw, 1.5rem);
+            width: 100%;
+            padding: clamp(0.875rem, 2vw, 1rem);
+            border: none;
+            border-radius: clamp(0.75rem, 2vw, 1rem);
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-size: clamp(1rem, 2vw, 1.125rem);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
 
-    dotlottie-wc {
-      width: 140px;
-      height: 140px;
-      filter: drop-shadow(0 0 40px rgba(255,255,255,0.8));
-    }
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
 
-    .spinner {
-      border: 3px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top: 3px solid white;
-      width: 24px;
-      height: 24px;
-      animation: spin 1s linear infinite;
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
 
-    @keyframes spin { 
-      to { transform: translate(-50%, -50%) rotate(360deg); } 
-    }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
+        }
 
-    button.loading .button-content { opacity: 0; }
-    button.loading .spinner { display: block; }
+        button.ghost {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            box-shadow: none;
+            margin-top: clamp(1rem, 2vw, 1.5rem);
+            font-size: clamp(0.9375rem, 2vw, 1rem);
+            padding: clamp(0.75rem, 1.5vw, 0.875rem);
+        }
 
-    .divider {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      margin: 20px 0;
-      color: #166534;
-      font-size: 0.9rem;
-    }
+        button.ghost:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-    .divider::before,
-    .divider::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid rgba(16, 185, 129, 0.3);
-    }
+        /* Overlay */
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 100;
+        }
 
-    .divider::before {
-      margin-right: 12px;
-    }
+        .container.right-panel-active .overlay-container { 
+            transform: translateX(-100%); 
+        }
 
-    .divider::after {
-      margin-left: 12px;
-    }
+        .overlay {
+            background: linear-gradient(135deg, #10b981, #059669);
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
 
-    .google-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      padding: 16px;
-      margin-top: 0;
-      background: white;
-      border: 2px solid rgba(16, 185, 129, 0.3);
-      border-radius: 20px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      color: var(--text);
-    }
+        .container.right-panel-active .overlay { 
+            transform: translateX(50%); 
+        }
 
-    .google-btn:hover {
-      background: #f8f9fa;
-      border-color: var(--green);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-      transform: translateY(-2px);
-    }
+        .overlay-panel {
+            position: absolute;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 clamp(1.5rem, 4vw, 3rem);
+            height: 100%;
+            width: 50%;
+            text-align: center;
+            color: white;
+        }
 
-    .google-btn img {
-      width: 24px;
-      height: 24px;
-      margin-right: 12px;
-    }
+        .overlay-left { 
+            transform: translateX(-20%); 
+        }
+        
+        .container.right-panel-active .overlay-left { 
+            transform: translateX(0); 
+        }
+        
+        .overlay-right { 
+            right: 0; 
+            transform: translateX(0); 
+        }
+        
+        .container.right-panel-active .overlay-right { 
+            transform: translateX(20%); 
+        }
 
-    #snackbar {
-      visibility: hidden;
-      min-width: 300px;
-      padding: 16px;
-      background: #ef4444;
-      color: white;
-      text-align: center;
-      border-radius: 12px;
-      position: fixed;
-      z-index: 9999;
-      left: 50%;
-      bottom: 30px;
-      transform: translateX(-50%);
-      font-size: 1.1rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      transition: all 0.4s ease;
-      opacity: 0;
-    }
+        .overlay-panel .overlay-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
 
-    #snackbar.show {
-      visibility: visible;
-      opacity: 1;
-    }
+        .overlay-panel .overlay-icon i {
+            font-size: 2.5rem;
+            color: white;
+        }
 
-    #snackbar.success {
-      background: #10b981;
-    }
+        .overlay-panel h1 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
 
-    .fade-out {
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
-  </style>
+        .overlay-panel p {
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            line-height: 1.6;
+            margin-bottom: clamp(1.5rem, 3vw, 2rem);
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin { 
+            to { transform: translate(-50%, -50%) rotate(360deg); } 
+        }
+
+        button.loading .button-content { 
+            opacity: 0; 
+        }
+        
+        button.loading .spinner { 
+            display: block; 
+        }
+
+        /* Snackbar */
+        #snackbar {
+            visibility: hidden;
+            min-width: 280px;
+            max-width: 90vw;
+            padding: clamp(1rem, 2vw, 1.25rem);
+            background: white;
+            color: #1e293b;
+            text-align: center;
+            border-radius: 1rem;
+            position: fixed;
+            z-index: 9999;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: clamp(0.9375rem, 2vw, 1rem);
+            font-weight: 600;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #ef4444;
+            transition: all 0.4s ease;
+            opacity: 0;
+        }
+
+        #snackbar.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        #snackbar.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        /* Fade out */
+        .fade-out {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container {
+                width: 95vw;
+                height: auto;
+                min-height: 550px;
+                max-height: 85vh;
+            }
+            
+            .app-branding {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 20px 10px;
+            }
+            
+            .container {
+                min-height: 500px;
+            }
+            
+            .form-container {
+                padding: 1.25rem;
+            }
+            
+            .app-icon {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .app-icon i {
+                font-size: 1.75rem;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .container {
+                min-height: 480px;
+            }
+            
+            .input-icon-wrapper {
+                margin: 0.5rem 0;
+            }
+        }
+
+        @media (max-width: 400px) {
+            body {
+                padding: 15px 5px;
+            }
+            
+            .container {
+                min-height: 460px;
+                border-radius: 1.25rem;
+            }
+            
+            .app-icon {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .app-icon i {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 10px;
+            }
+            
+            .app-branding {
+                margin-bottom: 0.75rem;
+            }
+            
+            .app-icon {
+                width: 48px;
+                height: 48px;
+                margin-bottom: 0.5rem;
+            }
+            
+            .container {
+                height: 85vh;
+                min-height: 350px;
+            }
+            
+            .input-icon-wrapper {
+                margin: 0.375rem 0;
+            }
+            
+            button {
+                margin-top: 0.75rem;
+                padding: 0.75rem;
+            }
+        }
+
+        @media (min-height: 900px) {
+            .container {
+                max-height: 650px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                width: 1000px;
+                height: 650px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-  <div class="stars" id="stars"></div>
-  <div class="particles" id="particles"></div>
-
-  <div class="app-title">Agricore Dynamics</div>
-  <div class="app-subtitle">Revolutionizing Agriculture with Smart Technology, Seamless Marketplaces, and AI-Powered Growth</div>
-
-  <div id="app">
-    <div class="container" id="container">
-      <!-- Sign Up Panel -->
-      <div class="form-container sign-up-container">
-        <form @submit.prevent="register">
-          <h2>Create Account</h2>
-          <span class="subtitle">Join the agricultural revolution</span>
-          <div class="input-icon-wrapper">
-            <i class="fas fa-user"></i>
-            <input type="text" placeholder="Username" v-model="signup.username" required />
-          </div>
-          <div class="input-icon-wrapper">
-            <i class="fas fa-envelope"></i>
-            <input type="email" placeholder="Email" v-model="signup.email" required />
-          </div>
-          <div class="input-icon-wrapper">
-            <i class="fas fa-lock"></i>
-            <input type="password" placeholder="Password" v-model="signup.password" required />
-          </div>
-          <button type="submit" :class="{ 'loading': isSigningUp }">
-            <span class="button-content">Sign Up</span>
-            <div class="spinner"></div>
-          </button>
-          <div class="divider">OR</div>
-          <button type="button" class="google-btn" @click="handleGoogleSignUp">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
-            Sign up with Google
-          </button>
-        </form>
-      </div>
-
-      <!-- Sign In Panel -->
-      <div class="form-container sign-in-container">
-        <form @submit.prevent="handleLogin">
-          <h2>Welcome Back!</h2>
-          <span class="subtitle">Log in to your farm dashboard</span>
-          <div class="input-icon-wrapper">
-            <i class="fas fa-user"></i>
-            <input type="text" placeholder="Username" v-model="login.username" required />
-          </div>
-          <div class="input-icon-wrapper">
-            <i class="fas fa-lock"></i>
-            <input type="password" placeholder="Password" v-model="login.password" required />
-          </div>
-          <button type="submit" :class="{ 'loading': isLoggingIn }">
-            <span class="button-content">Sign In</span>
-            <div class="spinner"></div>
-          </button>
-          <div class="divider">OR</div>
-          <button type="button" class="google-btn" @click="handleGoogleSignIn">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
-            Sign in with Google
-          </button>
-        </form>
-      </div>
-
-      <!-- Overlay -->
-      <div class="overlay-container">
-        <div class="overlay">
-          <div class="overlay-panel overlay-left">
-            <dotlottie-wc src="https://lottie.host/2c27ca81-5cda-4281-92e8-d4f0407b5cab/doZJqbW664.lottie" autoplay loop></dotlottie-wc>
-            <h1>Welcome Back!</h1>
-            <p>Continue managing your farms, livestock, and marketplace</p>
-            <button class="ghost" id="signIn">Sign In</button>
-          </div>
-          <div class="overlay-panel overlay-right">
-            <dotlottie-wc src="https://lottie.host/2c27ca81-5cda-4281-92e8-d4f0407b5cab/doZJqbW664.lottie" autoplay loop></dotlottie-wc>
-            <h1>Hello There!</h1>
-            <p>Join Agricore and unlock AI-powered farming</p>
-            <button class="ghost" id="signUp">Sign Up</button>
-          </div>
-        </div>
-      </div>
+    <!-- Background orbs -->
+    <div class="background-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
     </div>
-  </div>
 
-  <!-- Snackbar -->
-  <div id="snackbar"></div>
+    <div class="center-wrapper">
+        <!-- App branding -->
+        <div class="app-branding">
+            <div class="app-icon">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <h1 class="app-title">Agricore</h1>
+            <p class="app-subtitle">Smart farming solutions for the modern world</p>
+            <select id="settings-language" class="mt-4 px-3 py-2 rounded border border-gray-200 text-sm font-semibold text-gray-700" style="min-width:120px;">
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+                <option value="pt">Português</option>
+                <option value="sw">Kiswahili</option>
+                <option value="ar">العربية</option>
+            </select>
+        </div>
 
-  <script>
-    // Background particles
-    document.addEventListener('DOMContentLoaded', () => {
-      const stars = document.getElementById('stars');
-      const particles = document.getElementById('particles');
-      for (let i = 0; i < 120; i++) {
-        const el = document.createElement('div');
-        el.className = i < 80 ? 'star' : 'particle';
-        el.style.width = el.style.height = (Math.random() * 3 + 2) + 'px';
-        el.style.top = Math.random() * 100 + '%';
-        el.style.left = Math.random() * 100 + '%';
-        el.style.animationDelay = Math.random() * 6 + 's';
-        el.style.animationDuration = (Math.random() * 4 + 3) + 's';
-        (i < 80 ? stars : particles).appendChild(el);
-      }
+        <div id="app">
+            <div class="container" id="container">
+                <!-- Sign Up Panel -->
+                <div class="form-container sign-up-container">
+                    <form @submit.prevent="register">
+                        <h2>Create Account</h2>
+                        <span class="subtitle">Join the agricultural revolution</span>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" placeholder="Username" v-model="signup.username" required />
+                        </div>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" placeholder="Email" v-model="signup.email" required />
+                        </div>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" placeholder="Password" v-model="signup.password" required />
+                        </div>
+                        <button type="submit" :class="{ 'loading': isSigningUp }">
+                            <span class="button-content">Sign Up</span>
+                            <div class="spinner"></div>
+                        </button>
+                    </form>
+                </div>
 
-      // Initialize Vue app
-      const { createApp } = Vue;
+                <!-- Sign In Panel -->
+                <div class="form-container sign-in-container">
+                    <form @submit.prevent="handleLogin">
+                        <h2>Welcome Back</h2>
+                        <span class="subtitle">Log in to your farm dashboard</span>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" placeholder="Username" v-model="login.username" required />
+                        </div>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" placeholder="Password" v-model="login.password" required />
+                        </div>
+                        <button type="submit" :class="{ 'loading': isLoggingIn }">
+                            <span class="button-content">Sign In</span>
+                            <div class="spinner"></div>
+                        </button>
+                    </form>
+                </div>
 
-      const app = createApp({
-        data() {
-          return {
-            signup: { username: '', email: '', password: '' },
-            login: { username: '', password: '' },
-            isSigningUp: false,
-            isLoggingIn: false,
-            googleClientId: ''
-          }
-        },
-        mounted() {
-          this.initializeGoogleSignIn();
-        },
-        methods: {
-          showToast(msg, success = false) {
-            const snackbar = document.getElementById('snackbar');
-            snackbar.textContent = msg;
-            snackbar.className = success ? 'show success' : 'show';
-            setTimeout(() => {
-              snackbar.className = '';
-            }, 4000);
-          },
+                <!-- Overlay -->
+                <div class="overlay-container">
+                    <div class="overlay">
+                        <div class="overlay-panel overlay-left">
+                            <div class="overlay-icon">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <h1>Hello, Friend!</h1>
+                            <p>Enter your details and start your journey with us</p>
+                            <button class="ghost" id="signIn">Sign In</button>
+                        </div>
+                        <div class="overlay-panel overlay-right">
+                            <div class="overlay-icon">
+                                <i class="fas fa-tractor"></i>
+                            </div>
+                            <h1>Welcome Back!</h1>
+                            <p>To keep connected with us please login with your personal info</p>
+                            <button class="ghost" id="signUp">Sign Up</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-          async register() {
-            this.isSigningUp = true;
-            try {
-              // Create user account
-              await axios.post('http://127.0.0.1:8000/api/users/', {
-                username: this.signup.username,
-                email: this.signup.email,
-                password: this.signup.password
-              });
+    <!-- Snackbar -->
+    <div id="snackbar"></div>
 
-              // Get authentication tokens
-              const tokenResponse = await axios.post('http://127.0.0.1:8000/api/auth/token/', {
-                username: this.signup.username,
-                password: this.signup.password
-              });
+    <script>
+                // Language selector logic for authentication
+                document.addEventListener('DOMContentLoaded', function() {
+                    const languageSelect = document.getElementById('settings-language');
+                    if (languageSelect) {
+                        // Set initial value from localStorage
+                        const lang = localStorage.getItem('preferred_language') || 'en';
+                        languageSelect.value = lang;
+                        languageSelect.addEventListener('change', function() {
+                            localStorage.setItem('preferred_language', this.value);
+                            location.reload();
+                        });
+                    }
+                });
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Vue app
+            const { createApp } = Vue;
 
-              localStorage.setItem('access_token', tokenResponse.data.access);
-              localStorage.setItem('refresh_token', tokenResponse.data.refresh);
+            const app = createApp({
+                data() {
+                    return {
+                        signup: { username: '', email: '', password: '' },
+                        login: { username: '', password: '' },
+                        isSigningUp: false,
+                        isLoggingIn: false
+                    }
+                },
+                methods: {
+                    showToast(msg, success = false) {
+                        const snackbar = document.getElementById('snackbar');
+                        snackbar.textContent = msg;
+                        snackbar.className = success ? 'show success' : 'show';
+                        setTimeout(() => {
+                            snackbar.className = '';
+                        }, 4000);
+                    },
 
-              this.showToast('Account created successfully!', true);
+                    async register() {
+                        this.isSigningUp = true;
+                        try {
+                            // Create user account
+                            await axios.post('http://127.0.0.1:8000/api/users/', {
+                                username: this.signup.username,
+                                email: this.signup.email,
+                                password: this.signup.password
+                            });
 
-              const container = document.getElementById('container');
-              container.classList.add('fade-out');
-              setTimeout(() => {
-                window.location.href = 'multi_farm.html';
-              }, 800);
+                            // Get authentication tokens
+                            const tokenResponse = await axios.post('http://127.0.0.1:8000/api/auth/token/', {
+                                username: this.signup.username,
+                                password: this.signup.password
+                            });
 
-            } catch (error) {
-              console.error('Registration error:', error);
-              const errorMessage = error.response?.data
-                ? Object.values(error.response.data).flat().join(', ')
-                : 'Registration failed. Try another username/email.';
-              this.showToast(errorMessage);
-            } finally {
-              this.isSigningUp = false;
-            }
-          },
+                            localStorage.setItem('access_token', tokenResponse.data.access);
+                            localStorage.setItem('refresh_token', tokenResponse.data.refresh);
 
-          async handleLogin() {
-            console.log('Login handler called');
-            console.log('Login credentials:', this.login);
+                            this.showToast('Account created successfully!', true);
+
+                            const container = document.getElementById('container');
+                            container.classList.add('fade-out');
+                            setTimeout(() => {
+                                window.location.href = 'multi_farm.html';
+                            }, 800);
+
+                        } catch (error) {
+                            console.error('Registration error:', error);
+                            const errorMessage = error.response?.data
+                                ? Object.values(error.response.data).flat().join(', ')
+                                : 'Registration failed. Try another username/email.';
+                            this.showToast(errorMessage);
+                        } finally {
+                            this.isSigningUp = false;
+                        }
+                    },
+
+                    async handleLogin() {
+                        console.log('Login handler called');
+                        console.log('Login credentials:', this.login);
+                        
+                        if (!this.login.username || !this.login.password) {
+                            this.showToast('Please enter username and password');
+                            return;
+                        }
+
+                        this.isLoggingIn = true;
+
+                        try {
+                            console.log('Sending login request...');
+                            const response = await axios.post('http://127.0.0.1:8000/api/auth/token/', {
+                                username: this.login.username,
+                                password: this.login.password
+                            });
+
+                            console.log('Login response:', response);
+
+                            localStorage.setItem('access_token', response.data.access);
+                            localStorage.setItem('refresh_token', response.data.refresh);
+
+                            this.showToast('Welcome back!', true);
+
+                            const container = document.getElementById('container');
+                            container.classList.add('fade-out');
+                            setTimeout(() => {
+                                window.location.href = 'multi_farm.html';
+                            }, 800);
+
+                        } catch (error) {
+                            console.error('Login error:', error);
+                            const errorMessage = error.response?.data?.detail || 'Invalid username or password';
+                            this.showToast(errorMessage);
+                        } finally {
+                            this.isLoggingIn = false;
+                        }
+                    }
+                }
+            });
             
-            if (!this.login.username || !this.login.password) {
-              this.showToast('Please enter username and password');
-              return;
-            }
+            app.mount('#app');
 
-            this.isLoggingIn = true;
-
-            try {
-              console.log('Sending login request...');
-              const response = await axios.post('http://127.0.0.1:8000/api/auth/token/', {
-                username: this.login.username,
-                password: this.login.password
-              });
-
-              console.log('Login response:', response);
-
-              localStorage.setItem('access_token', response.data.access);
-              localStorage.setItem('refresh_token', response.data.refresh);
-
-              this.showToast('Welcome back!', true);
-
-              const container = document.getElementById('container');
-              container.classList.add('fade-out');
-              setTimeout(() => {
-                window.location.href = 'multi_farm.html';
-              }, 800);
-
-            } catch (error) {
-              console.error('Login error:', error);
-              const errorMessage = error.response?.data?.detail || 'Invalid username or password';
-              this.showToast(errorMessage);
-            } finally {
-              this.isLoggingIn = false;
-            }
-          },
-
-          initializeGoogleSignIn() {
-            // Initialize Google Sign-In
-            if (window.google) {
-              window.google.accounts.id.initialize({
-                client_id: '488596909366-vd5s2k861kn6g1v8e8f3u81eig3h2q2c.apps.googleusercontent.com',
-                callback: this.handleGoogleCredentialResponse
-              });
-            }
-          },
-
-          handleGoogleSignIn() {
-            if (window.google) {
-              window.google.accounts.id.prompt();
-            } else {
-              this.showToast('Google Sign-In not loaded. Please refresh.');
-            }
-          },
-
-          handleGoogleSignUp() {
-            if (window.google) {
-              window.google.accounts.id.prompt();
-            } else {
-              this.showToast('Google Sign-In not loaded. Please refresh.');
-            }
-          },
-
-          async handleGoogleCredentialResponse(response) {
-            try {
-              // Send the Google ID token to your backend
-              const result = await axios.post('http://127.0.0.1:8000/api/auth/google/', {
-                token: response.credential
-              });
-
-              localStorage.setItem('access_token', result.data.access);
-              localStorage.setItem('refresh_token', result.data.refresh);
-
-              this.showToast('Welcome!', true);
-
-              const container = document.getElementById('container');
-              container.classList.add('fade-out');
-              setTimeout(() => {
-                window.location.href = 'multi_farm.html';
-              }, 800);
-
-            } catch (error) {
-              console.error('Google auth error:', error);
-              const errorMessage = error.response?.data?.detail || 'Google authentication failed';
-              this.showToast(errorMessage);
-            }
-          }
-        }
-      });
-
-      app.mount('#app');
-
-      // Panel switching
-      document.getElementById('signUp').onclick = () => 
-        document.getElementById('container').classList.add('right-panel-active');
-      document.getElementById('signIn').onclick = () => 
-        document.getElementById('container').classList.remove('right-panel-active');
-    });
-  </script>
+            // Panel switching
+            document.getElementById('signUp').onclick = () => 
+                document.getElementById('container').classList.add('right-panel-active');
+            document.getElementById('signIn').onclick = () => 
+                document.getElementById('container').classList.remove('right-panel-active');
+        });
+    </script>
 </body>
 </html>

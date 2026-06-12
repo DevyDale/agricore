@@ -1,26 +1,97 @@
+
 from django.db import models
 from farms.models import Field
 from workforce.models import Employee
 from accounts.models import Attachment
 
+# --- Unified Event and Production Models ---
+
+class LivestockEvent(models.Model):
+    EVENT_TYPE_CHOICES = [
+        ("health", "Health Event"),
+        ("breeding", "Breeding Event"),
+        ("movement", "Movement"),
+        ("mortality", "Mortality"),
+        ("treatment", "Treatment"),
+        ("inspection", "Inspection"),
+        ("feeding", "Feeding"),
+        ("harvest", "Harvest"),
+        ("other", "Other"),
+    ]
+    livestock_unit = models.ForeignKey('LivestockUnit', on_delete=models.CASCADE)
+    event_type = models.CharField(max_length=30, choices=EVENT_TYPE_CHOICES)
+    event_date = models.DateField()
+    description = models.TextField(blank=True)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.get_event_type_display()} for {self.livestock_unit} on {self.event_date}"
+
+class ProductionRecord(models.Model):
+    livestock_unit = models.ForeignKey('LivestockUnit', on_delete=models.CASCADE, related_name='livestock_production_records')
+    product_name = models.CharField(max_length=100)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    unit = models.CharField(max_length=20)
+    record_date = models.DateField()
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.quantity} {self.unit} {self.product_name} from {self.livestock_unit} on {self.record_date}"
+
 class LivestockUnit(models.Model):
-    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    UNIT_TYPE_CHOICES = [
+        ("individual", "Individual Animal"),
+        ("herd", "Herd"),
+        ("batch", "Batch/Stock"),
+        ("colony", "Colony/Hive"),
+        ("population", "Population/Culture"),
+    ]
+    field = models.ForeignKey(Field, on_delete=models.CASCADE, blank=True, null=True)
     unit_name = models.CharField(max_length=255)
-    animal_type = models.CharField(max_length=50)
-    quantity = models.IntegerField()
-    breed = models.CharField(max_length=255)
+    unit_type = models.CharField(max_length=20, choices=UNIT_TYPE_CHOICES, blank=True, null=True)
+    species = models.CharField(max_length=100, blank=True, null=True)
+    breed = models.CharField(max_length=255, blank=True)
+    quantity = models.IntegerField(blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True)
+    # Batch/Colony/Population specific fields
+    installation_date = models.DateField(blank=True, null=True)  # For hives, batches, etc.
+    housing = models.CharField(max_length=100, blank=True)  # Coop, pen, pond, etc.
+    queen_status = models.CharField(max_length=50, blank=True)  # For bees
+    average_weight = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)  # For herds
+    from django.contrib.postgres.fields import ArrayField
+    purpose = ArrayField(
+        models.CharField(max_length=100, blank=True),
+        blank=True,
+        default=list,
+        help_text='List of purposes, e.g. ["meat", "milk"]'
+    )
+    sub_units = models.JSONField(blank=True, null=True, help_text='List of sub-units with count, age_range, stage, etc.')
+    # --- Produce fields ---
+    produce_type = models.CharField(max_length=100, blank=True, null=True, help_text='Type of produce, e.g. Milk, Eggs, Honey')
+    produce_frequency = models.CharField(max_length=20, blank=True, null=True, help_text='Frequency: Per Day, Per Week, etc.')
+    produce_quantity = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, help_text='Quantity per frequency')
+    produce_unit = models.CharField(max_length=20, blank=True, null=True, help_text='Unit, e.g. liters, kg, pieces')
     additional_notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.unit_name} ({self.get_unit_type_display()})"
+
 class Animal(models.Model):
-    livestock_unit = models.ForeignKey(LivestockUnit, on_delete=models.CASCADE)
+    """
+    Only used for unit_type = 'individual'.
+    """
+    livestock_unit = models.ForeignKey(LivestockUnit, on_delete=models.CASCADE, limit_choices_to={"unit_type": "individual"})
     tag_id = models.CharField(max_length=50)
     name = models.CharField(max_length=255, blank=True)
     sex = models.CharField(max_length=10)
-    age_group = models.CharField(max_length=20)
+    age_group = models.CharField(max_length=20, blank=True)
     dob = models.DateField(blank=True, null=True)
-    breed = models.CharField(max_length=255)
+    breed = models.CharField(max_length=255, blank=True)
     status = models.CharField(max_length=50)
     health_score = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     father = models.ForeignKey('self', related_name='father_children', on_delete=models.SET_NULL, null=True, blank=True)
@@ -29,6 +100,9 @@ class Animal(models.Model):
     additional_notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.tag_id} ({self.name})"
 
 class AnimalReproductiveRecord(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE)

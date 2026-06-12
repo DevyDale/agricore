@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-5xl mx-auto p-8">
+  <h1 class="text-3xl font-bold text-blue-700 mb-6">Farm Finances</h1>
+  {% if finances %}
+    <table class="min-w-full bg-white rounded-xl shadow">
+      <thead>
+        <tr>
+          <th class="py-3 px-4 text-left">Type</th>
+          <th class="py-3 px-4 text-left">Category</th>
+          <th class="py-3 px-4 text-left">Amount</th>
+          <th class="py-3 px-4 text-left">Currency</th>
+          <th class="py-3 px-4 text-left">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for finance in finances %}
+        <tr class="border-b">
+          <td class="py-2 px-4">{{ finance.type }}</td>
+          <td class="py-2 px-4">{{ finance.category }}</td>
+          <td class="py-2 px-4">{{ finance.amount }}</td>
+          <td class="py-2 px-4">{{ finance.currency }}</td>
+          <td class="py-2 px-4">{{ finance.date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="text-center py-16 text-gray-500 text-lg">
+      <i class="fas fa-box-open text-4xl text-blue-400 mb-4"></i>
+      <p>No finance records found.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

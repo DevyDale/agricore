@@ -1,6 +1,7 @@
 from django.db import models
+from django.utils import timezone
 from farms.models import Farm
-from crops.models import Crop
+## from crops.models import Crop  # Removed: Crop model deprecated
 from accounts.models import CustomUser
 
 # 🚨 IMPORTANT: If the SpecializedProfessional model is defined anywhere in this file (ai/models.py), 
@@ -16,17 +17,16 @@ class AILog(models.Model):
     tokens_used = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
-class Prediction(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, null=True, blank=True)
-    crop = models.ForeignKey(Crop, on_delete=models.CASCADE, null=True, blank=True)
+    # crop = models.ForeignKey(Crop, on_delete=models.CASCADE, null=True, blank=True)  # Removed
     livestock_unit = models.ForeignKey('livestock.LivestockUnit', on_delete=models.CASCADE, null=True, blank=True)
     animal = models.ForeignKey('livestock.Animal', on_delete=models.CASCADE, null=True, blank=True)
-    prediction_type = models.CharField(max_length=50)
+    prediction_type = models.CharField(max_length=50, default="")
     inputs = models.JSONField(default=dict)
     result = models.JSONField(default=dict)
-    confidence = models.DecimalField(max_digits=5, decimal_places=2)
-    explanation = models.TextField()
-    generated_at = models.DateTimeField(auto_now_add=True)
+    confidence = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    explanation = models.TextField(default="")
+    generated_at = models.DateTimeField(default=timezone.now)
 
 class Alert(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)

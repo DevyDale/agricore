@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h1>Farm Dashboard</h1>
+  <hr>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Farms</h5>
+          <p class="card-text">Manage your farm profiles and fields.</p>
+          <a href="{% url 'farms:list' %}" class="btn btn-primary">View Farms</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Livestock</h5>
+          <p class="card-text">Track and manage livestock units and animals.</p>
+          <a href="{% url 'livestock:list' %}" class="btn btn-primary">View Livestock</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Crops</h5>
+          <p class="card-text">Monitor crop fields, tasks, and yields.</p>
+          <a href="{% url 'crops:list' %}" class="btn btn-primary">View Crops</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Expenses</h5>
+          <p class="card-text">Log and review all farm expenses.</p>
+          <a href="{% url 'analytics:expense_list' %}" class="btn btn-primary">View Expenses</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Sales</h5>
+          <p class="card-text">Track produce and livestock sales.</p>
+          <a href="{% url 'analytics:sale_list' %}" class="btn btn-primary">View Sales</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Activity Logs</h5>
+          <p class="card-text">See all actions and changes for transparency.</p>
+          <a href="{% url 'analytics:activity_log_list' %}" class="btn btn-primary">View Activity Logs</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

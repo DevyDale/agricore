@@ -1,0 +1,1056 @@
+            <!-- Add Portion Dialog -->
+            <div id="add-portion-dialog" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
+                <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative">
+                    <button id="close-add-portion-dialog" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+                    <h3 class="text-2xl font-extrabold text-emerald-700 mb-4 flex items-center gap-2"><i class="fas fa-plus-circle"></i> Add Land Portion</h3>
+                                        <div class="text-sm text-gray-500 mb-2" style="margin-top:-1rem; margin-bottom:1.5rem;">(Max: <span id="portion-size-max-top"></span>)</div>
+                    <form id="add-portion-form">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="form-label" for="portion-name"><i class="fas fa-tag"></i> Portion Name</label>
+                                <input type="text" id="portion-name" name="portion_name" class="input-field" placeholder="e.g., North Field, Plot A" required>
+                            </div>
+                            <div>
+                                <label class="form-label" for="portion-size"><i class="fas fa-ruler-combined"></i> Portion Size</label>
+                                <input type="number" step="0.01" min="0.01" id="portion-size" name="portion_size" class="input-field" placeholder="e.g., 2.5" required>
+                                <span id="portion-size-unit" class="ml-2 text-gray-500"></span>
+                                <!-- Max info moved to top -->
+                            </div>
+                            <div>
+                                <label class="form-label" for="soil-type"><i class="fas fa-mountain"></i> Soil Type</label>
+                                <select id="soil-type" name="soil_type" class="input-field" required>
+                                    <option value="">Select soil type</option>
+                                    <option value="Loam">Loam</option>
+                                    <option value="Clay">Clay</option>
+                                    <option value="Sandy">Sandy</option>
+                                    <option value="Silty">Silty</option>
+                                    <option value="Peaty">Peaty</option>
+                                    <option value="Chalky">Chalky</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label" for="current-use"><i class="fas fa-user"></i> Current Use</label>
+                                <select id="current-use" name="current_use" class="input-field" required></select>
+                            </div>
+                            <!-- Current User field removed as requested -->
+                            <div>
+                                <label class="form-label" for="portion-status"><i class="fas fa-circle"></i> Status</label>
+                                <select id="portion-status" name="status" class="input-field" required></select>
+                            </div>
+                            <div>
+                                <label class="form-label" for="portion-actions"><i class="fas fa-tasks"></i> Actions Pending</label>
+                                <input type="text" id="portion-actions" name="actions" class="input-field" placeholder="e.g., Ploughing, Irrigation">
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-6">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save"></i> Save Portion
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+{% extends 'dashboard/base.html' %}
+{% block dashboard_content %}
+<style>
+    * {
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Header section with green theme */
+    .page-header {
+        background: linear-gradient(135deg, #10b981, #059669);
+        border-radius: 1.5rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+    }
+
+    .header-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .header-btn {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        color: white;
+        font-weight: 700;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.875rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .header-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+    }
+
+    /* Quick statistics cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #f1f5f9;
+        border-radius: 1.25rem;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.12);
+        border-color: #10b981;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.8125rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* View mode section */
+    .view-mode-section {
+        background: white;
+        border-radius: 1.25rem;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        border: 1px solid #f1f5f9;
+    }
+
+    .view-toggle {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .view-btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 2px solid #e2e8f0;
+        background: white;
+        color: #64748b;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .view-btn.active {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+    }
+
+    .view-btn:hover:not(.active) {
+        border-color: #cbd5e1;
+        background: #f8fafc;
+    }
+
+    /* Land details section */
+    .land-details-section {
+        background: white;
+        border-radius: 1.25rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        border: 1px solid #f1f5f9;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-title i {
+        color: #10b981;
+    }
+
+    .collapse-btn {
+        background: #f1f5f9;
+        color: #64748b;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .collapse-btn:hover {
+        background: #e2e8f0;
+    }
+
+    /* Form inputs */
+    .input-field {
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        color: #1e293b;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.9375rem;
+        transition: all 0.2s;
+        font-weight: 500;
+        width: 100%;
+    }
+
+    .input-field:focus {
+        outline: none;
+        border-color: #10b981;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .form-label i {
+        color: #10b981;
+        margin-right: 0.5rem;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        font-weight: 700;
+        padding: 0.875rem 1.75rem;
+        border-radius: 0.875rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Table styles */
+    .table-container {
+        background: white;
+        border-radius: 1.25rem;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        border: 1px solid #f1f5f9;
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    }
+
+    .data-table th {
+        padding: 1rem 1.25rem;
+        text-align: left;
+        font-weight: 700;
+        font-size: 0.8125rem;
+        color: #166534;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+    }
+
+    .data-table tbody tr {
+        border-top: 1px solid #f1f5f9;
+        transition: all 0.2s;
+    }
+
+    .data-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .data-table td {
+        padding: 1rem 1.25rem;
+        color: #475569;
+        font-weight: 500;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.375rem 0.875rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+
+    .badge-success {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .badge-warning {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .badge-info {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .action-btn {
+        padding: 0.5rem 0.875rem;
+        border-radius: 0.5rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+
+    .action-btn-view {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .action-btn-edit {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .action-btn-delete {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .action-btn:hover {
+        opacity: 0.8;
+        transform: translateY(-1px);
+    }
+
+
+    /* Error message */
+    .error-message {
+        background: #fee2e2;
+        border-left: 4px solid #ef4444;
+        color: #b91c1c;
+        padding: 1rem 1.5rem;
+        border-radius: 0.875rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .page-header {
+            padding: 1.5rem;
+        }
+
+        .header-actions {
+            flex-direction: column;
+        }
+
+        .header-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .view-toggle {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .view-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+    }
+</style>
+
+
+<!-- 1. GREEN HEADER BAR -->
+<div class="page-header">
+            <div class="mb-4">
+                <div class="flex items-center justify-between w-full">
+                    <h1 class="text-3xl md:text-4xl font-black text-white mb-1 flex items-center gap-2">
+                        <i class="fas fa-layer-group mr-2"></i>Land Management
+                        <span id="farm-title-brackets" class="text-emerald-100 font-bold text-lg"></span>
+                    </h1>
+                    <button id="open-farm-details-btn" class="flex items-center gap-2 text-base px-4 py-2 border-2 border-emerald-600 bg-white text-emerald-700 font-bold rounded-lg shadow hover:bg-emerald-50 transition">
+                        <i class="fas fa-info-circle"></i> Farm Details
+                    </button>
+                </div>
+                <p class="text-emerald-100 font-medium">Manage and organize your farm's land portions</p>
+            </div>
+            <!-- Farm Size Only Bar -->
+            <div id="farm-details-bar" class="bg-emerald-50/60 rounded-xl px-6 py-3 mb-4 flex items-center gap-4 border border-emerald-200 w-full max-w-xl">
+                <span class="font-bold text-emerald-900 text-lg flex items-center gap-2">
+                    <i class="fas fa-ruler-combined"></i> Farm Size:
+                </span>
+                <span id="farm-details-size" class="text-gray-800 text-lg">0 ha</span>
+            </div>
+            <!-- Farm Details Dialog -->
+            <div id="farm-details-dialog" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
+                <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative">
+                    <button id="close-farm-details-dialog" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+                    <h3 class="text-2xl font-extrabold text-emerald-700 mb-4 flex items-center gap-2"><i class="fas fa-tractor"></i> Farm Details</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-emerald-900"><i class="fas fa-tractor"></i> Name:</span>
+                            <span id="dialog-farm-name" class="text-gray-800">Farm Name</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-emerald-900"><i class="fas fa-flag"></i> Country:</span>
+                            <span id="dialog-farm-country" class="text-gray-800">Country</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-emerald-900"><i class="fas fa-city"></i> City:</span>
+                            <span id="dialog-farm-city" class="text-gray-800">City</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Analytics -->
+        <div class="mb-2">
+            <h2 class="text-xl md:text-2xl font-extrabold text-emerald-800 mb-3 flex items-center gap-2">
+                <i class="fas fa-bolt text-emerald-500"></i> Quick Analytics
+            </h2>
+        </div>
+        <div class="w-full flex flex-col md:flex-row gap-4 mb-8 mt-2">
+            <div class="flex-1 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-2xl shadow-lg p-6 flex flex-col items-center border-2 border-emerald-200 hover:shadow-emerald-200 transition">
+                <div class="text-4xl font-extrabold text-emerald-700 mb-1" id="total-area">0 ha</div>
+                <div class="uppercase text-xs font-bold tracking-wider text-emerald-800 mb-1">Total Land Portions Area</div>
+                <i class="fas fa-chart-area text-emerald-400 text-2xl"></i>
+            </div>
+            <div class="flex-1 bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl shadow-lg p-6 flex flex-col items-center border-2 border-blue-200 hover:shadow-blue-200 transition">
+                <div class="text-4xl font-extrabold text-blue-700 mb-1" id="portion-count">0</div>
+                <div class="uppercase text-xs font-bold tracking-wider text-blue-800 mb-1">Land Portions</div>
+                <i class="fas fa-th-large text-blue-400 text-2xl"></i>
+            </div>
+            <div class="flex-1 bg-gradient-to-br from-purple-100 to-purple-50 rounded-2xl shadow-lg p-6 flex flex-col items-center border-2 border-purple-200 hover:shadow-purple-200 transition">
+                <div class="text-4xl font-extrabold text-purple-700 mb-1" id="used-area">0 ha</div>
+                <div class="uppercase text-xs font-bold tracking-wider text-purple-800 mb-1">Used Land</div>
+                <i class="fas fa-check-circle text-purple-400 text-2xl"></i>
+            </div>
+            <div class="flex-1 bg-gradient-to-br from-orange-100 to-orange-50 rounded-2xl shadow-lg p-6 flex flex-col items-center border-2 border-orange-200 hover:shadow-orange-200 transition">
+                <div class="text-4xl font-extrabold text-orange-700 mb-1" id="utilization">0%</div>
+                <div class="uppercase text-xs font-bold tracking-wider text-orange-800 mb-1">Utilization Rate</div>
+                <i class="fas fa-percentage text-orange-400 text-2xl"></i>
+            </div>
+        </div>
+
+        <!-- Land Size Breakdown Section -->
+        <div class="mb-8">
+            <h2 class="text-xl md:text-2xl font-extrabold text-emerald-800 mb-3 flex items-center gap-2">
+                <i class="fas fa-layer-group text-emerald-500"></i> Land Size Breakdown
+            </h2>
+            <div class="flex gap-3 mb-4">
+                <!-- List View and Add Land Details buttons removed as requested -->
+            </div>
+            <div id="breakdown-list-section">
+                <!-- Existing land portions table/list goes here -->
+                <div class="table-container">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-th-list"></i>
+                            Land Portions
+                        </h2>
+                        <button class="btn-primary" id="add-portion-btn">
+                            <i class="fas fa-plus"></i>
+                            Add Portion
+                        </button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-tag mr-2"></i>Name</th>
+                                <th><i class="fas fa-ruler mr-2"></i>Size</th>
+                                <th><i class="fas fa-mountain mr-2"></i>Type</th>
+                                <th><i class="fas fa-seedling mr-2"></i>Current Use</th>
+                                <th><i class="fas fa-circle mr-2"></i>Status</th>
+                                <th><i class="fas fa-cog mr-2"></i>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="land-portions-tbody">
+                            <tr>
+                                <td colspan="6" class="text-center text-gray-500 py-8">
+                                    <i class="fas fa-inbox text-4xl mb-2 block text-gray-300"></i>
+                                    No land portions added yet. Click "Add Portion" to get started.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Dialog for Land Details -->
+        <div id="land-details-dialog" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg relative">
+                <button id="close-land-details-dialog" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+                <h3 class="text-2xl font-extrabold text-emerald-700 mb-4 flex items-center gap-2"><i class="fas fa-plus-circle"></i> Add Land Details</h3>
+                <form id="custom-land-details-form">
+                    <!-- Insert the same questions/fields as the current land details section here -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="form-label" for="dialog-land-location"><i class="fas fa-map-marker-alt"></i>Location</label>
+                            <input type="text" id="dialog-land-location" name="location" class="input-field" placeholder="Village, District, GPS coordinates">
+                        </div>
+                        <div>
+                            <label class="form-label" for="dialog-land-area"><i class="fas fa-ruler-combined"></i>Total Area (ha)</label>
+                            <input type="number" step="0.01" id="dialog-land-area" name="area" class="input-field" placeholder="e.g., 10.5">
+                        </div>
+                        <div>
+                            <label class="form-label" for="dialog-land-soil"><i class="fas fa-mountain"></i>Soil Type</label>
+                            <input type="text" id="dialog-land-soil" name="soil_type" class="input-field" placeholder="Loam, Clay, Sandy, etc.">
+                        </div>
+                        <div>
+                            <label class="form-label" for="dialog-land-irrigation"><i class="fas fa-tint"></i>Irrigation System</label>
+                            <input type="text" id="dialog-land-irrigation" name="irrigation" class="input-field" placeholder="Rainfed, Drip, Canal, etc.">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="form-label" for="dialog-land-boundaries"><i class="fas fa-border-style"></i>Boundaries Description</label>
+                            <input type="text" id="dialog-land-boundaries" name="boundaries" class="input-field" placeholder="Describe boundaries or upload map">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="form-label" for="dialog-land-notes"><i class="fas fa-sticky-note"></i>Additional Notes</label>
+                            <textarea id="dialog-land-notes" name="notes" class="input-field" rows="3" placeholder="Any special characteristics, remarks, or observations"></textarea>
+                        </div>
+                    </div>
+                    <div class="flex justify-end mt-6">
+                        <button type="button" id="save-land-details-btn" class="btn-primary">
+                            <i class="fas fa-save"></i> Save Land Details
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Land details section at the bottom removed as requested -->
+
+
+        <!-- Land portions section at the bottom removed as requested -->
+
+
+<script>
+
+// Land Portions State and Logic (now persistent)
+let landPortions = [];
+const addPortionBtn = document.getElementById('add-portion-btn');
+const closeAddPortionDialogBtn = document.getElementById('close-add-portion-dialog');
+const addPortionDialog = document.getElementById('add-portion-dialog');
+const addPortionForm = document.getElementById('add-portion-form');
+const landPortionsTbody = document.getElementById('land-portions-tbody');
+
+// Fetch land portions from backend on page load
+async function fetchLandPortions() {
+    let farmId = new URLSearchParams(window.location.search).get('id');
+    if (!farmId) return;
+    const token = localStorage.getItem('access_token');
+    try {
+        const res = await fetch(`/api/fields/?farm=${farmId}`, {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        if (!res.ok) throw new Error('Failed to fetch land portions');
+        const data = await res.json();
+        landPortions = Array.isArray(data) ? data : (data.results || []);
+        renderLandPortionsTable();
+    } catch (e) {
+        landPortions = [];
+        renderLandPortionsTable();
+    }
+}
+
+function getFarmMaxSize() {
+    const farmSizeText = document.getElementById('farm-details-size').textContent;
+    const match = farmSizeText.match(/([\d.]+)/);
+    return match ? parseFloat(match[1]) : 0;
+}
+
+function getFarmUnit() {
+    // Dynamically return the unit from the farm details
+    const farmSizeText = document.getElementById('farm-details-size').textContent;
+    const match = farmSizeText.match(/[\d.]+\s*(\w+)/);
+    return match ? match[1] : '';
+}
+
+function getTotalPortionSize() {
+    return landPortions.reduce((sum, p) => sum + (parseFloat(p.size) || 0), 0);
+}
+
+function renderLandPortionsTable() {
+    landPortionsTbody.innerHTML = '';
+    if (landPortions.length === 0) {
+        landPortionsTbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500 py-8">
+            <i class="fas fa-inbox text-4xl mb-2 block text-gray-300"></i>
+            No land portions added yet. Click \"Add Portion\" to get started.
+        </td></tr>`;
+    } else {
+        landPortions.forEach((portion, idx) => {
+            landPortionsTbody.innerHTML += `
+                <tr>
+                    <td>${portion.name || 'Portion ' + (idx+1)}</td>
+                    <td>${portion.total_size ? portion.total_size : ''} ${portion.size_unit ? portion.size_unit : getFarmUnit()}</td>
+                    <td>${portion.soil_type || ''}</td>
+                    <td>${portion.purpose || ''}</td>
+                    <td>${portion.status || ''}</td>
+                    <td>${portion.additional_notes || ''}</td>
+                </tr>
+            `;
+        });
+    }
+    updateAddPortionButtonState();
+    updateAnalytics();
+}
+
+function removePortion(idx) {
+    landPortions.splice(idx, 1);
+    renderLandPortionsTable();
+}
+window.removePortion = removePortion;
+
+function updateAddPortionButtonState() {
+    const max = getFarmMaxSize();
+    const total = getTotalPortionSize();
+    if (addPortionBtn) {
+        addPortionBtn.disabled = total >= max && max > 0;
+        addPortionBtn.classList.toggle('opacity-50', addPortionBtn.disabled);
+        addPortionBtn.classList.toggle('cursor-not-allowed', addPortionBtn.disabled);
+    }
+}
+
+function updateAnalytics() {
+    // Update quick analytics section
+    document.getElementById('portion-count').textContent = landPortions.length;
+    const unit = getFarmUnit();
+    document.getElementById('used-area').textContent = getTotalPortionSize() + (unit ? ' ' + unit : '');
+    document.getElementById('total-area').textContent = getTotalPortionSize() + (unit ? ' ' + unit : '');
+    const max = getFarmMaxSize();
+    document.getElementById('utilization').textContent = max > 0 ? Math.round(getTotalPortionSize()/max*100) + '%' : '0%';
+}
+
+// Add Portion Form Submission (now POSTs to backend with correct field names)
+if (addPortionForm) {
+    addPortionForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const max = getFarmMaxSize();
+        const total = getTotalPortionSize();
+        const size = parseFloat(document.getElementById('portion-size').value);
+        if (isNaN(size) || size <= 0) {
+            alert('Please enter a valid portion size.');
+            return;
+        }
+        if (total + size > max) {
+            alert('Cannot add: total land portions would exceed farm size.');
+            return;
+        }
+        const farmId = new URLSearchParams(window.location.search).get('id');
+        const token = localStorage.getItem('access_token');
+        // Get the unit from the farm details bar
+        const farmSizeText = document.getElementById('farm-details-size').textContent;
+        const unitMatch = farmSizeText.match(/\d+\s*(\w+)/);
+        const sizeUnit = unitMatch ? unitMatch[1].toLowerCase() : 'hectares';
+        const payload = {
+            name: document.getElementById('portion-name').value,
+            total_size: size,
+            size_unit: sizeUnit,
+            soil_type: document.getElementById('soil-type').value,
+            purpose: document.getElementById('current-use').value,
+            status: document.getElementById('portion-status').value,
+            additional_notes: document.getElementById('portion-actions').value,
+            farm: farmId
+        };
+        try {
+            const res = await fetch('/api/fields/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) {
+                alert('Failed to save land portion.');
+                return;
+            }
+            await fetchLandPortions();
+            addPortionDialog.classList.add('hidden');
+            addPortionForm.reset();
+        } catch (err) {
+            alert('Network error.');
+        }
+    });
+}
+
+// Re-render table and update button state on farm size change
+function onFarmDetailsChange() {
+    fetchLandPortions();
+}
+window.addEventListener('DOMContentLoaded', () => {
+    fetchLandPortions();
+    setPortionSizeLimits();
+});
+function populateCurrentUserDropdown() {
+    const userSelect = document.getElementById('current-user');
+    if (!userSelect) return;
+    userSelect.innerHTML = '';
+    const users = [
+        '',
+        (localStorage.getItem('username') || 'Current User'),
+        'Not in use'
+    ];
+    users.forEach(user => {
+        const opt = document.createElement('option');
+        opt.value = user;
+        opt.textContent = user ? user : 'Select user';
+        userSelect.appendChild(opt);
+    });
+}
+function populateStatusDropdown() {
+    const statusSelect = document.getElementById('portion-status');
+    if (!statusSelect) return;
+    statusSelect.innerHTML = '';
+    const statuses = [
+        '',
+        'Active',
+        'Fallow',
+        'Planned',
+        'Under Preparation',
+        'Harvested',
+        'Inactive',
+        'Not in use',
+        'Other'
+    ];
+    statuses.forEach(status => {
+        const opt = document.createElement('option');
+        opt.value = status;
+        opt.textContent = status ? status : 'Select status';
+        statusSelect.appendChild(opt);
+    });
+}
+function populateCurrentUseDropdown() {
+    const useSelect = document.getElementById('current-use');
+    if (!useSelect) return;
+    useSelect.innerHTML = '';
+    const uses = [
+        '',
+        'Crops',
+        'Grazing',
+        'Fallow',
+        'Orchard',
+        'Greenhouse',
+        'Aquaculture',
+        'Forestry',
+        'Storage',
+        'Residential',
+        'Commercial',
+        'Not yet in use',
+        'Other'
+    ];
+    uses.forEach(use => {
+        const opt = document.createElement('option');
+        opt.value = use;
+        opt.textContent = use ? use : 'Select use';
+        useSelect.appendChild(opt);
+    });
+}
+function setPortionSizeLimits() {
+    const sizeSpan = document.getElementById('portion-size-max');
+    const sizeSpanTop = document.getElementById('portion-size-max-top');
+    const unitSpan = document.getElementById('portion-size-unit');
+    const farmSizeText = document.getElementById('farm-details-size').textContent;
+    // Show the full farm size string as displayed in the top container
+    if (farmSizeText && farmSizeText.trim() && farmSizeText.trim() !== 'N/A') {
+        if (sizeSpan) sizeSpan.textContent = farmSizeText.trim();
+        if (sizeSpanTop) sizeSpanTop.textContent = farmSizeText.trim();
+        // Extract the unit for the input field and analytics
+        const match = farmSizeText.match(/[\d.]+\s*(\w+)/);
+        unitSpan.textContent = match ? match[1] : '';
+        // Set max for the input field
+        const numMatch = farmSizeText.match(/([\d.]+)/);
+        document.getElementById('portion-size').max = numMatch ? parseFloat(numMatch[1]) : '';
+        if (sizeSpan && sizeSpan.parentElement) sizeSpan.parentElement.style.display = '';
+        if (sizeSpanTop && sizeSpanTop.parentElement) sizeSpanTop.parentElement.style.display = '';
+    } else {
+        if (sizeSpan) sizeSpan.textContent = '';
+        if (sizeSpanTop) sizeSpanTop.textContent = '';
+        unitSpan.textContent = '';
+        document.getElementById('portion-size').removeAttribute('max');
+        if (sizeSpan && sizeSpan.parentElement) sizeSpan.parentElement.style.display = 'none';
+        if (sizeSpanTop && sizeSpanTop.parentElement) sizeSpanTop.parentElement.style.display = 'none';
+    }
+}
+// Always populate dropdowns on page load
+window.addEventListener('DOMContentLoaded', () => {
+    populateCurrentUseDropdown();
+    populateCurrentUserDropdown();
+    populateStatusDropdown();
+});
+if (addPortionBtn) {
+    addPortionBtn.addEventListener('click', function() {
+        document.getElementById('add-portion-dialog').classList.remove('hidden');
+        setPortionSizeLimits();
+        populateCurrentUserDropdown();
+        populateCurrentUseDropdown();
+        populateStatusDropdown();
+    });
+}
+if (closeAddPortionDialogBtn) {
+    closeAddPortionDialogBtn.addEventListener('click', function() {
+        document.getElementById('add-portion-dialog').classList.add('hidden');
+    });
+}
+
+// --- Fetch and display farm details at the top ---
+function getFarmIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id');
+}
+
+async function fetchAndDisplayFarmDetails() {
+    const farmId = getFarmIdFromUrl();
+    if (!farmId) {
+        document.getElementById('farm-details-bar').classList.add('hidden');
+        return;
+    }
+    try {
+        const token = localStorage.getItem('access_token');
+        const resp = await fetch(`/api/farms/${farmId}/`, {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        if (resp.status === 401) {
+            // Session expired, notify and redirect
+            alert('Your session has expired. Please log in again.');
+            localStorage.clear();
+            setTimeout(() => {
+                window.location.href = 'authentication.html';
+            }, 1000);
+            return;
+        }
+        if (!resp.ok) throw new Error('Could not fetch farm details');
+        const farm = await resp.json();
+        // Only show size in the bar
+        document.getElementById('farm-details-size').textContent = (farm.total_size ? farm.total_size + (farm.size_unit ? ' ' + farm.size_unit : ' ha') : 'N/A');
+        // Fill dialog details
+        document.getElementById('dialog-farm-name').textContent = farm.name || 'N/A';
+        document.getElementById('dialog-farm-country').textContent = farm.country || 'N/A';
+        document.getElementById('dialog-farm-city').textContent = farm.city || 'N/A';
+    } catch (e) {
+        document.getElementById('farm-details-bar').classList.add('hidden');
+    }
+}
+
+window.addEventListener('DOMContentLoaded', fetchAndDisplayFarmDetails);
+
+// Farm Details dialog open/close logic
+document.getElementById('open-farm-details-btn').addEventListener('click', function() {
+    document.getElementById('farm-details-dialog').classList.remove('hidden');
+});
+document.getElementById('close-farm-details-dialog').addEventListener('click', function() {
+    document.getElementById('farm-details-dialog').classList.add('hidden');
+});
+const token = localStorage.getItem('access_token');
+const API_BASE = 'http://127.0.0.1:8000/api';
+let farmId = new URLSearchParams(window.location.search).get('id');
+
+async function loadFarmDetails() {
+    const errorDiv = document.getElementById('farm-error-message');
+    errorDiv.classList.add('hidden');
+    
+    if (!farmId) {
+        try {
+            const res = await fetch(`${API_BASE}/farms/`, {
+                headers: {
+                    'Authorization': token ? `Bearer ${token}` : undefined,
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            if (res.status === 401) {
+                localStorage.clear();
+                window.location.href = 'authentication.html';
+                return;
+            }
+            
+            if (!res.ok) throw new Error('Failed to fetch farms');
+            
+            let farms = await res.json();
+            if (Array.isArray(farms) && farms.length > 0) {
+                farmId = farms[0].id;
+                window.location.search = '?id=' + farmId;
+                return;
+            } else if (farms.results && Array.isArray(farms.results) && farms.results.length > 0) {
+                farmId = farms.results[0].id;
+                window.location.search = '?id=' + farmId;
+                return;
+            } else {
+                document.getElementById('farm-name').textContent = 'No Farm Found';
+                errorDiv.querySelector('span').textContent = 'No farms found. Please create a farm first.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+        } catch (e) {
+            document.getElementById('farm-name').textContent = 'Error';
+            errorDiv.querySelector('span').textContent = 'Unable to fetch farms. Please check your connection.';
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/farms/${farmId}/`, {
+            headers: {
+                'Authorization': token ? `Bearer ${token}` : undefined,
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        if (res.status === 401) {
+            localStorage.clear();
+            window.location.href = 'authentication.html';
+            return;
+        }
+        
+        if (!res.ok) throw new Error('Failed to fetch farm details');
+        
+        const farm = await res.json();
+        document.getElementById('farm-type').textContent = farm.type || '-';
+        document.getElementById('farm-status').textContent = farm.status || '-';
+        document.getElementById('farm-location').textContent = farm.location || '-';
+        // Set farm name and size in brackets in the header
+        const farmTitleBrackets = document.getElementById('farm-title-brackets');
+        if (farmTitleBrackets) {
+            let name = farm.name ? farm.name : '';
+            let size = farm.total_size ? farm.total_size : '';
+            let unit = farm.size_unit ? farm.size_unit : '';
+            let sizeText = size ? `${size}${unit ? ' ' + unit : ''}` : '';
+            let text = '';
+            if (name && sizeText) {
+                text = `(${name}, ${sizeText})`;
+            } else if (name) {
+                text = `(${name})`;
+            } else if (sizeText) {
+                text = `(${sizeText})`;
+            }
+            farmTitleBrackets.textContent = text;
+        }
+    } catch (err) {
+        console.error('Error loading farm:', err);
+        document.getElementById('farm-name').textContent = 'Error Loading Farm';
+        errorDiv.querySelector('span').textContent = 'Failed to load farm details.';
+        errorDiv.classList.remove('hidden');
+    }
+}
+
+// View toggle
+document.getElementById('list-view-btn').addEventListener('click', function() {
+    document.getElementById('list-view-section').classList.remove('hidden');
+    document.getElementById('map-view-section').classList.add('hidden');
+    this.classList.add('active');
+    document.getElementById('map-view-btn').classList.remove('active');
+});
+
+document.getElementById('map-view-btn').addEventListener('click', function() {
+    document.getElementById('map-view-section').classList.remove('hidden');
+    document.getElementById('list-view-section').classList.add('hidden');
+    this.classList.add('active');
+    document.getElementById('list-view-btn').classList.remove('active');
+});
+
+// Form collapse toggle
+document.getElementById('toggle-form-btn').addEventListener('click', function() {
+    const form = document.querySelector('#main-land-details-form');
+    const icon = this.querySelector('i');
+    const text = this.querySelector('span');
+    
+    if (form.style.display === 'none') {
+        form.style.display = 'block';
+        icon.className = 'fas fa-chevron-up';
+        text.textContent = 'Collapse';
+    } else {
+        form.style.display = 'none';
+        icon.className = 'fas fa-chevron-down';
+        text.textContent = 'Expand';
+    }
+});
+
+// Form submission
+document.getElementById('main-land-details-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Land details saved! (API integration pending)');
+});
+
+// Initialize
+document.addEventListener('DOMContentLoaded', loadFarmDetails);
+</script>
+{% endblock %}

@@ -1,0 +1,2257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Dashboard - Agricore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        h1, h2, h3, .font-display {
+            font-family: 'Archivo', sans-serif;
+        }
+
+        :root {
+            --primary: #16a34a;
+            --primary-dark: #15803d;
+            --primary-light: #22c55e;
+            --secondary: #0d9488;
+            --accent: #f59e0b;
+            --surface: #ffffff;
+            --surface-elevated: #fafafa;
+            --border: #e5e7eb;
+            --text: #1f2937;
+            --text-secondary: #6b7280;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #d1fae5 100%);
+            min-height: 100vh;
+        }
+
+        /* Grain texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Modern glass effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* Enhanced cards */
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(22, 163, 74, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(22, 163, 74, 0.15);
+            border-color: rgba(22, 163, 74, 0.2);
+        }
+
+        /* Action cards */
+        .action-card {
+            background: white;
+            border-radius: 1.25rem;
+            border: 2px solid transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(22, 163, 74, 0.03));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .action-card:hover::before {
+            opacity: 1;
+        }
+
+        .action-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 24px 48px rgba(22, 163, 74, 0.12);
+        }
+
+        .action-card .icon-wrapper {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .action-card:hover .icon-wrapper {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .action-card:hover .icon-wrapper i {
+            color: white !important;
+        }
+
+        /* Modern button */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: 600;
+            padding: 0.875rem 1.75rem;
+            border-radius: 0.75rem;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(22, 163, 74, 0.35);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Enhanced table */
+        .modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .modern-table thead {
+            background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+        }
+
+        .modern-table thead th {
+            padding: 1.25rem 1.5rem;
+            font-weight: 700;
+            font-size: 0.8125rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .modern-table tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .modern-table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(240, 253, 244, 0.5), rgba(236, 253, 245, 0.5));
+            transform: scale(1.005);
+        }
+
+        .modern-table tbody td {
+            padding: 1.25rem 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* Badge styles */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+
+        .badge-crop {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .badge-livestock {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        /* Enhanced modals */
+        .modal-content {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Input fields */
+        .input-field {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.625rem;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s;
+            font-size: 0.9375rem;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(22, 163, 74, 0.1);
+        }
+
+        .sidebar-link {
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 0;
+            background: var(--primary);
+            border-radius: 0 3px 3px 0;
+            transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-link:hover::before {
+            height: 70%;
+        }
+
+        .sidebar-link:hover {
+            background: linear-gradient(90deg, rgba(240, 253, 244, 0.5), transparent);
+            padding-left: 1.25rem;
+        }
+
+        /* Hero section */
+        .hero-section {
+            background: linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px);
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(22, 163, 74, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Staggered fade in */
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+        }
+
+        .fade-in-1 { animation-delay: 0.1s; }
+        .fade-in-2 { animation-delay: 0.2s; }
+        .fade-in-3 { animation-delay: 0.3s; }
+        .fade-in-4 { animation-delay: 0.4s; }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Enhanced scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Action button group */
+        .action-btn {
+            padding: 0.625rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 1.5px solid #e5e7eb;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            background: rgba(22, 163, 74, 0.05);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* Empty state */
+        .empty-state {
+            background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(249,250,251,0.8));
+            border: 2px dashed #d1d5db;
+            border-radius: 1rem;
+            padding: 4rem 2rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Mobile Top Nav -->
+    <header class="md:hidden w-full glass shadow-sm sticky top-0 z-50 flex items-center justify-between px-4 py-3">
+        <div class="flex items-center gap-2">
+            <i class="fas fa-seedling text-green-600 text-2xl"></i>
+            <span class="text-lg font-display font-bold text-gray-900">Agricore</span>
+        </div>
+        <button id="mobile-menu-btn" class="text-gray-700 focus:outline-none">
+            <i class="fas fa-bars text-2xl"></i>
+        </button>
+    </header>
+
+    <div class="flex min-h-screen relative" style="z-index: 2;">
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col">
+            <!-- Hero Section with Nav Buttons -->
+            <section class="hero-section py-12 px-6 shadow-xl relative">
+                <div class="max-w-7xl mx-auto relative z-10">
+                    <div class="flex flex-col items-start gap-3 w-full">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 mr-3">
+                                <i class="fas fa-seedling text-white text-2xl"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <h1 class="font-display text-3xl md:text-4xl font-black text-white whitespace-nowrap flex items-center gap-4">
+                                    Farm Dashboard <span id="farm-dashboard-meta" class="text-3xl font-extrabold text-emerald-200 ml-2"></span>
+                                </h1>
+                                <span class="text-emerald-50 text-lg font-medium mt-1">Monitor and manage your agricultural operations</span>
+                            </div>
+                        </div>
+                        <nav class="flex flex-wrap gap-3 mt-3">
+                            <nav class="flex flex-row gap-3 mt-3 overflow-x-auto scrollbar-thin scrollbar-thumb-emerald-400 scrollbar-track-emerald-50 w-full" style="white-space:nowrap;">
+                                <a href="/chats/" class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-white text-white rounded-xl font-semibold transition hover:bg-white/10"><i class="fas fa-comments"></i>Chats</a>
+                                <button id="view-linked-stores-btn" type="button" class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-white text-white rounded-xl font-semibold transition hover:bg-white/10 bg-transparent"><i class="fas fa-store"></i>View Digital Stores linked to this farm</button>
+                                <a href="/marketplace/" class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-white text-white rounded-xl font-semibold transition hover:bg-white/10"><i class="fas fa-store"></i>Marketplace</a>
+                                <a href="/digitalstores/" class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-white text-white rounded-xl font-semibold transition hover:bg-white/10"><i class="fas fa-box"></i>Digital Stores</a>
+                                <a href="#" id="top-transfer-btn" class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-white text-white rounded-xl font-semibold transition hover:bg-white/10"><i class="fas fa-link"></i>Link to Store</a>
+                            </nav>
+
+                                <script>
+                                // Show only the farm name in brackets beside dashboard title
+                                async function setFarmDashboardMeta() {
+                                    if (!window.currentFarm) {
+                                        await loadFarmDetails();
+                                    }
+                                    const meta = document.getElementById('farm-dashboard-meta');
+                                    if (meta && window.currentFarm) {
+                                        const name = window.currentFarm.name || '';
+                                        meta.textContent = name ? `(${name})` : '';
+                                    }
+                                }
+                                document.addEventListener('DOMContentLoaded', setFarmDashboardMeta);
+                                const origLoadFarmDetails = loadFarmDetails;
+                                loadFarmDetails = async function() {
+                                    await origLoadFarmDetails.apply(this, arguments);
+                                    setFarmDashboardMeta();
+                                };
+                                </script>
+                        </nav>
+                    </div>
+                </div>
+            </section>
+
+            <main class="max-w-7xl w-full mx-auto px-6 py-10 flex-1">
+                <!-- Quick Access Cards -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-gray-900 mb-6">Quick Access</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                                <a id="land-management-link" href="#" class="action-card p-8 block group fade-in fade-in-4" style="position:relative;">
+                                                    <div class="icon-wrapper w-16 h-16 rounded-2xl mb-5 flex items-center justify-center">
+                                                        <i class="fas fa-tractor text-green-600 text-3xl"></i>
+                                                    </div>
+                                                    <h3 class="font-display text-xl font-bold mb-2 text-gray-900">Land Management</h3>
+                                                    <p class="text-gray-600 leading-relaxed">Organize fields, plots, and land assets.</p>
+                                                    <div class="mt-4 flex items-center text-green-600 font-semibold text-sm" id="land-tab-action">
+                                                        <span>Manage land</span>
+                                                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                                                    </div>
+                                                    </a>
+                        <script>
+                        // Dynamically set the Land Management link to include the farm id from the URL
+                        document.addEventListener('DOMContentLoaded', function() {
+                            function getFarmIdFromUrl() {
+                                const params = new URLSearchParams(window.location.search);
+                                return params.get('id');
+                            }
+                            var farmId = getFarmIdFromUrl();
+                            var landLink = document.getElementById('land-management-link');
+                            if (landLink && farmId) {
+                                landLink.href = '/landmanaggement.html?id=' + encodeURIComponent(farmId);
+                            } else if (landLink) {
+                                landLink.href = '/landmanaggement.html';
+                            }
+                        });
+                        </script>
+                        <a href="/livestock.html" class="action-card p-8 block group fade-in fade-in-1" style="position:relative;">
+                            <div class="icon-wrapper w-16 h-16 rounded-2xl mb-5 flex items-center justify-center">
+                                <i class="fas fa-cow text-green-600 text-3xl"></i>
+                            </div>
+                            <h3 class="font-display text-xl font-bold mb-2 text-gray-900">Livestock</h3>
+                            <p class="text-gray-600 leading-relaxed">Manage and track all animals on your farm.</p>
+                            <div class="mt-4 flex items-center text-green-600 font-semibold text-sm" id="livestock-tab-action">
+                                <span>View livestock</span>
+                                <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                            </div>
+                        </a>
+
+                        <a href="/crops.html" class="action-card p-8 block group fade-in fade-in-2" style="position:relative;">
+                            <div class="icon-wrapper w-16 h-16 rounded-2xl mb-5 flex items-center justify-center">
+                                <i class="fas fa-leaf text-green-600 text-3xl"></i>
+                            </div>
+                            <h3 class="font-display text-xl font-bold mb-2 text-gray-900">Crops</h3>
+                            <p class="text-gray-600 leading-relaxed">Monitor crop cycles, yields, and health.</p>
+                            <div class="mt-4 flex items-center text-green-600 font-semibold text-sm" id="crops-tab-action">
+                                <span>View crops</span>
+                                <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                            </div>
+                        </a>
+
+                        <a href="/expenses.html" class="action-card p-8 block group fade-in fade-in-3" style="position:relative;">
+                                            <!-- Loading Overlay -->
+                                            <div id="page-loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(255,255,255,0.7); z-index:9999; align-items:center; justify-content:center;">
+                                                <div class="spinner" style="width:64px; height:64px; border-width:6px;"></div>
+                                            </div>
+                            <div class="icon-wrapper w-16 h-16 rounded-2xl mb-5 flex items-center justify-center">
+                                <i class="fas fa-coins text-green-600 text-3xl"></i>
+                            </div>
+                            <h3 class="font-display text-xl font-bold mb-2 text-gray-900">Expenses</h3>
+                            <p class="text-gray-600 leading-relaxed">Track and manage farm expenses.</p>
+                            <div class="mt-4 flex items-center text-green-600 font-semibold text-sm" id="expenses-tab-action">
+                                <span>View expenses</span>
+                                <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Summary Stats -->
+                <div id="farm-modules" class="mb-10"></div>
+
+                <!-- Produce Collection History -->
+                <section class="glass rounded-2xl shadow-xl p-8 fade-in fade-in-4">
+                    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
+                        <div>
+                            <h3 class="font-display text-3xl font-bold text-gray-900 mb-1">Produce Collection History</h3>
+                            <p class="text-gray-600">Track and manage all your harvest records</p>
+                        </div>
+                        <button id="open-log-produce-modal" class="btn-primary flex items-center gap-2 whitespace-nowrap">
+                            <i class="fas fa-plus"></i>
+                            <span>Log New Produce</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input 
+                                id="produce-search" 
+                                type="text" 
+                                placeholder="Search produce..." 
+                                class="input-field w-full pl-12"
+                            />
+                        </div>
+                        <select id="produce-source-filter" class="input-field">
+                            <option value="all">All Sources</option>
+                            <option value="crop">Crops</option>
+                            <option value="livestock">Livestock</option>
+                        </select>
+                    </div>
+
+                    <div id="produce-table-container">
+                        <div id="produce-loading-spinner" class="flex flex-col items-center justify-center py-20">
+                            <div class="spinner mb-4"></div>
+                            <p class="text-gray-600 font-medium">Loading produce history...</p>
+                        </div>
+                        <div id="produce-empty-state" class="empty-state text-center hidden">
+                            <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-600 text-lg font-medium">No produce history found</p>
+                            <p class="text-gray-500 text-sm mt-2">Start by logging your first produce collection</p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Farm Details Modal -->
+    <div id="farm-details-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="modal-content max-w-4xl w-full p-10">
+            <h2 class="font-display text-3xl font-bold text-gray-900 mb-8">Farm Details</h2>
+            <div id="farm-details-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div class="flex justify-end mt-8">
+                <button id="close-farm-details-modal" class="px-6 py-3 rounded-xl border-2 border-gray-300 hover:bg-gray-50 font-semibold transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Produce Modal -->
+    <div id="log-produce-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="modal-content max-w-2xl w-full p-8">
+            <h2 class="font-display text-3xl font-bold text-gray-900 mb-6">Log New Produce Collection</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Source Type *</label>
+                    <select id="modal-produce-source" class="input-field w-full">
+                        <option value="">Select source</option>
+                        <option value="crop">Crop Harvest</option>
+                        <option value="animal">Animal Product</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Product Name *</label>
+                    <input type="text" id="modal-produce-name" class="input-field w-full" placeholder="e.g. Maize, Milk">
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Quantity *</label>
+                    <input type="number" step="0.01" id="modal-produce-quantity" class="input-field w-full" placeholder="e.g. 120">
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Unit *</label>
+                    <select id="modal-produce-unit" class="input-field w-full">
+                        <option value="">Select unit</option>
+                        <option value="kg">Kilograms (kg)</option>
+                        <option value="liters">Liters</option>
+                        <option value="crates">Crates</option>
+                        <option value="bags">Bags (90kg)</option>
+                        <option value="tons">Tons</option>
+                        <option value="pieces">Pieces</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Collection Date</label>
+                    <input type="date" id="modal-produce-date" class="input-field w-full">
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Quality Grade</label>
+                    <select id="modal-produce-quality" class="input-field w-full">
+                        <option value="">Select grade</option>
+                        <option value="A">Grade A (Premium)</option>
+                        <option value="B">Grade B (Standard)</option>
+                        <option value="C">Grade C (Below Standard)</option>
+                        <option value="Organic">Organic Certified</option>
+                        <option value="Rejected">Rejected / Spoiled</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block mb-2 font-semibold text-gray-700">Additional Notes</label>
+                    <textarea id="modal-produce-notes" rows="3" class="input-field w-full" placeholder="Optional comments, issues, or observations"></textarea>
+                </div>
+            </div>
+                                    <!-- Linked Stores Button removed from here, now in nav -->
+            <div class="flex justify-end gap-4 mt-8">
+                <button id="close-log-produce-modal" class="px-6 py-3 rounded-xl border-2 border-gray-300 hover:bg-gray-50 font-semibold transition">
+                    Cancel
+                </button>
+                <button id="save-log-produce-modal" class="btn-primary">
+                    Save Collection
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transfer Produce Modal -->
+    <div id="transfer-produce-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="modal-content max-w-xl w-full p-8">
+            <h2 class="font-display text-2xl font-bold text-gray-900 mb-6">Transfer Produce to Digital Store</h2>
+            <div id="transfer-error" class="text-sm text-red-600 mb-4 p-3 bg-red-50 rounded-lg hidden"></div>
+            <div id="transfer-status" class="text-sm text-green-600 mb-4 p-3 bg-green-50 rounded-lg hidden"></div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Select Store *</label>
+                    <select id="transfer-store-select" class="input-field w-full"></select>
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Product Title *</label>
+                    <input type="text" id="transfer-title" class="input-field w-full" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-2 font-semibold text-gray-700">Price (per unit)*</label>
+                        <input type="number" step="0.01" id="transfer-price" class="input-field w-full" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-semibold text-gray-700">Quantity to Transfer *</label>
+                        <input type="number" step="0.01" id="transfer-quantity" class="input-field w-full" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Unit</label>
+                    <input type="text" id="transfer-unit" class="input-field w-full" readonly />
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Expiration Date (optional)</label>
+                    <input type="date" id="transfer-expiration" class="input-field w-full" />
+                </div>
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="transfer-dropship" class="w-4 h-4 rounded text-green-600" />
+                    <label for="transfer-dropship" class="text-sm text-gray-700 font-medium">Is Dropshippable?</label>
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Description (Optional)</label>
+                    <textarea id="transfer-description" class="input-field w-full" rows="3"></textarea>
+                </div>
+                <div id="transfer-loading" class="hidden text-sm text-green-700 flex items-center gap-2 p-3 bg-green-50 rounded-lg">
+                    <div class="spinner" style="width: 20px; height: 20px; border-width: 2px;"></div>
+                    <span>Transferring produce...</span>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 mt-8">
+                <button id="transfer-cancel-btn" class="px-6 py-3 rounded-xl border-2 border-gray-300 hover:bg-gray-50 font-semibold transition">Cancel</button>
+                <button id="transfer-save-btn" class="btn-primary">Transfer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link Produce Modal -->
+    <div id="link-produce-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="modal-content max-w-xl w-full p-8">
+            <h2 class="font-display text-2xl font-bold text-gray-900 mb-6">Link Produce to Digital Store</h2>
+            <div id="link-error" class="text-sm text-red-600 mb-4 p-3 bg-red-50 rounded-lg hidden"></div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Select Store *</label>
+                    <select id="link-store-select" class="input-field w-full"></select>
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Product Title *</label>
+                    <input type="text" id="link-title" class="input-field w-full" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-2 font-semibold text-gray-700">Price (per unit)*</label>
+                        <input type="number" step="0.01" id="link-price" class="input-field w-full" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-semibold text-gray-700">Quantity on Store</label>
+                        <input type="number" step="0.01" id="link-quantity" class="input-field w-full" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Unit</label>
+                    <input type="text" id="link-unit" class="input-field w-full" readonly />
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Expiration Date (optional)</label>
+                    <input type="date" id="link-expiration" class="input-field w-full" />
+                </div>
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="link-dropship" class="w-4 h-4 rounded text-green-600" />
+                    <label for="link-dropship" class="text-sm text-gray-700 font-medium">Is Dropshippable?</label>
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Category</label>
+                    <input type="text" id="link-category" class="input-field w-full" value="Produce" />
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Description (Optional)</label>
+                    <textarea id="link-description" class="input-field w-full" rows="3"></textarea>
+                </div>
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="link-reduce-stock" class="w-4 h-4 rounded text-green-600" />
+                    <label for="link-reduce-stock" class="text-sm text-gray-700 font-medium">Also reduce farm stock by the linked quantity (transfer)</label>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 mt-8">
+                <button id="link-cancel-btn" class="px-6 py-3 rounded-xl border-2 border-gray-300 hover:bg-gray-50 font-semibold transition">Cancel</button>
+                <button id="link-save-btn" class="btn-primary">Link</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connect Store Modal -->
+    <div id="connect-store-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="modal-content max-w-lg w-full p-8">
+            <h2 class="font-display text-2xl font-bold text-gray-900 mb-6">Link this Farm to a Digital Store</h2>
+            <div id="connect-error" class="text-sm text-red-600 mb-4 p-3 bg-red-50 rounded-lg hidden"></div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">Select Store *</label>
+                    <select id="connect-store-select" class="input-field w-full"></select>
+                </div>
+                <div>
+                    <button id="connect-create-btn" class="px-4 py-2 rounded-lg border-2 border-green-200 text-green-700 hover:bg-green-50 font-semibold transition">Create new store</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="connect-new-store-row" class="hidden">
+                        <label class="block mb-2 font-semibold text-gray-700">New Store Name *</label>
+                        <input id="connect-new-store-name" class="input-field w-full" placeholder="Store name" />
+                    </div>
+                    <div id="connect-new-store-email-row" class="hidden">
+                        <label class="block mb-2 font-semibold text-gray-700">Store Email</label>
+                        <input id="connect-new-store-email" class="input-field w-full" placeholder="Store email" type="email" />
+                    </div>
+                    <div id="connect-new-store-owner-row" class="hidden">
+                        <label class="block mb-2 font-semibold text-gray-700">Store Owner Name *</label>
+                        <input id="connect-new-store-owner" class="input-field w-full" placeholder="Owner name" />
+                    </div>
+                    <div id="connect-new-store-desc-row" class="hidden">
+                        <label class="block mb-2 font-semibold text-gray-700">Store Description</label>
+                        <textarea id="connect-new-store-desc" class="input-field w-full" rows="2" placeholder="Optional description"></textarea>
+                    </div>
+                    <div id="connect-new-store-countries-row" class="hidden">
+                        <label class="block mb-2 font-semibold text-gray-700">Countries of Operation</label>
+                        <input id="connect-new-store-countries" class="input-field w-full" placeholder="e.g. Kenya, Uganda" />
+                    </div>
+                    <div id="connect-new-store-contact-row" class="hidden">
+                        <label class="block mb-2 font-semibold text-gray-700">Phone Contact *</label>
+                        <input id="connect-new-store-contact" class="input-field w-full" placeholder="Phone contact" />
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600">This will set the selected store as linked to this farm. The store must belong to you.</p>
+            </div>
+            <div class="flex justify-end gap-3 mt-8">
+                <button id="connect-cancel-btn" class="px-6 py-3 rounded-xl border-2 border-gray-300 hover:bg-gray-50 font-semibold transition">Cancel</button>
+                <button id="connect-save-btn" class="btn-primary">Connect</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Linked Stores Modal -->
+    <div id="linked-stores-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="modal-content max-w-2xl w-full p-8">
+            <h2 class="font-display text-2xl font-bold text-gray-900 mb-6">Digital Stores linked to this Farm</h2>
+            <div id="linked-stores-list" class="space-y-3 mb-6">Loading...</div>
+            <div class="flex justify-between items-center gap-3">
+                <button id="link-another-store" class="btn-primary">Link another store</button>
+                <button id="close-linked-stores" class="px-6 py-3 rounded-xl border-2 border-gray-300 hover:bg-gray-50 font-semibold transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="snackbar" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-4 rounded-xl text-white shadow-2xl z-50 font-semibold"></div>
+
+    <script>
+        // Linked Digital Stores modal logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewStoresBtn = document.getElementById('view-linked-stores-btn');
+            const linkedStoresModal = document.getElementById('linked-stores-modal');
+            const closeLinkedStoresBtn = document.getElementById('close-linked-stores');
+            const linkedStoresList = document.getElementById('linked-stores-list');
+            if (viewStoresBtn && linkedStoresModal && closeLinkedStoresBtn && linkedStoresList) {
+                viewStoresBtn.addEventListener('click', async function() {
+                    linkedStoresModal.classList.remove('hidden');
+                    linkedStoresList.innerHTML = 'Loading...';
+                    try {
+                        const token = localStorage.getItem('access_token');
+                        const farmId = new URLSearchParams(window.location.search).get('id');
+                        const res = await fetch(`${API_BASE}/stores/?farm=${farmId}`, {
+                            headers: { 'Authorization': 'Bearer ' + token }
+                        });
+                        if (!res.ok) throw new Error('Failed to load stores');
+                        const stores = await res.json();
+                        if (Array.isArray(stores) && stores.length > 0) {
+                            linkedStoresList.innerHTML = stores.map(store => `
+                                <div class=\"p-4 rounded-xl border bg-gray-50 flex flex-col gap-1\">
+                                    <span class=\"font-bold text-lg\">${store.name}</span>
+                                    <span class=\"text-gray-600 text-sm\">${store.email || ''}</span>
+                                    <span class=\"text-gray-500 text-xs\">${store.description || ''}</span>
+                                    <div class=\"flex gap-2 mt-3\">
+                                        <button class=\"manage-store-btn px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition\" data-id=\"${store.id}\">Manage</button>
+                                        <button class=\"unlink-store-btn px-4 py-2 bg-red-100 text-red-700 rounded-lg font-semibold hover:bg-red-200 transition\" data-id=\"${store.id}\">Unlink</button>
+                                    </div>
+                                </div>
+                            `).join('');
+                            // Attach event listeners after rendering
+                            setTimeout(() => {
+                                document.querySelectorAll('.manage-store-btn').forEach(btn => {
+                                    btn.onclick = function() {
+                                        const id = btn.getAttribute('data-id');
+                                        window.location.href = `digital_store.html?id=${id}`;
+                                    };
+                                });
+                                document.querySelectorAll('.unlink-store-btn').forEach(btn => {
+                                    btn.onclick = async function() {
+                                        const id = btn.getAttribute('data-id');
+                                        if (!confirm('Unlink this store from the farm?')) return;
+                                        try {
+                                            const token = localStorage.getItem('access_token');
+                                            const farmId = new URLSearchParams(window.location.search).get('id');
+                                            const res = await fetch(`${API_BASE}/stores/${id}/`, {
+                                                method: 'PATCH',
+                                                headers: {
+                                                    'Authorization': 'Bearer ' + token,
+                                                    'Content-Type': 'application/json'
+                                                },
+                                                body: JSON.stringify({ farm: null })
+                                            });
+                                            if (!res.ok) throw new Error('Failed to unlink store');
+                                            // Remove the store card from the UI
+                                            btn.closest('div.p-4').remove();
+                                            // Optionally show a message
+                                        } catch (err) {
+                                            alert('Failed to unlink store.');
+                                        }
+                                    };
+                                });
+                            }, 100);
+                        } else {
+                            linkedStoresList.innerHTML = '<div class=\"text-gray-500\">No digital stores linked to this farm.</div>';
+                        }
+                    } catch (e) {
+                        linkedStoresList.innerHTML = '<div class=\"text-red-600\">Failed to load digital stores.</div>';
+                    }
+                });
+                closeLinkedStoresBtn.addEventListener('click', function() {
+                    linkedStoresModal.classList.add('hidden');
+                });
+        }});
+                        // Enable navigation for Livestock, Crops, and Expenses quick access cards
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const farmId = new URLSearchParams(window.location.search).get('id');
+                            document.getElementById('livestock-link').addEventListener('click', function(e) {
+                                e.preventDefault();
+                                if (farmId) {
+                                    window.location.href = `/livestock/?id=${farmId}`;
+                                }
+                            });
+                            document.getElementById('crops-link').addEventListener('click', function(e) {
+                                e.preventDefault();
+                                if (farmId) {
+                                    window.location.href = `/crops/?id=${farmId}`;
+                                }
+                            });
+                            document.getElementById('expenses-link').addEventListener('click', function(e) {
+                                e.preventDefault();
+                                if (farmId) {
+                                    window.location.href = `/expenses/?id=${farmId}`;
+                                }
+                            });
+                        });
+                // Get farmId from URL
+                const farmIdParam = new URLSearchParams(window.location.search).get('id');
+
+                // Reset tab text if coming back from navigation
+                window.addEventListener('DOMContentLoaded', function() {
+                    // Always reset all tab actions on page load
+                    const livestockAction = document.getElementById('livestock-tab-action');
+                    if (livestockAction) {
+                        livestockAction.innerHTML = '<span>View livestock</span><i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>';
+                    }
+                    const cropsAction = document.getElementById('crops-tab-action');
+                    if (cropsAction) {
+                        cropsAction.innerHTML = '<span>View crops</span><i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>';
+                    }
+                    const expensesAction = document.getElementById('expenses-tab-action');
+                    if (expensesAction) {
+                        expensesAction.innerHTML = '<span>View expenses</span><i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>';
+                    }
+                    sessionStorage.removeItem('tabLoading');
+                });
+
+                // Livestock tab
+        // [INSERT ALL THE ORIGINAL JAVASCRIPT HERE - keeping it exactly the same]
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            alert('Please login');
+            window.location.href = 'authentication.html';
+        }
+
+        const API_BASE = 'http://127.0.0.1:8000/api';
+        window.currentFarm = null;
+        let currentUser = null;
+        let farmId = new URLSearchParams(location.search).get('id');
+        
+        window.DEBUG = {
+            token,
+            API_BASE,
+            farmId,
+            get currentFarm() { return window.currentFarm; },
+            get currentUser() { return currentUser; }
+        };
+
+        async function loadFarmDetails() {
+            if (!farmId) {
+                alert('No farm selected.');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/farms/${farmId}/`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (res.status === 401 || res.status === 403) {
+                    localStorage.clear();
+                    window.location.href = 'authentication.html';
+                    return;
+                }
+                window.currentFarm = await res.json();
+                const topNameEl = document.getElementById('top-farm-name');
+                if (topNameEl) {
+                    topNameEl.innerHTML = `<i class=\"fas fa-seedling text-emerald-600\"></i> Produce Management for **${currentFarm.name}**`;
+                } else {
+                    console.warn('Missing element: top-farm-name');
+                }
+            } catch (error) {
+                console.error("Failed to load farm details:", error);
+                alert('Failed to load farm. Session may have expired.');
+            }
+        }
+
+        async function getCurrentUser() {
+            if (!token) return null;
+            try {
+                const res = await fetch(`${API_BASE}/users/me/`, { headers: { 'Authorization': 'Bearer ' + token } });
+                if (res.status === 401 || res.status === 403) {
+                    localStorage.clear();
+                    window.location.href = 'authentication.html';
+                    return null;
+                }
+                if (!res.ok) {
+                    console.warn('Could not fetch current user:', res.status);
+                    return null;
+                }
+                currentUser = await res.json();
+                try { window.currentUser = currentUser; } catch (e) { /* ignore */ }
+                console.debug('Fetched current user:', currentUser);
+                return currentUser;
+            } catch (err) {
+                console.warn('Error fetching current user', err);
+                return null;
+            }
+        }
+
+        async function loadProduceData() {
+            if (!currentFarm) return;
+
+            const tableContainer = document.getElementById('produce-table-container');
+            if (!tableContainer) {
+                console.warn('Missing element: produce-table-container');
+                return;
+            }
+            tableContainer.innerHTML = `<div class="flex flex-col items-center justify-center py-20">
+                <div class="spinner mb-4"></div>
+                <p class="text-gray-600 font-medium">Loading produce history...</p>
+            </div>`;
+
+            try {
+                const summaryRes = await fetch(`${API_BASE}/farms/${farmId}/produce-collections/summary/`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (summaryRes.status === 401 || summaryRes.status === 403) {
+                    localStorage.clear();
+                    window.location.href = 'authentication.html';
+                    return;
+                }
+                console.debug('Summary status:', summaryRes.status, 'content-type:', summaryRes.headers.get('content-type'));
+                if (!summaryRes.ok) {
+                    throw new Error(`Summary API error: ${summaryRes.status} ${summaryRes.statusText}`);
+                }
+                const summary = await summaryRes.json();
+                console.debug('Produce summary', summary);
+                
+                const listRes = await fetch(`${API_BASE}/farms/${farmId}/produce-collections/`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (listRes.status === 401 || listRes.status === 403) {
+                    localStorage.clear();
+                    window.location.href = 'authentication.html';
+                    return;
+                }
+                console.debug('List status:', listRes.status, 'content-type:', listRes.headers.get('content-type'));
+                if (!listRes.ok) {
+                    const text = await listRes.text();
+                    throw new Error(`List API error: ${listRes.status} ${listRes.statusText}: ${text}`);
+                }
+                const contentType = listRes.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    const bodyText = await listRes.text();
+                    console.warn('List response not JSON', bodyText);
+                    throw new Error('List response is not valid JSON');
+                }
+                const produceRecords = await listRes.json();
+                console.debug('Raw produce list response', produceRecords);
+
+                let normalizedProduceRecords = produceRecords;
+                if (produceRecords && typeof produceRecords === 'object' && Array.isArray(produceRecords.results)) {
+                    normalizedProduceRecords = produceRecords.results;
+                }
+                if (!Array.isArray(normalizedProduceRecords)) {
+                    console.warn('Produce list is not an array, normalized value:', normalizedProduceRecords);
+                    normalizedProduceRecords = [];
+                }
+
+                const debugEl = document.getElementById('produce-debug');
+                if (debugEl) debugEl.textContent = `Fetched ${normalizedProduceRecords.length} produce records`;
+
+                if (typeof renderSummaryCards === 'function') {
+                    renderSummaryCards(summary);
+                } else {
+                    // Fallback: just log summary if function is missing
+                    console.warn('renderSummaryCards is not defined. Summary:', summary);
+                }
+                try {
+                    renderProduceTable(normalizedProduceRecords);
+                } catch (e) {
+                    console.error('Error rendering produce table', e, normalizedProduceRecords);
+                    tableContainer.innerHTML = `<div class=\"text-center py-16 text-red-600 text-lg\"><i class=\"fas fa-exclamation-triangle text-4xl mb-4\"></i><p>Failed to render produce table. See console for details.</p></div>`;
+                }
+
+            } catch (error) {
+                console.error("Failed to load produce data:", error);
+                tableContainer.innerHTML = `<div class=\"text-center py-16 text-red-600 text-lg\">\n                    <i class=\"fas fa-exclamation-triangle text-4xl mb-4\"></i>\n                    <p>Failed to load produce data. Please try again.</p>\n                </div>`;
+            }
+        }
+
+        async function saveProduceCollection(data) {
+            try {
+                const res = await fetch(`${API_BASE}/farms/${farmId}/produce-collections/`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token 
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (res.status === 401 || res.status === 403) {
+                    localStorage.clear();
+                    window.location.href = 'authentication.html';
+                    return;
+                }
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(JSON.stringify(errorData));
+                }
+
+                showSnackbar('Produce collection logged successfully!', 'success');
+                document.getElementById('log-produce-modal').classList.add('hidden');
+                loadProduceData();
+            } catch (error) {
+                console.error('Failed to save produce collection:', error);
+                showSnackbar('Failed to save produce collection. Please try again.', 'error');
+            }
+            const modulesContainer = document.getElementById('farm-modules');
+            if (!modulesContainer) {
+                console.warn('Missing element: farm-modules');
+                return;
+            }
+            const totalQty = summary.total_quantity || 0;
+            const lastCollectionDate = summary.last_collection ? new Date(summary.last_collection).toLocaleDateString() : 'N/A';
+
+            modulesContainer.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    <div class="stat-card p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                                <i class="fas fa-boxes-stacked text-green-600 text-xl"></i>
+                            </div>
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Collections</span>
+                        </div>
+                        <div class="font-display text-3xl font-black text-gray-900">${summary.total_collections}</div>
+                        <p class="text-sm text-gray-600 mt-1">Total records</p>
+                    </div>
+                    <div class="stat-card p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center">
+                                <i class="fas fa-weight-hanging text-teal-600 text-xl"></i>
+                            </div>
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Quantity</span>
+                        </div>
+                        <div class="font-display text-3xl font-black text-gray-900">${totalQty.toLocaleString()}</div>
+                        <p class="text-sm text-gray-600 mt-1">Total units</p>
+                    </div>
+                    <div class="stat-card p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                                <i class="fas fa-calendar-check text-emerald-600 text-xl"></i>
+                            </div>
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Latest</span>
+                        </div>
+                        <div class="font-display text-lg font-bold text-gray-900">${lastCollectionDate}</div>
+                        <p class="text-sm text-gray-600 mt-1">Last collection</p>
+                    </div>
+                    <div class="stat-card p-6 rounded-2xl cursor-pointer" id="open-linked-stores-card">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                                <i class="fas fa-store text-blue-600 text-xl"></i>
+                            </div>
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Stores</span>
+                        </div>
+                        <div class="font-display text-3xl font-black text-gray-900">—</div>
+                        <p class="text-sm text-green-600 mt-1 font-semibold">View linked stores →</p>
+                    </div>
+                </div>
+            `;
+            
+            const openBtn = document.getElementById('open-linked-stores-card');
+            if (openBtn) {
+                openBtn.onclick = async () => {
+                    await loadLinkedStores();
+                    document.getElementById('linked-stores-modal').classList.remove('hidden');
+                };
+            }
+        }
+        
+        function renderProduceTable(produceRecords) {
+            const tableContainer = document.getElementById('produce-table-container');
+
+            if (produceRecords.length === 0) {
+                tableContainer.innerHTML = `<div class="empty-state text-center">
+                    <i class="fas fa-seedling text-8xl mb-6" style="color: #d1d5db;"></i>
+                    <p class="text-xl font-semibold text-gray-700 mb-2">No produce logged yet</p>
+                    <p class="text-gray-600">Click "Log New Produce Collection" to start tracking your harvest</p>
+                </div>`;
+                return;
+            }
+
+            const tableHTML = `
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Source</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                            <th>Transfer History</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${produceRecords.map(p => `
+                            <tr class="produce-row" 
+                                data-product-name="${(p.product_name || '').toLowerCase()}"
+                                data-source="${p.source || ''}"
+                                data-source-display="${(p.source_display || '').toLowerCase()}">
+                                <td><span class="font-semibold text-gray-900">${p.collection_date}</span></td>
+                                <td>
+                                    <span class="badge ${p.source === 'crop' ? 'badge-crop' : 'badge-livestock'}">
+                                        ${p.source_display}
+                                    </span>
+                                </td>
+                                <td><span class="font-semibold text-gray-900">${p.product_name}</span></td>
+                                <td><span class="font-bold text-gray-900">${(p.quantity !== null && p.quantity !== undefined) ? Number(p.quantity).toLocaleString() : '—'}</span></td>
+                                <td>${p.unit}</td>
+                                <td class="align-top">
+                                    ${p.linked_products && p.linked_products.length ? `
+                                        <div class="space-y-2">
+                                            ${p.linked_products.map(lp => {
+                                                const prodName = lp.title || p.product_name || 'Product';
+                                                const storeName = lp.store_name || lp.store || 'Digital Store';
+                                                return `<div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-green-50 border border-green-200">
+                                                    <div class="flex-1">
+                                                        <div class="font-semibold text-sm text-gray-900">${prodName}</div>
+                                                        <div class="text-xs text-gray-600">→ ${storeName}</div>
+                                                    </div>
+                                                    <a href="digital_store.html?id=${lp.store || ''}" class="px-2 py-1 text-xs bg-green-600 text-white rounded-md hover:bg-green-700 font-semibold">View</a>
+                                                </div>`;
+                                            }).join('')}
+                                        </div>
+                                    ` : '<span class="text-xs text-gray-500">No transfers yet</span>'}
+                                </td>
+                                <td>
+                                    <div class="flex gap-2">
+                                        <button class="action-btn link-btn" data-id="${p.id}" title="Link to Digital Store">
+                                            <i class="fas fa-link"></i>
+                                        </button>
+                                        <button class="action-btn transfer-btn" data-id="${p.id}" title="Transfer to Digital Store">
+                                            <i class="fas fa-right-left"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            tableContainer.innerHTML = tableHTML;
+
+            (function safeInitTransfers() {
+                try {
+                    if (typeof enableTransferButtons === 'function') {
+                        enableTransferButtons(produceRecords);
+                    }
+                    if (typeof enableLinkButtons === 'function') {
+                        enableLinkButtons(produceRecords);
+                    }
+                } catch (e) { /* no-op */ }
+            })();
+            
+            setupProduceFilters();
+        }
+
+        function setupProduceFilters() {
+            const searchInput = document.getElementById('produce-search');
+            const sourceFilter = document.getElementById('produce-source-filter');
+            
+            if (!searchInput || !sourceFilter) return;
+
+            function filterProduceTable() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                const sourceType = sourceFilter.value;
+                const rows = document.querySelectorAll('.produce-row');
+                let visibleCount = 0;
+
+                rows.forEach(row => {
+                    const productName = row.dataset.productName || '';
+                    const sourceDisplay = row.dataset.sourceDisplay || '';
+                    const source = row.dataset.source || '';
+
+                    const matchesSearch = !searchTerm || 
+                        productName.includes(searchTerm) || 
+                        sourceDisplay.includes(searchTerm);
+
+                    const matchesSource = sourceType === 'all' || source === sourceType;
+
+                    if (matchesSearch && matchesSource) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                const tableContainer = document.getElementById('produce-table-container');
+                let noResultsMsg = document.getElementById('produce-no-results');
+                
+                if (visibleCount === 0 && rows.length > 0) {
+                    if (!noResultsMsg) {
+                        noResultsMsg = document.createElement('div');
+                        noResultsMsg.id = 'produce-no-results';
+                        noResultsMsg.className = 'text-center py-10 text-gray-500';
+                        noResultsMsg.innerHTML = '<i class="fas fa-search text-4xl mb-2 text-gray-300"></i><p>No produce found matching your filters.</p>';
+                        tableContainer.appendChild(noResultsMsg);
+                    }
+                    noResultsMsg.style.display = 'block';
+                } else if (noResultsMsg) {
+                    noResultsMsg.style.display = 'none';
+                }
+            }
+
+            searchInput.addEventListener('input', filterProduceTable);
+            sourceFilter.addEventListener('change', filterProduceTable);
+        }
+
+        document.getElementById('open-log-produce-modal').onclick = () => {
+            document.getElementById('log-produce-modal').classList.remove('hidden');
+        };
+
+        document.getElementById('close-log-produce-modal').onclick = () => {
+            document.getElementById('log-produce-modal').classList.add('hidden');
+        };
+
+        document.getElementById('save-log-produce-modal').onclick = () => {
+            const source = document.getElementById('modal-produce-source').value;
+            const product_name = document.getElementById('modal-produce-name').value.trim();
+            const quantity = parseFloat(document.getElementById('modal-produce-quantity').value);
+            const unit = document.getElementById('modal-produce-unit').value;
+            const collection_date = document.getElementById('modal-produce-date').value || new Date().toISOString().split('T')[0];
+            const quality_grade = document.getElementById('modal-produce-quality').value.trim();
+            const notes = document.getElementById('modal-produce-notes').value.trim();
+
+            if (!source || !product_name || !quantity || !unit) {
+                showSnackbar('Please fill all required fields', 'error');
+                return;
+            }
+
+            const payload = {
+                source,
+                product_name,
+                quantity,
+                unit,
+                collection_date,
+                quality_grade: quality_grade || null,
+                notes: notes || null
+            };
+            
+            saveProduceCollection(payload);
+        };
+
+        document.getElementById('close-farm-details-modal').onclick = () => {
+            const modal = document.getElementById('farm-details-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+
+        // Attach Farm Details button event handler at the end of the body to guarantee element exists
+        setTimeout(() => {
+            const farmDetailsBtn = document.getElementById('top-farm-details-btn');
+            if (farmDetailsBtn) {
+                farmDetailsBtn.onclick = async (e) => {
+                    e.preventDefault();
+                    await loadFarmDetails();
+                    // Populate modal content with farm details
+                    const modal = document.getElementById('farm-details-modal');
+                    const content = document.getElementById('farm-details-content');
+                    if (modal && content && window.currentFarm) {
+                        content.innerHTML = `
+                            <div><strong>Name:</strong> ${window.currentFarm.name || ''}</div>
+                            <div><strong>Location:</strong> ${window.currentFarm.location || ''}</div>
+                            <div><strong>Size:</strong> ${window.currentFarm.size || ''}</div>
+                            <div><strong>Owner:</strong> ${window.currentFarm.owner_name || ''}</div>
+                            <div><strong>Country:</strong> ${window.currentFarm.country || ''}</div>
+                            <div><strong>Created:</strong> ${window.currentFarm.created_at ? new Date(window.currentFarm.created_at).toLocaleDateString() : ''}</div>
+                            <div><strong>Description:</strong> ${window.currentFarm.description || ''}</div>
+                        `;
+                        modal.classList.remove('hidden');
+                        modal.classList.add('flex');
+                    }
+                };
+            }
+        }, 0);
+
+        async function populateUserStores(selectId = 'transfer-store-select', filterLinkedOnly = false) {
+            const storeSelect = document.getElementById(selectId);
+            if (!storeSelect) return;
+            try {
+                const res = await fetch(`${API_BASE}/stores/`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (!res.ok) {
+                    storeSelect.innerHTML = '<option value="">(Failed to load stores)</option>';
+                    return;
+                }
+                let stores = await res.json();
+                if (stores && typeof stores === 'object' && Array.isArray(stores.results)) {
+                    stores = stores.results;
+                }
+                if (!Array.isArray(stores)) stores = [];
+                
+                if (filterLinkedOnly && farmId) {
+                    stores = stores.filter(s => String(s.farm) === String(farmId));
+                }
+                
+                if (stores.length === 0) {
+                    const msg = filterLinkedOnly ? 'No stores linked to this farm yet' : 'No store found - Create one first';
+                    storeSelect.innerHTML = `<option value="">${msg}</option>`;
+                    return;
+                }
+                storeSelect.innerHTML = '<option value="">Select store...</option>' + stores.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            } catch (err) {
+                console.error('Failed to load stores', err);
+                storeSelect.innerHTML = '<option value="">Failed to load stores</option>';
+            }
+        }
+
+        window.addEventListener('storage', async (e) => {
+            if (!e.key) return;
+            if (e.key === 'last_store_created' || e.key === 'last_store_connected') {
+                try {
+                    await populateUserStores('connect-store-select');
+                    await populateUserStores('transfer-store-select');
+                    await populateUserStores('link-store-select');
+                } catch (err) { console.warn('Failed to refresh store selects after storage event', err); }
+            }
+        });
+
+        if (typeof BroadcastChannel !== 'undefined') {
+            const bc = new BroadcastChannel('stores');
+            bc.onmessage = async (msg) => {
+                try {
+                    const { type } = msg.data || {};
+                    if (type === 'created' || type === 'connected') {
+                        await populateUserStores('connect-store-select');
+                        await populateUserStores('transfer-store-select');
+                        await populateUserStores('link-store-select');
+                        if (typeof loadLinkedStores === 'function') await loadLinkedStores();
+                        if (typeof checkStoreConnection === 'function') await checkStoreConnection();
+                    }
+                } catch (err) { /* ignore */ }
+            };
+        }
+
+        function enableTransferButtons(produceRecords) {
+            document.querySelectorAll('.transfer-btn').forEach(btn => {
+                btn.onclick = async (e) => {
+                    e.stopPropagation();
+                    const id = Number(btn.getAttribute('data-id'));
+                    const produce = produceRecords.find(p => p.id === id);
+                    if (!produce) {
+                        console.warn('Produce record not found for transfer id', id);
+                        return;
+                    }
+                    document.getElementById('transfer-title').value = produce.product_name || '';
+                    document.getElementById('transfer-quantity').value = produce.quantity || '';
+                    document.getElementById('transfer-unit').value = produce.unit || '';
+                    document.getElementById('transfer-description').value = produce.notes || '';
+                    document.getElementById('transfer-error').classList.add('hidden');
+                    document.getElementById('transfer-status').classList.add('hidden');
+                    document.getElementById('transfer-status').innerText = '';
+                    const saveBtn = document.getElementById('transfer-save-btn');
+                    saveBtn.dataset.produceId = id;
+                    saveBtn.dataset.farmId = farmId;
+                    saveBtn.dataset.availableQty = produce.quantity;
+                    await populateUserStores('transfer-store-select', true);
+                    document.getElementById('transfer-produce-modal').classList.remove('hidden');
+                };
+            });
+        }
+
+        function enableLinkButtons(produceRecords) {
+            document.querySelectorAll('.link-btn').forEach(btn => {
+                btn.onclick = async (e) => {
+                    e.stopPropagation();
+                    const id = Number(btn.getAttribute('data-id'));
+                    const produce = produceRecords.find(p => p.id === id);
+                    if (!produce) {
+                        console.warn('Produce record not found for link id', id);
+                        return;
+                    }
+                    document.getElementById('link-title').value = produce.product_name || '';
+                    document.getElementById('link-quantity').value = '';
+                    document.getElementById('link-unit').value = produce.unit || '';
+                    document.getElementById('link-description').value = produce.notes || '';
+                    document.getElementById('link-category').value = 'Produce';
+                    document.getElementById('link-price').value = '';
+                    document.getElementById('link-reduce-stock').checked = false;
+                    document.getElementById('link-error').classList.add('hidden');
+
+                    const saveBtn = document.getElementById('link-save-btn');
+                    saveBtn.dataset.produceId = id;
+                    saveBtn.dataset.farmId = farmId;
+                    saveBtn.dataset.availableQty = produce.quantity;
+                    await populateUserStores('link-store-select');
+                    document.getElementById('link-produce-modal').classList.remove('hidden');
+                };
+            });
+        }
+
+        let connectedStoreId = null;
+
+        function setTopConnectButtonConnected(store) {
+            const btn = document.getElementById('top-transfer-btn');
+            if (!btn) return;
+            if (store && store.id) {
+                connectedStoreId = store.id;
+                btn.innerHTML = `<i class="fas fa-check mr-2"></i> Connected to your digital store`;
+                btn.disabled = true;
+                btn.classList.remove('hover:scale-105');
+            } else {
+                connectedStoreId = null;
+                btn.innerHTML = `<i class="fas fa-link mr-2"></i> Link to Digital Store`;
+                btn.disabled = false;
+            }
+        }
+
+        async function checkStoreConnection() {
+            if (!farmId) return;
+            try {
+                const stores = await (async () => {
+                    const res = await fetch(`${API_BASE}/stores/`, { headers: { 'Authorization': 'Bearer ' + token } });
+                    if (!res.ok) return [];
+                    const data = await res.json();
+                    if (Array.isArray(data)) return data;
+                    return data.results || [];
+                })();
+                const connected = stores.find(s => String(s.farm) === String(farmId));
+                setTopConnectButtonConnected(connected || null);
+            } catch (err) {
+                console.warn('Error checking store connection', err);
+            }
+        }
+
+        function normCountries(c) {
+            if (!c) return [];
+            if (Array.isArray(c)) {
+                // If array is array of single characters, join them
+                if (c.length > 1 && c.every(x => typeof x === 'string' && x.length === 1)) {
+                    return [c.join('').replace(/,/g, '').trim()];
+                }
+                return c;
+            }
+            if (typeof c === 'string') {
+                if (c.startsWith('[')) {
+                    try {
+                        const parsed = JSON.parse(c);
+                        if (Array.isArray(parsed) && parsed.length > 1 && parsed.every(x => typeof x === 'string' && x.length === 1)) {
+                            return [parsed.join('').replace(/,/g, '').trim()];
+                        }
+                        return Array.isArray(parsed) ? parsed : [c];
+                    } catch (e) {
+                        return [c];
+                    }
+                }
+                if (c.includes(',') && c.split(',').length > 1) {
+                    return c.split(',').map(s => s.trim()).filter(Boolean);
+                }
+                return [c];
+            }
+            return [];
+        }
+
+        async function loadLinkedStores() {
+            if (!farmId) {
+                console.log('[loadLinkedStores] No farmId, skipping');
+                return;
+            }
+            const listEl = document.getElementById('linked-stores-list');
+            const countEl = document.getElementById('linked-stores-count');
+            if (listEl) listEl.innerHTML = 'Loading...';
+            try {
+                console.log(`[loadLinkedStores] Fetching stores for farm ${farmId}`);
+                const res = await fetch(`${API_BASE}/stores/?farm=${farmId}`, { headers: { 'Authorization': 'Bearer ' + token } });
+                console.log(`[loadLinkedStores] Response status: ${res.status}`);
+                if (!res.ok) {
+                    if (res.status === 401) {
+                        if (listEl) listEl.innerHTML = '<div class="text-red-600">Session expired. Please sign in again.</div>';
+                    } else {
+                        if (listEl) listEl.innerHTML = '<div class="text-red-600">Failed to load linked stores</div>';
+                    }
+                    if (countEl) countEl.textContent = '—';
+                    console.warn('[loadLinkedStores] Failed to fetch stores', res.status);
+                    return;
+                }
+                let stores = await res.json();
+                console.log(`[loadLinkedStores] Received stores:`, stores);
+                if (stores && typeof stores === 'object' && Array.isArray(stores.results)) stores = stores.results;
+                if (!Array.isArray(stores)) stores = [];
+                console.log(`[loadLinkedStores] Found ${stores.length} linked stores`);
+                if (!stores.length) {
+                    if (listEl) listEl.innerHTML = '<div class="text-gray-600">No stores linked to this farm.</div>';
+                    return;
+                }
+                if (!listEl) {
+                    console.log('[loadLinkedStores] Modal not rendered yet, count updated');
+                    return;
+                }
+                listEl.innerHTML = stores.map(s => `
+                    <div class="p-4 bg-white rounded-xl border-2 border-gray-100 hover:border-green-300 transition flex items-center justify-between gap-3">
+                        <div>
+                            <div class="font-bold text-gray-900">${s.name}</div>
+                            <div class="text-sm text-gray-600">${s.owner_name || ''}${s.owner_email ? ' • ' + s.owner_email : ''}</div>
+                            <div class="text-xs text-gray-400 mt-1">${normCountries(s.countries_of_operation).filter(x => typeof x === 'string').map(x => x.replace(/,/g, '').trim()).join(', ') || 'No countries specified'}</div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="digital_store.html?id=${s.id}" class="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition">Manage</a>
+                            <button data-id="${s.id}" class="unlink-store-btn px-4 py-2 bg-red-100 text-red-700 rounded-lg font-semibold hover:bg-red-200 transition">Unlink</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load linked stores', err);
+                if (listEl) listEl.innerHTML = '<div class="text-red-600">Failed to load linked stores.</div>';
+            } finally {
+                document.querySelectorAll('.unlink-store-btn').forEach(btn => {
+                    btn.onclick = async () => {
+                        const id = Number(btn.dataset.id);
+                        if (!confirm('Unlink this store from the farm?')) return;
+                        try {
+                            const patchRes = await fetch(`${API_BASE}/stores/${id}/`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                                body: JSON.stringify({ farm: null })
+                            });
+                            if (!patchRes.ok) {
+                                const txt = await patchRes.text();
+                                throw new Error(txt || 'Failed to unlink');
+                            }
+                            await loadLinkedStores();
+                            await populateUserStores('connect-store-select');
+                            await checkStoreConnection();
+                            try {
+                                localStorage.setItem('last_store_connected', JSON.stringify({ storeId: id, farmId: null, timestamp: Date.now() }));
+                                if (typeof BroadcastChannel !== 'undefined') {
+                                    const bc = new BroadcastChannel('stores');
+                                    bc.postMessage({ type: 'connected', storeId: id, farmId: null });
+                                }
+                            } catch (err) { /* ignore */ }
+                        } catch (err) {
+                            showSnackbar('Failed to unlink store: ' + (err.message || err), 'error');
+                        }
+                    };
+                });
+            }
+        }
+
+        document.getElementById('top-transfer-btn').onclick = async () => {
+            const btn = document.getElementById('top-transfer-btn');
+            if (connectedStoreId) return;
+            await populateUserStores('connect-store-select');
+            document.getElementById('connect-error').classList.add('hidden');
+            document.getElementById('connect-store-modal').classList.remove('hidden');
+        };
+
+        document.getElementById('connect-cancel-btn').onclick = () => {
+            document.getElementById('connect-store-modal').classList.add('hidden');
+        };
+
+        (function ensureLinkedStoresModal() {
+            if (document.getElementById('linked-stores-modal')) return;
+        })();
+
+        document.getElementById('connect-create-btn').onclick = (e) => {
+            e.preventDefault();
+            const row = document.getElementById('connect-new-store-row');
+            const emailRow = document.getElementById('connect-new-store-email-row');
+            const countriesRow = document.getElementById('connect-new-store-countries-row');
+            const ownerRow = document.getElementById('connect-new-store-owner-row');
+            const contactRow = document.getElementById('connect-new-store-contact-row');
+            const descRow = document.getElementById('connect-new-store-desc-row');
+            if (!row) return;
+            const visible = row.classList.contains('hidden');
+            if (visible) {
+                row.classList.remove('hidden');
+                if (emailRow) emailRow.classList.remove('hidden');
+                if (countriesRow) countriesRow.classList.remove('hidden');
+                if (ownerRow) ownerRow.classList.remove('hidden');
+                if (contactRow) contactRow.classList.remove('hidden');
+                if (descRow) descRow.classList.remove('hidden');
+                document.getElementById('connect-create-btn').innerText = 'Cancel Create';
+                document.getElementById('connect-save-btn').innerText = 'Create & Connect';
+                if (window.currentUser) {
+                    const ownerEl = document.getElementById('connect-new-store-owner');
+                    const emailEl = document.getElementById('connect-new-store-email');
+                    const contactEl = document.getElementById('connect-new-store-contact');
+                    if (ownerEl && !ownerEl.value) ownerEl.value = window.currentUser.username || window.currentUser.name || '';
+                    if (emailEl && !emailEl.value) emailEl.value = window.currentUser.email || '';
+                    if (contactEl && !contactEl.value) contactEl.value = window.currentUser.phone || '';
+                }
+            } else {
+                row.classList.add('hidden');
+                if (emailRow) emailRow.classList.add('hidden');
+                if (countriesRow) countriesRow.classList.add('hidden');
+                if (ownerRow) ownerRow.classList.add('hidden');
+                if (contactRow) contactRow.classList.add('hidden');
+                if (descRow) descRow.classList.add('hidden');
+                document.getElementById('connect-create-btn').innerText = 'Create new store';
+                document.getElementById('connect-save-btn').innerText = 'Connect';
+            }
+        };
+
+        document.getElementById('connect-save-btn').onclick = async (e) => {
+            const btn = e.currentTarget || e.target;
+            btn.disabled = true;
+            const err = document.getElementById('connect-error');
+            const select = document.getElementById('connect-store-select');
+            const newStoreRow = document.getElementById('connect-new-store-row');
+            const newStoreInput = document.getElementById('connect-new-store-name');
+            const ownerInput = document.getElementById('connect-new-store-owner');
+            const contactInput = document.getElementById('connect-new-store-contact');
+            const emailInput = document.getElementById('connect-new-store-email');
+            const countriesInput = document.getElementById('connect-new-store-countries');
+            const descInput = document.getElementById('connect-new-store-desc');
+            const isCreateMode = newStoreRow && !newStoreRow.classList.contains('hidden') && newStoreInput && newStoreInput.value.trim().length > 0;
+            if (!select || !select.value) {
+                if (!isCreateMode) {
+                    err.innerText = 'Select a store to connect to';
+                    err.classList.remove('hidden');
+                    btn.disabled = false;
+                    return;
+                }
+            }
+            if (isCreateMode && (!newStoreInput || !newStoreInput.value.trim())) {
+                err.innerText = 'Enter a name for the new store';
+                err.classList.remove('hidden');
+                btn.disabled = false;
+                return;
+            }
+            if (isCreateMode && (!ownerInput || !ownerInput.value.trim())) {
+                err.innerText = 'Enter the store owner name';
+                err.classList.remove('hidden');
+                btn.disabled = false;
+                return;
+            }
+            if (isCreateMode && (!contactInput || !contactInput.value.trim())) {
+                err.innerText = 'Enter the contact email or phone';
+                err.classList.remove('hidden');
+                btn.disabled = false;
+                return;
+            }
+            const storeId = Number(select ? select.value : null);
+            try {
+                const topBtn = document.getElementById('top-transfer-btn');
+                topBtn.disabled = true;
+                topBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Connecting...`;
+                let updated = null;
+                if (isCreateMode) {
+                    const name = newStoreInput.value.trim();
+                    const ownerName = ownerInput.value.trim();
+                    const ownerContact = contactInput.value.trim();
+                    const ownerEmail = emailInput && emailInput.value.trim() ? emailInput.value.trim() : '';
+                    const countriesOfOperation = countriesInput && countriesInput.value.trim() ? countriesInput.value.trim() : '';
+                    const description = descInput && descInput.value.trim() ? descInput.value.trim() : '';
+                    const countriesArr = countriesOfOperation ? countriesOfOperation.split(',').map(s => s.trim()).filter(Boolean) : [];
+                    const payload = {
+                        name: name,
+                        farm: farmId,
+                        owner_name: ownerName,
+                        owner_phone: ownerContact,
+                        owner_email: ownerEmail,
+                        countries_of_operation: countriesArr
+                    };
+                    if (description) payload.description = description;
+                    const res = await fetch(`${API_BASE}/stores/`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!res.ok) {
+                        const txt = await res.text();
+                        throw new Error(`Failed to create store: ${res.status} ${res.statusText} ${txt}`);
+                    }
+                    updated = await res.json();
+                    try {
+                        await populateUserStores('connect-store-select');
+                        const sel = document.getElementById('connect-store-select');
+                        if (sel && updated && updated.id) sel.value = updated.id;
+                    } catch (err) { console.warn('Failed to refresh store select after create', err); }
+                } else {
+                    if (!storeId) throw new Error('Select a store to connect');
+                    const res = await fetch(`${API_BASE}/stores/${storeId}/`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                        body: JSON.stringify({ farm: farmId })
+                    });
+                    if (!res.ok) {
+                        const txt = await res.text();
+                        throw new Error(`Failed to link store: ${res.status} ${res.statusText} ${txt}`);
+                    }
+                    updated = await res.json();
+                }
+                setTopConnectButtonConnected(updated);
+                btn.disabled = false;
+                try {
+                    localStorage.setItem('last_store_connected', JSON.stringify({ storeId: (updated && updated.id) ? updated.id : storeId, farmId: farmId, timestamp: Date.now() }));
+                    if (typeof BroadcastChannel !== 'undefined') {
+                        const bc = new BroadcastChannel('stores');
+                        bc.postMessage({ type: 'connected', storeId: storeId, farmId: farmId, store: updated });
+                    }
+                } catch (err) { /* ignore */ }
+                document.getElementById('connect-store-modal').classList.add('hidden');
+            } catch (err) {
+                console.error('Connect store error', err);
+                const errDiv = document.getElementById('connect-error');
+                errDiv.innerText = err.message || 'Failed to link store';
+                errDiv.classList.remove('hidden');
+                setTopConnectButtonConnected(null);
+                btn.disabled = false;
+            }
+        };
+
+        document.getElementById('transfer-cancel-btn').onclick = () => {
+            document.getElementById('transfer-produce-modal').classList.add('hidden');
+            document.getElementById('transfer-error').classList.add('hidden');
+            document.getElementById('transfer-status').classList.add('hidden');
+            document.getElementById('transfer-status').innerText = '';
+        };
+
+        document.getElementById('transfer-save-btn').onclick = async (e) => {
+            const btn = e.currentTarget || e.target;
+            btn.disabled = true;
+            const errDiv = document.getElementById('transfer-error');
+            const statusDiv = document.getElementById('transfer-status');
+            const loadingEl = document.getElementById('transfer-loading');
+            errDiv.classList.add('hidden');
+            statusDiv.classList.add('hidden');
+            statusDiv.innerText = '';
+            if (loadingEl) loadingEl.classList.remove('hidden');
+            const produceId = Number(btn.dataset.produceId);
+            if (!produceId) {
+                errDiv.innerText = 'Missing produce reference. Please reopen the transfer modal.';
+                errDiv.classList.remove('hidden');
+                btn.disabled = false;
+                if (loadingEl) loadingEl.classList.add('hidden');
+                return;
+            }
+            const farmId = Number(btn.dataset.farmId);
+            const availableQty = Number(btn.dataset.availableQty);
+            const storeId = Number(document.getElementById('transfer-store-select').value);
+            const title = document.getElementById('transfer-title').value.trim();
+            const price = parseFloat(document.getElementById('transfer-price').value);
+            const qty = parseFloat(document.getElementById('transfer-quantity').value);
+            const unit = document.getElementById('transfer-unit').value;
+            const expiration = document.getElementById('transfer-expiration').value || null;
+            const dropship = document.getElementById('transfer-dropship').checked;
+            const description = document.getElementById('transfer-description').value.trim() || '';
+            
+            if (!storeId || !title || !price || !qty || qty <= 0) {
+                errDiv.innerText = 'Please fill store, title, price and transfer quantity';
+                errDiv.classList.remove('hidden');
+                btn.disabled = false;
+                if (loadingEl) loadingEl.classList.add('hidden');
+                return;
+            }
+            if (qty > availableQty) {
+                errDiv.innerText = 'Transfer quantity cannot exceed available quantity';
+                errDiv.classList.remove('hidden');
+                btn.disabled = false;
+                if (loadingEl) loadingEl.classList.add('hidden');
+                return;
+            }
+            try {
+                const payload = {
+                    store: storeId,
+                    title,
+                    description,
+                    category: 'Produce',
+                    price: price,
+                    stock_quantity: qty,
+                    unit: unit,
+                    source_produce: produceId
+                };
+                if (expiration) payload.expiration_date = expiration;
+                payload.is_dropshippable = dropship;
+                const createRes = await fetch(`${API_BASE}/products/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify(payload)
+                });
+                if (!createRes.ok) {
+                    const txt = await createRes.text();
+                    throw new Error(`Failed to create product: ${createRes.status} ${createRes.statusText} ${txt}`);
+                }
+                let newProduct = null;
+                try { newProduct = await createRes.json(); } catch (err) { console.warn('Could not parse new product response', err); }
+                console.log('[TRANSFER] Product created:', newProduct);
+                
+                console.log(`[TRANSFER] Attempting to link store ${storeId} to farm ${farmId}`);
+                try {
+                    const storeLinkRes = await fetch(`${API_BASE}/stores/${storeId}/`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                        body: JSON.stringify({ farm: farmId })
+                    });
+                    console.log(`[TRANSFER] Store link response status: ${storeLinkRes.status}`);
+                    if (storeLinkRes.ok) {
+                        const updatedStore = await storeLinkRes.json();
+                        console.log(`[TRANSFER] Store ${storeId} linked to farm ${farmId}:`, updatedStore);
+                    } else {
+                        const errorText = await storeLinkRes.text();
+                        console.error('[TRANSFER] Failed to link store to farm:', storeLinkRes.status, errorText);
+                    }
+                } catch (storeLinkErr) {
+                    console.error('[TRANSFER] Error linking store to farm during transfer:', storeLinkErr);
+                }
+                
+                const newQty = availableQty - qty;
+                if (newQty <= 0) {
+                    const delRes = await fetch(`${API_BASE}/farms/${farmId}/produce-collections/${produceId}/`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (!delRes.ok) console.warn('Failed to delete original produce collection after transfer', delRes.status);
+                } else {
+                    const patchRes = await fetch(`${API_BASE}/farms/${farmId}/produce-collections/${produceId}/`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                        body: JSON.stringify({ quantity: newQty })
+                    });
+                    if (!patchRes.ok) {
+                        const data = await patchRes.text();
+                        console.warn('Failed to update original produce collection quantity after transfer', patchRes.status, data);
+                    }
+                }
+                try {
+                    if (newProduct && newProduct.id) {
+                        localStorage.setItem('last_product_created', JSON.stringify({ id: newProduct.id, storeId: storeId, timestamp: Date.now() }));
+                    }
+                    if (typeof BroadcastChannel !== 'undefined') {
+                        const bc = new BroadcastChannel('products');
+                        bc.postMessage({ type: 'created', storeId: storeId, product: newProduct });
+                    }
+                } catch (err) { /* ignore */ }
+                showSnackbar('Produce transferred successfully', 'success');
+                document.getElementById('transfer-produce-modal').classList.add('hidden');
+                await loadLinkedStores();
+                await checkStoreConnection();
+                loadProduceData();
+            } catch (err) {
+                console.error('Transfer error', err);
+                errDiv.innerText = err.message || 'Failed to transfer produce';
+                errDiv.classList.remove('hidden');
+            } finally {
+                if (loadingEl) loadingEl.classList.add('hidden');
+                btn.disabled = false;
+            }
+        };
+
+        document.getElementById('link-cancel-btn').onclick = () => {
+            document.getElementById('link-produce-modal').classList.add('hidden');
+        };
+
+        document.getElementById('link-save-btn').onclick = async (e) => {
+            const btn = e.currentTarget || e.target;
+            btn.disabled = true;
+            const errDiv = document.getElementById('link-error');
+            const produceId = Number(btn.dataset.produceId);
+            if (!produceId) {
+                errDiv.innerText = 'Missing produce reference. Please re-open the link dialog and try again.';
+                errDiv.classList.remove('hidden');
+                btn.disabled = false;
+                return;
+            }
+            const farmId = Number(btn.dataset.farmId);
+            const availableQty = Number(btn.dataset.availableQty);
+            const storeId = Number(document.getElementById('link-store-select').value);
+            const title = document.getElementById('link-title').value.trim();
+            const price = parseFloat(document.getElementById('link-price').value) || 0.0;
+            const qty = parseFloat(document.getElementById('link-quantity').value) || 0;
+            const unit = document.getElementById('link-unit').value;
+            const category = document.getElementById('link-category').value || 'Produce';
+            const expiration = document.getElementById('link-expiration').value || null;
+            const dropship = document.getElementById('link-dropship').checked;
+            const description = document.getElementById('link-description').value.trim() || '';
+            const reduce = document.getElementById('link-reduce-stock').checked;
+            
+            if (!storeId || !title) {
+                errDiv.innerText = 'Please select store and title';
+                errDiv.classList.remove('hidden');
+                btn.disabled = false;
+                return;
+            }
+            if (reduce && qty <= 0) {
+                errDiv.innerText = 'Enter a quantity to reduce the farm stock by';
+                errDiv.classList.remove('hidden');
+                btn.disabled = false;
+                return;
+            }
+            if (qty > availableQty) {
+                errDiv.innerText = 'Cannot reduce more than available farm quantity';
+                errDiv.classList.remove('hidden');
+                btn.disabled = false;
+                return;
+            }
+            try {
+                const payload = {
+                    store: storeId,
+                    title,
+                    description,
+                    category,
+                    price: price,
+                    stock_quantity: qty > 0 ? qty : 0,
+                    unit: unit,
+                    source_produce: produceId
+                };
+                const createRes = await fetch(`${API_BASE}/products/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({ ...payload, expiration_date: expiration, is_dropshippable: dropship })
+                });
+                if (!createRes.ok) {
+                    const txt = await createRes.text();
+                    throw new Error(`Failed to create linked product: ${createRes.status} ${createRes.statusText} ${txt}`);
+                }
+                const newProduct = await createRes.json();
+                console.log('[LINK] Product created:', newProduct);
+                
+                console.log(`[LINK] Attempting to link store ${storeId} to farm ${farmId}`);
+                try {
+                    const storeLinkRes = await fetch(`${API_BASE}/stores/${storeId}/`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                        body: JSON.stringify({ farm: farmId })
+                    });
+                    console.log(`[LINK] Store link response status: ${storeLinkRes.status}`);
+                    if (storeLinkRes.ok) {
+                        const updatedStore = await storeLinkRes.json();
+                        console.log(`[LINK] Store ${storeId} successfully linked to farm ${farmId}:`, updatedStore);
+                        await loadLinkedStores();
+                        await checkStoreConnection();
+                    } else {
+                        const errorText = await storeLinkRes.text();
+                        console.error('[LINK] Failed to link store to farm:', storeLinkRes.status, errorText);
+                    }
+                } catch (storeLinkErr) {
+                    console.error('[LINK] Error linking store to farm:', storeLinkErr);
+                }
+                
+                if (reduce && qty > 0) {
+                    const newQty = availableQty - qty;
+                    if (newQty <= 0) {
+                        const delRes = await fetch(`${API_BASE}/farms/${farmId}/produce-collections/${produceId}/`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': 'Bearer ' + token }
+                        });
+                        if (!delRes.ok) console.warn('Failed to delete original produce collection after linking', delRes.status);
+                    } else {
+                        const patchRes = await fetch(`${API_BASE}/farms/${farmId}/produce-collections/${produceId}/`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                            body: JSON.stringify({ quantity: newQty })
+                        });
+                        if (!patchRes.ok) {
+                            const data = await patchRes.text();
+                            console.warn('Failed to update original produce collection quantity after linking', patchRes.status, data);
+                        }
+                    }
+                }
+
+                try {
+                    if (newProduct && newProduct.id) {
+                        localStorage.setItem('last_product_created', JSON.stringify({ id: newProduct.id, storeId: storeId, timestamp: Date.now() }));
+                    }
+                    if (typeof BroadcastChannel !== 'undefined') {
+                        const bc = new BroadcastChannel('products');
+                        bc.postMessage({ type: 'created', storeId: storeId, product: newProduct });
+                    }
+                } catch (err) { /* ignore */ }
+
+                document.getElementById('link-produce-modal').classList.add('hidden');
+                await loadLinkedStores();
+                await checkStoreConnection();
+                loadProduceData();
+                showSnackbar('Produce linked successfully', 'success');
+            } catch (err) {
+                console.error('Link error', err);
+                errDiv.innerText = err.message || 'Failed to link produce';
+                errDiv.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+            }
+        };
+
+        async function initializePage() {
+            try {
+                console.log('[INIT] Starting page initialization...');
+                
+                console.log('[INIT] Step 1: Getting current user...');
+                await getCurrentUser();
+                console.log('[INIT] Step 1 complete');
+                
+                console.log('[INIT] Step 2: Loading farm details...');
+                await loadFarmDetails();
+                console.log('[INIT] Step 2 complete');
+                
+                console.log('[INIT] Step 3: Checking store connection...');
+                await checkStoreConnection();
+                console.log('[INIT] Step 3 complete');
+                
+                console.log('[INIT] Step 4: Loading linked stores...');
+                await loadLinkedStores();
+                console.log('[INIT] Step 4 complete');
+                
+                console.log('[INIT] Step 5: Loading produce data...');
+                await loadProduceData();
+                console.log('[INIT] Step 5 complete');
+                
+                console.log('[INIT] Page initialization complete!');
+            } catch (error) {
+                console.error('[INIT] FATAL ERROR during initialization:', error);
+                let isSessionExpired = false;
+                if (error && error.message) {
+                    const msg = error.message.toLowerCase();
+                    if (msg.includes('token') && (msg.includes('expired') || msg.includes('invalid')))
+                        isSessionExpired = true;
+                    if (msg.includes('401') || msg.includes('403'))
+                        isSessionExpired = true;
+                }
+                if (isSessionExpired) {
+                    showSnackbar('Session expired. Redirecting to login...', 'error');
+                    setTimeout(() => {
+                        window.location.href = '/auth/authentication.html';
+                    }, 1800);
+                } else {
+                    const container = document.getElementById('produce-table-container');
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="text-center py-16 text-red-600 text-lg">
+                                <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                                <p class="font-bold mb-2">Failed to load page</p>
+                                <p class="text-sm">${error.message || error}</p>
+                                <p class="text-xs mt-2">Check browser console for details</p>
+                            </div>
+                        `;
+                    }
+                }
+            }
+        }
+
+        function showSnackbar(message, variant = 'info') {
+            const bar = document.getElementById('snackbar');
+            if (!bar) return;
+            bar.textContent = message;
+            bar.classList.remove('hidden');
+            bar.classList.remove('bg-green-600', 'bg-red-600', 'bg-slate-800');
+            if (variant === 'success') bar.classList.add('bg-green-600');
+            else if (variant === 'error') bar.classList.add('bg-red-600');
+            else bar.classList.add('bg-slate-800');
+            setTimeout(() => bar.classList.add('hidden'), 3000);
+        }
+
+        async function loadProduceHistory() {
+            const spinner = document.getElementById('produce-loading-spinner');
+            const emptyState = document.getElementById('produce-empty-state');
+            if (spinner) spinner.classList.remove('hidden');
+            if (emptyState) emptyState.classList.add('hidden');
+            let produceList = [];
+            try {
+                produceList = [];
+            } catch (err) {
+                produceList = [];
+            }
+            if (spinner) spinner.classList.add('hidden');
+            if (!produceList.length && emptyState) {
+                emptyState.classList.remove('hidden');
+            }
+        }
+
+        const closeLinkedBtn = document.getElementById('close-linked-stores');
+        if (closeLinkedBtn) {
+            closeLinkedBtn.onclick = () => document.getElementById('linked-stores-modal').classList.add('hidden');
+        }
+
+        const linkAnotherBtn = document.getElementById('link-another-store');
+        if (linkAnotherBtn) {
+            linkAnotherBtn.onclick = async () => {
+                try {
+                    await populateUserStores('connect-store-select');
+                    document.getElementById('connect-error').classList.add('hidden');
+                } catch (err) { /* ignore */ }
+                document.getElementById('linked-stores-modal').classList.add('hidden');
+                document.getElementById('connect-store-modal').classList.remove('hidden');
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePage();
+            loadProduceHistory();
+        });
+
+        window.testStoreLinking = async function() {
+            console.log('=== TESTING STORE LINKING ===');
+            console.log('Farm ID:', farmId);
+            console.log('Token exists:', !!token);
+            
+            try {
+                const res = await fetch(`${API_BASE}/stores/`, { 
+                    headers: { 'Authorization': 'Bearer ' + token } 
+                });
+                console.log('All stores response:', res.status);
+                if (res.ok) {
+                    const stores = await res.json();
+                    const storesList = Array.isArray(stores) ? stores : (stores.results || []);
+                    console.log('Total stores:', storesList.length);
+                    console.log('Stores:', storesList);
+                    
+                    const linkedStores = storesList.filter(s => String(s.farm) === String(farmId));
+                    console.log('Stores linked to farm', farmId, ':', linkedStores.length);
+                    console.log('Linked stores:', linkedStores);
+                    
+                    if (storesList.length > 0 && linkedStores.length === 0) {
+                        console.log('Attempting to link first store to farm...');
+                        const firstStore = storesList[0];
+                        const patchRes = await fetch(`${API_BASE}/stores/${firstStore.id}/`, {
+                            method: 'PATCH',
+                            headers: { 
+                                'Content-Type': 'application/json', 
+                                'Authorization': 'Bearer ' + token 
+                            },
+                            body: JSON.stringify({ farm: parseInt(farmId) })
+                        });
+                        console.log('PATCH response:', patchRes.status);
+                        if (patchRes.ok) {
+                            const updated = await patchRes.json();
+                            console.log('Store successfully linked:', updated);
+                            await loadLinkedStores();
+                        } else {
+                            const error = await patchRes.text();
+                            console.error('Failed to link store:', error);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Error in test:', err);
+            }
+            console.log('=== TEST COMPLETE ===');
+        };
+    </script>
+</body>
+</html>

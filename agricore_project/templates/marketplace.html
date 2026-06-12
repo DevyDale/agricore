@@ -1,121 +1,183 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
+        <script src="/static/i18n.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agricore Marketplace</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+        * {
             font-family: 'Inter', sans-serif;
         }
+        
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        
         .hero-container {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
-            border-radius: 20px;
-            outline: 5px solid #10b981;
-            outline-offset: -5px;
+            background: linear-gradient(rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.95)), 
+                        url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
+            border-radius: 2rem;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 20px 60px rgba(16, 185, 129, 0.2);
         }
+        
         .glass {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
+        
         .product-card {
-            transition: all 0.4s ease;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(10px) saturate(180%);
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(16,185,129,0.10);
+            border: 1px solid #e0f2f1;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
         }
         .product-card:hover {
-            transform: translateY(-16px);
-            box-shadow: 0 30px 60px rgba(16,185,129,0.25);
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 16px 48px rgba(16,185,129,0.18);
+            border-color: #10b981;
         }
+        
         .category-tab {
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             background: white;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 0.875rem 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
+        
         .category-tab.active {
-            background: linear-gradient(to right, #10b981, #059669);
+            background: linear-gradient(135deg, #10b981, #059669);
             color: white;
-            box-shadow: 0 12px 35px rgba(16,185,129,0.4);
+            border-color: #10b981;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
             transform: translateY(-4px);
         }
+        
         .category-tab:hover:not(.active) {
-            background: #d1fae5;
-            transform: translateY(-6px);
-            box-shadow: 0 12px 30px rgba(16,185,129,0.15);
+            background: #f0fdf4;
+            border-color: #10b981;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
         }
+        
         .fab {
             position: fixed;
-            bottom: 40px;
-            right: 40px;
-            background: linear-gradient(to right, #10b981, #059669);
-            width: 70px;
-            height: 70px;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
-            box-shadow: 0 10px 35px rgba(16,185,129,0.6);
-            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
         }
+        
         .fab:hover {
-            transform: scale(1.2);
-            box-shadow: 0 15px 45px rgba(16,185,129,0.8);
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
         }
+        
         .top-nav-btn {
             transition: all 0.3s;
             border-radius: 1rem;
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 1.25rem;
             font-weight: 600;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
+        
         .top-nav-btn:hover {
-            background: #d1fae5;
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
             transform: translateY(-2px);
         }
+        
         .search-bar {
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge-pill {
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
     </style>
 </head>
+<link rel="stylesheet" href="/static/dale_ai.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <body class="min-h-screen">
 
-    <!-- Hero Container - Isolated with Green Outline -->
-    <div class="container mx-auto px-6 pt-6">
-        <div class="hero-container text-white py-16 md:py-24 px-6">
-            <!-- Top Navigation Buttons (Top Right) -->
-            <div class="absolute top-6 right-6 flex flex-wrap justify-end gap-3">
-                <a href="multi_farm.html" class="top-nav-btn bg-white/20 backdrop-blur text-white hover:bg-white/30">
-                    <i class="fas fa-tractor mr-2"></i> My Farms
+    <!-- Hero Container -->
+    <div class="container mx-auto px-4 md:px-6 pt-6">
+        <div class="hero-container text-white py-12 md:py-20 px-4 md:px-6">
+            <!-- Top Navigation Buttons -->
+            <div class="absolute top-4 md:top-6 right-4 md:right-6 flex flex-wrap justify-end gap-2">
+                <a href="multi_farm.html" class="top-nav-btn text-white text-sm">
+                    <i class="fas fa-tractor mr-2"></i><span class="hidden sm:inline">My Farms</span>
                 </a>
-                <a href="digitalstores.html" class="top-nav-btn bg-white/20 backdrop-blur text-white hover:bg-white/30">
-                    <i class="fas fa-store mr-2"></i> My Stores
+                <a href="digitalstores.html" class="top-nav-btn text-white text-sm">
+                    <i class="fas fa-store mr-2"></i><span class="hidden sm:inline">My Stores</span>
                 </a>
-                <a href="workforce.html" class="top-nav-btn bg-white/20 backdrop-blur text-white hover:bg-white/30">
-                    <i class="fas fa-users mr-2"></i> Professional Network
+                <a href="workforce.html" class="top-nav-btn text-white text-sm">
+                    <i class="fas fa-users mr-2"></i><span class="hidden sm:inline">Network</span>
                 </a>
-                <a href="chats.html" class="top-nav-btn bg-white/20 backdrop-blur text-white hover:bg-white/30">
-                    <i class="fas fa-comments mr-2"></i> Chats
+                <a href="chats.html" class="top-nav-btn text-white text-sm">
+                    <i class="fas fa-comments mr-2"></i><span class="hidden sm:inline">Chats</span>
                 </a>
-                <a href="cart.html" class="top-nav-btn bg-white/20 backdrop-blur text-white hover:bg-white/30 relative">
-                    <i class="fas fa-shopping-cart mr-2"></i> Cart
-                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">3</span>
+                <a href="cart.html" class="top-nav-btn text-white relative text-sm">
+                    <i class="fas fa-shopping-cart mr-2"></i><span class="hidden sm:inline">Cart</span>
+                    <span class="absolute -top-2 -right-2 bg-rose-500 text-white text-xs rounded-full px-2 py-0.5 shadow-lg" data-cart-count>0</span>
                 </a>
-                <button class="top-nav-btn bg-white/20 backdrop-blur text-white hover:bg-white/30">
-                    <i class="fas fa-wallet mr-2"></i> $250.00
+                <button class="top-nav-btn text-white text-sm">
+                    <i class="fas fa-wallet mr-2"></i>$250
                 </button>
+                <select id="settings-language" class="top-nav-btn text-gray-700 bg-white text-sm font-semibold ml-2" style="min-width:120px;">
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="es">Español</option>
+                    <option value="pt">Português</option>
+                    <option value="sw">Kiswahili</option>
+                    <option value="ar">العربية</option>
+                </select>
             </div>
 
             <!-- Centered Title, Slogan, and Search -->
-            <div class="text-center max-w-4xl mx-auto pt-8">
-                <h1 class="text-5xl md:text-7xl font-black mb-4 drop-shadow-2xl">Agricore Marketplace</h1>
-                <p class="text-xl md:text-2xl mb-10 opacity-95 drop-shadow-lg">Your One-Stop Shop for Everything Farming</p>
+            <div class="text-center max-w-4xl mx-auto pt-8 md:pt-12">
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-black mb-3 md:mb-4 drop-shadow-2xl" id="marketplace-title">Agricore Marketplace</h1>
+                <p class="text-lg md:text-xl lg:text-2xl mb-8 md:mb-10 opacity-95 drop-shadow-lg" id="marketplace-desc">Your One-Stop Shop for Everything Farming</p>
                 
                 <!-- Search Bar -->
                 <div class="max-w-3xl mx-auto">
-                    <div class="flex flex-col md:flex-row gap-4 search-bar bg-white rounded-full overflow-hidden shadow-2xl">
-                        <input type="text" id="search-input" placeholder="Search seeds, livestock, tractors, fertilizers..." class="flex-1 px-8 py-5 text-gray-800 text-lg focus:outline-none">
-                        <button class="px-10 py-5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-lg hover:from-emerald-700 hover:to-teal-700 transition">
-                            <i class="fas fa-search mr-2"></i> Search
+                    <div class="flex flex-col sm:flex-row gap-3 search-bar bg-white rounded-2xl overflow-hidden">
+                        <input type="text" id="search-input" placeholder="Search seeds, livestock, tractors, fertilizers..." class="flex-1 px-6 py-4 text-gray-800 text-base focus:outline-none">
+                        <button class="px-6 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-base hover:from-emerald-700 hover:to-teal-700 transition">
+                            <i class="fas fa-search mr-2"></i><span class="hidden sm:inline">Search</span>
                         </button>
                     </div>
                 </div>
@@ -123,48 +185,82 @@
         </div>
     </div>
 
+    <!-- Stats Section -->
+    <section class="container mx-auto px-4 md:px-6 mt-8 md:mt-12">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass rounded-2xl p-6 text-center">
+                <div class="text-3xl md:text-4xl font-bold text-emerald-600 mb-2" id="stats-products">0</div>
+                <div class="text-sm text-gray-600 font-medium" id="stats-products-label">Products</div>
+            </div>
+            <div class="glass rounded-2xl p-6 text-center">
+                <div class="text-3xl md:text-4xl font-bold text-emerald-600 mb-2" id="stats-sellers">0</div>
+                <div class="text-sm text-gray-600 font-medium" id="stats-sellers-label">Verified Sellers</div>
+            </div>
+            <div class="glass rounded-2xl p-6 text-center">
+                <div class="text-3xl md:text-4xl font-bold text-emerald-600 mb-2" id="stats-deals">0</div>
+                <div class="text-sm text-gray-600 font-medium" id="stats-deals-label">Active Deals</div>
+            </div>
+            <div class="glass rounded-2xl p-6 text-center">
+                <div class="text-3xl md:text-4xl font-bold text-emerald-600 mb-2" id="stats-cart">0</div>
+                <div class="text-sm text-gray-600 font-medium" id="stats-cart-label">In Cart</div>
+            </div>
+        </div>
+    </section>
+
     <!-- Refine Results - Horizontal Layout -->
-    <section class="container mx-auto px-6 mb-8 mt-16">
-        <div class="glass rounded-3xl p-6 shadow-lg border border-emerald-100">
-            <h3 class="text-xl font-bold text-emerald-800 mb-4">Refine Results</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <section class="container mx-auto px-4 md:px-6 mb-8 mt-8 md:mt-12">
+        <div class="glass rounded-2xl p-6 border border-gray-100">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-sliders-h text-emerald-600"></i>
+                <span id="refine-results-label">Refine Results</span>
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Category Filter -->
                 <div>
-                    <p class="text-sm font-semibold text-gray-700 mb-2">Category</p>
-                    <select name="filter-category-select" id="filter-category-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <option value="all">All</option>
+                    <p class="text-sm font-semibold text-gray-700 mb-2" id="category-label">Category</p>
+                    <select name="filter-category-select" id="filter-category-select" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white">
+                        <option value="all">All Categories</option>
+                        <option value="all" id="opt-all-categories">All Categories</option>
                         <option value="Livestock and Animal Products">Livestock</option>
+                        <option value="Livestock and Animal Products" id="opt-livestock">Livestock</option>
                         <option value="Crops and Agricultural Produce">Crops</option>
+                        <option value="Crops and Agricultural Produce" id="opt-crops">Crops</option>
                         <option value="Agricultural Machinery and Equipment">Machinery</option>
+                        <option value="Agricultural Machinery and Equipment" id="opt-machinery">Machinery</option>
                         <option value="Agricultural Chemicals and Inputs">Chemicals</option>
+                        <option value="Agricultural Chemicals and Inputs" id="opt-chemicals">Chemicals</option>
                     </select>
                 </div>
                 <!-- Price Range -->
                 <div>
-                    <p class="text-sm font-semibold text-gray-700 mb-2">Price Range</p>
+                    <p class="text-sm font-semibold text-gray-700 mb-2" id="price-range-label">Price Range</p>
                     <div class="flex items-center gap-2">
-                        <input id="price-min" type="number" class="w-20 px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Min">
-                        <span class="text-gray-500">-</span>
-                        <input id="price-max" type="number" class="w-20 px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Max">
-                        <button id="price-apply" class="px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-semibold">Apply</button>
+                        <input id="price-min" type="number" class="w-24 px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white" placeholder="Min">
+                        <span class="text-gray-400">-</span>
+                        <input id="price-max" type="number" class="w-24 px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white" placeholder="Max">
+                        <button id="price-apply" class="px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 text-sm font-semibold transition shadow-sm">Go</button>
                     </div>
                 </div>
                 <!-- Rating -->
                 <div>
-                    <p class="text-sm font-semibold text-gray-700 mb-2">Minimum Rating</p>
-                    <select id="filter-rating-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <p class="text-sm font-semibold text-gray-700 mb-2" id="min-rating-label">Minimum Rating</p>
+                    <select id="filter-rating-select" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
                         <option value="">Any Rating</option>
-                        <option value="4.5">4.5+ stars</option>
-                        <option value="4.0">4.0+ stars</option>
-                        <option value="3.5">3.5+ stars</option>
+                        <option value="" id="opt-any-rating">Any Rating</option>
+                        <option value="4.5">4.5+ ⭐</option>
+                        <option value="4.5" id="opt-45">4.5+ ⭐</option>
+                        <option value="4.0">4.0+ ⭐</option>
+                        <option value="4.0" id="opt-40">4.0+ ⭐</option>
+                        <option value="3.5">3.5+ ⭐</option>
+                        <option value="3.5" id="opt-35">3.5+ ⭐</option>
                     </select>
                 </div>
                 <!-- Deals -->
                 <div>
-                    <p class="text-sm font-semibold text-gray-700 mb-2">Deals</p>
-                    <label class="flex items-center gap-2 cursor-pointer">
+                    <p class="text-sm font-semibold text-gray-700 mb-2" id="special-offers-label">Special Offers</p>
+                    <label class="flex items-center gap-3 cursor-pointer bg-white border-2 border-gray-200 rounded-xl px-4 py-2.5 hover:border-emerald-500 transition">
                         <input type="checkbox" id="filter-deals" class="w-5 h-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
-                        <span class="text-sm text-gray-700">Show only discounted items</span>
+                        <span class="text-sm text-gray-700 font-medium">Discounted items only</span>
                     </label>
                 </div>
             </div>
@@ -172,83 +268,178 @@
     </section>
 
     <!-- Main Content: Product Grid -->
-    <div class="container mx-auto px-6 pb-24 mt-12">
-        <div class="glass rounded-3xl p-6 md:p-8 shadow-2xl">
-                    <div class="flex items-center justify-between mb-6 md:mb-8">
-                        <h2 class="text-2xl md:text-3xl font-bold text-emerald-800">Available Products</h2>
-                        <div class="flex items-center gap-3">
-                            <select id="sort-select" class="px-3 py-2 rounded-xl bg-white border border-emerald-200 text-sm">
-                                <option value="relevance">Sort: Relevance</option>
-                                <option value="price-asc">Price: Low to High</option>
-                                <option value="price-desc">Price: High to Low</option>
-                                <option value="rating">Top Rated</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" id="product-grid-all"></div>
+    <div class="container mx-auto px-4 md:px-6 pb-24 mt-8">
+        <div class="glass rounded-2xl p-6 md:p-8">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Available Products</h2>
+                <div class="flex items-center gap-3">
+                    <select id="sort-select" class="px-4 py-2.5 rounded-xl bg-white border-2 border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="relevance" id="opt-sort-relevance">Sort: Relevance</option>
+                        <option value="price-asc" id="opt-sort-low-high">Price: Low to High</option>
+                        <option value="price-desc" id="opt-sort-high-low">Price: High to Low</option>
+                        <option value="rating" id="opt-sort-top-rated">Top Rated</option>
+                    </select>
                 </div>
-            </section>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="product-grid-all"></div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="mt-12 border-t">
-        <div class="container mx-auto px-6 py-10 text-sm text-gray-600 flex flex-col md:flex-row justify-between">
-            <p>© ${new Date().getFullYear ? new Date().getFullYear() : ''} Agricore — Grow smart, trade better.</p>
-            <div class="flex gap-4">
-                <a href="#" class="hover:text-emerald-700">Privacy</a>
-                <a href="#" class="hover:text-emerald-700">Terms</a>
-                <a href="#" class="hover:text-emerald-700">Support</a>
+    <footer class="mt-12 border-t border-gray-200 bg-white/50">
+        <div class="container mx-auto px-4 md:px-6 py-10 text-sm text-gray-600 flex flex-col md:flex-row justify-between gap-4">
+            <p>© 2024 Agricore — Grow smart, trade better.</p>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-emerald-600 transition">Privacy</a>
+                <a href="#" class="hover:text-emerald-600 transition">Terms</a>
+                <a href="#" class="hover:text-emerald-600 transition">Support</a>
             </div>
         </div>
     </footer>
 
-    <!-- AI FAB -->
-    <button class="fab text-white text-4xl flex items-center justify-center" id="dale-ai-btn">
-        <i class="fas fa-robot"></i>
-    </button>
+    <!-- Dale AI FAB -->
+    <div id="dale-ai-btn" class="fab" title="Ask Dale AI">
+        <i class="fas fa-robot text-white text-2xl"></i>
+    </div>
 
-    <!-- AI Modal -->
-    <div id="ai-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50">
-        <div class="glass rounded-3xl shadow-2xl p-12 max-w-3xl w-full mx-6">
-            <h2 class="text-5xl font-bold text-emerald-700 mb-10 flex items-center gap-6">
-                <i class="fas fa-robot text-6xl text-emerald-600"></i> Dale AI Assistant
-            </h2>
-            <input type="text" id="ai-input" class="w-full p-8 text-xl rounded-3xl border-4 border-emerald-300 focus:border-emerald-600 focus:outline-none mb-8" placeholder="Ask about products, prices, or farming tips...">
-            <div id="ai-response" class="p-10 bg-emerald-50 rounded-3xl min-h-64 text-gray-700 text-xl"></div>
-            <button id="ai-close-btn" class="mt-10 w-full py-6 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-2xl font-bold rounded-3xl shadow-2xl hover:shadow-3xl transition">
-                Close
-            </button>
+    <!-- Dale AI Modal -->
+    <div id="ai-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-[1001] p-4" tabindex="-1">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh] overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-teal-50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-robot text-white text-lg"></i>
+                    </div>
+                    <span class="font-bold text-gray-800 text-lg">Dale AI Assistant</span>
+                </div>
+                <button class="text-gray-400 hover:text-gray-600 transition" id="ai-close-btn">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-gray-50 to-white" id="ai-messages">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-white text-sm"></i>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-none px-4 py-3 max-w-[85%] shadow-sm">
+                        <p class="text-gray-700 text-sm">👋 Hello! I'm Dale AI. How can I help you with the marketplace today?</p>
+                    </div>
+                </div>
+            </div>
+            <form class="px-6 py-4 border-t border-gray-100 bg-white flex gap-3" id="ai-form">
+                <input class="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" id="ai-input" placeholder="Ask Dale AI..." autocomplete="off" />
+                <button type="submit" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl px-6 py-3 font-semibold transition shadow-sm">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
         </div>
     </div>
 
     <!-- Cart Drawer -->
     <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full sm:w-[420px] bg-white shadow-2xl transform translate-x-full transition-transform z-50 flex flex-col">
-        <div class="p-4 border-b flex items-center justify-between">
-            <h3 class="text-lg font-bold flex items-center gap-2">
+        <div class="p-6 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-emerald-50 to-teal-50">
+            <h3 class="text-xl font-bold flex items-center gap-2 text-gray-800">
                 <i class="fas fa-shopping-cart text-emerald-600"></i>
                 Your Cart (<span data-cart-count>0</span>)
             </h3>
-            <button id="cart-close" class="text-gray-600 hover:text-gray-900"><i class="fas fa-times"></i></button>
+            <button id="cart-close" class="text-gray-600 hover:text-gray-900 transition">
+                <i class="fas fa-times text-xl"></i>
+            </button>
         </div>
-        <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
-        <div class="p-4 border-t">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-gray-600">Subtotal</span>
-                <span id="cart-subtotal" class="font-bold">₦0.00</span>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50"></div>
+        <div class="p-6 border-t border-gray-100 bg-white">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-gray-600 font-medium">Subtotal</span>
+                                <span class="text-gray-600 font-medium" id="subtotal-label">Subtotal</span>
+                <span id="cart-subtotal" class="font-bold text-xl text-gray-800">₦0.00</span>
             </div>
-            <button onclick="goToCart()" class="w-full py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all">
-                <i class="fas fa-shopping-bag mr-2"></i>View Cart & Checkout
+            <button onclick="goToCart()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-bold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg">
+                <i class="fas fa-shopping-bag mr-2"></i><span id="view-cart-label">View Cart & Checkout</span>
+                <script>
+                // --- Apply i18n on static UI ---
+                function applyI18nStatic() {
+                    if (!window.i18n) return;
+                    const ids = [
+                        'marketplace-title','marketplace-desc','stats-products-label','stats-sellers-label','stats-deals-label','stats-cart-label','refine-results-label','category-label','opt-all-categories','opt-livestock','opt-crops','opt-machinery','opt-chemicals','price-range-label','min-rating-label','opt-any-rating','opt-45','opt-40','opt-35','special-offers-label','discounted-only-label','available-products-label','opt-sort-relevance','opt-sort-low-high','opt-sort-high-low','opt-sort-top-rated','subtotal-label','view-cart-label'
+                    ];
+                    const keys = [
+                        'Agricore Marketplace','Your One-Stop Shop for Everything Farming','Products','Verified Sellers','Active Deals','In Cart','Refine Results','Category','All Categories','Livestock','Crops','Machinery','Chemicals','Price Range','Minimum Rating','Any Rating','4.5+ ⭐','4.0+ ⭐','3.5+ ⭐','Special Offers','Discounted items only','Available Products','Sort: Relevance','Price: Low to High','Price: High to Low','Top Rated','Subtotal','View Cart & Checkout'
+                    ];
+                    ids.forEach((id, i) => {
+                        const el = document.getElementById(id);
+                        if (el) el.textContent = i18n.t(keys[i]);
+                    });
+                }
+                applyI18nStatic();
+                // --- End i18n static ---
+                </script>
             </button>
         </div>
     </div>
 
     <script>
-        // Backend-integrated marketplace: fetch products/ads, apply filters, open chat
+        // Dale AI FAB and Modal logic
+        (function(){
+    const fab = document.getElementById('dale-ai-btn');
+    const modal = document.getElementById('ai-modal');
+    const closeBtn = document.getElementById('ai-close-btn');
+    const form = document.getElementById('ai-form');
+    const input = document.getElementById('ai-input');
+    const messages = document.getElementById('ai-messages');
+
+    fab.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => input.focus(), 100);
+    });
+
+    closeBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    });
+
+    form.addEventListener('submit', function(e){
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        appendMsg(text, 'user');
+        input.value = '';
+        setTimeout(() => {
+            appendMsg("I'm here to help! What would you like to know about the marketplace?", 'bot');
+        }, 600);
+    });
+
+    function appendMsg(text, who) {
+        const isBot = who === 'bot';
+        const msg = document.createElement('div');
+        msg.className = `flex items-start gap-3 mb-4 ${isBot ? '' : 'flex-row-reverse'}`;
+        msg.innerHTML = isBot 
+            ? `<div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0">
+                   <i class="fas fa-robot text-white text-sm"></i>
+               </div>
+               <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-none px-4 py-3 max-w-[85%] shadow-sm">
+                   <p class="text-gray-700 text-sm">${text}</p>
+               </div>`
+            : `<div class="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl rounded-tr-none px-4 py-3 max-w-[85%] shadow-sm">
+                   <p class="text-white text-sm">${text}</p>
+               </div>`;
+        messages.appendChild(msg);
+        messages.scrollTop = messages.scrollHeight;
+    }
+        })();
+
+        // Backend-integrated marketplace
         const API_BASE = 'http://127.0.0.1:8000/api';
-        const token = localStorage.getItem('token') || localStorage.getItem('access_token');
-        if (!token) {
+        const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+        if (!token || token === 'null' || token === 'undefined') {
             window.location.href = 'authentication.html';
         }
 
@@ -259,13 +450,12 @@
         let ads = [];
         const filters = { q: '', category: 'all', min: null, max: null, rating: null, sort: 'relevance' };
 
-        // Toast helper
         function showToast(message) {
             let t = document.getElementById('toast');
             if (!t) {
                 t = document.createElement('div');
                 t.id = 'toast';
-                t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl z-50';
+                t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-xl z-50 font-medium';
                 document.body.appendChild(t);
             }
             t.textContent = message;
@@ -278,20 +468,18 @@
 
         function ratingStars(avg) {
             const r = Math.round(avg || 0);
-            return '★★★★★'.split('').map((s, i) => `<span class="${i < r ? 'text-yellow-500' : 'text-gray-300'}">★</span>`).join('');
+            return '★★★★★'.split('').map((s, i) => `<span class="${i < r ? 'text-yellow-400' : 'text-gray-300'}">${s}</span>`).join('');
         }
 
         function getProductInitials(title) {
             if (!title) return 'P';
             const words = title.trim().split(/\s+/);
-            if (words.length >= 2) {
-                return (words[0][0] + words[1][0]).toUpperCase();
-            }
+            if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
             return title.substring(0, 2).toUpperCase();
         }
 
         function renderCard(p) {
-            const priceDisplay = parseFloat(p.price || 0).toFixed(2);
+            const priceDisplay = i18n.formatCurrency(parseFloat(p.price || 0));
             const tag = p.tag || 'Deal';
             const rating = p.average_rating || 0;
             const reviewCount = p.reviews_count || 0;
@@ -299,45 +487,33 @@
             const initials = getProductInitials(p.title);
             
             return `
-                <div class="product-card glass rounded-3xl overflow-hidden animate-[fadeIn_0.5s_ease]">
-                    <div class="h-60 md:h-72 bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center relative">
+                <div class="product-card group">
+                    <div class="relative h-60 flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 overflow-hidden">
                         ${imageUrl 
-                            ? `<img src="${imageUrl}" alt="${p.title}" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                               <div class="absolute inset-0 flex items-center justify-center text-6xl font-bold text-emerald-700" style="display:none;">${initials}</div>`
-                            : `<div class="text-6xl font-bold text-emerald-700">${initials}</div>`
+                            ? `<img src="${imageUrl}" alt="${p.title}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                               <div class="absolute inset-0 flex items-center justify-center text-5xl font-bold text-emerald-600" style="display:none;">${initials}</div>`
+                            : `<div class="text-5xl font-bold text-emerald-600">${initials}</div>`
                         }
-                        <span class="absolute top-4 left-4 badge bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-semibold">${tag}</span>
-                        <div class="absolute top-4 right-4 flex items-center gap-2">
-                            <button onclick="addToCart(${p.id}, '${p.title.replace(/'/g, "\\'")}', '${priceDisplay}', '${p.unit || ''}', '${imageUrl || ''}', ${p.stock_quantity || 0})" class="bg-white/90 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold hover:bg-emerald-50" title="Add to Cart">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                            <button onclick="toggleWishlist(${p.id})" class="bg-white/90 text-red-500 px-3 py-1 rounded-full text-xs font-semibold hover:bg-red-50" title="Favorite">
-                                <i class="fas fa-heart"></i>
-                            </button>
+                        <span class="badge-pill absolute top-4 left-4 bg-white/90 text-emerald-700 shadow">${tag}</span>
+                        <div class="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="addToCart(${p.id}, '${p.title.replace(/'/g, "\\'")}', '${parseFloat(p.price || 0)}', '${p.unit || ''}', '${imageUrl || ''}', ${p.stock_quantity || 0})" class="w-10 h-10 bg-white/90 text-emerald-600 rounded-full hover:bg-emerald-100 transition flex items-center justify-center shadow"><i class="fas fa-cart-plus"></i></button>
+                            <button onclick="toggleWishlist(${p.id})" class="w-10 h-10 bg-white/90 text-rose-500 rounded-full hover:bg-rose-100 transition flex items-center justify-center shadow"><i class="fas fa-heart"></i></button>
+                            <button onclick="openDropshipModal(${p.id})" class="w-10 h-10 bg-white/90 text-blue-600 rounded-full hover:bg-blue-100 transition flex items-center justify-center shadow"><i class="fas fa-truck"></i></button>
                         </div>
-                        <span class="absolute bottom-4 left-4 bg-white/90 text-gray-800 px-3 py-1 rounded-full text-xs font-semibold">${p.category || 'General'}</span>
                     </div>
-                    <div class="p-6 md:p-8 min-h-[280px] flex flex-col">
-                        <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-2">${p.title}</h3>
-                        <div class="flex items-center gap-2 mb-3 text-sm text-gray-600">
-                            <span class="flex items-center gap-1">${ratingStars(rating)}</span>
-                            <span>(${rating.toFixed(1)} • ${reviewCount} reviews)</span>
+                    <div class="p-6 flex flex-col gap-2">
+                        <h3 class="text-xl font-bold text-gray-800 mb-1 line-clamp-2">${p.title}</h3>
+                        <div class="flex items-center gap-2 mb-2 text-base">
+                            <span class="flex">${ratingStars(rating)}</span>
+                            <span class="text-gray-500">(${rating.toFixed(1)} • ${reviewCount})</span>
                         </div>
-                        <p class="text-gray-600 mb-3 text-sm line-clamp-3">${p.description || 'Quality assured, delivered safely to your location'}</p>
-                        <p class="text-xs text-gray-500 mb-4">Store: ${p.store_name || 'Unknown'}${p.store_verified ? ' ✅' : ''}</p>
-                        <div class="mt-auto">
-                            <div class="mb-4">
-                                <p class="text-2xl md:text-3xl font-bold text-emerald-700">₦${priceDisplay}</p>
-                                <p class="text-gray-500 text-xs md:text-sm">${p.unit || ''}</p>
-                                <p class="text-xs text-gray-500 mt-1">Stock: ${p.stock_quantity || 0} ${p.unit || 'units'}</p>
+                        <p class="text-gray-600 mb-2 text-base line-clamp-2">${p.description || 'Quality product'}</p>
+                        <div class="flex items-center justify-between mt-auto">
+                            <div>
+                                <p class="text-2xl font-extrabold text-emerald-600">${priceDisplay}</p>
+                                <p class="text-gray-500 text-sm">${p.unit || ''} • Stock: ${p.stock_quantity || 0}</p>
                             </div>
-                            <div class="flex items-center gap-2 mb-2">
-                                <button onclick="addToCart(${p.id}, '${p.title.replace(/'/g, "\\'")}', '${priceDisplay}', '${p.unit || ''}', '${imageUrl || ''}', ${p.stock_quantity || 0})" class="flex-1 px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl text-sm md:text-base whitespace-nowrap transition-all"><i class="fas fa-cart-plus mr-1"></i>Add to Cart</button>
-                            </div>
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <button onclick="startChat(${p.id})" class="flex-1 min-w-[120px] px-4 py-2.5 bg-white text-emerald-700 border border-emerald-300 rounded-2xl font-semibold hover:bg-emerald-50 text-sm md:text-base whitespace-nowrap"><i class="fas fa-comments mr-1"></i>Chat</button>
-                                <button onclick="goToDetail(${p.id})" class="flex-1 min-w-[120px] px-4 py-2.5 bg-white text-emerald-700 border border-emerald-300 rounded-2xl font-semibold hover:bg-emerald-50 text-sm md:text-base whitespace-nowrap"><i class="fas fa-eye mr-1"></i>View</button>
-                            </div>
+                            <button onclick="goToDetail(${p.id})" class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-xl shadow hover:from-emerald-700 hover:to-teal-700 transition text-base"><i class="fas fa-eye"></i></button>
                         </div>
                     </div>
                 </div>
@@ -346,19 +522,20 @@
 
         function populateGrid(list) {
             const pageList = paginate(list);
-            document.getElementById('product-grid-all').innerHTML = pageList.length ? pageList.map(renderCard).join('') : '<div class="col-span-full text-center text-gray-600 py-10">No products match your filters.</div>';
+            document.getElementById('product-grid-all').innerHTML = pageList.length 
+                ? pageList.map(renderCard).join('') 
+                : '<div class="col-span-full text-center text-gray-500 py-16"><i class="fas fa-box-open text-6xl mb-4 text-gray-300"></i><p class="text-lg font-medium">No products match your filters</p></div>';
             renderPagination(list.length);
         }
 
-        // Skeleton shimmer while loading
         function skeletonCard() {
             return `
-                <div class="glass rounded-3xl overflow-hidden">
-                    <div class="h-60 md:h-72 bg-gray-200 animate-pulse"></div>
-                    <div class="p-6 md:p-8">
-                        <div class="h-6 w-2/3 bg-gray-200 rounded animate-pulse mb-3"></div>
-                        <div class="h-4 w-1/2 bg-gray-200 rounded animate-pulse mb-5"></div>
-                        <div class="h-8 w-full bg-gray-200 rounded animate-pulse"></div>
+                <div class="product-card">
+                    <div class="h-56 bg-gray-200 animate-pulse"></div>
+                    <div class="p-5">
+                        <div class="h-5 w-3/4 bg-gray-200 rounded animate-pulse mb-3"></div>
+                        <div class="h-4 w-1/2 bg-gray-200 rounded animate-pulse mb-4"></div>
+                        <div class="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
                     </div>
                 </div>`;
         }
@@ -367,7 +544,14 @@
             const animateCount = (el, target) => {
                 const duration = 600; const steps = 30; let cur = 0;
                 const inc = target / steps;
-                const timer = setInterval(() => { cur += inc; el.textContent = Math.round(cur); if (cur >= target) { el.textContent = target; clearInterval(timer); } }, duration / steps);
+                const timer = setInterval(() => { 
+                    cur += inc; 
+                    el.textContent = Math.round(cur); 
+                    if (cur >= target) { 
+                        el.textContent = target; 
+                        clearInterval(timer); 
+                    } 
+                }, duration / steps);
             };
             animateCount(document.getElementById('stats-products'), list.length);
             animateCount(document.getElementById('stats-sellers'), Math.max(10, Math.min(99, Math.round(list.length * 2))));
@@ -375,10 +559,10 @@
             animateCount(document.getElementById('stats-cart'), cartCount);
         }
 
-        // Pagination
         let page = 1; const perPage = 8;
         function paginate(list) {
-            const start = (page - 1) * perPage; return list.slice(start, start + perPage);
+            const start = (page - 1) * perPage; 
+            return list.slice(start, start + perPage);
         }
 
         function renderPagination(total) {
@@ -386,94 +570,91 @@
             if (!pager) {
                 pager = document.createElement('div');
                 pager.id = 'pager';
-                pager.className = 'flex items-center justify-center gap-2 mt-6';
+                pager.className = 'flex items-center justify-center gap-3 mt-8';
                 document.getElementById('product-grid-all').after(pager);
             }
             const pages = Math.max(1, Math.ceil(total / perPage));
             pager.innerHTML = `
-                <button ${page<=1?'disabled':''} class="px-3 py-1 border rounded" id="prev-page">Prev</button>
-                <span class="px-3 py-1">Page ${page} of ${pages}</span>
-                <button ${page>=pages?'disabled':''} class="px-3 py-1 border rounded" id="next-page">Next</button>
+                <button ${page<=1?'disabled':''} class="px-4 py-2 border-2 border-gray-200 rounded-xl font-medium hover:border-emerald-500 hover:text-emerald-600 transition disabled:opacity-50 disabled:cursor-not-allowed" id="prev-page">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <span class="px-4 py-2 font-medium text-gray-700">Page ${page} of ${pages}</span>
+                <button ${page>=pages?'disabled':''} class="px-4 py-2 border-2 border-gray-200 rounded-xl font-medium hover:border-emerald-500 hover:text-emerald-600 transition disabled:opacity-50 disabled:cursor-not-allowed" id="next-page">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             `;
             document.getElementById('prev-page').onclick = () => { if (page>1) { page--; applyFiltersAndRender(); } };
             document.getElementById('next-page').onclick = () => { if (page<pages) { page++; applyFiltersAndRender(); } };
         }
 
-        // Initial loading shimmer then render
         const gridEl = document.getElementById('product-grid-all');
         gridEl.innerHTML = Array.from({length: 8}).map(skeletonCard).join('');
 
         let cartCount = 0;
         const cart = new Map();
-        function addToCart(id) {
-            const item = products.find(p => p.id === id);
-            if (!item) return;
-            const prev = cart.get(id) || { ...item, qty: 0 };
-            prev.qty += 1; cart.set(id, prev);
-            cartCount++;
-            updateCartUI();
-            showToast('Added to cart');
-            const badge = document.querySelector('.top-nav-btn .bg-red-500');
-            if (badge) badge.textContent = cartCount;
-            document.getElementById('stats-cart').textContent = cartCount;
-            openCart();
-        }
 
         function updateCartUI() {
             const container = document.getElementById('cart-items');
             const items = Array.from(cart.values());
             container.innerHTML = items.length ? items.map(i => `
-                <div class="flex items-center gap-3">
-                    <img src="${i.image}" class="w-14 h-14 rounded object-cover"/>
-                    <div class="flex-1">
-                        <p class="font-semibold">${i.title || i.name}</p>
-                        <p class="text-sm text-gray-600">₦${parseFloat(i.price).toFixed(2)} × ${i.qty}</p>
+                <div class="flex items-center gap-4 bg-white p-4 rounded-xl border border-gray-100">
+                    <img src="${i.image}" class="w-16 h-16 rounded-lg object-cover"/>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-gray-800 truncate">${i.title || i.name}</p>
+                        <p class="text-sm text-gray-600">${i18n.formatCurrency(parseFloat(i.price))} × ${i.qty}</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button onclick="changeQty(${i.id}, -1)" class="px-2 py-1 border rounded">-</button>
-                        <button onclick="changeQty(${i.id}, 1)" class="px-2 py-1 border rounded">+</button>
-                        <button onclick="removeItem(${i.id})" class="px-2 py-1 text-red-600">Remove</button>
+                        <button onclick="changeQty(${i.id}, -1)" class="w-8 h-8 border-2 border-gray-200 rounded-lg hover:border-emerald-500 transition flex items-center justify-center">-</button>
+                        <span class="w-8 text-center font-medium">${i.qty}</span>
+                        <button onclick="changeQty(${i.id}, 1)" class="w-8 h-8 border-2 border-gray-200 rounded-lg hover:border-emerald-500 transition flex items-center justify-center">+</button>
+                        <button onclick="removeItem(${i.id})" class="w-8 h-8 text-rose-600 hover:bg-rose-50 rounded-lg transition flex items-center justify-center">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
                     </div>
                 </div>
-            `).join('') : '<p class="text-gray-600">Your cart is empty.</p>';
+            `).join('') : '<div class="text-center py-16"><i class="fas fa-shopping-cart text-6xl text-gray-200 mb-4"></i><p class="text-gray-500">Your cart is empty</p></div>';
             const subtotal = items.reduce((s,i)=> s + (parseFloat(i.price) || 0) * i.qty, 0);
-            document.getElementById('cart-subtotal').textContent = `₦${subtotal.toFixed(2)}`;
+            document.getElementById('cart-subtotal').textContent = i18n.formatCurrency(subtotal);
         }
 
         function changeQty(id, delta) {
-            const i = cart.get(id); if (!i) return;
-            i.qty += delta; if (i.qty <= 0) { cart.delete(id); }
+            const i = cart.get(id); 
+            if (!i) return;
+            i.qty += delta; 
+            if (i.qty <= 0) cart.delete(id);
             cartCount = Array.from(cart.values()).reduce((s,it)=> s + it.qty, 0);
             updateCartUI();
-            const badge = document.querySelector('.top-nav-btn .bg-red-500');
-            if (badge) badge.textContent = cartCount;
+            document.querySelectorAll('[data-cart-count]').forEach(el => el.textContent = cartCount);
             document.getElementById('stats-cart').textContent = cartCount;
         }
 
         function removeItem(id) {
-            const i = cart.get(id); if (!i) return;
             cart.delete(id);
             cartCount = Array.from(cart.values()).reduce((s,it)=> s + it.qty, 0);
             updateCartUI();
-            const badge = document.querySelector('.top-nav-btn .bg-red-500');
-            if (badge) badge.textContent = cartCount;
+            document.querySelectorAll('[data-cart-count]').forEach(el => el.textContent = cartCount);
             document.getElementById('stats-cart').textContent = cartCount;
         }
 
         function openCart() {
             document.getElementById('cart-drawer').classList.remove('translate-x-full');
         }
+        
         document.getElementById('cart-close').addEventListener('click', () => {
             document.getElementById('cart-drawer').classList.add('translate-x-full');
         });
 
         const wishlist = new Set();
         function toggleWishlist(id) {
-            if (wishlist.has(id)) { wishlist.delete(id); showToast('Removed from wishlist'); }
-            else { wishlist.add(id); showToast('Saved to wishlist'); }
+            if (wishlist.has(id)) { 
+                wishlist.delete(id); 
+                showToast('Removed from wishlist'); 
+            } else { 
+                wishlist.add(id); 
+                showToast('Added to wishlist'); 
+            }
         }
 
-        // Filtering helpers
         function applyFiltersAndRender() {
             let list = [...products];
             if (filters.q) list = list.filter(p => (p.title || '').toLowerCase().includes(filters.q.toLowerCase()));
@@ -488,17 +669,6 @@
             populateGrid(list);
             setStats(list);
         }
-
-        // Event bindings
-        document.querySelectorAll('.category-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                filters.category = tab.dataset.category;
-                page = 1;
-                applyFiltersAndRender();
-            });
-        });
 
         const searchInput = document.getElementById('search-input');
         if (searchInput) {
@@ -531,7 +701,7 @@
         if (ratingSelect) {
             ratingSelect.addEventListener('change', (e) => {
                 const v = e.target.value;
-                filters.rating = v ? parseInt(v) : null;
+                filters.rating = v ? parseFloat(v) : null;
                 page = 1;
                 applyFiltersAndRender();
             });
@@ -544,7 +714,6 @@
             applyFiltersAndRender();
         });
 
-        // Data fetching
         async function loadProductsFromApi() {
             try {
                 const params = new URLSearchParams();
@@ -553,144 +722,25 @@
                 if (filters.min) params.append('min_price', filters.min);
                 if (filters.max) params.append('max_price', filters.max);
                 const res = await fetch(`${API_BASE}/products/?${params.toString()}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
                 });
+                    if (res.status === 401) {
+                        document.getElementById('product-grid-all').innerHTML = '<div class="col-span-full text-center text-rose-500 py-16"><i class="fas fa-lock text-6xl mb-4"></i><p class="text-lg font-medium">You must be logged in to view products.</p></div>';
+                        return;
+                    }
                 const data = await res.json();
                 products = Array.isArray(data) ? data : (data.results || []);
                 applyFiltersAndRender();
             } catch (err) {
                 console.error('Failed to load products', err);
-                document.getElementById('product-grid-all').innerHTML = '<div class="col-span-full text-center text-red-500 py-10">Failed to load products.</div>';
+                document.getElementById('product-grid-all').innerHTML = '<div class="col-span-full text-center text-rose-500 py-16"><i class="fas fa-exclamation-triangle text-6xl mb-4"></i><p class="text-lg font-medium">Failed to load products</p></div>';
             }
         }
 
-        async function loadAds() {
-            try {
-                const res = await fetch(`${API_BASE}/advertisements/active/`);
-                ads = await res.json();
-                renderAds();
-            } catch (err) {
-                console.warn('Failed to load ads', err);
-            }
-        }
-
-        function renderAds() {
-            if (!ads.length) return;
-            const hero = document.querySelector('.hero-container');
-            if (!hero) return;
-            const bar = document.createElement('div');
-            bar.className = 'mt-4 grid grid-cols-1 md:grid-cols-3 gap-4';
-            bar.innerHTML = ads.slice(0,3).map(ad => `
-                <div class="p-4 rounded-2xl shadow-lg border border-emerald-100" style="background:${ad.background_color || '#10b981'}; color:${ad.text_color || '#fff'}">
-                    <p class="text-sm opacity-90 mb-1">${ad.store?.name || 'Store Ad'}</p>
-                    <h4 class="text-lg font-bold">${ad.title}</h4>
-                    <p class="text-sm mb-3">${ad.description || ''}</p>
-                    <div class="flex items-center gap-2">
-                        <button onclick="window.open('${ad.link_url || '#'}','_blank')" class="px-3 py-2 bg-white text-emerald-700 rounded-lg text-sm font-semibold">${ad.cta_text || 'Shop'}</button>
-                        <span class="text-xs opacity-80">${ad.duration_days || 1} day(s)</span>
-                    </div>
-                </div>
-            `).join('');
-            hero.appendChild(bar);
-        }
-
-        // Product detail navigation
         function goToDetail(id) {
             window.location.href = `product_detail.html?id=${id}`;
         }
 
-        // Realtime chat modal
-        const chatModal = document.createElement('div');
-        chatModal.id = 'chat-modal';
-        chatModal.className = 'fixed inset-0 bg-black/60 hidden items-center justify-center z-50';
-        chatModal.innerHTML = `
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl p-6 flex flex-col gap-4 max-h-[80vh]">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-gray-800">Chat with seller</h3>
-                    <button id="chat-close" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
-                </div>
-                <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 bg-gray-50 p-3 rounded-xl"></div>
-                <div class="flex gap-2">
-                    <input id="chat-input" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Type a message..." />
-                    <button id="chat-send" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold">Send</button>
-                </div>
-            </div>`;
-        document.body.appendChild(chatModal);
-
-        let chatSocket = null;
-        let activeConversationId = null;
-
-        document.getElementById('chat-close')?.addEventListener('click', () => {
-            chatModal.classList.add('hidden');
-            if (chatSocket) chatSocket.close();
-        });
-
-        document.getElementById('chat-send')?.addEventListener('click', sendChatMessage);
-        document.getElementById('chat-input')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
-
-        function appendMessage(text, mine=false) {
-            const box = document.getElementById('chat-messages');
-            const row = document.createElement('div');
-            row.className = `flex ${mine ? 'justify-end' : 'justify-start'}`;
-            row.innerHTML = `<div class="px-3 py-2 rounded-xl ${mine ? 'bg-emerald-600 text-white' : 'bg-white border'} max-w-[75%] text-sm">${text}</div>`;
-            box.appendChild(row);
-            box.scrollTop = box.scrollHeight;
-        }
-
-        function sendChatMessage() {
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if (!text || !chatSocket) return;
-            chatSocket.send(JSON.stringify({ content: text }));
-            appendMessage(text, true);
-            input.value = '';
-        }
-
-        async function startChat(productId) {
-            try {
-                const res = await fetch(`${API_BASE}/conversations/start-product-chat/`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ product: productId })
-                });
-                if (!res.ok) throw new Error('Unable to start chat');
-                const convo = await res.json();
-                activeConversationId = convo.id;
-                openChatSocket(convo.id);
-            } catch (err) {
-                console.error(err);
-                showToast('Unable to start chat');
-            }
-        }
-
-        function openChatSocket(conversationId) {
-            if (chatSocket) chatSocket.close();
-            chatModal.classList.remove('hidden');
-            document.getElementById('chat-messages').innerHTML = '';
-            const url = `${wsScheme}://${location.host}/ws/chat/${conversationId}/?token=${token}`;
-            chatSocket = new WebSocket(url);
-            chatSocket.onmessage = (event) => {
-                try {
-                    const payload = JSON.parse(event.data);
-                    if (payload.message) {
-                        appendMessage(payload.message.content || payload.message, false);
-                    }
-                } catch (err) { console.warn('WS parse', err); }
-            };
-            chatSocket.onclose = () => console.log('Chat closed');
-        }
-
-        // AI Modal
-        document.getElementById('dale-ai-btn').onclick = () => document.getElementById('ai-modal').classList.remove('hidden');
-        document.getElementById('ai-close-btn').onclick = () => document.getElementById('ai-modal').classList.add('hidden');
-        document.getElementById('ai-modal').onclick = (e) => {
-            if (e.target === document.getElementById('ai-modal')) document.getElementById('ai-modal').classList.add('hidden');
-        };
-
-        // Cart Management
         function getCart() {
             try {
                 const saved = localStorage.getItem('agricore_cart');
@@ -709,8 +759,7 @@
             const cart = getCart();
             const totalItems = Object.values(cart).reduce((sum, item) => sum + (item.qty || 1), 0);
             cartCount = totalItems;
-            const badge = document.querySelector('[data-cart-count]');
-            if (badge) badge.textContent = totalItems;
+            document.querySelectorAll('[data-cart-count]').forEach(el => el.textContent = totalItems);
             document.getElementById('stats-cart').textContent = totalItems;
         }
 
@@ -724,11 +773,12 @@
                     return;
                 }
                 cart[key].qty += 1;
-                showToast(`Updated ${name} quantity in cart`);
+                showToast(`Updated ${name} quantity`);
             } else {
                 cart[key] = {
                     id: id,
                     name: name,
+                    title: name,
                     price: parseFloat(price),
                     unit: unit,
                     image: image,
@@ -739,20 +789,170 @@
             }
             
             saveCart(cart);
+            openCart();
         }
 
         function goToCart() {
             window.location.href = 'cart.html';
         }
 
-        // Bootstrap
         async function initMarketplace() {
             updateCartCount();
-            await Promise.all([loadProductsFromApi(), loadAds()]);
+            await loadProductsFromApi();
         }
 
         initMarketplace();
     </script>
-    <script src="/static/js/dale.js" defer></script>
 </body>
+<script src="/static/dale_ai.js"></script>
+</body>
+<script>
+        // Dropship logic
+        let selectedProductId = null;
+        let selectedStoreId = null;
+        function openDropshipModal(productId) {
+            selectedProductId = productId;
+            selectedStoreId = null;
+            let modal = document.getElementById('dropship-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'dropship-modal';
+                modal.className = 'fixed inset-0 bg-black/40 flex items-center justify-center z-[1002]';
+                modal.innerHTML = `
+                    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full">
+                        <h2 class="text-2xl font-bold mb-4 text-gray-800 flex items-center gap-2"><i class='fas fa-truck text-blue-600'></i> Dropship Product</h2>
+                        <form id="dropship-form" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Quantity to Dropship *</label>
+                                <input type="number" id="dropship-qty" class="input-field" min="1" placeholder="Enter quantity" required />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Price (optional)</label>
+                                <input type="number" id="dropship-price" class="input-field" min="0" step="0.01" placeholder="Set your price (leave blank to use original)" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Notes (optional)</label>
+                                <textarea id="dropship-notes" class="input-field" rows="2" placeholder="Any special notes..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Select Digital Store *</label>
+                                <div id="store-list" class="grid gap-2"></div>
+                            </div>
+                            <div id="dropship-error" class="text-rose-600 text-sm font-semibold hidden"></div>
+                            <div class="flex gap-3 pt-2">
+                                <button type="button" id="dropship-cancel" class="btn-secondary flex-1">Cancel</button>
+                                <button type="submit" id="dropship-confirm" class="btn-primary flex-1">Confirm Dropship</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                document.getElementById('dropship-cancel').addEventListener('click', closeDropshipModal);
+                document.getElementById('dropship-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const qty = parseInt(document.getElementById('dropship-qty').value);
+                    const price = document.getElementById('dropship-price').value;
+                    const notes = document.getElementById('dropship-notes').value;
+                    if (!selectedProductId || !selectedStoreId) {
+                        showDropshipError('Please select a store.');
+                        return;
+                    }
+                    if (!qty || qty < 1) {
+                        showDropshipError('Please enter a valid quantity.');
+                        return;
+                    }
+                    const token = localStorage.getItem('access_token');
+                    const res = await fetch(`${API_BASE}/dropship/`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ product: selectedProductId, store: selectedStoreId, quantity: qty, price: price || undefined, notes: notes || undefined })
+                    });
+                    if (res.ok) {
+                        showToast('Product dropshipped to your store!');
+                        closeDropshipModal();
+                    } else {
+                        showDropshipError('Failed to dropship product.');
+                    }
+                });
+            } else {
+                modal.classList.remove('hidden');
+            }
+            fetchUserStores();
+        }
+        function closeDropshipModal() {
+            document.getElementById('dropship-modal').classList.add('hidden');
+        }
+        async function fetchUserStores() {
+            const token = localStorage.getItem('access_token');
+            const res = await fetch(`${API_BASE}/user/stores/`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const stores = await res.json();
+            const list = document.getElementById('store-list');
+            if (!list) return;
+            if (stores.length) {
+                list.innerHTML = stores.map(s => `
+                    <button type="button" class="btn-secondary w-full text-left flex items-center justify-between gap-2 ${selectedStoreId===s.id?'bg-emerald-600 text-white':''}" onclick="selectStore(${s.id}, this)">
+                        <span><i class='fas fa-store mr-2'></i>${s.name}</span>
+                        ${s.is_verified ? '<span class="badge badge-verified"><i class="fas fa-check-circle"></i>Verified</span>' : '<span class="badge badge-pending">Pending</span>'}
+                    </button>
+                `).join('');
+            } else {
+                list.innerHTML = '<p class="text-gray-500">No digital stores found. <a href="digitalstores.html" class="text-emerald-600 underline">Create one</a>.</p>';
+            }
+        }
+        function selectStore(storeId, btn) {
+            selectedStoreId = storeId;
+            document.querySelectorAll('#store-list button').forEach(b => b.classList.remove('bg-emerald-600', 'text-white'));
+            if (btn) btn.classList.add('bg-emerald-600', 'text-white');
+        }
+                function showDropshipError(msg) {
+                    const err = document.getElementById('dropship-error');
+                    if (err) {
+                        err.textContent = msg;
+                        err.classList.remove('hidden');
+                    }
+                }
+                function hideDropshipError() {
+                    const err = document.getElementById('dropship-error');
+                    if (err) err.classList.add('hidden');
+                }
+        const dropshipCancelBtn = document.getElementById('dropship-cancel');
+        if (dropshipCancelBtn) dropshipCancelBtn.addEventListener('click', closeDropshipModal);
+        const dropshipConfirmBtn = document.getElementById('dropship-confirm');
+        if (dropshipConfirmBtn) dropshipConfirmBtn.addEventListener('click', async () => {
+            if (!selectedProductId || !selectedStoreId) return alert('Select a store first!');
+            const token = localStorage.getItem('access_token');
+            const res = await fetch(`${API_BASE}/dropship/`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ product: selectedProductId, store: selectedStoreId })
+            });
+            if (res.ok) {
+                alert('Product dropshipped to your store!');
+                closeDropshipModal();
+            } else {
+                alert('Failed to dropship product.');
+            }
+        });
+// Language selector logic for marketplace
+document.addEventListener('DOMContentLoaded', function() {
+    const languageSelect = document.getElementById('settings-language');
+    if (languageSelect) {
+        // Set initial value from localStorage
+        const lang = localStorage.getItem('preferred_language') || 'en';
+        languageSelect.value = lang;
+        languageSelect.addEventListener('change', function() {
+            localStorage.setItem('preferred_language', this.value);
+            if (window.i18n && typeof applyI18nStatic === 'function') {
+                applyI18nStatic();
+            } else if (window.i18n) {
+                location.reload(); // fallback: reload to apply
+            }
+        });
+        // Also trigger translation on page load
+        if (window.i18n && typeof applyI18nStatic === 'function') {
+            applyI18nStatic();
+        }
+    }
+});
+</script>
 </html>

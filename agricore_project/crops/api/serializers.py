@@ -1,22 +1,15 @@
+
 from rest_framework import serializers
-from crops.models import Crop, CropTask, CropEmployeeAssignment, CropExpense
+from ..models import CropCycle, CropUnit
 
-class CropSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Crop
-        fields = '__all__'
+class CropCycleSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = CropCycle
+		fields = '__all__'
 
-class CropTaskSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CropTask
-        fields = '__all__'
-
-class CropEmployeeAssignmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CropEmployeeAssignment
-        fields = '__all__'
-
-class CropExpenseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CropExpense
-        fields = '__all__'
+	def validate(self, data):
+		required_fields = ['crop_unit', 'crop_type', 'planting_date']
+		missing = [f for f in required_fields if not data.get(f)]
+		if missing:
+			raise serializers.ValidationError({f: 'This field is required.' for f in missing})
+		return data

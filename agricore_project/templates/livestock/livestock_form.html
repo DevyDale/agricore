@@ -1,0 +1,48 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold mb-4">{% if animal %}Edit Animal{% else %}Add Animal{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label class="block mb-1">Tag ID</label>
+            <input type="text" name="tag_id" class="border rounded px-3 py-2 w-full" value="{{ animal.tag_id|default:'' }}" required>
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Name</label>
+            <input type="text" name="name" class="border rounded px-3 py-2 w-full" value="{{ animal.name|default:'' }}">
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Sex</label>
+            <select name="sex" class="border rounded px-3 py-2 w-full">
+                <option value="" {% if not animal or not animal.sex %}selected{% endif %}>Select</option>
+                <option value="Male" {% if animal and animal.sex == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if animal and animal.sex == 'Female' %}selected{% endif %}>Female</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Age Group</label>
+            <input type="text" name="age_group" class="border rounded px-3 py-2 w-full" value="{{ animal.age_group|default:'' }}">
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Breed</label>
+            <input type="text" name="breed" class="border rounded px-3 py-2 w-full" value="{{ animal.breed|default:'' }}">
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Status</label>
+            <input type="text" name="status" class="border rounded px-3 py-2 w-full" value="{{ animal.status|default:'' }}">
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Livestock Unit</label>
+            <select name="livestock_unit" class="border rounded px-3 py-2 w-full">
+                <option value="">Select Unit</option>
+                {% for unit in units %}
+                <option value="{{ unit.id }}" {% if animal and animal.livestock_unit and animal.livestock_unit.id == unit.id %}selected{% endif %}>{{ unit.unit_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded">Save</button>
+        <a href="{% url 'livestock_list' %}" class="ml-4 text-gray-600">Cancel</a>
+    </form>
+</div>
+{% endblock %}

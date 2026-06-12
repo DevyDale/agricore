@@ -1,3 +1,5 @@
+</main>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -164,6 +166,14 @@
                     <h1 class="text-xl font-bold text-emerald-800">Digital Store</h1>
                     <p class="text-xs text-gray-500" id="sidebar-store-name">Loading...</p>
                 </div>
+                <select id="settings-language" class="ml-auto mt-1 px-2 py-1 rounded border border-gray-200 text-sm font-semibold" style="min-width:120px;">
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="es">Español</option>
+                    <option value="pt">Português</option>
+                    <option value="sw">Kiswahili</option>
+                    <option value="ar">العربية</option>
+                </select>
             </div>
         </div>
 
@@ -216,6 +226,18 @@
         </nav>
 
         <div class="px-4 pt-4 mt-auto border-t border-emerald-100 space-y-3">
+            <!-- Theme Switcher (Dark Mode Toggle) -->
+            <div class="flex items-center justify-between bg-white rounded-lg px-4 py-3 mb-3 shadow-sm">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-moon text-gray-500"></i>
+                    <span class="text-gray-700">Dark Mode</span>
+                </div>
+                <label class="inline-flex relative items-center cursor-pointer">
+                    <input type="checkbox" id="theme-switch" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-400 rounded-full peer peer-checked:bg-emerald-500 transition-all"></div>
+                    <span class="ml-2 text-sm text-gray-500"></span>
+                </label>
+            </div>
             <button id="sidebar-farms" class="w-full py-3 px-4 bg-white border-2 border-teal-600 text-teal-700 font-semibold rounded-xl shadow-sm hover:bg-teal-50 transition flex items-center justify-center gap-2">
                 <i class="fas fa-tractor"></i>
                 Your Farms
@@ -912,6 +934,42 @@
                     </div>
                 </div>
 
+                <!-- Bank Details Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                    <h3 class="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-building-columns text-emerald-600"></i>
+                        Store Bank Details
+                    </h3>
+                    <form id="bank-details-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Account Name</label>
+                            <input type="text" id="bank-account-name" name="account_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Account Number</label>
+                            <input type="text" id="bank-account-number" name="account_number" maxlength="20" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Bank Name</label>
+                            <input type="text" id="bank-name" name="bank_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div class="col-span-full flex gap-2">
+                            <button type="submit" class="px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition flex items-center gap-2">
+                                <i class="fas fa-save"></i> Save Bank Details
+                            </button>
+                            <span id="bank-details-status" class="text-sm text-gray-600"></span>
+                        </div>
+                    </form>
+                    <div id="bank-details-display" class="hidden mt-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Current Bank Details</h4>
+                        <ul class="text-gray-700 text-sm space-y-1">
+                            <li><strong>Account Name:</strong> <span id="display-account-name"></span></li>
+                            <li><strong>Account Number:</strong> <span id="display-account-number"></span></li>
+                            <li><strong>Bank Name:</strong> <span id="display-bank-name"></span></li>
+                        </ul>
+                    </div>
+                </div>
+
                 <!-- Card Management Section -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
                     <h3 class="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
@@ -1582,12 +1640,127 @@
     </div>
 
     <script>
+        // --- User Settings: Fetch, Apply, Sync (i18n/currency/theme) ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageSelect = document.getElementById('settings-language');
+            const currencySelect = document.getElementById('settings-currency');
+            const themeSwitch = document.getElementById('theme-switch');
+
+            async function fetchUserSettings() {
+                try {
+                    const res = await fetch('/api/user/settings/', { credentials: 'include' });
+                    if (!res.ok) throw new Error('No user settings');
+                    return await res.json();
+                } catch {
+                    return null;
+                }
+            }
+
+            async function loadPreferences() {
+                let settings = await fetchUserSettings();
+                const lang = (settings && settings.language) || localStorage.getItem('preferred_language') || 'en';
+                const curr = (settings && settings.currency) || localStorage.getItem('preferred_currency') || 'NGN';
+                const theme = (settings && settings.theme) || localStorage.getItem('preferred_theme') || 'system';
+                if (languageSelect) languageSelect.value = lang;
+                if (currencySelect) currencySelect.value = curr;
+                if (themeSwitch) themeSwitch.checked = (theme === 'dark');
+                localStorage.setItem('preferred_language', lang);
+                localStorage.setItem('preferred_currency', curr);
+                localStorage.setItem('preferred_theme', theme);
+                applyLanguage(lang);
+                applyCurrency(curr);
+                applyTheme(theme);
+            }
+
+            function syncUserSettings() {
+                const data = {
+                    language: languageSelect?.value,
+                    currency: currencySelect?.value,
+                    theme: themeSwitch?.checked ? 'dark' : 'light',
+                };
+                localStorage.setItem('preferred_language', data.language);
+                localStorage.setItem('preferred_currency', data.currency);
+                localStorage.setItem('preferred_theme', data.theme);
+                fetch('/api/user/settings/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                    credentials: 'include',
+                });
+            }
+
+            languageSelect?.addEventListener('change', function() {
+                applyLanguage(this.value);
+                syncUserSettings();
+            });
+            currencySelect?.addEventListener('change', function() {
+                applyCurrency(this.value);
+                syncUserSettings();
+            });
+            themeSwitch?.addEventListener('change', function() {
+                applyTheme(this.checked ? 'dark' : 'light');
+                syncUserSettings();
+            });
+
+            function applyLanguage(lang) {
+                // Example: update sidebar and nav
+                if (window.i18n) {
+                    document.getElementById('sidebar-digital-store').textContent = i18n.t('Digital Store');
+                    document.getElementById('sidebar-main-title').textContent = i18n.t('Main');
+                    document.getElementById('nav-store-info').textContent = i18n.t('Store Information');
+                    document.getElementById('nav-products').textContent = i18n.t('Products');
+                    document.getElementById('nav-sales-stats').textContent = i18n.t('Sales Statistics');
+                    document.getElementById('nav-product-performance').textContent = i18n.t('Product Performance');
+                    document.getElementById('nav-conversion-funnel').textContent = i18n.t('Conversion Funnel');
+                    document.getElementById('nav-orders').textContent = i18n.t('Orders');
+                    document.getElementById('nav-create-advertisement').textContent = i18n.t('Create Advertisement');
+                    document.getElementById('sidebar-management-title').textContent = i18n.t('Management');
+                    document.getElementById('nav-ratings').textContent = i18n.t('Ratings & Reviews');
+                    document.getElementById('nav-wallet').textContent = i18n.t('Manage Wallet');
+                }
+                // Add more UI translations as needed
+            }
+
+            function applyCurrency(curr) {
+                // Update all currency displays using i18n.formatCurrency
+                document.querySelectorAll('[data-currency-amount]').forEach(el => {
+                    const amount = parseFloat(el.getAttribute('data-currency-amount'));
+                    if (!isNaN(amount) && window.i18n) {
+                        el.textContent = i18n.formatCurrency(amount);
+                    }
+                });
+                // Update dynamic product cards
+                document.querySelectorAll('.product-card .text-2xl.font-bold').forEach(el => {
+                    const raw = el.getAttribute('data-raw-amount');
+                    if (raw && window.i18n) {
+                        el.textContent = i18n.formatCurrency(Number(raw));
+                    }
+                });
+                // Update ad pricing
+                document.querySelectorAll('.ad-pricing').forEach(el => {
+                    const amount = el.getAttribute('data-amount');
+                    if (amount && window.i18n) {
+                        el.textContent = i18n.formatCurrency(Number(amount));
+                    }
+                });
+            }
+
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+
+            loadPreferences();
+        });
         console.log('=== SCRIPT START ===');
         console.log('Location:', window.location.href);
         console.log('URL Params:', new URLSearchParams(window.location.search).get('id'));
         
-        // Your original script logic remains the same
-        // Just added a few visual enhancements
+        // --- End User Settings Integration ---
+        // --- Original script logic remains below ---
         // Sidebar Navigation
         document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(navItem => {
             navItem.addEventListener('click', () => {
@@ -1608,6 +1781,50 @@
                     document.getElementById('sidebar').classList.remove('open');
                 }
             });
+
+        // --- Bank Details Logic ---
+        async function fetchBankDetails() {
+            try {
+                // Replace with your actual API endpoint
+                const resp = await fetch('/api/stores/bank-details/', { credentials: 'include' });
+                if (!resp.ok) throw new Error('No bank details found');
+                const data = await resp.json();
+                if (data.account_name && data.account_number && data.bank_name) {
+                    document.getElementById('display-account-name').textContent = data.account_name;
+                    document.getElementById('display-account-number').textContent = data.account_number;
+                    document.getElementById('display-bank-name').textContent = data.bank_name;
+                    document.getElementById('bank-details-display').classList.remove('hidden');
+                }
+            } catch (e) {
+                document.getElementById('bank-details-display').classList.add('hidden');
+            }
+        }
+
+        document.getElementById('bank-details-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const account_name = document.getElementById('bank-account-name').value.trim();
+            const account_number = document.getElementById('bank-account-number').value.trim();
+            const bank_name = document.getElementById('bank-name').value.trim();
+            const status = document.getElementById('bank-details-status');
+            status.textContent = 'Saving...';
+            try {
+                // Replace with your actual API endpoint
+                const resp = await fetch('/api/stores/bank-details/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ account_name, account_number, bank_name })
+                });
+                if (!resp.ok) throw new Error('Failed to save');
+                status.textContent = 'Saved!';
+                fetchBankDetails();
+            } catch (err) {
+                status.textContent = 'Error saving bank details';
+            }
+        });
+
+        fetchBankDetails();
+        // --- End Bank Details Logic ---
 
                 // Mobile menu toggle
                 document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
@@ -1748,8 +1965,8 @@
                             <div class="mx-auto w-16 h-16 rounded-2xl bg-white shadow-md flex items-center justify-center border border-emerald-100">
                                 <i class="fas fa-box-open text-3xl text-emerald-500"></i>
                             </div>
-                            <p class="text-xl font-bold text-emerald-900">No products found in your store yet.</p>
-                            <p class="text-sm text-gray-600">Add your first product to start selling.</p>
+                            <p class="text-xl font-bold text-emerald-900">${window.i18n ? i18n.t('No products found in your store yet.') : 'No products found in your store yet.'}</p>
+                            <p class="text-sm text-gray-600">${window.i18n ? i18n.t('Add your first product to start selling.') : 'Add your first product to start selling.'}</p>
                         </div>
                     </div>`;
                 return;
@@ -1757,8 +1974,6 @@
             products.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'bg-white rounded-xl shadow-lg overflow-hidden product-card border border-gray-100';
-                
-                // Image handling with fallback to initials
                 const imageUrl = p.image_display || p.image || p.image_url;
                 const getInitials = (title) => {
                     if (!title) return 'P';
@@ -1769,8 +1984,6 @@
                     return title.substring(0, 2).toUpperCase();
                 };
                 const initials = getInitials(p.title);
-                
-                // Create a visually appealing gradient placeholder with category icon
                 const categoryIcons = {
                     'Crops': 'fa-seedling',
                     'Livestock': 'fa-horse',
@@ -1787,7 +2000,7 @@
                 };
                 const icon = categoryIcons[p.category] || categoryIcons['Other'];
                 const gradient = categoryGradients[p.category] || categoryGradients['Other'];
-                
+                const isDropshipped = p.is_dropshipped || p.source_produce;
                 card.innerHTML = `
                     <div class="relative h-48 flex items-center justify-center" style="background: ${gradient};">
                         ${imageUrl 
@@ -1800,40 +2013,65 @@
                                    <p class="text-lg font-bold">${p.title}</p>
                                </div>`
                         }
-                        ${p.is_dropshippable ? `<span class="absolute top-3 left-3 px-2 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">Dropship</span>` : ''}
+                        ${isDropshipped ? `<span class="absolute top-3 left-3 px-2 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">${window.i18n ? i18n.t('Dropshipped') : 'Dropshipped'}</span>` : ''}
                         <button class="absolute top-3 right-3 px-3 py-1.5 bg-white text-emerald-700 rounded-lg shadow-md hover:bg-emerald-50 transition text-sm font-semibold">
-                            <i class="fas fa-edit"></i> Edit
+                            <i class="fas fa-edit"></i> ${window.i18n ? i18n.t('Edit') : 'Edit'}
                         </button>
                     </div>
                     <div class="p-4">
                         <div class="flex items-start justify-between mb-2">
                             <h3 class="font-bold text-lg text-gray-800 line-clamp-2">${p.title}</h3>
-                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-full ml-2">${p.category || 'Other'}</span>
+                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-full ml-2">${p.category || (window.i18n ? i18n.t('Other') : 'Other')}</span>
                         </div>
                         ${p.description ? `<p class="text-sm text-gray-600 mb-3 line-clamp-2">${p.description}</p>` : ''}
                         ${p.source_produce_info ? `
                             <div class="flex items-center gap-2 mb-3 p-2 bg-gray-50 rounded-lg">
                                 <i class="fas fa-tractor text-emerald-600"></i>
                                 <a href="individual_farm.html?id=${p.source_produce_info.farm_id}" class="text-sm text-emerald-700 hover:underline font-medium">
-                                    ${p.source_produce_info.farm_name || 'Farm'}
+                                    ${p.source_produce_info.farm_name || (window.i18n ? i18n.t('Farm') : 'Farm')}
                                 </a>
                             </div>` : ''}
                         <div class="flex items-center justify-between pt-3 border-t border-gray-100">
                             <div>
-                                <div class="text-2xl font-bold text-emerald-700">₦${Number(p.price || 0).toLocaleString()}</div>
+                                <div class="text-2xl font-bold text-emerald-700" data-raw-amount="${p.price || 0}">${window.i18n ? i18n.formatCurrency(Number(p.price || 0)) : ('₦' + Number(p.price || 0).toLocaleString())}</div>
                                 <div class="text-sm text-gray-500 mt-1">
                                     <i class="fas fa-box"></i> ${p.stock_quantity || 0} ${p.unit || ''}
                                 </div>
-                                ${p.expiration_date ? `<div class="text-xs text-orange-500 mt-1"><i class="fas fa-calendar"></i> Exp: ${p.expiration_date}</div>` : ''}
+                                ${p.expiration_date ? `<div class="text-xs text-orange-500 mt-1"><i class="fas fa-calendar"></i> ${window.i18n ? i18n.t('Exp:') : 'Exp:'} ${p.expiration_date}</div>` : ''}
                             </div>
-                            <button class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg shadow-md hover:shadow-lg transition text-sm font-semibold">
-                                <i class="fas fa-bullhorn"></i> Promote
-                            </button>
+                            <div class="flex flex-col gap-2 items-end">
+                                <button class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg shadow-md hover:shadow-lg transition text-sm font-semibold">
+                                    <i class="fas fa-bullhorn"></i> ${window.i18n ? i18n.t('Promote') : 'Promote'}
+                                </button>
+                                ${isDropshipped && !p.is_published ? `<button class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition text-sm font-semibold release-dropship-btn" data-product-id="${p.id}"><i class="fas fa-upload"></i> ${window.i18n ? i18n.t('Release') : 'Release'}</button>` : ''}
+                            </div>
                         </div>
                     </div>
                 `;
                 container.appendChild(card);
             });
+            setTimeout(() => {
+                document.querySelectorAll('.release-dropship-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const productId = btn.getAttribute('data-product-id');
+                        btn.disabled = true;
+                        btn.textContent = window.i18n ? i18n.t('Releasing...') : 'Releasing...';
+                        try {
+                            const resp = await fetch(`${API_BASE}/products/${productId}/release/`, {
+                                method: 'PATCH',
+                                headers: { 'Authorization': 'Bearer ' + (token || '') }
+                            });
+                            if (!resp.ok) throw new Error('Failed to release product');
+                            await loadStoreProducts(currentStoreId);
+                        } catch (err) {
+                            alert((window.i18n ? i18n.t('Error releasing product:') : 'Error releasing product:') + err.message);
+                        } finally {
+                            btn.disabled = false;
+                            btn.textContent = window.i18n ? i18n.t('Release') : 'Release';
+                        }
+                    });
+                });
+            }, 100);
         }
 
         async function getUserStores() {
@@ -2077,22 +2315,27 @@
             if (!c) return [];
             if (Array.isArray(c)) return c;
             if (typeof c === 'string') {
+                const trimmed = c.trim();
                 // Check if it's a JSON string first
-                if (c.startsWith('[')) {
+                if (trimmed.startsWith('[')) {
                     try {
-                        const parsed = JSON.parse(c);
-                        return Array.isArray(parsed) ? parsed : [c];
+                        const parsed = JSON.parse(trimmed);
+                        return Array.isArray(parsed) ? parsed : [trimmed];
                     } catch (e) {
                         // If JSON parsing fails, treat as single country
-                        return [c];
+                        return [trimmed];
                     }
                 }
                 // If it contains commas, split by comma
-                if (c.includes(',')) {
-                    return c.split(',').map(s => s.trim()).filter(Boolean);
+                if (trimmed.includes(',')) {
+                    return trimmed.split(',').map(s => s.trim()).filter(Boolean);
                 }
-                // Otherwise, it's a single country name
-                return [c];
+                // Defensive: if it's only letters (no comma, no brackets), treat as single country
+                if (/^[a-zA-Z\s'-]+$/.test(trimmed)) {
+                    return [trimmed];
+                }
+                // Otherwise, fallback
+                return [trimmed];
             }
             return [];
         }
@@ -2818,6 +3061,26 @@
             }
         });
     </script>
+        <script>
+        // --- Apply i18n on static UI ---
+        function applyI18nStatic() {
+            if (!window.i18n) return;
+            document.getElementById('sidebar-digital-store').textContent = i18n.t('Digital Store');
+            document.getElementById('sidebar-main-title').textContent = i18n.t('Main');
+            document.getElementById('nav-store-info').textContent = i18n.t('Store Information');
+            document.getElementById('nav-products').textContent = i18n.t('Products');
+            document.getElementById('nav-sales-stats').textContent = i18n.t('Sales Statistics');
+            document.getElementById('nav-product-performance').textContent = i18n.t('Product Performance');
+            document.getElementById('nav-conversion-funnel').textContent = i18n.t('Conversion Funnel');
+            document.getElementById('nav-orders').textContent = i18n.t('Orders');
+            document.getElementById('nav-create-advertisement').textContent = i18n.t('Create Advertisement');
+            document.getElementById('sidebar-management-title').textContent = i18n.t('Management');
+            document.getElementById('nav-ratings').textContent = i18n.t('Ratings & Reviews');
+            document.getElementById('nav-wallet').textContent = i18n.t('Manage Wallet');
+        }
+        applyI18nStatic();
+        // --- End i18n static ---
+        </script>
     <script src="/static/js/dale.js" defer></script>
 </body>
 </html>

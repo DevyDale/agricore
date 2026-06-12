@@ -79,3 +79,11 @@ local_settings.py
 
 # macOS
 .DS_Store
+
+.env
+agricore_project/.env
+*/.env
+myenv/
+*.bak
+.phase1_backups_*/
+node_modules/

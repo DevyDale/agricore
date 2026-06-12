@@ -1,25 +1,41 @@
-# farms/api/serializers.py (Modified)
+
 from rest_framework import serializers
-from ..models import Farm
+from ..models import Farm, Field
+
+# Serializer for Field (Land Portion)
+class FieldSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True, help_text="Name of the land portion (e.g., North Field, Plot A)")
+
+    class Meta:
+        model = Field
+        fields = [
+            'id', 'farm', 'name', 'purpose', 'total_size', 'size_unit',
+            'soil_type', 'additional_notes', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class FarmSerializer(serializers.ModelSerializer):
     owner = serializers.PrimaryKeyRelatedField(read_only=True)
-    
+
     # Enforce fields that are marked as required by the frontend/business logic
     name = serializers.CharField(required=True)
     type = serializers.CharField(required=True)
-    total_size = serializers.FloatField(required=True)
     country = serializers.CharField(required=True)
     city = serializers.CharField(required=True)
-    
-    # Keep optional fields as they were, but clean up auto-fields
-    state = serializers.CharField(allow_null=True, required=False)
+    state = serializers.CharField(required=True)
+    total_size = serializers.FloatField(required=False, allow_null=True)
     address = serializers.CharField(allow_null=True, required=False)
-    size_unit = serializers.CharField(allow_null=True, required=False) # Unit is optional on model, but required by frontend form
-    additional_notes = serializers.CharField(allow_null=True, required=False)
+    size_unit = serializers.CharField(allow_null=True, required=False)
+    additional_notes = serializers.CharField(allow_null=True, required=False, allow_blank=True)
     created_at = serializers.DateTimeField(read_only=True)
     updated_at = serializers.DateTimeField(read_only=True)
+
+    def validate_country(self, value):
+        # Remove commas from the country name
+        if value:
+            return str(value).replace(',', '').strip()
+        return value
 
 
     class Meta:
@@ -48,8 +64,4 @@ class FarmSerializer(serializers.ModelSerializer):
     def validate_size_unit(self, value):
         if value is None:
             return None # Allow null if the field is optional
-        value = value.lower()
-        valid = ['acres', 'hectares', 'square_meters']
-        if value not in valid:
-            raise serializers.ValidationError(f"Invalid unit. Use: {valid}")
-        return value
+        return str(value)

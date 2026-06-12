@@ -1,0 +1,54 @@
+
+{% extends 'dashboard/base.html' %}
+{% block dashboard_content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8 text-blue-700">Profits & Farm Finances</h1>
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-emerald-50 rounded-xl p-6 shadow flex flex-col items-center">
+            <span class="text-lg font-semibold text-gray-600 mb-2">Total Profit</span>
+            <span class="text-3xl font-bold text-emerald-700">${{ total_profit|default:'0.00' }}</span>
+        </div>
+        <div class="bg-red-50 rounded-xl p-6 shadow flex flex-col items-center">
+            <span class="text-lg font-semibold text-gray-600 mb-2">Total Expenses</span>
+            <span class="text-3xl font-bold text-red-600">${{ total_expenses|default:'0.00' }}</span>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-6 shadow flex flex-col items-center">
+            <span class="text-lg font-semibold text-gray-600 mb-2">Total Revenue</span>
+            <span class="text-3xl font-bold text-blue-700">${{ total_revenue|default:'0.00' }}</span>
+        </div>
+    </div>
+    <!-- Finance Table -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded-xl shadow">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="py-3 px-4 text-left">Type</th>
+                    <th class="py-3 px-4 text-left">Category</th>
+                    <th class="py-3 px-4 text-left">Amount</th>
+                    <th class="py-3 px-4 text-left">Currency</th>
+                    <th class="py-3 px-4 text-left">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for finance in finances %}
+                <tr class="border-b hover:bg-blue-50 transition">
+                    <td class="py-2 px-4">{{ finance.type }}</td>
+                    <td class="py-2 px-4">{{ finance.category }}</td>
+                    <td class="py-2 px-4 font-semibold">${{ finance.amount }}</td>
+                    <td class="py-2 px-4">{{ finance.currency }}</td>
+                    <td class="py-2 px-4">{{ finance.date }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="py-8 px-4 text-center text-gray-400">
+                        <i class="fas fa-box-open text-4xl text-blue-300 mb-4"></i><br>
+                        No profit/finance records found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

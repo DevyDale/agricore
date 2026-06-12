@@ -1,0 +1,35 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold mb-4">Add Field</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label class="block mb-1">Name</label>
+            <input type="text" name="name" class="border rounded px-3 py-2 w-full" required>
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Purpose</label>
+            <input type="text" name="purpose" class="border rounded px-3 py-2 w-full">
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Farm</label>
+            <input type="text" name="farm" class="border rounded px-3 py-2 w-full">
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Total Size</label>
+            <input type="number" name="total_size" class="border rounded px-3 py-2 w-full">
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Size Unit</label>
+            <input type="text" name="size_unit" class="border rounded px-3 py-2 w-full">
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Soil Type</label>
+            <input type="text" name="soil_type" class="border rounded px-3 py-2 w-full">
+        </div>
+        <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded">Save</button>
+        <a href="{% url 'field_list' %}" class="ml-4 text-gray-600">Cancel</a>
+    </form>
+</div>
+{% endblock %}

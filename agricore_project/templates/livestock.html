@@ -1,0 +1,1512 @@
+</script>
+
+</script>
+{% extends 'dashboard/base.html' %}
+{% block dashboard_content %}
+<!-- Adaptive Livestock Entry Modal -->
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Remove modal logic, replace with redirect
+    const openAdaptiveModalBtn = document.getElementById('open-adaptive-modal-btn');
+    if (openAdaptiveModalBtn) {
+        openAdaptiveModalBtn.onclick = function() {
+            window.location.href = 'add_livestock_unit.html';
+        };
+    }
+    if (openAdaptiveModalBtn) openAdaptiveModalBtn.onclick = showAdaptiveModal;
+    if (closeAdaptiveModal) closeAdaptiveModal.onclick = hideAdaptiveModal;
+
+    const fieldTemplates = {
+        individual: [
+            {label: 'Tag/ID', name: 'tag_id', type: 'text', required: true, placeholder: 'e.g. 12345'},
+            {label: 'Species', name: 'species', type: 'text', required: true, placeholder: 'e.g. Cattle'},
+            {label: 'Breed', name: 'breed', type: 'text', placeholder: 'e.g. Angus'},
+            {label: 'Sex', name: 'sex', type: 'select', options: ['Male','Female'], required: true},
+            {label: 'DOB', name: 'dob', type: 'date', placeholder: ''},
+            {label: 'Weight', name: 'weight', type: 'number', step: 'any', placeholder: 'e.g. 350'},
+            {label: 'Weight Unit', name: 'weight_unit', type: 'text', placeholder: 'e.g. kg, lbs'},
+            {label: 'Health Status', name: 'health_status', type: 'select', options: ['Healthy','Sick','Recovering','Unknown'], required: true},
+            {label: 'Purpose', name: 'purpose', type: 'text', placeholder: 'e.g. Dairy'},
+            // --- Produce fields ---
+            {label: 'Produce Type', name: 'produce_type', type: 'text', placeholder: 'e.g. Milk, Eggs, Honey'},
+            {label: 'Produce Frequency', name: 'produce_frequency', type: 'select', options: ['Per Day','Per Week','Per Month','Per Year'], placeholder: ''},
+            {label: 'Produce Quantity', name: 'produce_quantity', type: 'number', step: 'any', placeholder: 'e.g. 10'},
+            {label: 'Produce Unit', name: 'produce_unit', type: 'text', placeholder: 'e.g. liters, kg, pieces'},
+            {label: 'Notes', name: 'notes', type: 'textarea', placeholder: 'Optional notes'},
+        ],
+        herd: [
+            {label: 'Herd Name', name: 'unit_name', type: 'text', required: true, placeholder: 'e.g. Main Herd'},
+            {label: 'Species', name: 'species', type: 'text', required: true, placeholder: 'e.g. Cattle'},
+            {label: 'Breed', name: 'breed', type: 'text', placeholder: 'e.g. Angus'},
+            {label: 'Quantity', name: 'quantity', type: 'number', required: true, placeholder: 'e.g. 50'},
+            {label: 'Average Age', name: 'average_age', type: 'text', placeholder: 'e.g. 2 years'},
+            {label: 'Average Weight', name: 'average_weight', type: 'number', step: 'any', placeholder: 'e.g. 350'},
+            {label: 'Weight Unit', name: 'weight_unit', type: 'text', placeholder: 'e.g. kg, lbs'},
+            {label: 'Health Status', name: 'health_status', type: 'select', options: ['Healthy','Sick','Recovering','Unknown'], required: true},
+            {label: 'Purpose', name: 'purpose', type: 'text', placeholder: 'e.g. Beef'},
+            // --- Produce fields ---
+            {label: 'Produce Type', name: 'produce_type', type: 'text', placeholder: 'e.g. Milk, Eggs, Honey'},
+            {label: 'Produce Frequency', name: 'produce_frequency', type: 'select', options: ['Per Day','Per Week','Per Month','Per Year'], placeholder: ''},
+            {label: 'Produce Quantity', name: 'produce_quantity', type: 'number', step: 'any', placeholder: 'e.g. 10'},
+            {label: 'Produce Unit', name: 'produce_unit', type: 'text', placeholder: 'e.g. liters, kg, pieces'},
+            {label: 'Notes', name: 'notes', type: 'textarea', placeholder: 'Optional notes'},
+        ],
+        batch: [
+            {label: 'Batch Name', name: 'unit_name', type: 'text', required: true, placeholder: 'e.g. Batch A'},
+            {label: 'Species', name: 'species', type: 'text', required: true, placeholder: 'e.g. Tilapia'},
+            {label: 'Quantity Stocked', name: 'quantity', type: 'number', required: true, placeholder: 'e.g. 1000'},
+            {label: 'Date Stocked', name: 'installation_date', type: 'date', placeholder: ''},
+            {label: 'Housing', name: 'housing', type: 'text', placeholder: 'e.g. Pond 1'},
+            {label: 'Feed Type', name: 'feed_type', type: 'text', placeholder: 'e.g. Floating pellets'},
+            // --- Produce fields ---
+            {label: 'Produce Type', name: 'produce_type', type: 'text', placeholder: 'e.g. Fish'},
+            {label: 'Produce Frequency', name: 'produce_frequency', type: 'select', options: ['Per Day','Per Week','Per Month','Per Year'], placeholder: ''},
+            {label: 'Produce Quantity', name: 'produce_quantity', type: 'number', step: 'any', placeholder: 'e.g. 10'},
+            {label: 'Produce Unit', name: 'produce_unit', type: 'text', placeholder: 'e.g. kg, pieces'},
+            {label: 'Notes', name: 'notes', type: 'textarea', placeholder: 'Optional notes'},
+        ],
+        colony: [
+            {label: 'Hive ID / Name', name: 'unit_name', type: 'text', required: true, placeholder: 'e.g. Hive 1'},
+            {label: 'Bee Species', name: 'species', type: 'text', required: true, placeholder: 'e.g. Apis mellifera'},
+            {label: 'Hive Type', name: 'hive_type', type: 'text', placeholder: 'e.g. Langstroth'},
+            {label: 'Installation Date', name: 'installation_date', type: 'date', placeholder: ''},
+            {label: 'Queen Status', name: 'queen_status', type: 'text', placeholder: 'e.g. Present'},
+            // --- Produce fields ---
+            {label: 'Produce Type', name: 'produce_type', type: 'text', placeholder: 'e.g. Honey'},
+            {label: 'Produce Frequency', name: 'produce_frequency', type: 'select', options: ['Per Day','Per Week','Per Month','Per Year'], placeholder: ''},
+            {label: 'Produce Quantity', name: 'produce_quantity', type: 'number', step: 'any', placeholder: 'e.g. 2'},
+            {label: 'Produce Unit', name: 'produce_unit', type: 'text', placeholder: 'e.g. liters, kg'},
+            {label: 'Notes', name: 'notes', type: 'textarea', placeholder: 'Optional notes'},
+        ],
+        population: [
+            {label: 'Population Name', name: 'unit_name', type: 'text', required: true, placeholder: 'e.g. Culture 1'},
+            {label: 'Species', name: 'species', type: 'text', required: true, placeholder: 'e.g. Yeast'},
+            {label: 'Estimated Quantity/Biomass', name: 'quantity', type: 'number', placeholder: 'e.g. 500'},
+            {label: 'Container / Location', name: 'location', type: 'text', placeholder: 'e.g. Tank 2'},
+            {label: 'Start Date', name: 'installation_date', type: 'date', placeholder: ''},
+            {label: 'Notes', name: 'notes', type: 'textarea', placeholder: 'Optional notes'},
+        ]
+    };
+
+    function renderFields(type) {
+        adaptiveFields.innerHTML = '';
+        if (!type || !fieldTemplates[type]) return;
+        // Group fields in pairs for compact layout
+        const fields = fieldTemplates[type];
+        let html = '<div class="grid grid-cols-2 gap-4">';
+        for (let i = 0; i < fields.length; i++) {
+            let f = fields[i];
+            let field = '';
+            const required = f.required ? 'required' : '';
+            const placeholder = f.placeholder ? `placeholder='${f.placeholder}'` : '';
+            if (f.type === 'select') {
+                field = `<label class='block font-semibold mb-1'>${f.label}</label><select name='${f.name}' class='input-field w-full mb-3' ${required}>` + f.options.map(opt => `<option value='${opt.toLowerCase()}'>${opt}</option>`).join('') + `</select>`;
+            } else if (f.type === 'textarea') {
+                // Textarea always full width, so close grid and add separately
+                html += '</div><div class="mb-4">';
+                field = `<label class='block font-semibold mb-1'>${f.label}</label><textarea name='${f.name}' class='input-field w-full' ${placeholder}></textarea>`;
+                html += field + '</div><div class="grid grid-cols-2 gap-4">';
+                continue;
+            } else {
+                field = `<label class='block font-semibold mb-1'>${f.label}</label><input type='${f.type}' name='${f.name}' class='input-field w-full mb-3' ${required} ${f.step ? `step='${f.step}'` : ''} ${placeholder}>`;
+            }
+            html += `<div>${field}</div>`;
+        }
+        html += '</div>';
+        adaptiveFields.innerHTML = html;
+    }
+    if (unitTypeSelect) unitTypeSelect.addEventListener('change', function(e) {
+        renderFields(e.target.value);
+    });
+});
+    document.addEventListener('DOMContentLoaded', function() {
+        // Stat card filtering logic
+        const statCards = document.querySelectorAll('.stat-card');
+        const animalRows = document.querySelectorAll('.animal-row');
+        function clearStatHighlights() {
+            statCards.forEach(card => card.classList.remove('ring-4', 'ring-emerald-400'));
+        }
+        // Animals in herd (all)
+        statCards[0]?.addEventListener('click', function() {
+            clearStatHighlights();
+            this.classList.add('ring-4', 'ring-emerald-400');
+            animalRows.forEach(row => row.style.display = '');
+        });
+        // Healthy animals
+        statCards[1]?.addEventListener('click', function() {
+            clearStatHighlights();
+            this.classList.add('ring-4', 'ring-emerald-400');
+            animalRows.forEach(row => {
+                if ((row.dataset.status || '').toLowerCase() === 'active' || (row.dataset.status || '').toLowerCase() === 'healthy') {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        // Female animals
+        statCards[2]?.addEventListener('click', function() {
+            clearStatHighlights();
+            this.classList.add('ring-4', 'ring-emerald-400');
+            animalRows.forEach(row => {
+                if ((row.dataset.sex || '').toLowerCase() === 'female') {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        // Male animals
+        statCards[3]?.addEventListener('click', function() {
+            clearStatHighlights();
+            this.classList.add('ring-4', 'ring-emerald-400');
+            animalRows.forEach(row => {
+                if ((row.dataset.sex || '').toLowerCase() === 'male') {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+<!-- Add Animal Modal -->
+<div id="animal-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl p-0 w-full max-w-xl relative">
+        <button id="close-animal-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+        <div class="flex border-b">
+            <button id="tab-single" class="flex-1 py-3 px-4 font-bold text-center tab-btn border-b-2 border-green-600">Single Entry</button>
+            <button id="tab-bulk" class="flex-1 py-3 px-4 font-bold text-center tab-btn border-b-2 border-transparent">Bulk Entry</button>
+        </div>
+        <div class="p-6">
+            <form id="single-animal-form" method="POST" action="{% url 'livestock:livestock_create' %}">
+                {% csrf_token %}
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-semibold mb-1">Tag/ID</label>
+                        <input type="text" name="tag_id" class="input-field w-full" required>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Name</label>
+                        <input type="text" name="name" class="input-field w-full">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Sex</label>
+                        <select name="sex" class="input-field w-full" required>
+                            <option value="">Select</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Age Group</label>
+                        <input type="text" name="age_group" class="input-field w-full">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Date of Birth</label>
+                        <input type="date" name="dob" class="input-field w-full">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Breed</label>
+                        <input type="text" name="breed" class="input-field w-full">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Status</label>
+                        <select name="status" class="input-field w-full" required>
+                            <option value="active">Active</option>
+                            <option value="sold">Sold</option>
+                            <option value="deceased">Deceased</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Land Portion</label>
+                        <select name="field" id="livestock-field-dropdown" class="input-field w-full" required>
+                            <option value="">Loading...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Purpose</label>
+                        <select name="purpose" id="purpose-select" class="input-field w-full" required>
+                            <option value="">Select Purpose</option>
+                            <option value="dairy">Dairy</option>
+                            <option value="meat">Meat</option>
+                            <option value="breeding">Breeding</option>
+                            <option value="work">Work</option>
+                            <option value="show">Show</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <script>
+                    // Populate Land Portion dropdown from /api/fields/
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const dropdown = document.getElementById('livestock-field-dropdown');
+                        if (!dropdown) return;
+                        const token = localStorage.getItem('access_token');
+                        fetch('/api/fields/', {
+                            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                        })
+                        .then(res => res.json())
+                        .then(fields => {
+                            dropdown.innerHTML = '';
+                            if (Array.isArray(fields) && fields.length > 0) {
+                                dropdown.innerHTML = '<option value="">Select land portion</option>' +
+                                    fields.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+                            } else {
+                                dropdown.innerHTML = '<option value="">No land portions found</option>';
+                            }
+                        })
+                        .catch(() => {
+                            dropdown.innerHTML = '<option value="">Failed to load</option>';
+                        });
+                    });
+                    </script>
+                    <div>
+                        <label class="block font-semibold mb-1">Sub-Units</label>
+                        <div id="sub-units-list" class="mb-2"></div>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="sub-unit-name" class="input-field flex-1" placeholder="Sub-unit name (e.g. Pen 1, Group A)">
+                            <input type="number" id="sub-unit-qty" class="input-field w-24" min="1" placeholder="Qty">
+                            <button type="button" id="add-sub-unit-btn" class="btn-primary px-4">Add</button>
+                        </div>
+                        <input type="hidden" name="sub_units" id="sub-units-json">
+                    </div>
+                <script>
+                // Sub-units dynamic logic
+                let subUnits = [];
+                function renderSubUnits() {
+                    const list = document.getElementById('sub-units-list');
+                    if (!list) return;
+                    if (subUnits.length === 0) {
+                        list.innerHTML = '<span class="text-gray-400">No sub-units added.</span>';
+                    } else {
+                        list.innerHTML = subUnits.map((su, i) =>
+                            `<span class="inline-flex items-center bg-emerald-100 text-emerald-700 rounded-full px-3 py-1 mr-2 mb-2">
+                                ${su.name} (${su.qty})
+                                <button type="button" class="ml-2 text-red-500 hover:text-red-700" onclick="removeSubUnit(${i})">&times;</button>
+                            </span>`
+                        ).join('');
+                    }
+                    document.getElementById('sub-units-json').value = JSON.stringify(subUnits);
+                }
+                function removeSubUnit(idx) {
+                    subUnits.splice(idx, 1);
+                    renderSubUnits();
+                }
+                document.addEventListener('DOMContentLoaded', function() {
+                    const addBtn = document.getElementById('add-sub-unit-btn');
+                    if (addBtn) {
+                        addBtn.onclick = function() {
+                            const name = document.getElementById('sub-unit-name').value.trim();
+                            const qty = parseInt(document.getElementById('sub-unit-qty').value);
+                            if (!name || isNaN(qty) || qty < 1) return;
+                            subUnits.push({ name, qty });
+                            document.getElementById('sub-unit-name').value = '';
+                            document.getElementById('sub-unit-qty').value = '';
+                            renderSubUnits();
+                        };
+                    }
+                    renderSubUnits();
+                });
+                </script>
+                </div>
+                <div class="mt-3">
+                    <label class="block font-semibold mb-1">Notes</label>
+                    <textarea name="additional_notes" class="input-field w-full"></textarea>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button type="submit" class="btn-primary">Save</button>
+                    <button type="button" id="cancel-animal-modal" class="btn-secondary">Cancel</button>
+                </div>
+            </form>
+            <form id="bulk-animal-form" class="hidden" method="POST" action="{% url 'livestock:livestock_create' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="block font-semibold mb-1">Paste animals (CSV or one per line):</label>
+                    <textarea name="bulk" id="bulk-textarea" class="input-field w-full" rows="5" placeholder="tag_id,name,sex,age_group,dob,breed,status,livestock_unit,notes\n12345,Bessie,female,adult,2022-01-01,Angus,active,1,Healthy"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="block font-semibold mb-1">Or upload CSV file:</label>
+                    <input type="file" id="bulk-csv" name="bulk_csv" accept=".csv" class="input-field w-full">
+                </div>
+                <div id="bulk-preview" class="mb-3 hidden">
+                    <label class="block font-semibold mb-1">Preview:</label>
+                    <div id="bulk-preview-table" class="overflow-x-auto"></div>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button type="submit" class="btn-primary">Save All</button>
+                    <button type="button" id="cancel-bulk-animal-modal" class="btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Log Produce Modal -->
+<div id="log-produce-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+    <div class="modal-content max-w-2xl w-full p-8">
+        <h2 class="font-display text-2xl font-bold text-gray-900 mb-6">Log Produce for Animal</h2>
+        <form id="log-produce-form">
+            <input type="hidden" id="produce-animal-id" name="animal_id">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-semibold mb-1">Product</label>
+                    <input type="text" id="produce-product" name="product" class="input-field w-full" required placeholder="e.g. Milk, Eggs, Wool">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Quantity</label>
+                    <input type="number" id="produce-quantity" name="quantity" class="input-field w-full" required min="0" step="any">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Unit</label>
+                    <input type="text" id="produce-unit" name="unit" class="input-field w-full" required placeholder="e.g. liters, kg">
+                </div>
+                <div>
+                            <label class="block font-semibold mb-1">Date</label>
+                            <input type="date" id="produce-date" name="date" class="input-field w-full" value="{{ today|date:'Y-m-d' }}">
+                </div>
+            </div>
+            <div class="mt-3">
+                <label class="block font-semibold mb-1">Notes</label>
+                <textarea id="produce-notes" name="notes" class="input-field w-full"></textarea>
+            </div>
+            <div class="flex gap-4 mt-6 justify-end">
+                <button type="button" id="close-log-produce-modal" class="btn-secondary">Cancel</button>
+                <button type="submit" class="btn-primary">Save Produce</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    * {
+        font-family: 'DM Sans', sans-serif;
+    }
+    
+    h1, h2, h3, .font-display {
+        font-family: 'Archivo', sans-serif;
+    }
+
+    :root {
+        --primary: #16a34a;
+        --primary-dark: #15803d;
+        --primary-light: #22c55e;
+        --secondary: #0d9488;
+        --accent: #f59e0b;
+    }
+
+    body {
+        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #d1fae5 100%);
+        min-height: 100vh;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: 
+            repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px);
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(22, 163, 74, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .stat-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(22, 163, 74, 0.15);
+        border-color: rgba(22, 163, 74, 0.2);
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border: 1.5px solid #16a34a;
+    }
+
+    .modern-table thead {
+        background: #16a34a;
+    }
+
+    .modern-table thead th {
+        padding: 1.25rem 1.5rem;
+        font-weight: 700;
+        font-size: 0.8125rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #fff;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .modern-table tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .modern-table tbody tr:hover {
+        background: linear-gradient(135deg, rgba(240, 253, 244, 0.5), rgba(236, 253, 245, 0.5));
+        transform: scale(1.005);
+    }
+
+    .modern-table tbody td {
+        padding: 1.25rem 1.5rem;
+        color: #6b7280;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.375rem 0.875rem;
+        border-radius: 9999px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+    }
+
+    .badge-active {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        border: 1px solid #86efac;
+    }
+
+    .badge-sold {
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        color: #1e40af;
+        border: 1px solid #93c5fd;
+    }
+
+    .badge-deceased {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+    }
+
+    .badge-male {
+        background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+        color: #3730a3;
+        border: 1px solid #a5b4fc;
+    }
+
+    .badge-female {
+        background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+        color: #9f1239;
+        border: 1px solid #f9a8d4;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        font-weight: 600;
+        padding: 0.875rem 1.75rem;
+        border-radius: 0.75rem;
+        border: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2));
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .btn-primary:hover::before {
+        opacity: 1;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(22, 163, 74, 0.35);
+    }
+
+    .input-field {
+        border: 2px solid #e5e7eb;
+        border-radius: 0.625rem;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s;
+        font-size: 0.9375rem;
+        background: white;
+    }
+
+    .input-field:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+    }
+
+    .action-btn {
+        padding: 0.625rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        border: 1.5px solid #e5e7eb;
+        background: white;
+    }
+
+    .action-btn:hover {
+        border-color: var(--primary);
+        background: rgba(22, 163, 74, 0.05);
+        color: var(--primary);
+        transform: translateY(-1px);
+    }
+
+    .empty-state {
+        background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(249,250,251,0.8));
+        border: 2px dashed #d1d5db;
+        border-radius: 1rem;
+        padding: 4rem 2rem;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+    }
+
+    .fade-in-1 { animation-delay: 0.1s; }
+    .fade-in-2 { animation-delay: 0.2s; }
+    .fade-in-3 { animation-delay: 0.3s; }
+    .fade-in-4 { animation-delay: 0.4s; }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="min-h-screen">
+    <!-- Hero Header -->
+    <section class="page-header py-12 px-6 shadow-xl relative mb-10">
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                            <i class="fas fa-cow text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="font-display text-4xl md:text-5xl font-black text-white mb-1">
+                                Livestock Management
+                            </h1>
+                            <p class="text-emerald-50 text-lg font-medium">Track and manage your farm animals</p>
+                        </div>
+                    </div>
+                </div>
+                <button id="open-adaptive-modal-btn" type="button" class="btn-primary flex items-center gap-2 whitespace-nowrap">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Livestock Unit</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <div class="max-w-7xl mx-auto px-6 pb-10">
+        <!-- Summary Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="stat-card p-6 rounded-2xl fade-in fade-in-1">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                        <i class="fas fa-paw text-green-600 text-xl"></i>
+                    </div>
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Total</span>
+                </div>
+                <div class="font-display text-3xl font-black text-gray-900">{{ animals|length }}</div>
+                <p class="text-sm text-gray-600 mt-1">Animals in herd</p>
+            </div>
+
+            <div class="stat-card p-6 rounded-2xl fade-in fade-in-2">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                        <i class="fas fa-heart-pulse text-emerald-600 text-xl"></i>
+                    </div>
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Active</span>
+                </div>
+                <div class="font-display text-3xl font-black text-gray-900" id="active-count">0</div>
+                <p class="text-sm text-gray-600 mt-1">Healthy animals</p>
+            </div>
+
+            <div class="stat-card p-6 rounded-2xl fade-in fade-in-3">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                        <i class="fas fa-venus text-blue-600 text-xl"></i>
+                    </div>
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Female</span>
+                </div>
+                <div class="font-display text-3xl font-black text-gray-900" id="female-count">0</div>
+                <p class="text-sm text-gray-600 mt-1">Female animals</p>
+            </div>
+
+            <div class="stat-card p-6 rounded-2xl fade-in fade-in-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center">
+                        <i class="fas fa-mars text-indigo-600 text-xl"></i>
+                    </div>
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Male</span>
+                </div>
+                <div class="font-display text-3xl font-black text-gray-900" id="male-count">0</div>
+                <p class="text-sm text-gray-600 mt-1">Male animals</p>
+            </div>
+        </div>
+
+        <!-- Livestock Units Section in a white container -->
+        <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-visible p-6 mb-8">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+            <h2 class="font-display text-2xl font-bold text-gray-900">Livestock Units</h2>
+            <div class="flex flex-col md:flex-row md:items-center gap-2 w-full md:w-auto">
+                <input 
+                    type="text" 
+                    id="search-input"
+                    placeholder="Search by name or tag ID..." 
+                    class="input-field w-full md:w-64"
+                />
+                <select id="status-filter" class="input-field w-full md:w-auto">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="sold">Sold</option>
+                    <option value="deceased">Deceased</option>
+                </select>
+                <select id="sex-filter" class="input-field w-full md:w-auto">
+                    <option value="">All Genders</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Livestock Table -->
+            {% if animals %}
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Tag ID</th>
+                        <th>Name</th>
+                        <th>Sex</th>
+                        <th>Age Group</th>
+                        <th>Breed</th>
+                        <th>Status</th>
+                                                <th>Produce</th>
+                                                <th>Transfer</th>
+                        <th>Livestock Unit</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for animal in animals %}
+                    <tr class="animal-row" 
+                        data-name="{{ animal.name|lower }}" 
+                        data-tag="{{ animal.tag_id|lower }}"
+                        data-status="{{ animal.status|lower }}"
+                        data-sex="{{ animal.sex|lower }}"
+                        data-animal-id="{{ animal.id }}">
+                        <td>
+                            <span class="font-bold text-gray-900">{{ animal.tag_id }}</span>
+                        </td>
+                        <td>
+                            <span class="font-semibold text-gray-900">{{ animal.name }}</span>
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ animal.sex|lower }}">
+                                {% if animal.sex|lower == 'male' %}
+                                    <i class="fas fa-mars mr-1"></i>
+                                {% else %}
+                                    <i class="fas fa-venus mr-1"></i>
+                                {% endif %}
+                                {{ animal.sex|title }}
+                            </span>
+                        </td>
+                        <td>{{ animal.age_group|title }}</td>
+                        <td>
+                            <span class="font-medium text-gray-700">{{ animal.breed }}</span>
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ animal.status|lower }}">
+                                {{ animal.status|title }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if animal.livestock_unit.produce_type %}
+                                <span class="font-medium">{{ animal.livestock_unit.produce_type }}</span>
+                                <span class="text-xs text-gray-500">({{ animal.livestock_unit.produce_quantity }} {{ animal.livestock_unit.produce_unit }} {{ animal.livestock_unit.produce_frequency }})</span>
+                            {% else %}
+                                <span class="text-gray-400">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if animal.livestock_unit.produce_type %}
+                                <button class="action-btn transfer-produce-btn" data-unit-id="{{ animal.livestock_unit.id }}" data-produce-type="{{ animal.livestock_unit.produce_type }}" data-produce-quantity="{{ animal.livestock_unit.produce_quantity }}" data-produce-unit="{{ animal.livestock_unit.produce_unit }}" data-produce-frequency="{{ animal.livestock_unit.produce_frequency }}">
+                                    <i class="fas fa-arrow-right"></i> Transfer
+                                </button>
+                            {% else %}
+                                <span class="text-gray-300">N/A</span>
+                            {% endif %}
+                        </td>
+                            // --- Transfer Produce Modal Logic ---
+                            document.body.insertAdjacentHTML('beforeend', `
+                            <div id="transfer-produce-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+                                <div class="modal-content max-w-md w-full p-4 relative">
+                                    <button type="button" id="close-transfer-produce-x" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl font-bold focus:outline-none" aria-label="Close">
+                                        &times;
+                                    </button>
+                                    <h2 class="font-display text-2xl font-bold text-gray-900 mb-4">Transfer Produce to Farm Collection</h2>
+                                    <form id="transfer-produce-form">
+                                        <div class="mb-2 grid grid-cols-3 gap-3">
+                                            <div>
+                                                <label class="block font-semibold mb-1">Produce Type</label>
+                                                <input type="text" id="transfer-produce-type" name="produce_type" class="input-field w-full" required>
+                                            </div>
+                                            <div>
+                                                <label class="block font-semibold mb-1">Quantity</label>
+                                                <input type="number" id="transfer-produce-quantity" name="produce_quantity" class="input-field w-full" required step="any">
+                                            </div>
+                                            <div>
+                                                <label class="block font-semibold mb-1">Unit</label>
+                                                <input type="text" id="transfer-produce-unit" name="produce_unit" class="input-field w-full" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="block font-semibold mb-1">Frequency</label>
+                                            <select id="transfer-produce-frequency" name="produce_frequency" class="input-field w-full" required>
+                                                <option value="Per Day">Per Day</option>
+                                                <option value="Per Week">Per Week</option>
+                                                <option value="Per Month">Per Month</option>
+                                                <option value="Per Year">Per Year</option>
+                                            </select>
+                                        </div>
+                                        <div class="flex justify-end gap-4 mt-4">
+                                            <button type="button" id="close-transfer-produce-modal" class="px-4 py-2 rounded-xl border-2 border-gray-300 hover:bg-gray-50 font-semibold transition">Cancel</button>
+                                            <button type="submit" class="btn-primary px-4 py-2">Transfer</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            `);
+
+                            document.querySelectorAll('.transfer-produce-btn').forEach(btn => {
+                                btn.addEventListener('click', function() {
+                                    document.getElementById('transfer-produce-type').value = btn.getAttribute('data-produce-type') || '';
+                                    document.getElementById('transfer-produce-quantity').value = btn.getAttribute('data-produce-quantity') || '';
+                                    document.getElementById('transfer-produce-unit').value = btn.getAttribute('data-produce-unit') || '';
+                                    document.getElementById('transfer-produce-frequency').value = btn.getAttribute('data-produce-frequency') || 'Per Day';
+                                    document.getElementById('transfer-produce-modal').classList.remove('hidden');
+                                });
+                            });
+                            document.getElementById('close-transfer-produce-modal').onclick = function() {
+                                    document.getElementById('close-transfer-produce-x').onclick = function() {
+                                        document.getElementById('transfer-produce-modal').classList.add('hidden');
+                                    };
+                                document.getElementById('transfer-produce-modal').classList.add('hidden');
+                            };
+                            document.getElementById('transfer-produce-form').onsubmit = async function(e) {
+                                e.preventDefault();
+                                // Prepare payload for transfer
+                                const payload = {
+                                    source: 'livestock',
+                                    product_name: document.getElementById('transfer-produce-type').value,
+                                    quantity: parseFloat(document.getElementById('transfer-produce-quantity').value),
+                                    unit: document.getElementById('transfer-produce-unit').value,
+                                    collection_date: new Date().toISOString().split('T')[0],
+                                    quality_grade: null,
+                                    notes: '',
+                                    frequency: document.getElementById('transfer-produce-frequency').value
+                                };
+                                // Send to produce collection API (must match individual_farm.html backend)
+                                const token = localStorage.getItem('access_token');
+                                const farmId = localStorage.getItem('current_farm_id') || '';
+                                if (!token || !farmId) {
+                                    alert('Session expired or farm not selected.');
+                                    window.location.href = 'authentication.html';
+                                    return;
+                                }
+                                try {
+                                    const res = await fetch(`http://127.0.0.1:8000/api/farms/${farmId}/produce-collections/`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Authorization': 'Bearer ' + token
+                                        },
+                                        body: JSON.stringify(payload)
+                                    });
+                                    if (res.status === 401 || res.status === 403) {
+                                        localStorage.clear();
+                                        window.location.href = 'authentication.html';
+                                        return;
+                                    }
+                                    if (!res.ok) {
+                                        alert('Failed to transfer produce.');
+                                        return;
+                                    }
+                                    alert('Produce transferred to farm collection history!');
+                                    document.getElementById('transfer-produce-modal').classList.add('hidden');
+                                } catch (err) {
+                                    alert('Network error.');
+                                }
+                            };
+                        <td>
+                            <span class="text-sm bg-gray-100 px-3 py-1 rounded-full font-medium">
+                                {{ animal.livestock_unit.unit_name }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="flex gap-2">
+                                <button class="action-btn log-produce-btn" title="Log Produce" data-animal-id="{{ animal.id }}">
+                                    <i class="fas fa-plus-circle"></i> Log Produce
+                                </button>
+                                <button class="action-btn" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div id="livestock-units-table-wrapper">
+                <p class="text-gray-500">Loading livestock units...</p>
+            </div>
+            {% endif %}
+            
+            <div id="no-results" class="empty-state text-center hidden">
+                <i class="fas fa-search text-6xl mb-4" style="color: #d1d5db;"></i>
+                <p class="text-lg font-semibold text-gray-700 mb-2">No animals found</p>
+                <p class="text-gray-600">Try adjusting your search or filters</p>
+            </div>
+        </div>
+        </div>
+
+        <!-- Spreadsheet-style Bulk Animal Entry -->
+        <div id="bulk-animal-table-section" class="hidden">
+            <h3 class="text-lg font-bold mb-2">Bulk Animal Entry (Spreadsheet Mode)</h3>
+            <div class="overflow-x-auto">
+                <table id="bulk-animal-table" class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>Tag/ID</th>
+                            <th>Name</th>
+                            <th>Sex</th>
+                            <th>Age Group</th>
+                            <th>DOB</th>
+                            <th>Breed</th>
+                            <th>Status</th>
+                            <th>Livestock Unit</th>
+                            <th>Notes</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="bulk-animal-table-body">
+                        <!-- Rows will be added dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex gap-4 mt-4">
+                <button id="add-bulk-row-btn" type="button" class="btn-primary">Add Row</button>
+                <button id="save-bulk-animals-btn" type="button" class="btn-primary">Save All</button>
+                <button id="cancel-bulk-table-btn" type="button" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Modal open/close logic
+    const animalModal = document.getElementById('animal-modal');
+    const openAnimalModalBtn = document.getElementById('open-animal-modal-btn');
+    const addFirstAnimalBtn = document.getElementById('add-first-animal-btn');
+    const closeAnimalModal = document.getElementById('close-animal-modal');
+    const cancelAnimalModal = document.getElementById('cancel-animal-modal');
+    const cancelBulkAnimalModal = document.getElementById('cancel-bulk-animal-modal');
+    const singleEntryBtn = document.getElementById('single-entry-btn');
+    const bulkEntryBtn = document.getElementById('bulk-entry-btn');
+    const singleAnimalForm = document.getElementById('single-animal-form');
+    const bulkAnimalForm = document.getElementById('bulk-animal-form');
+
+    // Tab logic for modal
+    const tabSingle = document.getElementById('tab-single');
+    const tabBulk = document.getElementById('tab-bulk');
+
+    function showAnimalModal() {
+        animalModal.classList.remove('hidden');
+        singleAnimalForm.classList.remove('hidden');
+        bulkAnimalForm.classList.add('hidden');
+    }
+    function hideAnimalModal() {
+        animalModal.classList.add('hidden');
+    }
+    if (openAnimalModalBtn) openAnimalModalBtn.onclick = showAnimalModal;
+    if (addFirstAnimalBtn) addFirstAnimalBtn.onclick = showAnimalModal;
+    if (closeAnimalModal) closeAnimalModal.onclick = hideAnimalModal;
+    if (cancelAnimalModal) cancelAnimalModal.onclick = hideAnimalModal;
+    if (cancelBulkAnimalModal) cancelBulkAnimalModal.onclick = hideAnimalModal;
+    if (singleEntryBtn) singleEntryBtn.onclick = function() {
+        singleAnimalForm.classList.remove('hidden');
+        bulkAnimalForm.classList.add('hidden');
+    };
+    if (bulkEntryBtn) bulkEntryBtn.onclick = function() {
+        singleAnimalForm.classList.add('hidden');
+        bulkAnimalForm.classList.remove('hidden');
+    };
+
+    function showTab(tab) {
+        if (tab === 'single') {
+            tabSingle.classList.add('border-green-600');
+            tabBulk.classList.remove('border-green-600');
+            singleAnimalForm.classList.remove('hidden');
+            bulkAnimalForm.classList.add('hidden');
+        } else {
+            tabBulk.classList.add('border-green-600');
+            tabSingle.classList.remove('border-green-600');
+            bulkAnimalForm.classList.remove('hidden');
+            singleAnimalForm.classList.add('hidden');
+        }
+    }
+    if (tabSingle) tabSingle.onclick = () => showTab('single');
+    if (tabBulk) tabBulk.onclick = () => {
+        showTab('bulk');
+        // Optionally, show spreadsheet mode when bulk tab is selected
+        const bulkTableSection = document.getElementById('bulk-animal-table-section');
+        if (bulkTableSection) bulkTableSection.classList.remove('hidden');
+    };
+    showTab('single');
+
+    // CSV upload and preview for bulk
+    const bulkCsv = document.getElementById('bulk-csv');
+    const bulkTextarea = document.getElementById('bulk-textarea');
+    const bulkPreview = document.getElementById('bulk-preview');
+    const bulkPreviewTable = document.getElementById('bulk-preview-table');
+
+    function parseCSV(text) {
+        const lines = text.trim().split(/\r?\n/);
+        return lines.map(line => line.split(','));
+    }
+    function renderPreview(data) {
+        if (!data.length) return;
+        let html = '<table class="modern-table"><thead><tr>';
+        html += '<th>Tag ID</th><th>Name</th><th>Sex</th><th>Age Group</th><th>DOB</th><th>Breed</th><th>Status</th><th>Unit</th><th>Notes</th></tr></thead><tbody>';
+        for (const row of data) {
+            html += '<tr>' + row.map(cell => `<td>${cell}</td>`).join('') + '</tr>';
+        }
+        html += '</tbody></table>';
+        bulkPreviewTable.innerHTML = html;
+        bulkPreview.classList.remove('hidden');
+    }
+    function handleBulkInput(text) {
+        const data = parseCSV(text);
+        renderPreview(data);
+    }
+    if (bulkTextarea) bulkTextarea.addEventListener('input', e => {
+        handleBulkInput(e.target.value);
+    });
+    if (bulkCsv) bulkCsv.addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            bulkTextarea.value = evt.target.result;
+            handleBulkInput(evt.target.result);
+        };
+        reader.readAsText(file);
+    });
+
+    // Log Produce modal logic
+    document.querySelectorAll('.log-produce-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const animalId = this.getAttribute('data-animal-id');
+            document.getElementById('produce-animal-id').value = animalId;
+            document.getElementById('log-produce-modal').classList.remove('hidden');
+        });
+    });
+    document.getElementById('close-log-produce-modal').onclick = function() {
+        document.getElementById('log-produce-modal').classList.add('hidden');
+    };
+    document.getElementById('log-produce-form').onsubmit = function(e) {
+        e.preventDefault();
+        // TODO: AJAX submit produce for animal
+        document.getElementById('log-produce-modal').classList.add('hidden');
+    };
+
+    // Spreadsheet-style bulk animal entry logic
+    const bulkTableSection = document.getElementById('bulk-animal-table-section');
+    const bulkTableBody = document.getElementById('bulk-animal-table-body');
+    const addBulkRowBtn = document.getElementById('add-bulk-row-btn');
+    const saveBulkAnimalsBtn = document.getElementById('save-bulk-animals-btn');
+    const cancelBulkTableBtn = document.getElementById('cancel-bulk-table-btn');
+
+    function addBulkRow(data = {}) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="text" class="input-field" value="${data.tag_id||''}"></td>
+            <td><input type="text" class="input-field" value="${data.name||''}"></td>
+            <td><select class="input-field"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></td>
+            <td><input type="text" class="input-field" value="${data.age_group||''}"></td>
+            <td><input type="date" class="input-field" value="${data.dob||''}"></td>
+            <td><input type="text" class="input-field" value="${data.breed||''}"></td>
+            <td><select class="input-field"><option value="active">Active</option><option value="sold">Sold</option><option value="deceased">Deceased</option></select></td>
+            <td><input type="text" class="input-field" value="${data.livestock_unit||''}"></td>
+            <td><input type="text" class="input-field" value="${data.notes||''}"></td>
+            <td><button type="button" class="text-red-600 font-bold remove-bulk-row">&times;</button></td>
+        `;
+        tr.querySelector('.remove-bulk-row').onclick = function() {
+            tr.remove();
+        };
+        bulkTableBody.appendChild(tr);
+    }
+    if (addBulkRowBtn) addBulkRowBtn.onclick = () => addBulkRow();
+    if (cancelBulkTableBtn) cancelBulkTableBtn.onclick = () => {
+        bulkTableSection.classList.add('hidden');
+    };
+    if (saveBulkAnimalsBtn) saveBulkAnimalsBtn.onclick = () => {
+        // TODO: Gather all rows and submit via AJAX or form
+        bulkTableSection.classList.add('hidden');
+    };
+
+    // --- Stat Card Dynamic Counts ---
+    const animals = Array.from(document.querySelectorAll('.animal-row'));
+    // Total
+    const totalCount = animals.length;
+    document.querySelector('.stat-card .font-display').textContent = totalCount;
+    // Active/Healthy
+    const activeCount = animals.filter(row => {
+        const status = (row.dataset.status || '').toLowerCase();
+        return status === 'active' || status === 'healthy';
+    }).length;
+    document.getElementById('active-count').textContent = activeCount;
+    // Female
+    const femaleCount = animals.filter(row => (row.dataset.sex || '').toLowerCase() === 'female').length;
+    document.getElementById('female-count').textContent = femaleCount;
+    // Male
+    const maleCount = animals.filter(row => (row.dataset.sex || '').toLowerCase() === 'male').length;
+    document.getElementById('male-count').textContent = maleCount;
+});
+</script>
+
+<script>
+// Fetch and display livestock units in the 'No livestock found' section
+document.addEventListener('DOMContentLoaded', function() {
+    const unitsTableWrapper = document.getElementById('livestock-units-table-wrapper');
+    if (!unitsTableWrapper) return;
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        unitsTableWrapper.innerHTML = '<div class="text-red-600 font-semibold p-4">You are not logged in. <a href="/login/" class="underline text-emerald-700">Log in</a> to view livestock units.</div>';
+        return;
+    }
+    fetch('http://127.0.0.1:8000/api/livestock-units/', {
+        headers: { 'Authorization': 'Bearer ' + token }
+    })
+    .then(res => {
+        if (res.status === 401) {
+            unitsTableWrapper.innerHTML = '<div class="text-red-600 font-semibold p-4">Session expired or unauthorized. <a href="/login/" class="underline text-emerald-700">Log in again</a> to continue.</div>';
+            return null;
+        }
+        return res.json();
+    })
+    .then(data => {
+        if (!data) return;
+        if (!Array.isArray(data) || data.length === 0) {
+            unitsTableWrapper.innerHTML = '<p class="text-gray-400">No livestock units found.</p>';
+            return;
+        }
+        let html = '<table class="modern-table" id="livestock-units-table"><thead><tr>' +
+            '<th>Name</th><th>Type</th><th>Species</th><th>Breed</th><th>Quantity</th><th>Produce</th>' +
+            '</tr></thead><tbody>';
+        for (const unit of data) {
+            function showNull(val) { return (val === null || val === '' || typeof val === 'undefined') ? 'null' : val; }
+            html += `<tr class="livestock-unit-row" tabindex="0" style="cursor:pointer;"` +
+                ` data-unit='${JSON.stringify(unit).replace(/'/g, "&#39;")}'` +
+                '>' +
+                `<td>${showNull(unit.unit_name)}</td>` +
+                `<td>${showNull(unit.unit_type)}</td>` +
+                `<td>${showNull(unit.species)}</td>` +
+                `<td>${showNull(unit.breed)}</td>` +
+                `<td>${showNull(unit.quantity)}</td>` +
+                `<td>${unit.produce_type ? showNull(unit.produce_type) + ' (' + showNull(unit.produce_quantity) + ' ' + showNull(unit.produce_unit) + ' ' + showNull(unit.produce_frequency) + ')' : 'null'}</td>` +
+                '</tr>';
+        }
+                        // Transfer form is now embedded in dialog, modal removed
+
+                        // Transfer button logic is now in dialog
+
+                        // Transfer form is now handled in dialog logic
+        html += '</tbody></table>';
+        unitsTableWrapper.innerHTML = html;
+
+        // Add dialog HTML if not present
+                if (!document.getElementById('livestock-unit-dialog')) {
+                    document.body.insertAdjacentHTML('beforeend', `
+                        <div id="livestock-unit-dialog" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm hidden">
+                            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative animate-fade-in">
+                                <button id="close-livestock-unit-dialog" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold transition-colors">&times;</button>
+                                <div class="px-10 pt-10 pb-8">
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center border border-emerald-100">
+                                            <i class="fas fa-cow text-emerald-500 text-3xl"></i>
+                                        </div>
+                                        <div>
+                                            <h2 class="font-display text-2xl font-extrabold text-gray-900 mb-1 flex items-center gap-2">
+                                                Livestock Unit Details
+                                            </h2>
+                                            <div class="text-gray-500 text-base font-medium" id="livestock-unit-dialog-header-sub"></div>
+                                        </div>
+                                    </div>
+                                    <div id="livestock-unit-dialog-content"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <style>
+                            @keyframes fadeInDialog { from { opacity: 0; transform: translateY(40px);} to { opacity: 1; transform: none;}}
+                            .animate-fade-in { animation: fadeInDialog 0.4s cubic-bezier(0.4,0,0.2,1) backwards; }
+                            .details-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 1rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-top: 0.5rem; }
+                            .details-table th, .details-table td { padding: 0.85rem 1.2rem; }
+                            .details-table th { background: #f0fdf4; color: #166534; font-weight: 700; text-align: left; width: 40%; }
+                            .details-table tr { border-bottom: 1px solid #f3f4f6; }
+                            .details-table tr:last-child { border-bottom: none; }
+                            .details-table td { color: #374151; font-size: 1rem; }
+                            .dialog-action-bar { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2.5rem; }
+                            .dialog-action-btn { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.1rem; border-radius: 0.75rem; padding: 0.85rem 2.2rem; transition: background 0.2s, color 0.2s, box-shadow 0.2s; box-shadow: 0 2px 8px rgba(16,185,129,0.08); }
+                            .dialog-action-btn-primary { background: linear-gradient(90deg, #16a34a, #22c55e); color: #fff; border: none; }
+                            .dialog-action-btn-primary:hover { background: linear-gradient(90deg, #22c55e, #16a34a); color: #fff; }
+                            .dialog-action-btn-secondary { background: #f3f4f6; color: #166534; border: 2px solid #d1fae5; }
+                            .dialog-action-btn-secondary:hover { background: #d1fae5; color: #166534; }
+                        </style>
+                    `);
+                }
+        const dialog = document.getElementById('livestock-unit-dialog');
+        const dialogContent = document.getElementById('livestock-unit-dialog-content');
+        const closeDialog = document.getElementById('close-livestock-unit-dialog');
+        closeDialog.onclick = () => dialog.classList.add('hidden');
+
+        // Add click handler to each row
+        document.querySelectorAll('.livestock-unit-row').forEach(row => {
+            row.addEventListener('click', function() {
+                const unit = JSON.parse(this.getAttribute('data-unit').replace(/&#39;/g, "'"));
+                                // Format keys for readability
+                                function formatKey(key) {
+                                    return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                                }
+
+
+
+                                // Show universal fields
+                                const universalFields = [
+                                    'purpose',
+                                    'sub_units',
+                                    'produce_type',
+                                    'produce_frequency',
+                                    'produce_quantity',
+                                    'produce_unit',
+                                    'notes',
+                                    'additional_notes'
+                                ];
+                                const nonEditable = ['id', 'created_at', 'updated_at'];
+                                // Render read-only table first
+                                let details = '<table class="details-table" id="produce-details-table">';
+                                function showNull(val) { return (val === null || val === '' || typeof val === 'undefined') ? 'null' : val; }
+                                for (const [key, value] of Object.entries(unit)) {
+                                    if (nonEditable.includes(key) || !universalFields.includes(key)) continue;
+                                    if (key === 'sub_units' && value) {
+                                        let subUnitsArr = [];
+                                        try { subUnitsArr = typeof value === 'string' ? JSON.parse(value) : value; } catch {}
+                                        details += `<tr><th>Sub-Units</th><td>` + (Array.isArray(subUnitsArr) && subUnitsArr.length > 0 ?
+                                            subUnitsArr.map(su => `<span class='inline-block bg-emerald-100 text-emerald-700 rounded-full px-3 py-1 mr-2 mb-2'>${su.name} (${su.qty})</span>`).join('') :
+                                            '<span class="text-gray-400">None</span>') + `</td></tr>`;
+                                    } else {
+                                        details += `<tr><th>${formatKey(key)}</th><td><span class="produce-value" data-key="${key}">${showNull(value)}</span></td></tr>`;
+                                    }
+                                }
+                                details += '</table>';
+                                details += '<div class="dialog-action-bar">'
+                                    +'<button type="button" id="open-transfer-livestock-produce-btn" class="dialog-action-btn dialog-action-btn-primary"><i class="fas fa-arrow-right"></i> Transfer Produce</button>'
+                                    +'<button type="button" id="edit-livestock-unit-btn" class="dialog-action-btn dialog-action-btn-primary"><i class="fas fa-edit"></i> Edit</button>'
+                                    +'<button type="button" id="close-livestock-unit-dialog-2" class="dialog-action-btn dialog-action-btn-secondary"><i class="fas fa-times"></i> Close</button>'
+                                    +'</div>';
+                                dialogContent.innerHTML = details;
+                                // Header subtext
+                                const headerSub = document.getElementById('livestock-unit-dialog-header-sub');
+                                if (headerSub) headerSub.textContent = `${unit.unit_name || ''} (${unit.unit_type || ''})`;
+                                dialog.classList.remove('hidden');
+
+                                                                // Always re-bind Transfer Produce button after rendering
+                                                                setTimeout(() => {
+                                                                  const openTransferBtn = document.getElementById('open-transfer-livestock-produce-btn');
+                                                                  if (openTransferBtn) {
+                                                                    openTransferBtn.onclick = function() {
+                                                                        // Render transfer form in dialogContent
+                                                                        dialogContent.innerHTML = `
+                                                                            <h2 class="font-display text-2xl font-bold text-gray-900 mb-4">Transfer Produce to Farm</h2>
+                                                                            <form id="transfer-livestock-produce-form">
+                                                                                <div class="mb-4">
+                                                                                    <label class="block font-semibold mb-1">Product Name</label>
+                                                                                    <input type="text" id="transfer-produce-type" name="product_name" class="input-field w-full" required readonly value="${unit.produce_type || ''}" placeholder="e.g. Milk, Eggs, Wool">
+                                                                                </div>
+                                                                                <div class="mb-4">
+                                                                                    <label class="block font-semibold mb-1">Quantity</label>
+                                                                                    <input type="number" id="transfer-produce-quantity" name="quantity" class="input-field w-full" min="0.01" step="any" required placeholder="Enter quantity to transfer">
+                                                                                    <div class="text-xs text-gray-500 mt-1">Available: <span id="transfer-available-quantity">${unit.produce_quantity || '0'}</span></div>
+                                                                                </div>
+                                                                                <div class="mb-4">
+                                                                                    <label class="block font-semibold mb-1">Unit</label>
+                                                                                    <input type="text" id="transfer-produce-unit" name="unit" class="input-field w-full" required readonly value="${unit.produce_unit || ''}" placeholder="e.g. liters, kg">
+                                                                                </div>
+                                                                                <div class="mb-4">
+                                                                                    <label class="block font-semibold mb-1">Collection Date</label>
+                                                                                    <input type="date" id="transfer-produce-date" name="collection_date" class="input-field w-full" value="${new Date().toISOString().slice(0,10)}" required>
+                                                                                </div>
+                                                                                <div class="mb-4">
+                                                                                    <label class="block font-semibold mb-1">Quality Grade</label>
+                                                                                    <input type="text" id="transfer-produce-quality" name="quality_grade" class="input-field w-full" placeholder="e.g. A, B, Premium">
+                                                                                </div>
+                                                                                <div class="mb-4">
+                                                                                    <label class="block font-semibold mb-1">Notes</label>
+                                                                                    <textarea id="transfer-produce-notes" name="notes" class="input-field w-full" placeholder="Optional notes about this transfer"></textarea>
+                                                                                </div>
+                                                                                <div class="flex gap-2 justify-end mt-6">
+                                                                                    <button type="button" id="cancel-transfer-livestock-produce-btn" class="btn-secondary">Cancel</button>
+                                                                                    <button type="submit" class="btn-primary">Transfer</button>
+                                                                                </div>
+                                                                            </form>
+                                                                        `;
+                                                                        // Cancel button returns to details
+                                                                        document.getElementById('cancel-transfer-livestock-produce-btn').onclick = function() {
+                                                                            // Re-render details view
+                                                                            dialogContent.innerHTML = details;
+                                                                            dialog.classList.remove('hidden');
+                                                                            // Re-bind buttons
+                                                                            setTimeout(() => { /* rebind all buttons */ }, 0);
+                                                                        };
+                                                                        // Transfer form submit logic
+                                                                        document.getElementById('transfer-livestock-produce-form').onsubmit = async function(e) {
+                                                                            e.preventDefault();
+                                                                            const produce_type = document.getElementById('transfer-produce-type').value;
+                                                                            const quantityToTransfer = parseFloat(document.getElementById('transfer-produce-quantity').value);
+                                                                            const availableQuantity = parseFloat(unit.produce_quantity) || 0;
+                                                                            const unitStr = document.getElementById('transfer-produce-unit').value;
+                                                                            const date = document.getElementById('transfer-produce-date').value;
+                                                                            const notes = document.getElementById('transfer-produce-notes').value;
+                                                                            if (isNaN(quantityToTransfer) || quantityToTransfer <= 0 || quantityToTransfer > availableQuantity) {
+                                                                                alert('Invalid quantity to transfer.');
+                                                                                return;
+                                                                            }
+                                                                            const token = localStorage.getItem('access_token');
+                                                                            try {
+                                                                                let farmId = localStorage.getItem('current_farm_id') || '';
+                                                                                if (!farmId) {
+                                                                                    alert('No farm selected.');
+                                                                                    return;
+                                                                                }
+                                                                                // POST to /api/farms/{farmId}/produce-collections/
+                                                                                const payload = {
+                                                                                    source: 'livestock',
+                                                                                    product_name: produce_type,
+                                                                                    quantity: quantityToTransfer,
+                                                                                    unit: unitStr,
+                                                                                    collection_date: date,
+                                                                                    notes: notes,
+                                                                                    livestock_unit: unit.id,
+                                                                                    livestock_unit_name: unit.unit_name,
+                                                                                    animal_id: unit.id,
+                                                                                    animal_name: unit.unit_name
+                                                                                };
+                                                                                const res = await fetch(`http://127.0.0.1:8000/api/farms/${farmId}/produce-collections/`, {
+                                                                                    method: 'POST',
+                                                                                    headers: {
+                                                                                        'Content-Type': 'application/json',
+                                                                                        'Authorization': 'Bearer ' + token
+                                                                                    },
+                                                                                    body: JSON.stringify(payload)
+                                                                                });
+                                                                                if (!res.ok) {
+                                                                                    alert('Failed to transfer produce to farm history.');
+                                                                                    return;
+                                                                                }
+                                                                                // PATCH livestock unit to reduce produce_quantity
+                                                                                const newQuantity = availableQuantity - quantityToTransfer;
+                                                                                const patchRes = await fetch(`http://127.0.0.1:8000/api/livestock-units/${unit.id}/`, {
+                                                                                    method: 'PATCH',
+                                                                                    headers: {
+                                                                                        'Content-Type': 'application/json',
+                                                                                        'Authorization': 'Bearer ' + token
+                                                                                    },
+                                                                                    body: JSON.stringify({ produce_quantity: newQuantity })
+                                                                                });
+                                                                                if (!patchRes.ok) {
+                                                                                    alert('Produce transferred, but failed to update livestock unit quantity.');
+                                                                                }
+                                                                                dialog.classList.add('hidden');
+                                                                                location.reload();
+                                                                            } catch (err) {
+                                                                                alert('Network error.');
+                                                                            }
+                                                                        };
+                                                                    };
+                                                                  }
+                                                                }, 0);
+
+                                // Always wire up close button
+                                const closeBtn2 = document.getElementById('close-livestock-unit-dialog-2');
+                                if (closeBtn2) closeBtn2.onclick = () => dialog.classList.add('hidden');
+
+                                // Edit button logic
+                                const editBtn = document.getElementById('edit-livestock-unit-btn');
+                                editBtn.onclick = function() {
+                                    // Replace values with inputs
+                                    let form = '<form id="edit-livestock-unit-form"><table class="details-table">';
+                                    for (const [key, value] of Object.entries(unit)) {
+                                        if (nonEditable.includes(key) || !produceFields.includes(key)) continue;
+                                        let input;
+                                        if (key === 'produce_quantity') {
+                                            input = `<input name="${key}" type="number" step="any" class="input-field w-full" value="${value === null ? '' : value}" />`;
+                                        } else if (key === 'produce_frequency') {
+                                            input = `<select name="produce_frequency" class="input-field w-full">
+                                                <option value="Per Day"${value==='Per Day'?' selected':''}>Per Day</option>
+                                                <option value="Per Week"${value==='Per Week'?' selected':''}>Per Week</option>
+                                                <option value="Per Month"${value==='Per Month'?' selected':''}>Per Month</option>
+                                                <option value="Per Year"${value==='Per Year'?' selected':''}>Per Year</option>
+                                            </select>`;
+                                        } else if (key === 'notes' || key === 'additional_notes') {
+                                            input = `<textarea name="${key}" class="input-field w-full">${value === null ? '' : value}</textarea>`;
+                                        } else {
+                                            input = `<input name="${key}" type="text" class="input-field w-full" value="${value === null ? '' : value}" />`;
+                                        }
+                                        form += `<tr><th>${formatKey(key)}</th><td>${input}</td></tr>`;
+                                    }
+                                    form += '</table>';
+                                    form += '<div class="flex justify-between mt-6">'
+                                        +'<button type="button" id="cancel-edit-livestock-unit-btn" class="btn-secondary">Cancel</button>'
+                                        +'<button type="submit" class="btn-primary">Save Changes</button>'
+                                        +'</div>';
+                                    form += '</form>';
+                                    dialogContent.innerHTML = form;
+
+                                    // Cancel button logic
+                                    document.getElementById('cancel-edit-livestock-unit-btn').onclick = () => dialog.classList.add('hidden');
+
+                                    // Save handler
+                                    const editForm = document.getElementById('edit-livestock-unit-form');
+                                    editForm.onsubmit = async function(e) {
+                                        e.preventDefault();
+                                        const formData = new FormData(editForm);
+                                        const payload = {};
+                                        for (const [k, v] of formData.entries()) {
+                                            // Convert empty string to null, and for numbers, send null if blank
+                                            if (v === '' || v === undefined) {
+                                                payload[k] = null;
+                                            } else if (k === 'produce_quantity') {
+                                                payload[k] = isNaN(Number(v)) || v === '' ? null : Number(v);
+                                            } else {
+                                                payload[k] = v;
+                                            }
+                                        }
+                                        const token = localStorage.getItem('access_token');
+                                        try {
+                                            const res = await fetch(`http://127.0.0.1:8000/api/livestock-units/${unit.id}/`, {
+                                                method: 'PATCH',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'Authorization': 'Bearer ' + token
+                                                },
+                                                body: JSON.stringify(payload)
+                                            });
+                                            if (!res.ok) {
+                                                alert('Failed to update livestock unit.');
+                                                return;
+                                            }
+                                            dialog.classList.add('hidden');
+                                            location.reload();
+                                        } catch (err) {
+                                            alert('Network error.');
+                                        }
+                                    };
+                                };
+
+                                // Save handler
+                                const editForm = document.getElementById('edit-livestock-unit-form');
+                                editForm.onsubmit = async function(e) {
+                                    e.preventDefault();
+                                    const formData = new FormData(editForm);
+                                    const payload = {};
+                                    for (const [k, v] of formData.entries()) {
+                                        payload[k] = v === '' ? null : v;
+                                    }
+                                    const token = localStorage.getItem('access_token');
+                                    try {
+                                        const res = await fetch(`http://127.0.0.1:8000/api/livestock-units/${unit.id}/`, {
+                                            method: 'PATCH',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Authorization': 'Bearer ' + token
+                                            },
+                                            body: JSON.stringify(payload)
+                                        });
+                                        if (!res.ok) {
+                                            alert('Failed to update livestock unit.');
+                                            return;
+                                        }
+                                        dialog.classList.add('hidden');
+                                        // Optionally, refresh the table
+                                        location.reload();
+                                    } catch (err) {
+                                        alert('Network error.');
+                                    }
+                                };
+            });
+        });
+    })
+    .catch(() => {
+        unitsTableWrapper.innerHTML = '<p class="text-red-500">Failed to load livestock units.</p>';
+    });
+});
+</script>
+
+{% endblock %}

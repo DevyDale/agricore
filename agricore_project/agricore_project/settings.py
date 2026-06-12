@@ -30,6 +30,10 @@ SECURE_HSTS_SECONDS = 0
 
 # ==================== APPLICATION DEFINITION ====================
 INSTALLED_APPS = [
+    # African Agricultural Commerce Ecosystem - Phase 1
+    'marketprices.apps.MarketPricesConfig',
+    'logistics.apps.LogisticsConfig',
+    'escrow.apps.EscrowConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,6 +59,8 @@ INSTALLED_APPS = [
     'ai.apps.AiConfig',
     'analytics.apps.AnalyticsConfig',
     'produce.apps.ProduceConfig',
+    'utils.apps.UtilsConfig',
+    'expenses.apps.ExpensesConfig',
 ]
 
 MIDDLEWARE = [
@@ -95,10 +101,13 @@ TEMPLATES = [
 DATABASES = {
     'default': dj_database_url.config(
         default=env('DATABASE_URL', default='postgres://postgres:password@localhost:5432/agricore'),
-        conn_max_age=600,
+        conn_max_age=60,  # Reduce idle connection time to help avoid max clients error
         ssl_require=not DEBUG
     )
 }
+
+# If you keep hitting max clients, try lowering CONN_MAX_AGE further (e.g., 10),
+# and ensure you are not running multiple servers or scripts at once.
 
 # ==================== PASSWORD VALIDATION ====================
 AUTH_PASSWORD_VALIDATORS = [
@@ -160,8 +169,13 @@ USE_I18N = True
 USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ==================== KEYS ====================
-GROQ_API_KEY = env('GROQ_API_KEY', default='')
+ # ==================== KEYS ====================
+OLLAMA_MODEL = env('OLLAMA_MODEL', default='mistral')
+OLLAMA_BASE_URL = env('OLLAMA_BASE_URL', default='http://localhost:11434/v1/chat/completions')
 SUPABASE_URL = env('SUPABASE_URL', default='')
 SUPABASE_ANON_KEY = env('SUPABASE_ANON_KEY', default='')
 SUPABASE_SERVICE_ROLE_KEY = env('SUPABASE_SERVICE_ROLE_KEY', default='')
+# ==================== CLOUDINARY ====================
+CLOUDINARY_CLOUD_NAME = env('CLOUDINARY_CLOUD_NAME', default='')
+CLOUDINARY_API_KEY = env('CLOUDINARY_API_KEY', default='')
+CLOUDINARY_API_SECRET = env('CLOUDINARY_API_SECRET', default='')

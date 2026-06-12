@@ -3,567 +3,896 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>My Digital Stores</title>
+    <title>My Digital Stores - Agricore Solutions</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header-gradient {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        /* Navigation */
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.625rem 1.125rem;
+            border-radius: 0.875rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .nav-btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Container */
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Glass container */
+        .glass-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Store cards */
+        .store-card {
+            background: white;
+            border: 1px solid #f1f5f9;
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .store-card:hover {
+            transform: translateY(-8px);
+            border-color: #10b981;
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Input fields */
+        .input-field {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #1e293b;
+            border-radius: 1rem;
+            padding: 0.875rem 1.125rem;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .input-field::placeholder {
+            color: #94a3b8;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #10b981;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-weight: 700;
+            padding: 0.875rem 1.75rem;
+            border-radius: 1rem;
+            border: none;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 1rem;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            margin: auto;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-verified {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 100;
+            font-size: 1.5rem;
+        }
+        
+        .fab:hover {
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
+        }
+
+        /* Loading spinner */
+        .spinner-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 3px solid #e2e8f0;
+            border-top-color: #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: #fafafa;
+            border-radius: 1.25rem;
+            border: 2px dashed #e2e8f0;
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            color: #cbd5e1;
+            margin-bottom: 1.5rem;
+        }
+
+        /* AI Modal */
+        .ai-modal {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 24px;
+            z-index: 1100;
+            width: 420px;
+            max-width: calc(100vw - 48px);
+        }
+        
+        .ai-modal.show {
+            display: block;
+            animation: ai-pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @keyframes ai-pop-in {
+            0% { transform: scale(0.8) translateY(20px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .ai-content {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            padding: 1.25rem;
+        }
+
+        .ai-messages {
+            max-height: 320px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.5rem;
+        }
+
+        .ai-bubble {
+            max-width: 85%;
+            padding: 0.875rem 1.125rem;
+            border-radius: 1.125rem;
+            font-size: 0.9375rem;
+            line-height: 1.5;
+        }
+
+        .ai-bubble.bot {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #dcfce7;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .ai-bubble.user {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .glass-container {
+                padding: 1.5rem;
+            }
+
+            .store-card {
+                padding: 1.25rem;
+            }
+
+            .fab, .ai-modal {
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            .fab {
+                width: 56px;
+                height: 56px;
+            }
+
+            .ai-modal {
+                right: 12px;
+                left: 12px;
+                width: auto;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <!-- Heading and Button Bar -->
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-4">
-            <h1 class="text-3xl font-semibold text-gray-900">My Digital Stores</h1>
-            <div class="flex flex-wrap gap-3 justify-end">
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg transition"
-                    onclick="window.location.href='marketplace.html'">
-                    Marketplace
+<body>
+    <!-- Header -->
+    <header class="header-gradient shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 header-content">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-store text-2xl md:text-3xl text-white"></i>
+                <h1 class="text-xl md:text-2xl font-bold text-white">My Digital Stores</h1>
+            </div>
+            
+            <div class="flex items-center gap-2 flex-wrap">
+                <button onclick="window.location.href='marketplace.html'" class="nav-btn">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="hidden sm:inline">Marketplace</span>
                 </button>
-                <button class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-5 rounded-lg transition"
-                    onclick="window.location.href='chats.html'">
-                    Chats
+                <button onclick="window.location.href='chats.html'" class="nav-btn">
+                    <i class="fas fa-comments"></i>
+                    <span class="hidden sm:inline">Chats</span>
                 </button>
-                <button class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-5 rounded-lg transition"
-                    onclick="window.location.href='multi_farm.html'">
-                    Your Farms
+                <button onclick="window.location.href='multi_farm.html'" class="nav-btn">
+                    <i class="fas fa-tractor"></i>
+                    <span class="hidden sm:inline">Your Farms</span>
                 </button>
-                <button id="openModalBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-lg transition">
-                    Create Digital Store
+                <button id="openModalBtn" class="btn-primary">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span class="hidden sm:inline">Create Store</span>
+                    <span class="sm:hidden">New</span>
                 </button>
             </div>
         </div>
+    </header>
 
-        <!-- Modal -->
-        <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-            <div class="bg-white rounded-lg shadow-lg w-full max-w-lg mx-4 p-4 md:p-6 relative max-h-[90vh] overflow-y-auto">
-                <h2 class="text-2xl font-semibold mb-3">Create Digital Store</h2>
-                <form id="createStoreForm" class="space-y-3 md:space-y-4">
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                        <input type="text" id="name" name="name" class="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
-                    </div>
-                    <div class="flex flex-col md:flex-row md:space-x-4">
-                        <div class="flex-1">
-                            <label for="ownerName" class="block text-sm font-medium text-gray-700 mb-1">Owner Name</label>
-                            <input type="text" id="ownerName" name="ownerName" class="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
-                        </div>
-                        <div class="flex-1 mt-3 md:mt-0">
-                            <label for="ownerPhone" class="block text-sm font-medium text-gray-700 mb-1">Owner Phone</label>
-                            <input type="tel" id="ownerPhone" name="ownerPhone" class="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
-                        </div>
-                    </div>
-                    <div>
-                        <label for="ownerEmail" class="block text-sm font-medium text-gray-700 mb-1">Owner Email</label>
-                        <input type="email" id="ownerEmail" name="ownerEmail" class="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
-                    </div>
-                    <div>
-                        <label for="countries" class="block text-sm font-medium text-gray-700 mb-1">Countries of Operation</label>
-                        <input type="text" id="countries" name="countries" placeholder="Separate countries with commas" class="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
-                    </div>
-                    <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Store Description</label>
-                        <textarea id="description" name="description" class="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="Describe your store (optional)"></textarea>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <input type="checkbox" id="isVerified" name="isVerified" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded" />
-                        <label for="isVerified" class="block text-sm font-medium text-gray-700">Is Verified</label>
-                    </div>
-                    <div class="flex justify-end space-x-3 pt-3 border-t border-gray-200">
-                        <button type="button" id="cancelBtn" class="px-4 py-1.5 rounded bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold transition">Cancel</button>
-                        <button type="submit" class="px-4 py-1.5 rounded bg-green-600 hover:bg-green-700 text-white font-semibold transition">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-8">
-            <input id="searchInput" type="text" placeholder="Search by store name or country..." class="mb-4 sm:mb-0 w-full sm:w-1/2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
-            <select id="verificationFilter" class="w-full sm:w-1/4 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-                <option value="all">All Verification Status</option>
-                <option value="verified">Verified</option>
-                <option value="not_verified">Not Verified</option>
-            </select>
-        </div>
-
-        {% if stores %}
-        <div id="storesGrid" class="min-h-screen bg-gray-100 rounded-[20px] outline outline-5 outline-white p-6 grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {# Only show stores that belong to the logged-in user.
-               The backend StoreViewSet should already filter by request.user,
-               so this loop will only iterate over the user's own stores. #}
-            {% for store in stores %}
-            <div class="store-tile bg-white rounded-lg shadow-md p-6 flex flex-col justify-between transform transition duration-300 hover:scale-[1.03] hover:shadow-xl cursor-pointer" data-name="{{ store.name | lower }}" data-countries="{{ store.countries_of_operation|lower }}" data-verified="{{ store.is_verified|yesno:'verified,not_verified' }}">
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="glass-container">
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
                 <div>
-                    <h2 class="text-xl font-bold text-gray-800 mb-2">{{ store.name }}</h2>
-                    <p class="text-gray-700"><span class="font-semibold">Owner Name:</span> {{ store.owner_name }}</p>
-                    <p class="text-gray-700"><span class="font-semibold">Owner Email:</span> {{ store.owner_email }}</p>
-                    <p class="text-gray-700"><span class="font-semibold">Owner Phone:</span> {{ store.owner_phone }}</p>
-                    <p class="text-gray-700"><span class="font-semibold">Countries of Operation:</span> {{ store.countries_of_operation }}</p>
-                    <p class="text-gray-700"><span class="font-semibold">Total Value:</span> ${{ store.total_value }}</p>
-                        <p class="text-gray-700"><span class="font-semibold">Verification Status:</span>
-                            {% if store.is_verified %}
-                            <span class="text-green-600 font-semibold">Verified</span>
-                        {% else %}
-                            <span class="text-red-600 font-semibold">Not Verified</span>
-                        {% endif %}
-                    </p>
-                </div>
-                <div class="mt-6">
-                        <div class="flex gap-2">
-                            <a href="{% url 'store_products' store.id %}" class="inline-block w-1/2 text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition">
-                                View Products
-                            </a>
-                            <a href="digital_store.html?id={{store.id}}" class="inline-block w-1/2 text-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded transition">
-                                Manage Store
-                            </a>
-                        </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Your Digital Stores</h2>
+                    <p class="text-gray-600">Manage your agricultural marketplace presence</p>
                 </div>
             </div>
-            {% endfor %}
+
+            <!-- Search and Filter -->
+            <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                <div class="flex-1">
+                    <input id="searchInput" type="text" placeholder="Search by store name or country..." class="input-field">
+                </div>
+                <select id="verificationFilter" class="input-field sm:w-64">
+                    <option value="all">All Stores</option>
+                    <option value="verified">Verified Only</option>
+                    <option value="not_verified">Pending Verification</option>
+                </select>
+            </div>
+
+            <!-- Stores Grid -->
+            <div id="storesGrid" class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"></div>
         </div>
-        {% else %}
-        {% endif %}
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="storesLoading" class="spinner-overlay hidden">
+        <div class="flex flex-col items-center">
+            <div class="spinner"></div>
+            <span class="text-emerald-700 font-semibold mt-4">Loading stores...</span>
+        </div>
+    </div>
+
+    <!-- Create Store Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Create Digital Store</h2>
+            <form id="createStoreForm" class="space-y-4">
+                <div>
+                    <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Store Name *</label>
+                    <input type="text" id="name" name="name" class="input-field" placeholder="e.g., Green Valley Marketplace" required />
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="ownerName" class="block text-sm font-semibold text-gray-700 mb-2">Owner Name</label>
+                        <input type="text" id="ownerName" name="ownerName" class="input-field" placeholder="Your name" />
+                    </div>
+                    <div>
+                        <label for="ownerPhone" class="block text-sm font-semibold text-gray-700 mb-2">Owner Phone</label>
+                        <input type="tel" id="ownerPhone" name="ownerPhone" class="input-field" placeholder="+1 234 567 8900" />
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="ownerEmail" class="block text-sm font-semibold text-gray-700 mb-2">Owner Email</label>
+                    <input type="email" id="ownerEmail" name="ownerEmail" class="input-field" placeholder="your@email.com" />
+                </div>
+                
+                <div>
+                    <label for="countries" class="block text-sm font-semibold text-gray-700 mb-2">Countries of Operation</label>
+                    <input type="text" id="countries" name="countries" placeholder="e.g., USA, Canada, Mexico" class="input-field" />
+                    <p class="text-xs text-gray-500 mt-1">Separate countries with commas</p>
+                </div>
+                
+                <div>
+                    <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Store Description</label>
+                    <textarea id="description" name="description" class="input-field" rows="3" placeholder="Describe what your store offers..."></textarea>
+                </div>
+                
+                <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                    <input type="checkbox" id="isVerified" name="isVerified" class="w-5 h-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded" />
+                    <label for="isVerified" class="text-sm font-medium text-gray-700">Request Verification</label>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                    <button type="button" id="cancelBtn" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-primary">Create Store</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dale AI FAB -->
+    <div id="dale-ai-btn" class="fab" title="Ask Dale AI">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <!-- Dale AI Modal -->
+    <div id="ai-modal" class="ai-modal">
+        <div class="ai-content">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-robot text-emerald-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-gray-800">Dale AI</span>
+                        <p class="text-xs text-gray-500" id="ai-user-greeting"></p>
+                    </div>
+                </div>
+                <button id="ai-close-btn" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition">
+                    <i class="fas fa-times text-gray-600"></i>
+                </button>
+            </div>
+            
+            <div id="ai-chat-messages" class="ai-messages mb-4">
+                <div class="ai-bubble bot" id="ai-welcome-message">
+                    Hi! I'm Dale, your AI-powered agricultural assistant. Ask me anything about farming, stores, or marketplace management!
+                </div>
+            </div>
+            
+            <div class="flex gap-2">
+                <input type="text" id="ai-input" class="input-field" placeholder="Type your question..." />
+                <button id="ai-send-btn" class="btn-primary px-4">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchInput');
-            const verificationFilter = document.getElementById('verificationFilter');
-            let storesGrid = document.getElementById('storesGrid');
-            let storeTiles = storesGrid ? Array.from(storesGrid.getElementsByClassName('store-tile')) : [];
-
-            function showStoresLoading() {
-                const loader = document.getElementById('storesLoading');
-                if (loader) loader.classList.remove('hidden');
-                if (storesGrid) storesGrid.classList.add('hidden');
+        // Session check
+        function decodeJWT(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                return null;
             }
+        }
 
-            function hideStoresLoading() {
-                const loader = document.getElementById('storesLoading');
-                if (loader) loader.classList.add('hidden');
-                if (storesGrid) storesGrid.classList.remove('hidden');
-            }
-
-            function ensureStoresGrid() {
-                if (storesGrid) return storesGrid;
-                // Find the main container where the grid should be inserted
-                const mainContainer = document.querySelector('.container.mx-auto.px-4.py-8');
-                if (!mainContainer) return null;
-                // Remove the empty-state block if present (contains 'You have no digital stores yet.')
-                const emptyBlock = Array.from(mainContainer.querySelectorAll('div')).find(d => d.textContent && d.textContent.includes('You have no digital stores yet.'));
-                if (emptyBlock) emptyBlock.remove();
-                // Create the grid container
-                const grid = document.createElement('div');
-                grid.id = 'storesGrid';
-                grid.className = 'bg-gray-100 rounded-[20px] outline outline-5 outline-white p-6 grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
-                // Insert after the search/filter div (find it by looking for the element with searchInput)
-                const searchDiv = document.getElementById('searchInput');
-                const afterElem = searchDiv ? searchDiv.closest('div') : null;
-                if (afterElem && afterElem.nextSibling) {
-                    mainContainer.insertBefore(grid, afterElem.nextSibling);
+        function checkSessionAndAlert() {
+            let token = localStorage.getItem('access_token');
+            let expired = false;
+            if (!token) {
+                expired = true;
+            } else {
+                const decoded = decodeJWT(token);
+                if (!decoded || !decoded.exp) {
+                    expired = true;
                 } else {
-                    mainContainer.appendChild(grid);
-                }
-                storesGrid = grid;
-                storeTiles = [];
-                return storesGrid;
-            }
-
-            function filterStores() {
-                const searchTerm = searchInput.value.trim().toLowerCase();
-                const verificationValue = verificationFilter.value;
-
-                storeTiles.forEach(tile => {
-                    const name = tile.getAttribute('data-name') || '';
-                    const countries = tile.getAttribute('data-countries') || '';
-                    const verified = tile.getAttribute('data-verified');
-
-                    const matchesSearch = name.includes(searchTerm) || countries.includes(searchTerm);
-                    const matchesVerification = (verificationValue === 'all') || (verified === verificationValue);
-
-                    if (matchesSearch && matchesVerification) {
-                        tile.classList.remove('hidden');
-                    } else {
-                        tile.classList.add('hidden');
+                    const now = Math.floor(Date.now() / 1000);
+                    if (decoded.exp < now) {
+                        expired = true;
                     }
+                }
+            }
+            if (expired) {
+                alert('Your session has expired. Please log in again.');
+                setTimeout(function() {
+                    window.location.href = 'authentication.html';
+                }, 800);
+                return false;
+            }
+            return true;
+        }
+
+        // Current user
+        const token = localStorage.getItem('access_token');
+        let currentUser = { name: 'Guest', email: '', id: null };
+        
+        if (token) {
+            const decoded = decodeJWT(token);
+            if (decoded) {
+                currentUser = {
+                    name: decoded.name || decoded.full_name || decoded.username || 'User',
+                    email: decoded.email || '',
+                    id: decoded.user_id || decoded.sub || decoded.id || null
+                };
+            }
+        }
+
+        let storesGrid = document.getElementById('storesGrid');
+        let storeTiles = [];
+
+        // Helper functions
+        function normCountries(c) {
+            if (!c) return [];
+            if (Array.isArray(c)) return c;
+            if (typeof c === 'string') {
+                const trimmed = c.trim();
+                if (trimmed.startsWith('[')) {
+                    try {
+                        const parsed = JSON.parse(trimmed);
+                        return Array.isArray(parsed) ? parsed : [trimmed];
+                    } catch (e) {
+                        return [trimmed];
+                    }
+                }
+                if (trimmed.includes(',')) {
+                    return trimmed.split(',').map(s => s.trim()).filter(Boolean);
+                }
+                // Defensive: if it's only letters (no comma, no brackets), treat as single country
+                if (/^[a-zA-Z\s'-]+$/.test(trimmed)) {
+                    return [trimmed];
+                }
+                // Otherwise, fallback
+                return [trimmed];
+            }
+            return [];
+        }
+
+        function showLoading() {
+            document.getElementById('storesLoading').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('storesLoading').classList.add('hidden');
+        }
+
+        function filterStores() {
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+            const verificationValue = document.getElementById('verificationFilter').value;
+
+            storeTiles.forEach(tile => {
+                const name = tile.getAttribute('data-name') || '';
+                const countries = tile.getAttribute('data-countries') || '';
+                const verified = tile.getAttribute('data-verified');
+
+                const matchesSearch = name.includes(searchTerm) || countries.includes(searchTerm);
+                const matchesVerification = (verificationValue === 'all') || (verified === verificationValue);
+
+                if (matchesSearch && matchesVerification) {
+                    tile.classList.remove('hidden');
+                } else {
+                    tile.classList.add('hidden');
+                }
+            });
+        }
+
+        async function fetchUserStores() {
+            try {
+                const res = await fetch('/api/stores/', {
+                    headers: { 'Authorization': `Bearer ${token || ''}` }
                 });
-            }
-
-            // Helper - normalize countries_of_operation to an array regardless of representation
-            function normCountries(c) {
-                if (!c) return [];
-                if (Array.isArray(c)) return c;
-                if (typeof c === 'string') {
-                    // Check if it's a JSON string first
-                    if (c.startsWith('[')) {
-                        try {
-                            const parsed = JSON.parse(c);
-                            return Array.isArray(parsed) ? parsed : [c];
-                        } catch (e) {
-                            // If JSON parsing fails, treat as single country
-                            return [c];
-                        }
-                    }
-                    // If it contains commas, split by comma
-                    if (c.includes(',')) {
-                        return c.split(',').map(s => s.trim()).filter(Boolean);
-                    }
-                    // Otherwise, it's a single country name
-                    return [c];
-                }
+                if (!res.ok) return [];
+                const data = await res.json();
+                return Array.isArray(data) ? data : (data.results || []);
+            } catch (err) {
+                console.error('Failed to fetch stores', err);
                 return [];
             }
+        }
 
-            searchInput.addEventListener('input', filterStores);
-            verificationFilter.addEventListener('change', filterStores);
-
-            // Modal functionality
-            const openModalBtn = document.getElementById('openModalBtn');
-            const modal = document.getElementById('modal');
-            const cancelBtn = document.getElementById('cancelBtn');
-
-            openModalBtn.addEventListener('click', () => {
-                modal.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden'); // Prevent background scroll when modal open
-                // Fetch current user and pre-fill owner info to avoid re-entry
-                fetchCurrentUserAndPrefill();
-            });
-
-            // Also fetch current user on page load to populate owner details (avoids extra wait on modal open)
-            console.log('[INIT] Starting page initialization...');
-            console.log('[INIT] Fetching current user...');
-            fetchCurrentUserAndPrefill().catch(err => console.error('[INIT] Failed to fetch user:', err));
-            // Also refresh the stores grid on initial load so any existing stores are rendered
-            console.log('[INIT] Refreshing stores grid...');
-            refreshStoresGrid().then(() => console.log('[INIT] Page initialization complete')).catch(err => {
-                console.error('[INIT] Failed to refresh stores on load:', err);
-            });
-
-            cancelBtn.addEventListener('click', () => {
-                modal.classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
-            });
-            // Helper: fetch current user and prefill owner fields in the modal (do not overwrite input if user already typed)
-            async function fetchCurrentUserAndPrefill() {
-                const token = localStorage.getItem('access_token');
-                if (!token) {
-                    console.log('[fetchCurrentUser] No token found');
+        async function refreshStoresGrid() {
+            try {
+                showLoading();
+                const stores = await fetchUserStores();
+                
+                if (!stores || stores.length === 0) {
+                    storesGrid.innerHTML = `
+                        <div class="empty-state col-span-full">
+                            <i class="fas fa-store"></i>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">No stores yet</h3>
+                            <p class="text-gray-600 mb-6">Create your first digital store to get started</p>
+                            <button onclick="document.getElementById('openModalBtn').click()" class="btn-primary">
+                                <i class="fas fa-plus mr-2"></i>Create Your First Store
+                            </button>
+                        </div>
+                    `;
+                    hideLoading();
                     return;
                 }
-                try {
-                    console.log('[fetchCurrentUser] Fetching /api/users/me/');
-                    const res = await fetch('/api/users/me/', { headers: { 'Authorization': 'Bearer ' + token } });
-                    console.log('[fetchCurrentUser] Response status:', res.status);
-                    if (!res.ok) {
-                        console.warn('[fetchCurrentUser] Failed to fetch user:', res.status);
-                        return;
-                    }
-                    const u = await res.json();
-                    console.log('[fetchCurrentUser] User fetched successfully');
-                    window.currentUser = u;
-                    // Do not override input if already typed
-                    const ownerNameEl = document.getElementById('ownerName');
-                    const ownerPhoneEl = document.getElementById('ownerPhone');
-                    const ownerEmailEl = document.getElementById('ownerEmail');
-                    if (ownerNameEl && !ownerNameEl.value) ownerNameEl.value = u.username || u.name || '';
-                    if (ownerPhoneEl && !ownerPhoneEl.value) ownerPhoneEl.value = u.phone || '';
-                    if (ownerEmailEl && !ownerEmailEl.value) ownerEmailEl.value = u.email || '';
-                } catch (err) {
-                    console.error('[fetchCurrentUser] ERROR:', err);
-                }
-            }
 
-            // Close modal when clicking outside modal content
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.add('hidden');
-                    document.body.classList.remove('overflow-hidden');
-                }
-            });
-
-
-            const createStoreForm = document.getElementById('createStoreForm');
-                createStoreForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                // Collect form data
-                // No farm field in form, get farmId from URL query string if present
-                let farmId = new URLSearchParams(location.search).get('id');
-                const name = createStoreForm.elements['name'].value;
-                // If owner fields are empty, use the logged in user's details
-                const owner_name = createStoreForm.elements['ownerName'].value || (window.currentUser && (window.currentUser.username || window.currentUser.name)) || '';
-                const owner_phone = createStoreForm.elements['ownerPhone'].value || (window.currentUser && window.currentUser.phone) || '';
-                const owner_email = createStoreForm.elements['ownerEmail'].value || (window.currentUser && window.currentUser.email) || '';
-                const description = createStoreForm.elements['description'].value || '';
-                const countries_raw = createStoreForm.elements['countries'].value;
-                const is_verified = createStoreForm.elements['isVerified'].checked;
-                // Countries as array, split by comma, trim whitespace, remove empty
-                const countries_of_operation = countries_raw.split(',').map(s => s.trim()).filter(Boolean);
-                // Build payload, include farm only if farmId exists
-                const payload = {
-                    ...(farmId ? { farm: farmId } : {}),
-                    name,
-                    owner_name,
-                    owner_phone,
-                    owner_email,
-                    description,
-                    countries_of_operation,
-                    verified: is_verified
-                };
-                // Send POST request with JWT Authorization header
-                try {
-                    const token = localStorage.getItem('access_token');
-                    const response = await fetch('/api/stores/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + token
-                        },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!response.ok) {
-                        // Optionally show error feedback
-                        alert('Failed to create store. Please check your input.');
-                        return;
-                    }
-                    const store = await response.json();
-                    // Broadcast the creation to other tabs so they can refresh their store lists
-                    try {
-                        localStorage.setItem('last_store_created', JSON.stringify({ storeId: store.id, timestamp: Date.now() }));
-                        if (window.BroadcastChannel) {
-                            const bc = new BroadcastChannel('stores');
-                            bc.postMessage({ type: 'created', storeId: store.id });
-                        }
-                    } catch (err) { /* ignore */ }
-                    // Close modal, reset form
-                    modal.classList.add('hidden');
-                    document.body.classList.remove('overflow-hidden');
-                    createStoreForm.reset();
-                    // Add new tile to storesGrid (create grid if missing)
-                    ensureStoresGrid();
-                    if (storesGrid) {
-                        // Compose HTML for the new tile
-                        // For data attributes, use lowercased name, countries, and yesno for verified
-                        const dataName = (store.name || '').toLowerCase();
-                        const dataCountries = normCountries(store.countries_of_operation).join('|').toLowerCase();
-                        const dataVerified = store.is_verified ? 'verified' : 'not_verified';
-                        // For countries display
-                        const countriesDisplay = normCountries(store.countries_of_operation).join(', ');
-                        // For total_value, fallback to 0 if not provided
-                        const totalValue = typeof store.total_value !== "undefined" ? store.total_value : 0;
-                        // For store id/url
-                        const storeId = store.id;
-                        // Construct tile HTML
-                        const tileHTML = `
-                            <div class="store-tile bg-gradient-to-br from-white to-emerald-50 rounded-2xl shadow-lg p-6 flex flex-col justify-between transform transition duration-300 hover:scale-[1.03] hover:shadow-2xl border border-emerald-100"
-                                data-name="${dataName}"
-                                data-countries="${dataCountries}"
-                                data-verified="${dataVerified}">
-                                <div>
-                                    <div class="flex items-start justify-between mb-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                                                <i class="fas fa-store text-emerald-600 text-xl"></i>
-                                            </div>
-                                            <h2 class="text-2xl font-extrabold text-emerald-800">${store.name}</h2>
-                                        </div>
-                                        ${store.is_verified
-                                            ? '<span class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full font-semibold flex items-center gap-1"><i class="fas fa-check-circle"></i>Verified</span>'
-                                            : '<span class="px-3 py-1 text-xs bg-gray-100 text-gray-600 rounded-full font-semibold">Pending</span>'
-                                        }
-                                    </div>
-                                    <div class="space-y-2 text-sm text-gray-700 mb-4">
-                                        <div class="flex items-start gap-2">
-                                            <i class="fas fa-user text-emerald-600 w-4 mt-0.5"></i>
-                                            <div><span class="font-semibold text-gray-500 text-xs">Owner:</span> <span class="font-medium">${store.owner_name || 'N/A'}</span></div>
-                                        </div>
-                                        <div class="flex items-start gap-2">
-                                            <i class="fas fa-envelope text-emerald-600 w-4 mt-0.5"></i>
-                                            <div><span class="font-semibold text-gray-500 text-xs">Email:</span> <span>${store.owner_email || 'N/A'}</span></div>
-                                        </div>
-                                        <div class="flex items-start gap-2">
-                                            <i class="fas fa-phone text-emerald-600 w-4 mt-0.5"></i>
-                                            <div><span class="font-semibold text-gray-500 text-xs">Contact:</span> <span>${store.owner_phone || 'N/A'}</span></div>
-                                        </div>
-                                        <div class="flex items-start gap-2">
-                                            <i class="fas fa-globe text-emerald-600 w-4 mt-0.5"></i>
-                                            <div><span class="font-semibold text-gray-500 text-xs">Countries:</span> <span>${countriesDisplay || 'N/A'}</span></div>
-                                        </div>
-                                        <div class="flex items-start gap-2">
-                                            <i class="fas fa-dollar-sign text-emerald-600 w-4 mt-0.5"></i>
-                                            <div><span class="font-semibold text-gray-500 text-xs">Product Value:</span> <span class="font-bold text-emerald-700">$${totalValue.toLocaleString()}</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mt-4">
-                                    <a href="digital_store.html?id=${storeId}" class="block w-full text-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-md hover:shadow-lg">
-                                        <i class="fas fa-store mr-2"></i>Manage Store
-                                    </a>
-                                </div>
-                            </div>
-                        `;
-                        storesGrid.insertAdjacentHTML('beforeend', tileHTML);
-                        // Add new tile to storeTiles array for filtering
-                        const newTile = storesGrid.lastElementChild;
-                        storeTiles.push(newTile);
-                        filterStores(); // update filter view if search/filter is active
-                    }
-                } catch (err) {
-                    alert('An error occurred. Please try again.');
-                }
-            });
-
-            // Listen for store create/connect events from other tabs and refresh the store list
-            window.addEventListener('storage', async (e) => {
-                if (!e.key) return;
-                if (e.key === 'last_store_created' || e.key === 'last_store_connected') {
-                    try {
-                        await refreshStoresGrid();
-                    } catch (err) { console.warn('Failed to refresh stores after storage event', err); }
-                }
-            });
-
-            if (window.BroadcastChannel) {
-                const bc = new BroadcastChannel('stores');
-                bc.onmessage = async (msg) => {
-                    try {
-                        const { type } = msg.data || {};
-                        if (type === 'created' || type === 'connected') {
-                            await refreshStoresGrid();
-                        }
-                    } catch (err) { /* ignore */ }
-                };
-            }
-
-            // Fetch latest stores from API and re-render the grid
-            async function fetchUserStores() {
-                try {
-                    const token = localStorage.getItem('access_token');
-                    console.debug('Fetching user stores from API');
-                    const res = await fetch('/api/stores/', { headers: { 'Authorization': 'Bearer ' + (token || '') } });
-                    if (!res.ok) return [];
-                    const data = await res.json();
-                    if (Array.isArray(data)) return data;
-                    if (data && Array.isArray(data.results)) return data.results;
-                    return [];
-                } catch (err) {
-                    console.warn('Failed to fetch stores', err);
-                    return [];
-                }
-            }
-
-            async function refreshStoresGrid() {
-                try {
-                    console.log('[refreshStoresGrid] Starting refresh...');
-                    ensureStoresGrid();
-                    if (storesGrid) {
-                        storesGrid.classList.remove('hidden');
-                        storesGrid.innerHTML = `<div class="w-full text-center py-10 text-gray-600">
-                            <div class="mx-auto mb-3 h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                            <div>Loading your stores...</div>
-                        </div>`;
-                    }
-                    const stores = await fetchUserStores();
-                    console.log('[refreshStoresGrid] Fetched', stores.length, 'stores');
-                    ensureStoresGrid();
-                    if (!storesGrid) {
-                        console.warn('[refreshStoresGrid] storesGrid not found after ensure');
-                        return;
-                    }
-                    console.debug('Refreshing stores grid with', stores.length, 'stores');
-                    if (!stores || stores.length === 0) {
-                        storesGrid.className = 'min-h-screen bg-gray-100 rounded-[20px] outline outline-5 outline-white p-6 flex flex-col items-center justify-center text-center';
-                        storesGrid.innerHTML = '<div><i class="fas fa-store text-9xl text-black mb-8"></i><h3 class="text-3xl font-semibold text-gray-800 mb-2">No stores yet</h3><p class="text-gray-600 text-lg">Create one to get started.</p></div>';
-                        storesGrid.classList.remove('hidden');
-                        return;
-                    }
-                    // Reset className to grid layout for stores
-                    storesGrid.className = 'bg-gray-100 rounded-[20px] outline outline-5 outline-white p-6 grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
-                // Reconstruct HTML
                 storesGrid.innerHTML = stores.map(store => {
                     const dataName = (store.name || '').toLowerCase();
                     const countries = normCountries(store.countries_of_operation);
                     const dataCountries = countries.join('|').toLowerCase();
                     const dataVerified = store.is_verified ? 'verified' : 'not_verified';
-                    const countriesDisplay = countries.join(', ');
+                    const countriesDisplay = countries.join(', ') || 'Not specified';
                     const totalValue = typeof store.total_value !== 'undefined' ? store.total_value : 0;
-                    const storeId = store.id;
+
                     return `
-                        <div class="store-tile bg-gradient-to-br from-white to-emerald-50 rounded-2xl shadow-lg p-6 flex flex-col justify-between transform transition duration-300 hover:scale-[1.03] hover:shadow-2xl border border-emerald-100" data-name="${dataName}" data-countries="${dataCountries}" data-verified="${dataVerified}">
-                            <div>
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                                            <i class="fas fa-store text-emerald-600 text-xl"></i>
-                                        </div>
-                                        <h2 class="text-2xl font-extrabold text-emerald-800">${store.name}</h2>
+                        <div class="store-card" data-name="${dataName}" data-countries="${dataCountries}" data-verified="${dataVerified}">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-store text-emerald-600 text-xl"></i>
                                     </div>
-                                    ${store.is_verified
-                                        ? '<span class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full font-semibold flex items-center gap-1"><i class="fas fa-check-circle"></i>Verified</span>'
-                                        : '<span class="px-3 py-1 text-xs bg-gray-100 text-gray-600 rounded-full font-semibold">Pending</span>'
-                                    }
+                                    <h3 class="text-xl font-bold text-gray-800 truncate">${store.name}</h3>
                                 </div>
-                                <div class="space-y-2 text-sm text-gray-700 mb-4">
-                                    <div class="flex items-start gap-2">
-                                        <i class="fas fa-user text-emerald-600 w-4 mt-0.5"></i>
-                                        <div><span class="font-semibold text-gray-500 text-xs">Owner:</span> <span class="font-medium">${store.owner_name || 'N/A'}</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-2">
-                                        <i class="fas fa-envelope text-emerald-600 w-4 mt-0.5"></i>
-                                        <div><span class="font-semibold text-gray-500 text-xs">Email:</span> <span>${store.owner_email || 'N/A'}</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-2">
-                                        <i class="fas fa-phone text-emerald-600 w-4 mt-0.5"></i>
-                                        <div><span class="font-semibold text-gray-500 text-xs">Contact:</span> <span>${store.owner_phone || 'N/A'}</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-2">
-                                        <i class="fas fa-globe text-emerald-600 w-4 mt-0.5"></i>
-                                        <div><span class="font-semibold text-gray-500 text-xs">Countries:</span> <span>${countriesDisplay || 'N/A'}</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-2">
-                                        <i class="fas fa-dollar-sign text-emerald-600 w-4 mt-0.5"></i>
-                                        <div><span class="font-semibold text-gray-500 text-xs">Product Value:</span> <span class="font-bold text-emerald-700">$${totalValue.toLocaleString()}</span></div>
-                                    </div>
+                                ${store.is_verified
+                                    ? '<span class="badge badge-verified flex-shrink-0"><i class="fas fa-check-circle"></i>Verified</span>'
+                                    : '<span class="badge badge-pending flex-shrink-0">Pending</span>'
+                                }
+                            </div>
+                            
+                            <div class="space-y-2 text-sm text-gray-700 mb-4">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-user text-emerald-600 w-4"></i>
+                                    <span class="truncate">${store.owner_name || 'N/A'}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-envelope text-emerald-600 w-4"></i>
+                                    <span class="truncate">${store.owner_email || 'N/A'}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-phone text-emerald-600 w-4"></i>
+                                    <span class="truncate">${store.owner_phone || 'N/A'}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-globe text-emerald-600 w-4"></i>
+                                    <span class="truncate">${countriesDisplay}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-dollar-sign text-emerald-600 w-4"></i>
+                                    <span class="font-bold text-emerald-700">$${totalValue.toLocaleString()}</span>
                                 </div>
                             </div>
-                            <div class="mt-4">
-                                <a href="digital_store.html?id=${storeId}" class="block w-full text-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-md hover:shadow-lg">
-                                    <i class="fas fa-store mr-2"></i>Manage Store
-                                </a>
-                            </div>
+                            
+                            <a href="digital_store.html?id=${store.id}" class="block w-full text-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3 px-4 rounded-xl transition shadow-sm hover:shadow-md">
+                                <i class="fas fa-cog mr-2"></i>Manage Store
+                            </a>
                         </div>
                     `;
                 }).join('');
-                    // Update storeTiles array for filter
-                    const newTiles = Array.from(storesGrid.getElementsByClassName('store-tile'));
-                    storeTiles.length = 0;
-                    Array.prototype.push.apply(storeTiles, newTiles);
-                    if (storesGrid) storesGrid.classList.remove('hidden');
-                    filterStores();
-                    console.log('[refreshStoresGrid] Refresh complete');
-                } catch (error) {
-                    console.error('[refreshStoresGrid] ERROR:', error);
-                }
+
+                storeTiles = Array.from(storesGrid.getElementsByClassName('store-card'));
+                filterStores();
+                hideLoading();
+            } catch (error) {
+                console.error('Error refreshing stores:', error);
+                hideLoading();
             }
+        }
 
-            // Listen for store create/connect events from other tabs and refresh the store list
-            window.addEventListener('storage', async (e) => {
-                if (!e.key) return;
-                if (e.key === 'last_store_created' || e.key === 'last_store_connected') {
-                    try {
-                        await refreshStoresGrid();
-                    } catch (err) { console.warn('Failed to refresh stores after storage event', err); }
-                }
-            });
+        async function fetchCurrentUserAndPrefill() {
+            if (!token) return;
+            try {
+                const res = await fetch('/api/users/me/', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) return;
+                const u = await res.json();
+                window.currentUser = u;
+                
+                const ownerNameEl = document.getElementById('ownerName');
+                const ownerPhoneEl = document.getElementById('ownerPhone');
+                const ownerEmailEl = document.getElementById('ownerEmail');
+                
+                if (ownerNameEl && !ownerNameEl.value) ownerNameEl.value = u.username || u.name || '';
+                if (ownerPhoneEl && !ownerPhoneEl.value) ownerPhoneEl.value = u.phone || '';
+                if (ownerEmailEl && !ownerEmailEl.value) ownerEmailEl.value = u.email || '';
+            } catch (err) {
+                console.error('Failed to fetch user:', err);
+            }
+        }
 
-            if (window.BroadcastChannel) {
-                const bc = new BroadcastChannel('stores');
-                bc.onmessage = async (msg) => {
-                    try {
-                        const { type } = msg.data || {};
-                        if (type === 'created' || type === 'connected') {
-                            await refreshStoresGrid();
-                        }
-                    } catch (err) { /* ignore */ }
-                };
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterStores);
+        document.getElementById('verificationFilter').addEventListener('change', filterStores);
+
+        // Modal
+        const modal = document.getElementById('modal');
+        const openModalBtn = document.getElementById('openModalBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        openModalBtn.addEventListener('click', () => {
+            modal.classList.add('show');
+            fetchCurrentUserAndPrefill();
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            modal.classList.remove('show');
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('show');
             }
         });
+
+        // Form submit
+        document.getElementById('createStoreForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const countries_raw = formData.get('countries');
+            const countries_of_operation = countries_raw.split(',').map(s => s.trim()).filter(Boolean);
+            
+            const payload = {
+                name: formData.get('name'),
+                owner_name: formData.get('ownerName') || currentUser.name,
+                owner_phone: formData.get('ownerPhone') || '',
+                owner_email: formData.get('ownerEmail') || currentUser.email,
+                description: formData.get('description') || '',
+                countries_of_operation,
+                verified: document.getElementById('isVerified').checked
+            };
+
+            try {
+                const response = await fetch('/api/stores/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    alert('Failed to create store. Please check your input.');
+                    return;
+                }
+
+                modal.classList.remove('show');
+                e.target.reset();
+                await refreshStoresGrid();
+            } catch (err) {
+                alert('An error occurred. Please try again.');
+                console.error('Error creating store:', err);
+            }
+        });
+
+        // Dale AI
+        const daleFab = document.getElementById('dale-ai-btn');
+        const aiModal = document.getElementById('ai-modal');
+        const aiInput = document.getElementById('ai-input');
+        const aiSendBtn = document.getElementById('ai-send-btn');
+        const aiCloseBtn = document.getElementById('ai-close-btn');
+        const aiMessages = document.getElementById('ai-chat-messages');
+        const aiUserGreeting = document.getElementById('ai-user-greeting');
+        const aiWelcomeMessage = document.getElementById('ai-welcome-message');
+
+        if (currentUser.name !== 'Guest') {
+            aiUserGreeting.textContent = `Hi, ${currentUser.name}!`;
+            aiWelcomeMessage.textContent = `Hello ${currentUser.name}! I'm Dale, your AI assistant. How can I help with your stores?`;
+        }
+
+        daleFab.addEventListener('click', () => {
+            aiModal.classList.add('show');
+            setTimeout(() => aiInput.focus(), 100);
+        });
+
+        aiCloseBtn.addEventListener('click', () => {
+            aiModal.classList.remove('show');
+        });
+
+        function addAiMessage(text, isUser = false) {
+            const bubble = document.createElement('div');
+            bubble.className = `ai-bubble ${isUser ? 'user' : 'bot'}`;
+            bubble.textContent = text;
+            aiMessages.appendChild(bubble);
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+            return bubble;
+        }
+
+        aiSendBtn.addEventListener('click', async () => {
+            const question = aiInput.value.trim();
+            if (!question) return;
+            
+            addAiMessage(question, true);
+            aiInput.value = '';
+            const thinking = addAiMessage('Thinking...', false);
+            
+            try {
+                const res = await fetch('/api/ai/dale/ask/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({
+                        prompt: question,
+                        context: { type: 'digital_stores', user: currentUser }
+                    })
+                });
+                const data = await res.json();
+                thinking.textContent = data.reply || 'Sorry, I could not process that.';
+            } catch (err) {
+                thinking.textContent = 'Error: Could not reach Dale AI.';
+            }
+        });
+
+        aiInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') aiSendBtn.click();
+        });
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!checkSessionAndAlert()) return;
+            refreshStoresGrid();
+        });
     </script>
-    <script src="/static/js/dale.js" defer></script>
 </body>
 </html>

@@ -5,8 +5,24 @@ from rest_framework.authentication import TokenAuthentication # Or SessionAuthen
 from rest_framework.response import Response
 from rest_framework import status
 import logging
-from ..models import Farm
-from .serializers import FarmSerializer
+from ..models import Farm, Field
+from .serializers import FarmSerializer, FieldSerializer
+
+# ViewSet for Field (Land Portion)
+class FieldViewSet(viewsets.ModelViewSet):
+    serializer_class = FieldSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Only return fields for farms owned by the user
+        return Field.objects.filter(farm__owner=self.request.user)
+
+    def perform_create(self, serializer):
+        # Ensure the field is linked to a farm owned by the user
+        farm = serializer.validated_data.get('farm')
+        if farm.owner != self.request.user:
+            raise PermissionError('You do not own this farm.')
+        serializer.save()
 
 class FarmViewSet(viewsets.ModelViewSet):
     # Ensure this queryset is correct for listing farms

@@ -1,6 +1,6 @@
 from django.db import models
 from farms.models import Farm
-from crops.models import Crop
+## from crops.models import Crop  # Removed: Crop model deprecated
 from livestock.models import Animal, LivestockUnit
 
 class Inventory(models.Model):
@@ -15,13 +15,13 @@ class Inventory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-class ProductionRecord(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
-    crop = models.ForeignKey(Crop, on_delete=models.SET_NULL, null=True, blank=True)
+    # crop = models.ForeignKey(Crop, on_delete=models.SET_NULL, null=True, blank=True)  # Removed
     animal = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, blank=True)
     livestock_unit = models.ForeignKey(LivestockUnit, on_delete=models.SET_NULL, null=True, blank=True)
-    date = models.DateField()
-    item_type = models.CharField(max_length=50)
+    from django.utils import timezone
+    date = models.DateField(default=timezone.now)
+    item_type = models.CharField(max_length=50, default="")
     quantity = models.DecimalField(max_digits=10, decimal_places=2)
     unit = models.CharField(max_length=20)
     value_estimate = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)

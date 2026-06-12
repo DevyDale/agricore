@@ -77,6 +77,37 @@ class StoreViewSet(viewsets.ModelViewSet):
             raise
     
 class ProductViewSet(viewsets.ModelViewSet):
+    @action(detail=False, methods=['post'], url_path='dropship', permission_classes=[IsAuthenticated])
+    def dropship(self, request):
+        """Copy a marketplace product to user's store as dropshipped."""
+        product_id = request.data.get('product')
+        store_id = request.data.get('store')
+        if not product_id or not store_id:
+            return Response({'detail': 'Product and store required.'}, status=400)
+        try:
+            product = Product.objects.get(pk=product_id)
+        except Product.DoesNotExist:
+            return Response({'detail': 'Product not found.'}, status=404)
+        try:
+            store = Store.objects.get(pk=store_id, owner=request.user)
+        except Store.DoesNotExist:
+            return Response({'detail': 'Store not found or not owned by user.'}, status=404)
+        # Copy product fields
+        dropship_product = Product.objects.create(
+            store=store,
+            title=product.title,
+            description=product.description,
+            category=product.category,
+            price=product.price,
+            stock_quantity=product.stock_quantity,
+            unit=product.unit,
+            is_dropshippable=True,
+            image=product.image,
+            image_url=product.image_url,
+            source_produce=product.source_produce
+        )
+        return Response({'detail': 'Product dropshipped.', 'product_id': dropship_product.id})
+
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]

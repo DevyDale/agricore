@@ -1,0 +1,32 @@
+{% extends 'dashboard/base.html' %}
+{% block dashboard_content %}
+<div class="container mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold mb-4">Expenses</h1>
+    <table class="min-w-full bg-white rounded-xl shadow">
+        <thead>
+            <tr>
+                <th class="py-3 px-4 text-left">Date</th>
+                <th class="py-3 px-4 text-left">Farm</th>
+                <th class="py-3 px-4 text-left">Category</th>
+                <th class="py-3 px-4 text-left">Description</th>
+                <th class="py-3 px-4 text-left">Amount</th>
+                <th class="py-3 px-4 text-left">Created By</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr class="border-b">
+                <td class="py-2 px-4">{{ expense.date }}</td>
+                <td class="py-2 px-4">{{ expense.farm }}</td>
+                <td class="py-2 px-4">{{ expense.category }}</td>
+                <td class="py-2 px-4">{{ expense.description }}</td>
+                <td class="py-2 px-4">{{ expense.amount }}</td>
+                <td class="py-2 px-4">{{ expense.created_by }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="py-2 px-4 text-center text-gray-500">No expenses found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

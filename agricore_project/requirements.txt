@@ -24,4 +24,4 @@ dj-database-url
 python-dotenv
 whitenoise
 groq
-requests
+requestscloudinary

@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Profile - Agricore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <style>
+        * {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        /* Animated background orbs */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -200px;
+            right: -200px;
+            pointer-events: none;
+            animation: float 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -150px;
+            left: -150px;
+            pointer-events: none;
+            animation: float 25s ease-in-out infinite reverse;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, 30px) scale(1.05); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 12px 48px rgba(16, 185, 129, 0.12);
+        }
+
+        .gradient-header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 24px 24px 0 0;
+            padding: 2.5rem 3rem;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-weight: 700;
+            padding: 14px 28px;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #059669, #047857);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-primary > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f1f5f9;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(16, 185, 129, 0.15);
+            border-color: #d1fae5;
+        }
+
+        .review-card {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-radius: 16px;
+            border: 1px solid #d1fae5;
+            padding: 1.25rem;
+            transition: all 0.3s;
+        }
+
+        .review-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .store-image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .store-image-container img {
+            transition: transform 0.3s ease;
+        }
+
+        .store-image-container:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Dale AI FAB */
+        .fab {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
+        }
+
+        .ai-chat-modal {
+            position: fixed;
+            bottom: 7rem;
+            right: 1.5rem;
+            width: 400px;
+            max-width: calc(100vw - 3rem);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            display: none;
+            z-index: 99;
+            animation: slideUpFade 0.3s ease-out;
+        }
+
+        .ai-chat-modal.active {
+            display: block;
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ai-chat-content {
+            padding: 1.5rem;
+        }
+
+        .ai-chat-messages {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .ai-chat-pointer {
+            position: absolute;
+            bottom: -10px;
+            right: 30px;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.98);
+            transform: rotate(45deg);
+            border-right: 1px solid rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Stats cards */
+        .stat-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(6, 182, 212, 0.05));
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Social links */
+        .social-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #e2e8f0;
+            background: white;
+            font-size: 1.125rem;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .social-btn.facebook { border-color: #1877f2; color: #1877f2; }
+        .social-btn.facebook:hover { background: #1877f2; color: white; }
+        
+        .social-btn.twitter { border-color: #1da1f2; color: #1da1f2; }
+        .social-btn.twitter:hover { background: #1da1f2; color: white; }
+        
+        .social-btn.instagram { border-color: #e4405f; color: #e4405f; }
+        .social-btn.instagram:hover { background: #e4405f; color: white; }
+        
+        .social-btn.website { border-color: #10b981; color: #10b981; }
+        .social-btn.website:hover { background: #10b981; color: white; }
+
+        /* Contact info */
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .contact-item:hover {
+            background: #f0fdf4;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Featured badge */
+        .featured-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        /* Tab navigation */
+        .tab-btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .tab-btn:not(.active) {
+            background: white;
+            border-color: #e2e8f0;
+        }
+
+        .tab-btn:not(.active):hover {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <a href="marketplace.html" class="inline-flex items-center gap-2 text-lg font-bold text-emerald-700 hover:text-emerald-800 mb-8 transition-colors">
+            <i class="fas fa-arrow-left"></i> Back to marketplace
+        </a>
+        
+        <!-- Store Header -->
+        <div class="glass-card p-0 mb-10 fade-in">
+            <div class="gradient-header">
+                <h1 id="store-title" class="text-5xl font-black mb-3 tracking-tight relative">Loading...</h1>
+                <div class="flex items-center gap-3 mb-3">
+                    <span id="store-verified" class="text-base text-white/90 font-semibold"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="social-btn facebook" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </button>
+                    <button class="social-btn twitter" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </button>
+                    <button class="social-btn instagram" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </button>
+                    <button class="social-btn website" title="Website">
+                        <i class="fas fa-globe"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-8">
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="flex flex-col justify-center space-y-4">
+                        <p id="store-owner" class="text-xl text-gray-700 font-bold"></p>
+                        <p id="store-desc" class="text-base text-gray-600 leading-relaxed font-medium"></p>
+                        
+                        <!-- Contact Info -->
+                        <div class="space-y-2 mt-4">
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 font-semibold">Email</p>
+                                    <p id="store-email" class="text-sm font-bold text-gray-800">contact@store.com</p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 font-semibold">Phone</p>
+                                    <p id="store-phone" class="text-sm font-bold text-gray-800">+234 xxx xxx xxxx</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-4 pt-4">
+                            <button id="chat-store-btn" class="btn-primary text-lg">
+                                <i class="fas fa-comments"></i>
+                                Chat with store
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center">
+                        <div class="store-image-container w-full max-w-md">
+                            <img id="store-image" src="https://via.placeholder.com/400x300?text=Store" alt="Store" class="w-full h-64 object-cover">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Store Statistics -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="stat-card">
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Products</div>
+                        <div class="stat-value" id="stat-products">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sales</div>
+                        <div class="stat-value" id="stat-sales">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Rating</div>
+                        <div class="stat-value" id="stat-rating">0.0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Reviews</div>
+                        <div class="stat-value" id="stat-reviews">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Store Content Tabs -->
+        <div class="glass-card p-8 mb-10 fade-in" style="animation-delay: 0.1s;">
+            <!-- Tab Navigation -->
+            <div class="flex items-center gap-3 mb-6 flex-wrap">
+                <button class="tab-btn active" data-tab="products">
+                    <i class="fas fa-box mr-2"></i>All Products
+                </button>
+                <button class="tab-btn" data-tab="featured">
+                    <i class="fas fa-star mr-2"></i>Featured
+                </button>
+                <button class="tab-btn" data-tab="about">
+                    <i class="fas fa-info-circle mr-2"></i>About Store
+                </button>
+            </div>
+
+            <!-- All Products Tab -->
+            <div class="tab-content active" id="tab-products">
+                <h2 class="text-3xl font-black gradient-text mb-6">All Products</h2>
+                <div id="store-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+
+            <!-- Featured Products Tab -->
+            <div class="tab-content" id="tab-featured">
+                <h2 class="text-3xl font-black gradient-text mb-6">Featured Products</h2>
+                <div id="featured-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="text-center text-gray-500 col-span-full py-8">
+                        <i class="fas fa-star text-4xl mb-2 opacity-50"></i>
+                        <p class="font-medium">No featured products yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Store Tab -->
+            <div class="tab-content" id="tab-about">
+                <h2 class="text-3xl font-black gradient-text mb-6">About This Store</h2>
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-6">
+                        <h3 class="font-bold text-gray-800 mb-3 text-lg">Store Information</h3>
+                        <p id="about-description" class="text-gray-700 leading-relaxed font-medium">
+                            This store offers high-quality agricultural products and services...
+                        </p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="glass-card p-6">
+                            <h3 class="font-bold text-gray-800 mb-4 text-lg flex items-center gap-2">
+                                <i class="fas fa-shield-alt text-emerald-600"></i>
+                                Store Policies
+                            </h3>
+                            <ul class="space-y-2 text-gray-700 font-medium">
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
+                                    <span>Quality guarantee on all products</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
+                                    <span>Secure payment processing</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
+                                    <span>Fast and reliable delivery</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
+                                    <span>Customer satisfaction priority</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="glass-card p-6">
+                            <h3 class="font-bold text-gray-800 mb-4 text-lg flex items-center gap-2">
+                                <i class="fas fa-clock text-emerald-600"></i>
+                                Business Hours
+                            </h3>
+                            <div class="space-y-2 text-gray-700 font-medium">
+                                <div class="flex justify-between">
+                                    <span>Monday - Friday</span>
+                                    <span class="font-bold">8:00 AM - 6:00 PM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Saturday</span>
+                                    <span class="font-bold">9:00 AM - 4:00 PM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Sunday</span>
+                                    <span class="font-bold text-red-600">Closed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Store Reviews -->
+        <div class="glass-card p-8 fade-in" style="animation-delay: 0.2s;">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-3xl font-black gradient-text">Store Reviews</h3>
+                <span id="store-reviews-count" class="text-base text-gray-500 font-semibold"></span>
+            </div>
+            <form id="store-review-form" class="mb-8 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-6 space-y-4">
+                <label class="font-bold text-gray-700 text-sm uppercase tracking-wider">Your Rating:</label>
+                <select id="store-review-rating" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold transition-all">
+                    <option value="">Select</option>
+                    <option value="5">5 - Excellent ⭐⭐⭐⭐⭐</option>
+                    <option value="4">4 - Good ⭐⭐⭐⭐</option>
+                    <option value="3">3 - Average ⭐⭐⭐</option>
+                    <option value="2">2 - Poor ⭐⭐</option>
+                    <option value="1">1 - Terrible ⭐</option>
+                </select>
+                <textarea id="store-review-comment" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 font-medium transition-all" rows="3" placeholder="Share your experience..."></textarea>
+                <button type="submit" class="btn-primary w-full text-lg">
+                    <i class="fas fa-paper-plane"></i>
+                    Submit Review
+                </button>
+            </form>
+            <div id="store-reviews-list" class="space-y-4"></div>
+        </div>
+    </div>
+
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000/api';
+        const token = localStorage.getItem('access_token');
+        if (!token) window.location.href = 'authentication.html';
+        const params = new URLSearchParams(window.location.search);
+        const storeId = params.get('id');
+        if (!storeId) window.location.href = 'marketplace.html';
+
+        function ratingStars(avg) {
+            const r = Math.round(avg || 0);
+            return '★★★★★'.split('').map((s, i) => `<span class="${i < r ? 'text-yellow-400' : 'text-gray-300'} text-xl">★</span>`).join('');
+        }
+
+        async function loadStore() {
+            const res = await fetch(`${API_BASE}/stores/${storeId}/`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const store = await res.json();
+            
+            document.getElementById('store-title').textContent = store.name || 'Store';
+            document.getElementById('store-owner').textContent = store.owner_name ? `Owner: ${store.owner_name}` : '';
+            document.getElementById('store-desc').textContent = store.description || '';
+            document.getElementById('about-description').textContent = store.description || 'This store offers high-quality agricultural products and services...';
+            document.getElementById('store-verified').textContent = store.verified ? '✓ Verified store' : 'Unverified store';
+            document.getElementById('store-image').src = store.image || 'https://via.placeholder.com/400x300?text=Store';
+            
+            // Contact information
+            document.getElementById('store-email').textContent = store.email || 'contact@store.com';
+            document.getElementById('store-phone').textContent = store.phone || '+234 xxx xxx xxxx';
+            
+            // Store statistics
+            document.getElementById('stat-products').textContent = store.product_count || '0';
+            document.getElementById('stat-sales').textContent = store.total_sales || '0';
+            document.getElementById('stat-rating').textContent = (store.average_rating || 0).toFixed(1);
+            document.getElementById('stat-reviews').textContent = store.review_count || '0';
+        }
+
+        async function loadStoreProducts() {
+            const res = await fetch(`${API_BASE}/products/?store=${storeId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const products = await res.json();
+            
+            // All products
+            document.getElementById('store-products').innerHTML = products.length ? products.map(p => `
+                <div class="product-card">
+                    <div class="relative h-48 bg-gray-100">
+                        ${p.is_featured ? '<div class="featured-badge"><i class="fas fa-star"></i> Featured</div>' : ''}
+                        <img src="${p.image || 'https://via.placeholder.com/400x300?text=Product'}" alt="${p.title}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5 space-y-3">
+                        <h4 class="text-xl font-bold text-gray-800 line-clamp-2">${p.title}</h4>
+                        <p class="text-gray-600 line-clamp-2 font-medium">${p.description || ''}</p>
+                        <div class="flex items-center gap-2">
+                            <p class="text-2xl font-black gradient-text">₦${parseFloat(p.price || 0).toFixed(2)}</p>
+                            ${p.stock_quantity > 0 ? '<span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full font-bold">In Stock</span>' : '<span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-bold">Out of Stock</span>'}
+                        </div>
+                        <a href="product_detail.html?id=${p.id}" class="btn-primary w-full justify-center">
+                            <i class="fas fa-eye"></i>
+                            View Product
+                        </a>
+                    </div>
+                </div>
+            `).join('') : '<p class="text-gray-500 col-span-full text-center py-12 text-lg font-medium">No products found.</p>';
+            
+            // Featured products
+            const featured = products.filter(p => p.is_featured);
+            document.getElementById('featured-products').innerHTML = featured.length ? featured.map(p => `
+                <div class="product-card">
+                    <div class="relative h-48 bg-gray-100">
+                        <div class="featured-badge"><i class="fas fa-star"></i> Featured</div>
+                        <img src="${p.image || 'https://via.placeholder.com/400x300?text=Product'}" alt="${p.title}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5 space-y-3">
+                        <h4 class="text-xl font-bold text-gray-800 line-clamp-2">${p.title}</h4>
+                        <p class="text-gray-600 line-clamp-2 font-medium">${p.description || ''}</p>
+                        <p class="text-2xl font-black gradient-text">₦${parseFloat(p.price || 0).toFixed(2)}</p>
+                        <a href="product_detail.html?id=${p.id}" class="btn-primary w-full justify-center">
+                            <i class="fas fa-eye"></i>
+                            View Product
+                        </a>
+                    </div>
+                </div>
+            `).join('') : '<div class="text-center text-gray-500 col-span-full py-8"><i class="fas fa-star text-4xl mb-2 opacity-50"></i><p class="font-medium">No featured products yet</p></div>';
+        }
+
+        // Tab navigation
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons and contents
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Show corresponding content
+                const tabName = this.getAttribute('data-tab');
+                document.getElementById(`tab-${tabName}`).classList.add('active');
+            });
+        });
+
+        async function loadStoreReviews() {
+                        const res = await fetch(`${API_BASE}/reviews/?store=${storeId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                        const reviews = await res.json();
+                        document.getElementById('store-reviews-count').textContent = `${reviews.length} review(s)`;
+                        document.getElementById('store-reviews-list').innerHTML = reviews.length ? reviews.map(r => {
+                                // Generate avatar (first letter of name)
+                                const avatar = `<div class='w-11 h-11 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg mr-3'>${(r.reviewer_name||'U')[0]}</div>`;
+                                // Format timestamp (if available)
+                                let time = '';
+                                if (r.created_at) {
+                                    const d = new Date(r.created_at);
+                                    time = `<span class='text-xs text-gray-400 ml-2'>${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
+                                }
+                                return `
+                                <div class="review-card flex gap-4 items-start">
+                                    ${avatar}
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="font-bold text-gray-800">${r.reviewer_name || 'User'}</span>
+                                            <span class="text-sm text-emerald-700 font-bold">${r.rating} ★</span>
+                                            ${time}
+                                        </div>
+                                        <p class="text-gray-700 font-medium">${r.comment || ''}</p>
+                                    </div>
+                                </div>
+                                `;
+                        }).join('') : '<p class="text-gray-500 text-center py-8 font-medium">No reviews yet.</p>';
+        }
+
+        async function submitStoreReview(e) {
+            e.preventDefault();
+            const rating = document.getElementById('store-review-rating').value;
+            const comment = document.getElementById('store-review-comment').value.trim();
+            if (!rating) return alert('Please select a rating.');
+            try {
+                const res = await fetch(`${API_BASE}/reviews/`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ store: storeId, rating: rating, comment: comment })
+                });
+                if (!res.ok) throw new Error('Failed to submit review');
+                document.getElementById('store-review-rating').value = '';
+                document.getElementById('store-review-comment').value = '';
+                await loadStoreReviews();
+                alert('Review submitted!');
+            } catch (err) {
+                alert('Unable to submit review.');
+            }
+        }
+        document.getElementById('store-review-form').addEventListener('submit', submitStoreReview);
+
+        document.getElementById('chat-store-btn').addEventListener('click', async () => {
+            try {
+                const res = await fetch(`${API_BASE}/conversations/start-store-chat/`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ store: storeId })
+                });
+                if (!res.ok) throw new Error('Unable to start chat');
+                const convo = await res.json();
+                window.location.href = `chats.html?conversation=${convo.id}`;
+            } catch (err) {
+                alert('Unable to start chat');
+            }
+        });
+
+        // Dale AI Toggle
+        document.getElementById('dale-ai-btn').addEventListener('click', () => {
+            document.getElementById('ai-modal').classList.toggle('active');
+        });
+
+        document.getElementById('ai-close-btn').addEventListener('click', () => {
+            document.getElementById('ai-modal').classList.remove('active');
+        });
+
+        (async () => {
+            await loadStore();
+            await loadStoreProducts();
+            await loadStoreReviews();
+        })();
+    </script>
+    <script src="/static/js/dale.js" defer></script>
+</body>
+</html>

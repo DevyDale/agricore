@@ -9,7 +9,9 @@ class LivestockUnitViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.queryset.filter(field__farm__owner=self.request.user)
+        from django.db.models import Q
+        # Show units where field is null (unassigned) or belongs to user's farm
+        return self.queryset.filter(Q(field__farm__owner=self.request.user) | Q(field__isnull=True))
 
 class AnimalViewSet(viewsets.ModelViewSet):
     queryset = Animal.objects.all()

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Sales Records</h2>
+  <a href="{% url 'analytics:sale_create' %}" class="btn btn-success mb-3">Add Sale</a>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Farm</th>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Unit</th>
+        <th>Total Price</th>
+        <th>Buyer</th>
+        <th>Created By</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sale in sales %}
+      <tr>
+        <td>{{ sale.date }}</td>
+        <td>{{ sale.farm }}</td>
+        <td>{{ sale.product }}</td>
+        <td>{{ sale.quantity }}</td>
+        <td>{{ sale.unit }}</td>
+        <td>{{ sale.total_price }}</td>
+        <td>{{ sale.buyer }}</td>
+        <td>{{ sale.created_by }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8">No sales found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

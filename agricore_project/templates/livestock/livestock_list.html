@@ -1,0 +1,136 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8 text-emerald-700">Livestock Management</h1>
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+            <i class="fas fa-cow text-4xl text-emerald-500 mb-2"></i>
+            <div class="text-2xl font-bold">{{ units|length }}</div>
+            <div class="text-gray-600">Livestock Units</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+            <i class="fas fa-dog text-4xl text-emerald-400 mb-2"></i>
+            <div class="text-2xl font-bold">{{ animals|length }}</div>
+            <div class="text-gray-600">Animals</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+            <i class="fas fa-notes-medical text-4xl text-emerald-300 mb-2"></i>
+            <div class="text-2xl font-bold">{{ animals|length }}</div>
+            <div class="text-gray-600">Health Records</div>
+        </div>
+    </div>
+    <!-- Quick Actions -->
+    <div class="mb-8 flex gap-4">
+        <a href="{% url 'livestock:livestock_create' %}" class="bg-emerald-600 text-white px-4 py-2 rounded font-bold btn-glow">Add Livestock Unit</a>
+        <a href="{% url 'livestock:animal_create' %}" class="bg-emerald-500 text-white px-4 py-2 rounded font-bold btn-glow">Add Animal</a>
+    </div>
+    <!-- Livestock Unit Details -->
+    <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for unit in units %}
+        <div class="bg-white rounded-xl shadow p-6">
+            <div class="flex items-center justify-between mb-2">
+                <div>
+                    <span class="font-bold text-lg text-emerald-700">{{ unit.unit_name }}</span>
+                    <span class="ml-2 text-gray-500">({{ unit.animal_type }})</span>
+                </div>
+                <div class="flex gap-2">
+                    <a href="{% url 'livestock:livestock_update' unit.id %}" class="text-blue-600 hover:underline">Edit</a>
+                    <a href="{% url 'livestock:livestock_delete' unit.id %}" class="text-red-600 hover:underline">Delete</a>
+                </div>
+            </div>
+            <div class="mb-2 text-gray-700">Breed: <span class="font-semibold">{{ unit.breed }}</span></div>
+            <div class="mb-2 text-gray-700">Quantity: <span class="font-semibold">{{ unit.quantity }}</span></div>
+            <div class="mb-2 text-gray-700">Notes: <span class="font-semibold">{{ unit.additional_notes }}</span></div>
+        </div>
+        {% empty %}
+        <div class="bg-white rounded-xl shadow p-6 text-center text-gray-400">
+            <i class="fas fa-box-open text-4xl text-emerald-300 mb-4"></i><br>No livestock units found.
+        </div>
+        {% endfor %}
+    </div>
+    <!-- Livestock Units Table -->
+    <h2 class="text-2xl font-bold text-emerald-700 mb-4">Livestock Units</h2>
+    <div class="overflow-x-auto mb-8">
+        <table class="min-w-full bg-white rounded-xl shadow">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="py-3 px-4 text-left">Unit Name</th>
+                    <th class="py-3 px-4 text-left">Animal Type</th>
+                    <th class="py-3 px-4 text-left">Breed</th>
+                    <th class="py-3 px-4 text-left">Quantity</th>
+                    <th class="py-3 px-4 text-left">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for unit in units %}
+                <tr class="border-b hover:bg-emerald-50 transition">
+                    <td class="py-2 px-4 font-semibold">{{ unit.unit_name }}</td>
+                    <td class="py-2 px-4">{{ unit.animal_type }}</td>
+                    <td class="py-2 px-4">{{ unit.breed }}</td>
+                    <td class="py-2 px-4">{{ unit.quantity }}</td>
+                    <td class="py-2 px-4">{{ unit.additional_notes }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="py-8 px-4 text-center text-gray-400"><i class="fas fa-box-open text-4xl text-emerald-300 mb-4"></i><br>No livestock units found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- Animals Table -->
+    <h2 class="text-2xl font-bold text-emerald-700 mb-4">Animals</h2>
+    <div class="overflow-x-auto">
+        {% if animals %}
+        <table class="min-w-full bg-white rounded-xl shadow">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="py-3 px-4 text-left">Tag ID</th>
+                    <th class="py-3 px-4 text-left">Name</th>
+                    <th class="py-3 px-4 text-left">Sex</th>
+                    <th class="py-3 px-4 text-left">Age Group</th>
+                    <th class="py-3 px-4 text-left">Breed</th>
+                    <th class="py-3 px-4 text-left">Status</th>
+                    <th class="py-3 px-4 text-left">Health</th>
+                    <th class="py-3 px-4 text-left">Livestock Unit</th>
+                    <th class="py-3 px-4 text-left">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for animal in animals %}
+                <tr class="border-b hover:bg-emerald-50 transition">
+                    <td class="py-2 px-4 font-semibold">{{ animal.tag_id }}</td>
+                    <td class="py-2 px-4">{{ animal.name }}</td>
+                    <td class="py-2 px-4">{{ animal.sex }}</td>
+                    <td class="py-2 px-4">{{ animal.age_group }}</td>
+                    <td class="py-2 px-4">{{ animal.breed }}</td>
+                    <td class="py-2 px-4">{{ animal.status }}</td>
+                    <td class="py-2 px-4">
+                        {% if animal.status == 'Healthy' %}
+                            <span class="inline-block px-2 py-1 rounded bg-emerald-100 text-emerald-700">Healthy</span>
+                        {% elif animal.status == 'Sick' %}
+                            <span class="inline-block px-2 py-1 rounded bg-red-100 text-red-700">Sick</span>
+                        {% elif animal.status == 'Sold' %}
+                            <span class="inline-block px-2 py-1 rounded bg-yellow-100 text-yellow-700">Sold</span>
+                        {% elif animal.status == 'Deceased' %}
+                            <span class="inline-block px-2 py-1 rounded bg-gray-200 text-gray-700">Deceased</span>
+                        {% else %}
+                            <span class="inline-block px-2 py-1 rounded bg-gray-100 text-gray-700">Unknown</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-2 px-4">{{ animal.livestock_unit.unit_name }}</td>
+                    <td class="py-2 px-4">
+                        <a href="{% url 'livestock:livestock_update' animal.id %}" class="text-blue-600 hover:underline">Edit</a>
+                        <a href="{% url 'livestock:livestock_delete' animal.id %}" class="text-red-600 hover:underline ml-2">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="text-center py-8 text-gray-500 text-lg">
+            <i class="fas fa-box-open text-4xl text-emerald-400 mb-4"></i>
+            <p>No animals found.</p>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

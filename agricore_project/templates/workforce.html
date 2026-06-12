@@ -1,72 +1,205 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Network - Agricore</title>
+    <title>Professional Network - Agricore Solutions</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/i18n.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+        * {
             font-family: 'Inter', sans-serif;
         }
+        
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header-gradient {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Hero Section */
         .hero-container {
-            background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.65)), url('https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
-            border-radius: 20px;
-            outline: 5px solid #10b981;
-            outline-offset: -5px;
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
-        .glass {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+
+        /* Glass container */
+        .glass-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
+
+        /* Professional cards */
         .professional-card {
-            transition: all 0.3s ease;
+            background: white;
+            border: 1px solid #f1f5f9;
+            border-radius: 1.25rem;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
+
         .professional-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(16,185,129,0.2);
+            border-color: #10b981;
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15);
         }
+
+        /* Filter buttons */
         .filter-btn {
-            transition: all 0.3s ease;
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #64748b;
+            padding: 0.625rem 1.125rem;
+            border-radius: 0.875rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            cursor: pointer;
         }
+
+        .filter-btn:hover {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+        }
+
         .filter-btn.active {
-            background: linear-gradient(to right, #10b981, #059669);
+            background: linear-gradient(135deg, #10b981, #059669);
             color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
         }
+
+        /* Input fields */
+        .input-field {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #1e293b;
+            border-radius: 0.875rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-weight: 700;
+            padding: 0.875rem 1.75rem;
+            border-radius: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Stars */
         .rating-stars {
             color: #fbbf24;
         }
-        /* Subtle farm/work themed background pattern */
-        /* remove inline pattern; hero uses photo background like marketplace */
+
+        /* Modal */
+        .modal-backdrop {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Toast */
+        .toast {
+            background: white;
+            border: 1px solid #10b981;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        
+        .fab:hover {
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
+        }
     </style>
 </head>
-<body class="min-h-screen">
+<body>
     <!-- Header -->
-    <header class="glass shadow-lg sticky top-0 z-40">
+    <header class="header-gradient shadow-lg sticky top-0 z-50">
         <div class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <a href="marketplace.html" class="text-2xl font-black text-emerald-700">
-                        <i class="fas fa-leaf mr-2"></i>Agricore
+                <div class="flex items-center gap-4">
+                    <a href="marketplace.html" class="text-2xl font-black text-white flex items-center gap-2">
+                        <i class="fas fa-leaf"></i>
+                        Agricore
                     </a>
-                    <span class="text-gray-400">|</span>
-                    <h1 class="text-xl font-bold text-gray-800">Professional Network</h1>
+                    <span class="text-white/40">|</span>
+                    <h1 class="text-lg font-bold text-white" id="heading-prof-network">Professional Network</h1>
                 </div>
-                <nav class="flex items-center gap-4">
-                    <a href="marketplace.html" class="px-4 py-2 text-gray-700 hover:text-emerald-600 font-semibold">
-                        <i class="fas fa-store mr-2"></i>Marketplace
+                <nav class="flex items-center gap-3">
+                    <a href="{% url 'marketplace' %}" class="px-4 py-2 bg-white/10 backdrop-blur-sm border-2 border-white/20 text-white hover:bg-white/20 font-semibold rounded-xl transition flex items-center gap-2">
+                        <i class="fas fa-store"></i>
+                        <span class="hidden sm:inline">Marketplace</span>
                     </a>
-                    <a href="multi_farm.html" class="px-4 py-2 text-gray-700 hover:text-emerald-600 font-semibold">
-                        <i class="fas fa-tractor mr-2"></i>My Farms
+                    <a href="{% url 'multi_farm' %}" class="px-4 py-2 bg-white/10 backdrop-blur-sm border-2 border-white/20 text-white hover:bg-white/20 font-semibold rounded-xl transition flex items-center gap-2">
+                        <i class="fas fa-tractor"></i>
+                        <span class="hidden sm:inline">My Farms</span>
                     </a>
-                    <button id="profile-btn" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700">
-                        <i class="fas fa-user mr-2"></i>My Profile
+                    <button id="profile-btn" class="px-4 py-2 bg-white text-emerald-700 rounded-xl font-bold hover:bg-emerald-50 transition flex items-center gap-2">
+                        <i class="fas fa-user"></i>
+                        <span class="hidden sm:inline">Profile</span>
                     </button>
+                    <select id="settings-language" class="ml-2 px-2 py-1 rounded border border-gray-200 text-sm font-semibold text-gray-700" style="min-width:120px;">
+                        <option value="en">English</option>
+                        <option value="fr">Français</option>
+                        <option value="es">Español</option>
+                        <option value="pt">Português</option>
+                        <option value="sw">Kiswahili</option>
+                        <option value="ar">العربية</option>
+                    </select>
                 </nav>
             </div>
         </div>
@@ -74,18 +207,30 @@
 
     <!-- Hero Section -->
     <section class="container mx-auto px-6 pt-6 mb-10">
-        <div class="hero-container text-white py-16 md:py-24 px-6 flex items-center justify-center">
-            <div class="w-full max-w-4xl flex flex-col items-center text-center">
-                <h2 class="text-4xl md:text-6xl font-black mb-4 drop-shadow-2xl whitespace-nowrap">
+        <div class="hero-container text-white py-16 md:py-24 px-6">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-4xl md:text-6xl font-black mb-4 drop-shadow-2xl" id="hero-title">
                     Agricore Professional Network
                 </h2>
-                <p class="text-xl md:text-2xl mb-10 opacity-95 drop-shadow-lg">Connect with skilled professionals to power your farm work</p>
+                <p class="text-xl md:text-2xl mb-10 opacity-95 drop-shadow-lg" id="hero-desc">
+                    Connect with skilled professionals to power your farm work
+                </p>
+                
                 <!-- Search Bar -->
-                <div class="max-w-3xl mx-auto w-full">
-                    <div class="flex flex-row gap-4 bg-white/90 rounded-3xl overflow-hidden shadow-2xl p-3 items-center">
-                        <input type="text" id="search-input" placeholder="Search by name, skills, or location..." class="flex-1 px-6 py-4 text-gray-800 text-lg focus:outline-none">
-                        <button id="search-btn" class="px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-lg hover:from-emerald-700 hover:to-teal-700 transition rounded-2xl whitespace-nowrap">
-                            <i class="fas fa-search mr-2"></i> Search
+                <div class="max-w-3xl mx-auto">
+                    <div class="flex gap-4 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-2xl">
+                        <input 
+                            type="text" 
+                            id="search-input" 
+                            placeholder="Search by name, skills, or location..." 
+                            class="flex-1 px-6 py-4 bg-transparent text-gray-800 text-lg focus:outline-none"
+                        >
+                        <button 
+                            id="search-btn" 
+                            class="btn-primary whitespace-nowrap flex items-center gap-2"
+                        >
+                            <i class="fas fa-search"></i>
+                            <span class="hidden sm:inline">Search</span>
                         </button>
                     </div>
                 </div>
@@ -95,34 +240,24 @@
 
     <!-- Filters & Stats -->
     <section class="container mx-auto px-6 mb-8">
-        <div class="glass rounded-3xl p-6 shadow-xl">
-            <div class="flex flex-wrap items-center gap-4 mb-6">
-                <h3 class="text-lg font-bold text-gray-800">Filter by Specialty:</h3>
-                <button class="filter-btn active px-4 py-2 bg-gray-100 rounded-xl font-semibold" data-specialty="all">
-                    All
-                </button>
-                <button class="filter-btn px-4 py-2 bg-gray-100 rounded-xl font-semibold" data-specialty="agronomist">
-                    Agronomists
-                </button>
-                <button class="filter-btn px-4 py-2 bg-gray-100 rounded-xl font-semibold" data-specialty="veterinarian">
-                    Veterinarians
-                </button>
-                <button class="filter-btn px-4 py-2 bg-gray-100 rounded-xl font-semibold" data-specialty="mechanic">
-                    Mechanics
-                </button>
-                <button class="filter-btn px-4 py-2 bg-gray-100 rounded-xl font-semibold" data-specialty="farm_manager">
-                    Farm Managers
-                </button>
-                <button class="filter-btn px-4 py-2 bg-gray-100 rounded-xl font-semibold" data-specialty="livestock_handler">
-                    Livestock Handlers
-                </button>
+        <div class="glass-container p-6">
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4" id="filter-specialty-label">Filter by Specialty:</h3>
+                <div class="flex flex-wrap gap-3">
+                    <button class="filter-btn active" data-specialty="all" id="filter-all">All</button>
+                    <button class="filter-btn" data-specialty="agronomist" id="filter-agronomist">Agronomists</button>
+                    <button class="filter-btn" data-specialty="veterinarian" id="filter-veterinarian">Veterinarians</button>
+                    <button class="filter-btn" data-specialty="mechanic" id="filter-mechanic">Mechanics</button>
+                    <button class="filter-btn" data-specialty="farm_manager" id="filter-farm-manager">Farm Managers</button>
+                    <button class="filter-btn" data-specialty="livestock_handler" id="filter-livestock-handler">Livestock Handlers</button>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Minimum Rating</label>
-                    <select id="rating-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <option value="">Any Rating</option>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" id="label-min-rating">Minimum Rating</label>
+                    <select id="rating-filter" class="input-field w-full">
+                        <option value="" id="opt-any-rating">Any Rating</option>
                         <option value="4.5">4.5+ stars</option>
                         <option value="4.0">4.0+ stars</option>
                         <option value="3.5">3.5+ stars</option>
@@ -130,21 +265,21 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Max Hourly Rate ($)</label>
-                    <input type="number" id="rate-filter" placeholder="e.g., 50" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" id="label-max-rate">Max Hourly Rate ($)</label>
+                    <input type="number" id="rate-filter" placeholder="e.g., 50" class="input-field w-full">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Min Experience (years)</label>
-                    <input type="number" id="experience-filter" placeholder="e.g., 5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" id="label-min-exp">Min Experience (years)</label>
+                    <input type="number" id="experience-filter" placeholder="e.g., 5" class="input-field w-full">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Availability</label>
-                    <select id="availability-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <option value="">All</option>
-                        <option value="available">Available Now</option>
-                        <option value="full_time">Full-Time</option>
-                        <option value="part_time">Part-Time</option>
-                        <option value="contract">Contract</option>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" id="label-availability">Availability</label>
+                    <select id="availability-filter" class="input-field w-full">
+                        <option value="" id="opt-all">All</option>
+                        <option value="available" id="opt-available">Available Now</option>
+                        <option value="full_time" id="opt-full-time">Full-Time</option>
+                        <option value="part_time" id="opt-part-time">Part-Time</option>
+                        <option value="contract" id="opt-contract">Contract</option>
                     </select>
                 </div>
             </div>
@@ -155,60 +290,89 @@
     <section class="container mx-auto px-6 pb-12">
         <div class="flex items-center justify-between mb-6">
             <h3 class="text-2xl font-bold text-gray-800">
-                <span id="professional-count">0</span> Professionals Available
+                <span id="professional-count">0</span> <span id="label-pros-available">Professionals Available</span>
             </h3>
-            <select id="sort-select" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                <option value="-average_rating">Highest Rated</option>
-                <option value="hourly_rate">Lowest Rate</option>
-                <option value="-hourly_rate">Highest Rate</option>
-                <option value="-years_experience">Most Experienced</option>
-                <option value="-created_at">Newest</option>
+            <select id="sort-select" class="input-field">
+                <option value="-average_rating" id="opt-highest-rated">Highest Rated</option>
+                <option value="hourly_rate" id="opt-lowest-rate">Lowest Rate</option>
+                <option value="-hourly_rate" id="opt-highest-rate">Highest Rate</option>
+                <option value="-years_experience" id="opt-most-experienced">Most Experienced</option>
+                <option value="-created_at" id="opt-newest">Newest</option>
             </select>
         </div>
 
-        <div id="professionals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div id="professionals-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <!-- Populated by JavaScript -->
         </div>
 
         <!-- Empty State -->
-        <div id="empty-state" class="hidden text-center py-16">
+        <div id="empty-state" class="hidden text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200">
             <i class="fas fa-users text-gray-300 text-6xl mb-4"></i>
-            <h3 class="text-xl font-bold text-gray-600 mb-2">No professionals found</h3>
-            <p class="text-gray-500">Try adjusting your filters</p>
+            <h3 class="text-xl font-bold text-gray-600 mb-2" id="label-no-pros">No professionals found</h3>
+            <p class="text-gray-500" id="label-try-filters">Try adjusting your filters</p>
         </div>
 
         <!-- Loading State -->
-        <div id="loading-state" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- Skeleton cards -->
+        <div id="loading-state" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 hidden">
+            <!-- Skeleton cards would go here -->
+            <div class="professional-card p-6 animate-pulse">
+                <div class="w-full h-48 bg-gray-200 rounded-xl mb-4"></div>
+                <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+            </div>
         </div>
     </section>
 
     <!-- Professional Detail Modal -->
-    <div id="detail-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 p-6 overflow-y-auto">
-        <div class="glass rounded-3xl shadow-2xl max-w-4xl w-full mx-auto my-8">
-            <div class="p-8">
-                <div class="flex justify-between items-start mb-6">
-                    <h2 class="text-3xl font-bold text-gray-800">Professional Details</h2>
-                    <button id="close-modal" class="text-gray-600 hover:text-gray-900 text-2xl">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div id="modal-content">
-                    <!-- Populated by JavaScript -->
-                </div>
+    <div id="detail-modal" class="fixed inset-0 modal-backdrop hidden flex items-center justify-center z-50 p-6 overflow-y-auto">
+        <div class="modal-content max-w-4xl w-full mx-auto my-8 p-8">
+            <div class="flex justify-between items-start mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Professional Details</h2>
+                <button id="close-modal" class="text-gray-600 hover:text-gray-900 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="modal-content">
+                <!-- Populated by JavaScript -->
             </div>
         </div>
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-6 right-6 bg-emerald-600 text-white px-6 py-4 rounded-xl shadow-2xl transform translate-x-full transition-transform z-50">
+    <div id="toast" class="fixed bottom-6 right-6 toast px-6 py-4 rounded-xl transform translate-x-full transition-transform z-50">
         <div class="flex items-center gap-3">
-            <i class="fas fa-check-circle text-xl"></i>
-            <span id="toast-message"></span>
+            <i class="fas fa-check-circle text-emerald-600 text-xl"></i>
+            <span id="toast-message" class="text-gray-800 font-semibold"></span>
         </div>
     </div>
 
+    <!-- Dale AI FAB -->
+    <div class="fab" id="dale-ai-btn" title="Ask Dale AI">
+        <i class="fas fa-robot text-2xl"></i>
+    </div>
+
     <script>
+        // Language selector logic for workforce
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageSelect = document.getElementById('settings-language');
+            if (languageSelect) {
+                // Set initial value from localStorage
+                const lang = localStorage.getItem('preferred_language') || 'en';
+                languageSelect.value = lang;
+                languageSelect.addEventListener('change', function() {
+                    localStorage.setItem('preferred_language', this.value);
+                    if (window.i18n && typeof applyI18nStatic === 'function') {
+                        applyI18nStatic();
+                    } else if (window.i18n) {
+                        location.reload(); // fallback: reload to apply
+                    }
+                });
+                // Also trigger translation on page load
+                if (window.i18n && typeof applyI18nStatic === 'function') {
+                    applyI18nStatic();
+                }
+            }
+        });
         let professionals = [];
         let currentFilters = {
             specialty: 'all',
@@ -220,7 +384,7 @@
             ordering: '-average_rating'
         };
 
-        // Ensure auth token is present; redirect if missing
+        // Ensure auth token is present
         function ensureAuth() {
             const token = localStorage.getItem('access_token');
             if (!token || token === 'null' || token === 'undefined') {
@@ -270,7 +434,7 @@
                     renderProfessionals();
                 } else {
                     showToast('Failed to load professionals');
-                    renderProfessionals(); // Show empty state
+                    renderProfessionals();
                 }
             } catch (error) {
                 console.error('Error loading professionals:', error);
@@ -299,59 +463,52 @@
 
             grid.innerHTML = professionals.map(pro => {
                 const profileImg = pro.profile_image_display || pro.profile_image_url || pro.profile_image;
-                const fallbackIcon = `<div class="w-full h-48 bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white">
-                    <i class="fas fa-user text-6xl"></i>
-                </div>`;
-                
+                const initials = pro.user_name ? pro.user_name.substring(0, 2).toUpperCase() : 'PR';
                 return `
-                <div class="professional-card glass rounded-2xl overflow-hidden shadow-lg cursor-pointer" onclick="showDetails(${pro.id})">
+                <div class="professional-card cursor-pointer group" onclick="showDetails(${pro.id})">
                     <div class="relative">
-                        ${profileImg 
-                            ? `<img src="${profileImg}" alt="${pro.user_name}" class="w-full h-48 object-cover" onerror="this.parentElement.innerHTML='${fallbackIcon.replace(/'/g, "&apos;")}'+ this.parentElement.innerHTML.match(/(<span.*?span>)/g).join('');">`
-                            : fallbackIcon
+                        ${profileImg
+                            ? `<img src="${profileImg}" alt="${pro.user_name || initials}" class="w-full h-48 object-cover rounded-t-xl" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                               <div class="hidden w-full h-48 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-t-xl items-center justify-center text-white">
+                                   <div class="text-5xl font-bold">${initials}</div>
+                               </div>`
+                            : `<div class="w-full h-48 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-t-xl flex items-center justify-center text-white">
+                                   <div class="text-5xl font-bold">${initials}</div>
+                               </div>`
                         }
-                        ${pro.is_verified ? '<span class="absolute top-3 right-3 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold"><i class="fas fa-check-circle mr-1"></i>Verified</span>' : ''}
-                        ${pro.featured ? '<span class="absolute top-3 left-3 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold"><i class="fas fa-star mr-1"></i>Featured</span>' : ''}
+                        ${pro.is_verified ? '<span class="absolute top-3 right-3 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold"><i class="fas fa-check-circle mr-1"></i>Verified</span>' : ''}
+                        ${pro.featured ? '<span class="absolute top-3 left-3 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold"><i class="fas fa-star mr-1"></i>Featured</span>' : ''}
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">${pro.user_name}</h3>
-                        <p class="text-emerald-600 font-semibold mb-3">${pro.specialty_display}</p>
-                        
-                        <div class="flex items-center gap-2 mb-3">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2 truncate">${pro.user_name || initials}</h3>
+                        <p class="text-emerald-600 font-semibold mb-3">${pro.specialty_display || ''}</p>
+                        <div class="flex items-center gap-2 mb-4">
                             <div class="rating-stars">
                                 ${renderStars(pro.average_rating)}
                             </div>
-                            <span class="text-gray-600 text-sm">${(pro.average_rating || 0).toFixed(1)} (${pro.total_reviews || 0} reviews)</span>
+                            <span class="text-gray-600 text-sm">${(pro.average_rating || 0).toFixed(1)} (${pro.total_reviews || 0})</span>
                         </div>
-
                         <div class="space-y-2 text-sm text-gray-600 mb-4">
                             <div class="flex items-center gap-2">
-                                <i class="fas fa-map-marker-alt text-emerald-600"></i>
-                                <span>${pro.location}</span>
+                                <i class="fas fa-map-marker-alt text-emerald-600 w-4"></i>
+                                <span class="truncate">${pro.location || ''}</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <i class="fas fa-clock text-emerald-600"></i>
-                                <span>${pro.years_experience} years experience</span>
+                                <i class="fas fa-clock text-emerald-600 w-4"></i>
+                                <span>${pro.years_experience || 0} years</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <i class="fas fa-dollar-sign text-emerald-600"></i>
-                                <span>$${pro.hourly_rate}/hour</span>
+                                <i class="fas fa-dollar-sign text-emerald-600 w-4"></i>
+                                <span>$${pro.hourly_rate || 0}/hour</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <i class="fas fa-briefcase text-emerald-600"></i>
-                                <span>${pro.availability_display}</span>
+                                <i class="fas fa-briefcase text-emerald-600 w-4"></i>
+                                <span class="truncate">${pro.availability_display || ''}</span>
                             </div>
                         </div>
-
-                        ${pro.bio ? `<p class="text-gray-600 text-sm mb-4 line-clamp-2">${pro.bio}</p>` : ''}
-
                         <div class="flex gap-2">
-                            <button onclick="event.stopPropagation(); showDetails(${pro.id})" class="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700">
-                                View Profile
-                            </button>
-                            <button onclick="event.stopPropagation(); contactProfessional(${pro.id})" class="px-4 py-2 border-2 border-emerald-600 text-emerald-600 rounded-xl font-semibold hover:bg-emerald-50">
-                                <i class="fas fa-envelope"></i>
-                            </button>
+                            <button onclick="event.stopPropagation(); showDetails(${pro.id})" class="flex-1 px-4 py-2 btn-primary text-sm" id="btn-view-profile">${window.i18n ? i18n.t('View Profile') : 'View Profile'}</button>
+                            <button onclick="event.stopPropagation(); startChatWithProfessional(${pro.id})" class="px-4 py-2 border-2 border-emerald-600 text-emerald-600 rounded-xl font-semibold hover:bg-emerald-50 transition" id="btn-chat-prof"><i class="fas fa-envelope"></i></button>
                         </div>
                     </div>
                 </div>
@@ -387,10 +544,9 @@
             content.innerHTML = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-4xl text-emerald-600"></i></div>';
 
             try {
+                const token = localStorage.getItem('access_token');
                 const response = await fetch(`/api/professional-profiles/${id}/`, {
-                    headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
-                    }
+                    headers: { 'Authorization': 'Bearer ' + token }
                 });
 
                 if (response.ok) {
@@ -409,28 +565,31 @@
         function renderDetailModal(pro) {
             const content = document.getElementById('modal-content');
             const profileImg = pro.profile_image_display || pro.profile_image_url || pro.profile_image;
-            const fallbackIcon = `<div class="w-32 h-32 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white">
-                <i class="fas fa-user text-4xl"></i>
-            </div>`;
+            const initials = pro.user_name ? pro.user_name.substring(0, 2).toUpperCase() : 'PR';
             
             content.innerHTML = `
                 <div class="space-y-6">
-                    <div class="flex items-start gap-6">
+                    <div class="flex items-start gap-6 flex-col sm:flex-row">
                         ${profileImg 
-                            ? `<img src="${profileImg}" alt="${pro.user_name}" class="w-32 h-32 rounded-2xl object-cover" onerror="this.outerHTML='${fallbackIcon.replace(/'/g, "&apos;")}';">`
-                            : fallbackIcon
+                            ? `<img src="${profileImg}" alt="${pro.user_name}" class="w-32 h-32 rounded-2xl object-cover flex-shrink-0" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                               <div class="hidden w-32 h-32 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 items-center justify-center text-white">
+                                   <div class="text-4xl font-bold">${initials}</div>
+                               </div>`
+                            : `<div class="w-32 h-32 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white flex-shrink-0">
+                                   <div class="text-4xl font-bold">${initials}</div>
+                               </div>`
                         }
                         <div class="flex-1">
-                            <div class="flex items-center gap-3 mb-2">
+                            <div class="flex items-center gap-3 mb-2 flex-wrap">
                                 <h3 class="text-2xl font-bold text-gray-800">${pro.user_name}</h3>
-                                ${pro.is_verified ? '<span class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold"><i class="fas fa-check-circle mr-1"></i>Verified</span>' : ''}
+                                ${pro.is_verified ? '<span class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold"><i class="fas fa-check-circle mr-1"></i>Verified</span>' : ''}
                             </div>
                             <p class="text-emerald-600 font-semibold text-lg mb-3">${pro.specialty_display}</p>
                             <div class="flex items-center gap-2 mb-3">
                                 <div class="rating-stars text-xl">${renderStars(pro.average_rating)}</div>
                                 <span class="text-gray-600">${(pro.average_rating || 0).toFixed(1)} (${pro.total_reviews || 0} reviews)</span>
                             </div>
-                            <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                                 <div>
                                     <span class="text-gray-600">Location:</span>
                                     <span class="font-semibold ml-2">${pro.location}</span>
@@ -440,8 +599,8 @@
                                     <span class="font-semibold ml-2">${pro.years_experience} years</span>
                                 </div>
                                 <div>
-                                    <span class="text-gray-600">Rate:</span>
-                                    <span class="font-semibold ml-2">$${pro.hourly_rate}/hour</span>
+                                    <span class="text-gray-600">${window.i18n ? i18n.t('Rate:') : 'Rate:'}</span>
+                                    <span class="font-semibold ml-2">${window.i18n ? i18n.formatCurrency(pro.hourly_rate) : ('$' + pro.hourly_rate + '/hour')}</span>
                                 </div>
                                 <div>
                                     <span class="text-gray-600">Availability:</span>
@@ -453,92 +612,44 @@
 
                     ${pro.bio ? `
                         <div>
-                            <h4 class="font-bold text-lg mb-2">About</h4>
+                            <h4 class="font-bold text-lg mb-2 text-gray-800">About</h4>
                             <p class="text-gray-700">${pro.bio}</p>
                         </div>
                     ` : ''}
 
                     ${pro.skills && pro.skills.length > 0 ? `
                         <div>
-                            <h4 class="font-bold text-lg mb-2">Skills</h4>
+                            <h4 class="font-bold text-lg mb-2 text-gray-800">Skills</h4>
                             <div class="flex flex-wrap gap-2">
                                 ${pro.skills.map(skill => `<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold">${skill}</span>`).join('')}
                             </div>
                         </div>
                     ` : ''}
 
-                    ${pro.certifications && pro.certifications.length > 0 ? `
-                        <div>
-                            <h4 class="font-bold text-lg mb-2">Certifications</h4>
-                            <ul class="list-disc list-inside text-gray-700 space-y-1">
-                                ${pro.certifications.map(cert => `<li>${cert}</li>`).join('')}
-                            </ul>
-                        </div>
-                    ` : ''}
-
-                    ${pro.education ? `
-                        <div>
-                            <h4 class="font-bold text-lg mb-2">Education</h4>
-                            <p class="text-gray-700 whitespace-pre-line">${pro.education}</p>
-                        </div>
-                    ` : ''}
-
-                    ${pro.work_experience ? `
-                        <div>
-                            <h4 class="font-bold text-lg mb-2">Work Experience</h4>
-                            <p class="text-gray-700 whitespace-pre-line">${pro.work_experience}</p>
-                        </div>
-                    ` : ''}
-
-                    <!-- Reviews Section -->
-                    <div>
-                        <h4 class="font-bold text-lg mb-4">Reviews (${pro.total_reviews})</h4>
-                        <div id="reviews-container" class="space-y-4">
-                            ${pro.reviews && pro.reviews.length > 0 ? pro.reviews.map(review => `
-                                <div class="bg-gray-50 rounded-xl p-4">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <div>
-                                            <span class="font-semibold">${review.reviewer_name || review.reviewer_username}</span>
-                                            <div class="rating-stars text-sm">${renderStars(review.rating)}</div>
-                                        </div>
-                                        <span class="text-sm text-gray-500">${new Date(review.created_at).toLocaleDateString()}</span>
-                                    </div>
-                                    <p class="font-semibold text-gray-800 mb-1">${review.title}</p>
-                                    <p class="text-gray-700">${review.comment}</p>
-                                    ${review.response ? `
-                                        <div class="mt-3 pl-4 border-l-2 border-emerald-500">
-                                            <p class="text-sm text-gray-600 mb-1">Response from professional:</p>
-                                            <p class="text-gray-700">${review.response}</p>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            `).join('') : '<p class="text-gray-500">No reviews yet</p>'}
-                        </div>
-                    </div>
-
-                    <div class="flex gap-4 pt-4">
-                        <button onclick="contactProfessional(${pro.id})" class="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700">
-                            <i class="fas fa-envelope mr-2"></i>Contact Professional
-                        </button>
-                        <button onclick="leaveReview(${pro.id})" class="px-6 py-3 border-2 border-emerald-600 text-emerald-600 rounded-xl font-bold hover:bg-emerald-50">
-                            <i class="fas fa-star mr-2"></i>Leave Review
-                        </button>
+                    <div class="flex gap-4 pt-4 flex-col sm:flex-row">
+                        <button onclick="startChatWithProfessional(${pro.id})" class="flex-1 btn-primary flex items-center justify-center gap-2" id="btn-chat-modal"><i class="fas fa-envelope"></i> ${window.i18n ? i18n.t('Chat with Professional') : 'Chat with Professional'}</button>
+                        <button onclick="leaveReview(${pro.id})" class="px-6 py-3 border-2 border-emerald-600 text-emerald-600 rounded-xl font-bold hover:bg-emerald-50 transition flex items-center justify-center gap-2" id="btn-leave-review"><i class="fas fa-star"></i> ${window.i18n ? i18n.t('Leave Review') : 'Leave Review'}</button>
                     </div>
                 </div>
             `;
         }
 
+        // Start chat with professional
+        function startChatWithProfessional(id) {
+            showToast(window.i18n ? i18n.t('Opening chat...') : 'Opening chat...');
+            window.location.href = `chats.html?user=${encodeURIComponent(id)}`;
+        }
+        
+
         // Contact professional
         function contactProfessional(id) {
             showToast('Opening chat...');
-            // TODO: Implement chat functionality
             window.location.href = 'chats.html';
         }
 
         // Leave review
         function leaveReview(id) {
-            showToast('Review feature coming soon!');
-            // TODO: Implement review modal
+            showToast(window.i18n ? i18n.t('Review feature coming soon!') : 'Review feature coming soon!');
         }
 
         // Filter event listeners
@@ -626,9 +737,46 @@
             }, 3000);
         }
 
-        // Initialize
+        // Dale AI
+        document.getElementById('dale-ai-btn').addEventListener('click', () => {
+            showToast('Dale AI chat coming soon!');
+        });
+
+        // --- Apply i18n on static UI ---
+        function applyI18nStatic() {
+            if (!window.i18n) return;
+            document.getElementById('heading-prof-network').textContent = i18n.t('Professional Network');
+            document.getElementById('hero-title').textContent = i18n.t('Agricore Professional Network');
+            document.getElementById('hero-desc').textContent = i18n.t('Connect with skilled professionals to power your farm work');
+            document.getElementById('filter-specialty-label').textContent = i18n.t('Filter by Specialty:');
+            document.getElementById('filter-all').textContent = i18n.t('All');
+            document.getElementById('filter-agronomist').textContent = i18n.t('Agronomists');
+            document.getElementById('filter-veterinarian').textContent = i18n.t('Veterinarians');
+            document.getElementById('filter-mechanic').textContent = i18n.t('Mechanics');
+            document.getElementById('filter-farm-manager').textContent = i18n.t('Farm Managers');
+            document.getElementById('filter-livestock-handler').textContent = i18n.t('Livestock Handlers');
+            document.getElementById('label-min-rating').textContent = i18n.t('Minimum Rating');
+            document.getElementById('opt-any-rating').textContent = i18n.t('Any Rating');
+            document.getElementById('label-max-rate').textContent = i18n.t('Max Hourly Rate ($)');
+            document.getElementById('label-min-exp').textContent = i18n.t('Min Experience (years)');
+            document.getElementById('label-availability').textContent = i18n.t('Availability');
+            document.getElementById('opt-all').textContent = i18n.t('All');
+            document.getElementById('opt-available').textContent = i18n.t('Available Now');
+            document.getElementById('opt-full-time').textContent = i18n.t('Full-Time');
+            document.getElementById('opt-part-time').textContent = i18n.t('Part-Time');
+            document.getElementById('opt-contract').textContent = i18n.t('Contract');
+            document.getElementById('label-pros-available').textContent = i18n.t('Professionals Available');
+            document.getElementById('opt-highest-rated').textContent = i18n.t('Highest Rated');
+            document.getElementById('opt-lowest-rate').textContent = i18n.t('Lowest Rate');
+            document.getElementById('opt-highest-rate').textContent = i18n.t('Highest Rate');
+            document.getElementById('opt-most-experienced').textContent = i18n.t('Most Experienced');
+            document.getElementById('opt-newest').textContent = i18n.t('Newest');
+            document.getElementById('label-no-pros').textContent = i18n.t('No professionals found');
+            document.getElementById('label-try-filters').textContent = i18n.t('Try adjusting your filters');
+        }
+        applyI18nStatic();
+        // --- End i18n static ---
         loadProfessionals();
     </script>
-    <script src="/static/js/dale.js" defer></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
+from .user_settings_api import user_settings
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -8,6 +9,22 @@ from rest_framework_nested.routers import NestedSimpleRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from accounts.api.views import SPAView
+from accounts.views import (
+    authentication_view,
+    cart_view,
+    chat_detail_view,
+    chats_view,
+    digital_store_view,
+    digitalstores_view,
+    individual_farm_view,
+    marketplace_view,
+    multi_farm_view,
+    onboarding_view,
+    product_detail_view,
+    profile_view,
+    splashscreen_view,
+    workforce_view,
+)
 from accounts.api.views import (
     CurrentUserView,
     CustomUserViewSet,
@@ -19,15 +36,10 @@ from accounts.api.views import (
     GoogleAuthView,
 )
 
-from farms.api.views import FarmViewSet
+from farms.api.views import FarmViewSet, FieldViewSet
 from produce.views import ProduceCollectionViewSet
 
-from crops.api.views import (
-    CropViewSet,
-    CropTaskViewSet,
-    CropEmployeeAssignmentViewSet,
-    CropExpenseViewSet,
-)
+
 
 from livestock.api.views import (
     LivestockUnitViewSet,
@@ -41,7 +53,6 @@ from livestock.api.views import (
 
 from inventory.api.views import (
     InventoryViewSet,
-    ProductionRecordViewSet,
 )
 
 from marketplace.api.views import (
@@ -77,7 +88,6 @@ from communications.api.views import (
 
 from ai.api.views import (
     AILogViewSet,
-    PredictionViewSet,
     AlertViewSet,
     DaleAIChatView,
 )
@@ -90,9 +100,19 @@ from analytics.api.views import (
 
 # -------------------------------------------------------------------
 # MAIN ROUTER
+from crops.api.views import CropCycleViewSet
 # -------------------------------------------------------------------
 
+from marketprices.api.views import MarketPriceViewSet
+from logistics.api.views import (
+    VehicleViewSet,
+    TransportRequestViewSet,
+    TransportBidViewSet,
+)
+from escrow.api.views import EscrowViewSet
+
 router = DefaultRouter()
+router.register(r'crop-cycles', CropCycleViewSet, basename='cropcycle')
 
 # Accounts
 router.register(r'users', CustomUserViewSet, basename='user')
@@ -102,14 +122,12 @@ router.register(r'specialized-professionals', SpecializedProfessionalViewSet, ba
 router.register(r'reviews', ReviewViewSet, basename='review')
 router.register(r'onboarding-progress', OnboardingProgressViewSet, basename='onboardingprogress')
 
+
 # Farms
 router.register(r'farms', FarmViewSet, basename='farm')
+router.register(r'fields', FieldViewSet, basename='field')
 
-# Crops
-router.register(r'crops', CropViewSet, basename='crop')
-router.register(r'crop-tasks', CropTaskViewSet, basename='croptask')
-router.register(r'crop-employee-assignments', CropEmployeeAssignmentViewSet, basename='cropemployeeassignment')
-router.register(r'crop-expenses', CropExpenseViewSet, basename='cropexpense')
+
 
 # Livestock
 router.register(r'livestock-units', LivestockUnitViewSet, basename='livestockunit')
@@ -122,7 +140,6 @@ router.register(r'animal-medical-records', AnimalMedicalRecordViewSet, basename=
 
 # Inventory
 router.register(r'inventory', InventoryViewSet, basename='inventory')
-router.register(r'production-records', ProductionRecordViewSet, basename='productionrecord')
 
 # Marketplace
 router.register(r'stores', StoreViewSet, basename='store')
@@ -156,13 +173,19 @@ router.register(r'messages', MessageViewSet, basename='message')
 
 # AI
 router.register(r'ai-logs', AILogViewSet, basename='ailog')
-router.register(r'predictions', PredictionViewSet, basename='prediction')
 router.register(r'alerts', AlertViewSet, basename='alert')
 
 # Analytics
 router.register(r'farm-finances', FarmFinanceViewSet, basename='farmfinance')
 router.register(r'analytics-aggregates', AnalyticsAggregateViewSet, basename='analyticsaggregate')
 router.register(r'reports', ReportViewSet, basename='report')
+
+# Ecosystem - Phase 1
+router.register(r'market-prices', MarketPriceViewSet, basename='marketprice')
+router.register(r'vehicles', VehicleViewSet, basename='vehicle')
+router.register(r'transport-requests', TransportRequestViewSet, basename='transportrequest')
+router.register(r'transport-bids', TransportBidViewSet, basename='transportbid')
+router.register(r'escrows', EscrowViewSet, basename='escrow')
 
 # -------------------------------------------------------------------
 # NESTED ROUTER: PRODUCE UNDER FARMS
@@ -180,7 +203,31 @@ farms_router.register(
 # -------------------------------------------------------------------
 
 urlpatterns = [
+    path('auth/', authentication_view, name='authentication'),
+    path('accounts/login/', __import__('accounts.views').views.login_view, name='login'),
+    path('cart/', cart_view, name='cart'),
+    path('chat_detail/', chat_detail_view, name='chat_detail'),
+    path('chats/', chats_view, name='chats'),
+    path('digital_store/', digital_store_view, name='digital_store'),
+    path('digitalstores/', digitalstores_view, name='digitalstores'),
+    path('individual_farm/', individual_farm_view, name='individual_farm'),
+    path('marketplace/', marketplace_view, name='marketplace'),
+    path('multi_farm/', multi_farm_view, name='multi_farm'),
+    path('onboarding/', onboarding_view, name='onboarding'),
+    path('product_detail/', product_detail_view, name='product_detail'),
+    path('profile/', profile_view, name='profile'),
+    path('splashscreen/', splashscreen_view, name='splashscreen'),
+    path('workforce/', workforce_view, name='workforce'),
     path('admin/', admin.site.urls),
+
+    # Farm management dashboard and analytics UI
+    path('dashboard/', include('analytics.urls', namespace='analytics')),
+    # Livestock and Crops views
+    path('livestock/', include('livestock.urls', namespace='livestock')),
+    path('crops/', include('crops.urls', namespace='crops')),
+
+    # Farm finance view
+    path('analytics/finances/', __import__('analytics.views').views.farm_finance_list, name='farm_finance_list'),
 
     # JWT Auth
     path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -205,3 +252,6 @@ urlpatterns = [
 # Serve media files in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    # User settings API (must be in urlpatterns, not at top-level)
+    urlpatterns.insert(0, path('api/user/settings/', user_settings, name='user_settings'))
