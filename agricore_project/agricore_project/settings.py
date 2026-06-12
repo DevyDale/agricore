@@ -194,3 +194,11 @@ FLW_SECRET_HASH = env('FLW_SECRET_HASH', default='')  # same value as the Flutte
 DEFAULT_CURRENCY = env('DEFAULT_CURRENCY', default='UGX')
 PLATFORM_FEE_PERCENT = env.float('PLATFORM_FEE_PERCENT', default=2.5)
 PAYMENT_REDIRECT_URL = env('PAYMENT_REDIRECT_URL', default='https://agricore-frontend.vercel.app/payment/callback')
+
+# Google OAuth: client IDs accepted as ID-token audiences (Android / iOS / web).
+# Set GOOGLE_OAUTH_CLIENT_IDS in .env as a comma-separated list to override.
+GOOGLE_OAUTH_CLIENT_IDS = env.list(
+    'GOOGLE_OAUTH_CLIENT_IDS',
+    default=['488596909366-vd5s2k861kn6g1v8e8f3u81eig3h2q2c.apps.googleusercontent.com'],
+)
+

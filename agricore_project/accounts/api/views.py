@@ -38,62 +38,85 @@ class GoogleAuthView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        token = request.data.get('token')
-        
+        token = request.data.get('token') or request.data.get('id_token')
+
         if not token:
             return Response(
                 {'error': 'Token is required'},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        allowed_auds = getattr(settings, 'GOOGLE_OAUTH_CLIENT_IDS', [])
+        if not allowed_auds:
+            return Response(
+                {'error': 'Google sign-in is not configured on the server'},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
 
         try:
-            # Verify the token with Google
+            # Verify signature, issuer, and expiry against Google's public certs.
+            # audience=None so we can accept several client IDs (Android / iOS /
+            # web) and check the audience ourselves against the allow-list below.
             idinfo = id_token.verify_oauth2_token(
                 token,
                 requests.Request(),
-                '488596909366-vd5s2k861kn6g1v8e8f3u81eig3h2q2c.apps.googleusercontent.com'
+                audience=None,
             )
-
-            # Get user info from token
-            email = idinfo.get('email')
-            google_id = idinfo.get('sub')
-            name = idinfo.get('name', '')
-            
-            if not email:
-                return Response(
-                    {'error': 'Email not provided by Google'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            # Check if user exists
-            user, created = CustomUser.objects.get_or_create(
-                email=email,
-                defaults={
-                    'username': email.split('@')[0] + '_' + google_id[:8],
-                    'first_name': name.split()[0] if name else '',
-                    'last_name': ' '.join(name.split()[1:]) if len(name.split()) > 1 else '',
-                }
-            )
-
-            # Generate JWT tokens
-            refresh = RefreshToken.for_user(user)
-            
-            return Response({
-                'access': str(refresh.access_token),
-                'refresh': str(refresh),
-                'user': CustomUserSerializer(user).data
-            }, status=status.HTTP_200_OK)
-
         except ValueError as e:
             return Response(
                 {'error': f'Invalid token: {str(e)}'},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_401_UNAUTHORIZED,
             )
-        except Exception as e:
+
+        # The token must have been issued for one of our own apps.
+        if idinfo.get('aud') not in allowed_auds:
             return Response(
-                {'error': f'Authentication failed: {str(e)}'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {'error': 'Token audience is not allowed'},
+                status=status.HTTP_401_UNAUTHORIZED,
             )
+
+        # Only accept emails that Google itself has verified.
+        if not idinfo.get('email_verified', False):
+            return Response(
+                {'error': 'Google account email is not verified'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        email = idinfo.get('email')
+        google_id = idinfo.get('sub', '')
+        name = idinfo.get('name', '')
+
+        if not email:
+            return Response(
+                {'error': 'Email not provided by Google'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Match an existing account by email (links password + Google logins),
+        # or create a new one. The email is Google-verified at this point.
+        user, created = CustomUser.objects.get_or_create(
+            email=email,
+            defaults={
+                'username': email.split('@')[0] + '_' + google_id[:8],
+                'first_name': name.split()[0] if name else '',
+                'last_name': ' '.join(name.split()[1:]) if len(name.split()) > 1 else '',
+                'is_verified': True,
+            },
+        )
+
+        # A successful Google login proves email ownership.
+        if not user.is_verified:
+            user.is_verified = True
+            user.save(update_fields=['is_verified'])
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': CustomUserSerializer(user).data,
+            'created': created,
+        }, status=status.HTTP_200_OK)
 
 
 class IsOwnerOrReadOnly(BasePermission):
