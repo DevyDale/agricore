@@ -33,3 +33,38 @@ class Escrow(models.Model):
 
     def __str__(self):
         return f"Escrow #{self.pk} ({self.status}) - {self.amount}{self.currency}"
+
+
+class PaymentTransaction(models.Model):
+    """Audit record for every money movement tied to an escrow."""
+
+    KIND_CHOICES = [
+        ("collection", "Collection (buyer -> platform)"),
+        ("payout", "Payout (platform -> seller)"),
+    ]
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("successful", "Successful"),
+        ("failed", "Failed"),
+    ]
+
+    escrow = models.ForeignKey(
+        Escrow, on_delete=models.CASCADE, related_name="transactions"
+    )
+    kind = models.CharField(max_length=20, choices=KIND_CHOICES, default="collection")
+    tx_ref = models.CharField(max_length=100, unique=True)
+    flw_id = models.CharField(max_length=64, blank=True)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    fee = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    currency = models.CharField(max_length=3, default="UGX")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    checkout_link = models.URLField(blank=True)
+    raw = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.kind} {self.tx_ref} ({self.status})"

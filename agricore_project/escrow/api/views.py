@@ -3,8 +3,11 @@ from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from escrow.models import Escrow
+from django.conf import settings
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from escrow.models import Escrow, PaymentTransaction
+from utils import flutterwave
 from .serializers import EscrowSerializer
 
 
@@ -29,6 +32,62 @@ class EscrowViewSet(viewsets.ModelViewSet):
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied("You can only open escrow for your own order.")
         serializer.save(buyer=self.request.user)
+
+    @action(detail=True, methods=["post"])
+    def pay(self, request, pk=None):
+        """Buyer starts payment for this escrow. Returns a Flutterwave checkout
+        link (MTN/Airtel mobile money or card). The webhook confirms it later."""
+        escrow = self.get_object()
+        if escrow.buyer != request.user:
+            return Response(
+                {"detail": "Only the buyer can pay for this escrow."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        if escrow.status != "pending":
+            return Response(
+                {"detail": f"Cannot pay from status: {escrow.status}."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        fee = flutterwave.service_fee(escrow.amount)
+        total = escrow.amount + fee
+        tx_ref = flutterwave.new_tx_ref(f"esc{escrow.pk}")
+        txn = PaymentTransaction.objects.create(
+            escrow=escrow,
+            kind="collection",
+            tx_ref=tx_ref,
+            amount=total,
+            fee=fee,
+            currency=escrow.currency,
+        )
+        try:
+            link = flutterwave.create_payment_link(
+                amount=float(total),
+                currency=escrow.currency,
+                tx_ref=tx_ref,
+                customer_email=request.user.email,
+                customer_name=request.user.username,
+                customer_phone=getattr(request.user, "phone", "") or "",
+                meta={"escrow_id": escrow.pk, "txn_id": txn.id},
+            )
+        except flutterwave.FlutterwaveError as e:
+            txn.status = "failed"
+            txn.raw = {"error": str(e)}
+            txn.save()
+            return Response(
+                {"detail": f"Could not start payment: {e}"},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+
+        txn.checkout_link = link
+        txn.save()
+        return Response({
+            "checkout_link": link,
+            "tx_ref": tx_ref,
+            "amount": str(total),
+            "service_fee": str(fee),
+            "currency": escrow.currency,
+        })
 
     @action(detail=True, methods=["post"])
     def fund(self, request, pk=None):
@@ -67,3 +126,61 @@ class EscrowViewSet(viewsets.ModelViewSet):
         escrow.released_at = timezone.now()
         escrow.save()
         return Response(self.get_serializer(escrow).data)
+
+
+class FlutterwaveWebhookView(APIView):
+    """Receives Flutterwave payment events. Verifies the signature, re-verifies
+    the transaction with Flutterwave, then marks the matching escrow as held.
+    Unauthenticated by design (Flutterwave calls it), but signature-protected."""
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def post(self, request):
+        # 1) Signature check: the header must equal our configured secret hash.
+        signature = request.headers.get("verif-hash")
+        expected = getattr(settings, "FLW_SECRET_HASH", "")
+        if not expected or not signature or signature != expected:
+            return Response({"detail": "invalid signature"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        payload = request.data or {}
+        data = payload.get("data") or {}
+        tx_ref = data.get("tx_ref")
+        flw_id = data.get("id")
+        if not tx_ref:
+            return Response({"detail": "no tx_ref"}, status=status.HTTP_200_OK)
+
+        try:
+            txn = PaymentTransaction.objects.get(tx_ref=tx_ref)
+        except PaymentTransaction.DoesNotExist:
+            return Response({"detail": "unknown tx_ref"}, status=status.HTTP_200_OK)
+
+        # Idempotent: ignore repeat deliveries of an already-settled payment.
+        if txn.status == "successful":
+            return Response({"detail": "already processed"}, status=status.HTTP_200_OK)
+
+        # 2) Never trust the webhook body alone — verify with Flutterwave directly.
+        try:
+            verified = flutterwave.verify_transaction(flw_id)
+        except flutterwave.FlutterwaveError as e:
+            return Response({"detail": f"verify failed: {e}"}, status=status.HTTP_200_OK)
+
+        vdata = verified.get("data") or {}
+        amount_ok = abs(float(vdata.get("amount", 0)) - float(txn.amount)) < 0.01
+        currency_ok = vdata.get("currency") == txn.currency
+        if vdata.get("status") == "successful" and amount_ok and currency_ok:
+            txn.status = "successful"
+            txn.flw_id = str(flw_id or "")
+            txn.raw = verified
+            txn.save()
+            escrow = txn.escrow
+            if escrow.status == "pending":
+                escrow.status = "held"
+                escrow.funded_at = timezone.now()
+                escrow.save()
+            return Response({"detail": "ok"}, status=status.HTTP_200_OK)
+
+        txn.status = "failed"
+        txn.raw = verified
+        txn.save()
+        return Response({"detail": "not successful"}, status=status.HTTP_200_OK)
