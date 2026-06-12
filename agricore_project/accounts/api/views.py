@@ -1,4 +1,6 @@
 from rest_framework import viewsets
+from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiResponse
+from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -28,6 +30,7 @@ from accounts.api.serializers import (
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(responses=CustomUserSerializer)
     def get(self, request):
         # When called by an authenticated user, return their serialized profile.
         serializer = CustomUserSerializer(request.user)
@@ -37,6 +40,7 @@ class CurrentUserView(APIView):
 class GoogleAuthView(APIView):
     permission_classes = [AllowAny]
 
+    @extend_schema(request=inline_serializer(name="GoogleAuthRequest", fields={"token": serializers.CharField()}), responses=inline_serializer(name="GoogleAuthResponse", fields={"access": serializers.CharField(), "refresh": serializers.CharField(), "created": serializers.BooleanField(), "user": CustomUserSerializer()}))
     def post(self, request):
         token = request.data.get('token') or request.data.get('id_token')
 

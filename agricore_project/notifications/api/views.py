@@ -1,5 +1,7 @@
 from django.utils import timezone
 from rest_framework import mixins, viewsets
+from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiResponse
+from rest_framework import serializers
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -23,11 +25,13 @@ class NotificationViewSet(mixins.ListModelMixin,
             qs = qs.filter(is_read=False)
         return qs
 
+    @extend_schema(responses=inline_serializer(name="UnreadCountResponse", fields={"unread": serializers.IntegerField()}))
     @action(detail=False, methods=["get"])
     def unread_count(self, request):
         count = Notification.objects.filter(recipient=request.user, is_read=False).count()
         return Response({"unread": count})
 
+    @extend_schema(request=None, responses=NotificationSerializer)
     @action(detail=True, methods=["post"])
     def read(self, request, pk=None):
         n = self.get_object()
@@ -37,6 +41,7 @@ class NotificationViewSet(mixins.ListModelMixin,
             n.save(update_fields=["is_read", "read_at"])
         return Response(self.get_serializer(n).data)
 
+    @extend_schema(request=None, responses=inline_serializer(name="ReadAllResponse", fields={"marked_read": serializers.IntegerField()}))
     @action(detail=False, methods=["post"])
     def read_all(self, request):
         updated = Notification.objects.filter(

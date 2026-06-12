@@ -1,6 +1,8 @@
 from django.db.models import Q
 from django.utils import timezone
 from rest_framework import viewsets, status
+from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiResponse
+from rest_framework import serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.conf import settings
@@ -33,6 +35,7 @@ class EscrowViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("You can only open escrow for your own order.")
         serializer.save(buyer=self.request.user)
 
+    @extend_schema(request=None, responses=inline_serializer(name="EscrowPayResponse", fields={"checkout_link": serializers.URLField(), "tx_ref": serializers.CharField(), "amount": serializers.CharField(), "service_fee": serializers.CharField(), "currency": serializers.CharField()}))
     @action(detail=True, methods=["post"])
     def pay(self, request, pk=None):
         """Buyer starts payment for this escrow. Returns a Flutterwave checkout
@@ -89,6 +92,7 @@ class EscrowViewSet(viewsets.ModelViewSet):
             "currency": escrow.currency,
         })
 
+    @extend_schema(request=None, responses=EscrowSerializer)
     @action(detail=True, methods=["post"])
     def fund(self, request, pk=None):
         """Mark funds as held (in a real system this follows a payment webhook)."""
@@ -108,6 +112,7 @@ class EscrowViewSet(viewsets.ModelViewSet):
         escrow.save()
         return Response(self.get_serializer(escrow).data)
 
+    @extend_schema(request=None, responses=OpenApiResponse(description="Payout to the seller is initiated; the escrow flips to 'released' once Flutterwave confirms the payout via webhook."))
     @action(detail=True, methods=["post"])
     def release(self, request, pk=None):
         """Buyer confirms delivery -> pay the seller. The escrow flips to

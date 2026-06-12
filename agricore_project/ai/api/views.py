@@ -1,4 +1,6 @@
 from rest_framework import viewsets, status
+from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiResponse
+from rest_framework import serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -39,6 +41,7 @@ class DaleAIChatView(APIView):
             # If the prompt matches a greeting, do not return a hardcoded response—let the LLM generate a reply using context and user data.
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=inline_serializer(name="DaleAskRequest", fields={"prompt": serializers.CharField(), "context": serializers.JSONField(required=False), "history": serializers.JSONField(required=False)}), responses=inline_serializer(name="DaleAskResponse", fields={"reply": serializers.CharField(), "log_id": serializers.IntegerField(), "action": serializers.JSONField()}))
     def post(self, request):
         import re
         """
@@ -271,6 +274,7 @@ class CropDiagnosisView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
+    @extend_schema(request={"multipart/form-data": inline_serializer(name="CropDiagnoseRequest", fields={"image": serializers.ImageField(), "prompt": serializers.CharField(required=False), "crop": serializers.CharField(required=False)})}, responses=OpenApiResponse(description="Structured crop diagnosis (JSON)."))
     def post(self, request):
         image = request.FILES.get("image")
         if not image:

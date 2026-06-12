@@ -29,3 +29,5 @@ harden_google_auth.py
 add_api_docs.py
 
 fix_api_issues.py
+
+polish_api_docs.py
