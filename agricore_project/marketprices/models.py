@@ -10,12 +10,21 @@ class MarketPrice(models.Model):
         ("export", "Export"),
     ]
 
+    CATEGORY_CHOICES = [
+        ("crop", "Crop"),
+        ("livestock", "Livestock"),
+        ("input", "Input"),
+    ]
+
     commodity = models.CharField(max_length=100)            # e.g. "Maize"
     variety = models.CharField(max_length=100, blank=True)
     country = models.CharField(max_length=100)
     region = models.CharField(max_length=100, blank=True)
     price_type = models.CharField(
         max_length=20, choices=PRICE_TYPE_CHOICES, default="local"
+    )
+    category = models.CharField(
+        max_length=20, choices=CATEGORY_CHOICES, default="crop"
     )
     price = models.DecimalField(max_digits=12, decimal_places=2)
     currency = models.CharField(max_length=3, default="USD")

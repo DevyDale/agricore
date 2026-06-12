@@ -24,10 +24,13 @@ class MarketPriceViewSet(viewsets.ModelViewSet):
         commodity = self.request.query_params.get("commodity")
         country = self.request.query_params.get("country")
         price_type = self.request.query_params.get("price_type")
+        category = self.request.query_params.get("category")
         if commodity:
             qs = qs.filter(commodity__iexact=commodity)
         if country:
             qs = qs.filter(country__iexact=country)
         if price_type:
             qs = qs.filter(price_type=price_type)
+        if category:
+            qs = qs.filter(category__iexact=category)
         return qs
