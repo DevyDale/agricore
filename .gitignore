@@ -87,3 +87,11 @@ myenv/
 *.bak
 .phase1_backups_*/
 node_modules/
+
+.security_backup_*/
+security_fix.py
+
+.backend_backup_*/
+.security_backup_*/
+backend_p0_fix.py
+security_fix.py

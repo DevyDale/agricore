@@ -6,6 +6,7 @@ from django.contrib.auth.models import AnonymousUser
 from channels.middleware import BaseMiddleware
 from django.conf import settings
 from jwt import decode as jwt_decode
+from rest_framework_simplejwt.settings import api_settings
 
 @database_sync_to_async
 def get_user(user_id):
@@ -23,7 +24,7 @@ class JwtAuthMiddleware(BaseMiddleware):
             token = token_param[0]
             try:
                 UntypedToken(token)
-                decoded_data = jwt_decode(token, settings.SIMPLE_JWT['SIGNING_KEY'], algorithms=[settings.SIMPLE_JWT['ALGORITHM']])
+                decoded_data = jwt_decode(token, api_settings.SIGNING_KEY, algorithms=[api_settings.ALGORITHM])
                 scope['user'] = await get_user(decoded_data['user_id'])
             except (InvalidToken, TokenError):
                 scope['user'] = AnonymousUser()

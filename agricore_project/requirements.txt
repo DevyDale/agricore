@@ -3,6 +3,7 @@ djangorestframework
 drf-nested-routers
 django-environ
 django-cors-headers
+django-filter
 Pillow
 
 channels
@@ -12,9 +13,12 @@ redis
 celery
 django-celery-beat
 
-openai
+groq
 PyPDF2
 python-magic
+requests
+cloudinary
+google-auth
 
 psycopg2-binary
 djangorestframework-simplejwt
@@ -23,5 +27,3 @@ gunicorn
 dj-database-url
 python-dotenv
 whitenoise
-groq
-requestscloudinary
