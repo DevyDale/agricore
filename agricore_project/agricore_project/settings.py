@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'produce.apps.ProduceConfig',
     'utils.apps.UtilsConfig',
     'expenses.apps.ExpensesConfig',
+    'notifications.apps.NotificationsConfig',
 ]
 
 MIDDLEWARE = [

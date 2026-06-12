@@ -111,6 +111,7 @@ from logistics.api.views import (
     TransportBidViewSet,
 )
 from escrow.api.views import EscrowViewSet, FlutterwaveWebhookView, PayoutAccountViewSet
+from notifications.api.views import NotificationViewSet
 from expenses.api.views import (
     ExpenseCategoryViewSet,
     ExpenseViewSet,
@@ -123,6 +124,7 @@ router.register(r'crop-cycles', CropCycleViewSet, basename='cropcycle')
 
 # Accounts
 router.register(r'users', CustomUserViewSet, basename='user')
+router.register(r'notifications', NotificationViewSet, basename='notification')
 router.register(r'attachments', AttachmentViewSet, basename='attachment')
 router.register(r'digital-wallets', DigitalWalletViewSet, basename='digitalwallet')
 router.register(r'specialized-professionals', SpecializedProfessionalViewSet, basename='specializedprofessional')
