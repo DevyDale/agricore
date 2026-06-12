@@ -8,6 +8,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True},
             'last_login': {'read_only': True},
+            'is_verified': {'read_only': True},
             'role': {'required': False, 'allow_null': True}  # ← THIS LINE WAS MISSING
         }
 

@@ -244,7 +244,6 @@ urlpatterns = [
     path('dashboard/', include('analytics.urls', namespace='analytics')),
     # Livestock and Crops views
     path('livestock/', include('livestock.urls', namespace='livestock')),
-    path('crops/', include('crops.urls', namespace='crops')),
 
     # Farm finance view
     path('analytics/finances/', __import__('analytics.views').views.farm_finance_list, name='farm_finance_list'),

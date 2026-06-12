@@ -27,3 +27,5 @@ complete_payments.py
 harden_google_auth.py
 
 add_api_docs.py
+
+fix_api_issues.py
