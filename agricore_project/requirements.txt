@@ -27,3 +27,4 @@ gunicorn
 dj-database-url
 python-dotenv
 whitenoise
+drf-spectacular

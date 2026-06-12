@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'drf_spectacular',
     'rest_framework_simplejwt',
     'corsheaders',
     'channels',
@@ -202,3 +203,18 @@ GOOGLE_OAUTH_CLIENT_IDS = env.list(
     default=['488596909366-vd5s2k861kn6g1v8e8f3u81eig3h2q2c.apps.googleusercontent.com'],
 )
 
+
+
+# ==================== API DOCS (drf-spectacular) ====================
+REST_FRAMEWORK['DEFAULT_SCHEMA_CLASS'] = 'drf_spectacular.openapi.AutoSchema'
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Agricore API',
+    'DESCRIPTION': (
+        'Backend API for the Agricore agricultural commerce platform: '
+        'farms, crops, livestock, inventory, marketplace, escrow payments, '
+        'market prices, logistics, workforce, AI, and notifications.'
+    ),
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
