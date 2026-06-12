@@ -110,6 +110,12 @@ from logistics.api.views import (
     TransportBidViewSet,
 )
 from escrow.api.views import EscrowViewSet
+from expenses.api.views import (
+    ExpenseCategoryViewSet,
+    ExpenseViewSet,
+    ExpenseEventViewSet,
+    ExpensePaymentViewSet,
+)
 
 router = DefaultRouter()
 router.register(r'crop-cycles', CropCycleViewSet, basename='cropcycle')
@@ -186,6 +192,12 @@ router.register(r'vehicles', VehicleViewSet, basename='vehicle')
 router.register(r'transport-requests', TransportRequestViewSet, basename='transportrequest')
 router.register(r'transport-bids', TransportBidViewSet, basename='transportbid')
 router.register(r'escrows', EscrowViewSet, basename='escrow')
+
+# Expenses
+router.register(r'expense-categories', ExpenseCategoryViewSet, basename='expensecategory')
+router.register(r'expenses', ExpenseViewSet, basename='expense')
+router.register(r'expense-events', ExpenseEventViewSet, basename='expenseevent')
+router.register(r'expense-payments', ExpensePaymentViewSet, basename='expensepayment')
 
 # -------------------------------------------------------------------
 # NESTED ROUTER: PRODUCE UNDER FARMS
