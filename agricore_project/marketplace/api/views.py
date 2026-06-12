@@ -219,7 +219,9 @@ class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.queryset.filter(buyer=self.request.user)  # Or store__owner for sellers
+        user = self.request.user
+        # Buyers see orders they placed; sellers see orders to stores they own.
+        return self.queryset.filter(Q(buyer=user) | Q(store__owner=user)).distinct()
 
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all()
@@ -227,7 +229,10 @@ class OrderItemViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.queryset.filter(order__buyer=self.request.user)
+        user = self.request.user
+        return self.queryset.filter(
+            Q(order__buyer=user) | Q(order__store__owner=user)
+        ).distinct()
 
     def perform_create(self, serializer):
         order = serializer.validated_data.get('order')
@@ -241,7 +246,10 @@ class PaymentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.queryset.filter(order__buyer=self.request.user)
+        user = self.request.user
+        return self.queryset.filter(
+            Q(order__buyer=user) | Q(order__store__owner=user)
+        ).distinct()
 
     def perform_create(self, serializer):
         order = serializer.validated_data.get('order')
@@ -255,12 +263,19 @@ class ShippingViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.queryset.filter(order__buyer=self.request.user)
+        user = self.request.user
+        return self.queryset.filter(
+            Q(order__buyer=user) | Q(order__store__owner=user)
+        ).distinct()
 
     def perform_create(self, serializer):
+        # Sellers fulfill shipping; buyers may also create it for their own orders.
         order = serializer.validated_data.get('order')
-        if order is None or order.buyer_id != self.request.user.id:
-            raise PermissionDenied("You can only add shipping to your own orders.")
+        if order is None or (
+            order.buyer_id != self.request.user.id
+            and order.store.owner_id != self.request.user.id
+        ):
+            raise PermissionDenied("You can only manage shipping for your own orders.")
         serializer.save()
 
 class AdvertisementViewSet(viewsets.ModelViewSet):
