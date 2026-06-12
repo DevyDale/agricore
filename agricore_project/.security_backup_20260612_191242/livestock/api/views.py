@@ -26,11 +26,6 @@ class AnimalReproductiveRecordViewSet(viewsets.ModelViewSet):
     serializer_class = AnimalReproductiveRecordSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        return self.queryset.filter(
-            animal__livestock_unit__field__farm__owner=self.request.user
-        )
-
 class LivestockTaskViewSet(viewsets.ModelViewSet):
     queryset = LivestockTask.objects.all()
     serializer_class = LivestockTaskSerializer
@@ -43,11 +38,6 @@ class LivestockEmployeeAssignmentViewSet(viewsets.ModelViewSet):
     queryset = LivestockEmployeeAssignment.objects.all()
     serializer_class = LivestockEmployeeAssignmentSerializer
     permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return self.queryset.filter(
-            livestock_task__livestock_unit__field__farm__owner=self.request.user
-        )
 
 class LivestockExpenseViewSet(viewsets.ModelViewSet):
     queryset = LivestockExpense.objects.all()

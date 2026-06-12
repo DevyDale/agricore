@@ -9,14 +9,6 @@ class CropCycleViewSet(viewsets.ModelViewSet):
 	serializer_class = CropCycleSerializer
 	permission_classes = [IsAuthenticated]
 
-	def get_queryset(self):
-		from django.db.models import Q
-		user = self.request.user
-		# Cycles on the user's farms, plus unassigned units (field is null)
-		return self.queryset.filter(
-			Q(crop_unit__field__farm__owner=user) | Q(crop_unit__field__isnull=True)
-		)
-
 
 
 

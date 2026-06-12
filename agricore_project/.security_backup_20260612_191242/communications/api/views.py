@@ -55,11 +55,6 @@ class ConversationParticipantViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationParticipantSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        return self.queryset.filter(
-            conversation__participants__user=self.request.user
-        ).distinct()
-
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer

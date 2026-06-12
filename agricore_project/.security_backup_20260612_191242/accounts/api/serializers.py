@@ -33,13 +33,11 @@ class AttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attachment
         fields = '__all__'
-        read_only_fields = ['uploaded_by']
 
 class DigitalWalletSerializer(serializers.ModelSerializer):
     class Meta:
         model = DigitalWallet
         fields = '__all__'
-        read_only_fields = ['user']
 
 class SpecializedProfessionalSerializer(serializers.ModelSerializer):
     profile_image_display = serializers.SerializerMethodField(read_only=True)
@@ -47,7 +45,6 @@ class SpecializedProfessionalSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpecializedProfessional
         fields = '__all__'
-        read_only_fields = ['user']
     
     def get_profile_image_display(self, obj):
         """Return absolute URL for profile image (from file or URL field)"""
@@ -64,10 +61,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
-        read_only_fields = ['user']
 
 class OnboardingProgressSerializer(serializers.ModelSerializer):
     class Meta:
         model = OnboardingProgress
         fields = '__all__'
-        read_only_fields = ['user']

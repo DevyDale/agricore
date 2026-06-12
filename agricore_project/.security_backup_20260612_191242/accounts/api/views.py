@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, AllowAny, BasePermission, SAFE_METHODS
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from google.oauth2 import id_token
 from google.auth.transport import requests
@@ -96,14 +96,6 @@ class GoogleAuthView(APIView):
             )
 
 
-class IsOwnerOrReadOnly(BasePermission):
-    """Read for any authenticated user; write only for the object's owner."""
-    def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS:
-            return True
-        return getattr(obj, 'user_id', None) == request.user.id
-
-
 class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
@@ -113,25 +105,11 @@ class CustomUserViewSet(viewsets.ModelViewSet):
             return [AllowAny()]  # Allow unauthenticated POST
         return [IsAuthenticated()]  # Require auth for other actions
 
-    def get_queryset(self):
-        user = self.request.user
-        if not user.is_authenticated:
-            return CustomUser.objects.none()
-        if user.is_staff:
-            return CustomUser.objects.all()
-        return CustomUser.objects.filter(pk=user.pk)
-
 
 class AttachmentViewSet(viewsets.ModelViewSet):
     queryset = Attachment.objects.all()
     serializer_class = AttachmentSerializer
     permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Attachment.objects.filter(uploaded_by=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(uploaded_by=self.request.user)
 
 
 class DigitalWalletViewSet(viewsets.ModelViewSet):
@@ -139,44 +117,23 @@ class DigitalWalletViewSet(viewsets.ModelViewSet):
     serializer_class = DigitalWalletSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        return DigitalWallet.objects.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
 
 class SpecializedProfessionalViewSet(viewsets.ModelViewSet):
-    # Public professional directory: anyone authenticated can read,
-    # but only the owner can edit/delete their own profile.
     queryset = SpecializedProfessional.objects.all()
     serializer_class = SpecializedProfessionalSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    permission_classes = [IsAuthenticated]
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    # Reviews are publicly readable, but only the author can edit/delete.
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    permission_classes = [IsAuthenticated]
 
 
 class OnboardingProgressViewSet(viewsets.ModelViewSet):
     queryset = OnboardingProgress.objects.all()
     serializer_class = OnboardingProgressSerializer
     permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return OnboardingProgress.objects.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
 from django.shortcuts import render
 from django.views.generic import TemplateView
