@@ -191,8 +191,8 @@ class FlutterwaveWebhookView(APIView):
             return Response({"detail": "invalid signature"}, status=status.HTTP_401_UNAUTHORIZED)
 
         payload = request.data or {}
-        data = payload.get("data") or {}
-        tx_ref = data.get("tx_ref") or data.get("reference")
+        data = payload.get("data") or payload
+        tx_ref = data.get("tx_ref") or data.get("txRef") or data.get("reference")
         flw_id = data.get("id")
         if not tx_ref:
             return Response({"detail": "no tx_ref"}, status=status.HTTP_200_OK)
