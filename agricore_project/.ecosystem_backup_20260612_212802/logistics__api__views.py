@@ -1,30 +1,12 @@
 from django.db.models import Q
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
+from rest_framework.permissions import IsAuthenticated
 from logistics.models import Vehicle, TransportRequest, TransportBid
 from .serializers import (
     VehicleSerializer,
     TransportRequestSerializer,
     TransportBidSerializer,
 )
-
-
-class IsRequesterOrReadOnly(BasePermission):
-    """Read for anyone allowed to see it; write only for the request's owner."""
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS:
-            return True
-        return obj.requester_id == request.user.id
-
-
-class IsBidderOrReadOnly(BasePermission):
-    """Read for anyone allowed to see it; write only for the bidding transporter."""
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS:
-            return True
-        return obj.transporter_id == request.user.id
 
 
 class VehicleViewSet(viewsets.ModelViewSet):
@@ -42,7 +24,7 @@ class VehicleViewSet(viewsets.ModelViewSet):
 class TransportRequestViewSet(viewsets.ModelViewSet):
     queryset = TransportRequest.objects.all()
     serializer_class = TransportRequestSerializer
-    permission_classes = [IsAuthenticated, IsRequesterOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # Requesters see their own requests; transporters see open requests
@@ -59,7 +41,7 @@ class TransportRequestViewSet(viewsets.ModelViewSet):
 class TransportBidViewSet(viewsets.ModelViewSet):
     queryset = TransportBid.objects.all()
     serializer_class = TransportBidSerializer
-    permission_classes = [IsAuthenticated, IsBidderOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # A transporter sees their own bids; a requester sees bids placed

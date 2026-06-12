@@ -12,9 +12,6 @@ class EscrowViewSet(viewsets.ModelViewSet):
     queryset = Escrow.objects.all()
     serializer_class = EscrowSerializer
     permission_classes = [IsAuthenticated]
-    # Financial records: only safe reads and POST (create + fund/release actions).
-    # No raw PUT/PATCH/DELETE — status changes go through fund() / release() only.
-    http_method_names = ["get", "post", "head", "options"]
 
     def get_queryset(self):
         # Visible to the buyer and to the seller (store owner) on the order.
@@ -24,10 +21,6 @@ class EscrowViewSet(viewsets.ModelViewSet):
         ).distinct()
 
     def perform_create(self, serializer):
-        order = serializer.validated_data.get("order")
-        if order is not None and getattr(order, "buyer_id", None) != self.request.user.id:
-            from rest_framework.exceptions import PermissionDenied
-            raise PermissionDenied("You can only open escrow for your own order.")
         serializer.save(buyer=self.request.user)
 
     @action(detail=True, methods=["post"])
