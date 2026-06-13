@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from communications.models import Conversation, ConversationParticipant, Message
 from .serializers import ConversationSerializer, ConversationParticipantSerializer, MessageSerializer
-from marketplace.models import Product
+from marketplace.models import Product, Store
 
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
@@ -50,6 +50,37 @@ class ConversationViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(convo)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['post'], url_path='start-store-chat')
+    def start_store_chat(self, request):
+        """Create or return a conversation between the current user and a store owner."""
+        store_id = request.data.get('store')
+        if not store_id:
+            return Response({'detail': 'store is required'}, status=400)
+        try:
+            store = Store.objects.select_related('owner').get(id=store_id)
+        except Store.DoesNotExist:
+            return Response({'detail': 'Store not found'}, status=404)
+
+        user = request.user
+        owner = store.owner
+        title = f"Store: {store.name}"
+
+        convo = (Conversation.objects
+                 .filter(title=title, participants__user=user)
+                 .filter(participants__user=owner)
+                 .first())
+
+        if not convo:
+            convo = Conversation.objects.create(title=title)
+            parts = [ConversationParticipant(conversation=convo, user=user)]
+            if owner and owner != user:
+                parts.append(ConversationParticipant(conversation=convo, user=owner))
+            ConversationParticipant.objects.bulk_create(parts)
+
+        serializer = self.get_serializer(convo)
+        return Response(serializer.data)
+
+
 class ConversationParticipantViewSet(viewsets.ModelViewSet):
     queryset = ConversationParticipant.objects.all()
     serializer_class = ConversationParticipantSerializer
@@ -66,4 +97,8 @@ class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.queryset.filter(conversation__participants__user=self.request.user)
+        qs = self.queryset.filter(conversation__participants__user=self.request.user)
+        conversation_id = self.request.query_params.get('conversation')
+        if conversation_id:
+            qs = qs.filter(conversation_id=conversation_id)
+        return qs

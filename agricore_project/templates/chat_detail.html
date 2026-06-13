@@ -74,8 +74,8 @@
         const convId = urlParams.get('id');
         async function loadMessages() {
             try {
-                const response = await fetch(`/api/communications/messages/?conversation=${convId}`, {
-                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+                const response = await fetch(`/api/messages/?conversation=${convId}`, {
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('access_token') }
                 });
                 const messages = await response.json();
                 const list = document.getElementById('messages-list');
@@ -93,9 +93,9 @@
             const content = document.getElementById('message-input').value;
             if (content) {
                 try {
-                    await fetch('/api/communications/messages/', {
+                    await fetch('/api/messages/', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('access_token') },
                         body: JSON.stringify({ conversation: convId, content }),
                     });
                     document.getElementById('message-input').value = '';
@@ -121,13 +121,13 @@
                 const query = e.target.value;
                 document.getElementById('ai-response').textContent = 'Processing...';
                 try {
-                    const response = await fetch('/api/ai/', {
+                    const response = await fetch('/api/ai/dale/ask/', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('access_token') },
                         body: JSON.stringify({ prompt: query }),
                     });
                     const data = await response.json();
-                    document.getElementById('ai-response').textContent = data.response || 'No response';
+                    document.getElementById('ai-response').textContent = data.reply || 'No response';
                 } catch (error) {
                     document.getElementById('ai-response').textContent = 'Error: ' + error.message;
                 }
