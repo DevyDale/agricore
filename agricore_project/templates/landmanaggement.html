@@ -920,7 +920,7 @@ document.getElementById('close-farm-details-dialog').addEventListener('click', f
     document.getElementById('farm-details-dialog').classList.add('hidden');
 });
 const token = localStorage.getItem('access_token');
-const API_BASE = 'http://127.0.0.1:8000/api';
+const API_BASE = '/api';
 let farmId = new URLSearchParams(window.location.search).get('id');
 
 async function loadFarmDetails() {

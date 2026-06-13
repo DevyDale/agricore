@@ -867,7 +867,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     return;
                                 }
                                 try {
-                                    const res = await fetch(`http://127.0.0.1:8000/api/farms/${farmId}/produce-collections/`, {
+                                    const res = await fetch(`/api/farms/${farmId}/produce-collections/`, {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json',
@@ -1142,7 +1142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         unitsTableWrapper.innerHTML = '<div class="text-red-600 font-semibold p-4">You are not logged in. <a href="/login/" class="underline text-emerald-700">Log in</a> to view livestock units.</div>';
         return;
     }
-    fetch('http://127.0.0.1:8000/api/livestock-units/', {
+    fetch('/api/livestock-units/', {
         headers: { 'Authorization': 'Bearer ' + token }
     })
     .then(res => {
@@ -1358,7 +1358,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                                                                     animal_id: unit.id,
                                                                                     animal_name: unit.unit_name
                                                                                 };
-                                                                                const res = await fetch(`http://127.0.0.1:8000/api/farms/${farmId}/produce-collections/`, {
+                                                                                const res = await fetch(`/api/farms/${farmId}/produce-collections/`, {
                                                                                     method: 'POST',
                                                                                     headers: {
                                                                                         'Content-Type': 'application/json',
@@ -1372,7 +1372,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                                                                 }
                                                                                 // PATCH livestock unit to reduce produce_quantity
                                                                                 const newQuantity = availableQuantity - quantityToTransfer;
-                                                                                const patchRes = await fetch(`http://127.0.0.1:8000/api/livestock-units/${unit.id}/`, {
+                                                                                const patchRes = await fetch(`/api/livestock-units/${unit.id}/`, {
                                                                                     method: 'PATCH',
                                                                                     headers: {
                                                                                         'Content-Type': 'application/json',
@@ -1450,7 +1450,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         }
                                         const token = localStorage.getItem('access_token');
                                         try {
-                                            const res = await fetch(`http://127.0.0.1:8000/api/livestock-units/${unit.id}/`, {
+                                            const res = await fetch(`/api/livestock-units/${unit.id}/`, {
                                                 method: 'PATCH',
                                                 headers: {
                                                     'Content-Type': 'application/json',
@@ -1481,7 +1481,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     }
                                     const token = localStorage.getItem('access_token');
                                     try {
-                                        const res = await fetch(`http://127.0.0.1:8000/api/livestock-units/${unit.id}/`, {
+                                        const res = await fetch(`/api/livestock-units/${unit.id}/`, {
                                             method: 'PATCH',
                                             headers: {
                                                 'Content-Type': 'application/json',
