@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.9/axios.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.5.13/vue.global.prod.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
@@ -119,6 +118,10 @@
     .field .toggle-pw:hover{color:var(--s600)}
     .field .toggle-pw svg{width:20px;height:20px}
 
+    /* create-account: two-column username+email so it stays the sign-in height */
+    .su-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 .8rem}
+    @media (max-width:560px){ .su-grid{grid-template-columns:1fr} }
+
     .submit{position:relative;overflow:hidden;width:100%;height:54px;margin-top:.4rem;border:0;border-radius:var(--r);cursor:pointer;
       background:linear-gradient(135deg,var(--g500),var(--g700));color:#fff;font:700 1.02rem 'Inter',sans-serif;
       box-shadow:0 14px 28px -10px rgba(5,150,105,.6);transition:transform .2s, box-shadow .2s}
@@ -130,7 +133,7 @@
     .submit.busy .lbl{opacity:0}.submit.busy .spin{display:block}
     @keyframes spin{to{transform:rotate(360deg)}}
 
-    .legal{margin-top:1.3rem;text-align:center;font-size:.82rem;color:var(--s400);line-height:1.5}
+    .legal{margin-top:1rem;text-align:center;font-size:.8rem;color:var(--s400);line-height:1.5}
     .legal a{color:var(--g700);font-weight:600;text-decoration:none;cursor:pointer}
 
     .form-shell{position:relative;transition:height .34s cubic-bezier(.4,0,.2,1);min-height:0}
@@ -282,15 +285,21 @@
             </form>
 
             <form class="authform" :class="{active:mode==='signup'}" :inert="mode!=='signup'" ref="signupForm" @submit.prevent="register" autocomplete="on">
-              <label class="fl" for="su-user" v-text="t('l_user')"></label>
-              <div class="field">
-                <svg class="ic fico" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <input id="su-user" type="text" v-model="signup.username" :placeholder="t('ph_user_signup')" autocomplete="username" required />
-              </div>
-              <label class="fl" for="su-email" v-text="t('l_email')"></label>
-              <div class="field">
-                <svg class="ic fico" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                <input id="su-email" type="email" v-model="signup.email" :placeholder="t('ph_email')" autocomplete="email" required />
+              <div class="su-grid">
+                <div>
+                  <label class="fl" for="su-user" v-text="t('l_user')"></label>
+                  <div class="field">
+                    <svg class="ic fico" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <input id="su-user" type="text" v-model="signup.username" :placeholder="t('ph_user_signup')" autocomplete="username" required />
+                  </div>
+                </div>
+                <div>
+                  <label class="fl" for="su-email" v-text="t('l_email')"></label>
+                  <div class="field">
+                    <svg class="ic fico" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    <input id="su-email" type="email" v-model="signup.email" :placeholder="t('ph_email')" autocomplete="email" required />
+                  </div>
+                </div>
               </div>
               <label class="fl" for="su-pass" v-text="t('l_pass')"></label>
               <div class="field">
@@ -329,6 +338,14 @@
     };
     function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
     function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+    async function apiPost(url, body){
+      let res;
+      try{ res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) }); }
+      catch(e){ const err=new Error('network'); err.data={detail:'Cannot reach the server. Make sure it is running.'}; throw err; }
+      let data=null; try{ data = await res.json(); }catch(e){}
+      if(!res.ok){ const err=new Error('http '+res.status); err.status=res.status; err.data=data; throw err; }
+      return data;
+    }
     const GOOGLE_CLIENT_ID = '971117362434-eip5e1hqarqhsed65ne29qcsbjjkcth4.apps.googleusercontent.com';
 
     /* ---- procedural farmland mosaic ---- */
@@ -388,7 +405,13 @@
         setInterval(()=>{ this.tkSwap=true; setTimeout(()=>{ this.tk=(this.tk+1)%3; this.tkSwap=false; },380); }, 3600);
       },
       methods:{
-        setShellH(){ this.$nextTick(()=>{ const el = this.mode==='login' ? this.$refs.loginForm : this.$refs.signupForm; if(el) this.shellH = el.scrollHeight + 'px'; }); },
+        // Lock the shell to the taller of the two forms so it stays one size
+        // across both tabs (no expand/contract when switching).
+        setShellH(){ this.$nextTick(()=>{
+          const a=this.$refs.loginForm, b=this.$refs.signupForm;
+          const h=Math.max(a?a.scrollHeight:0, b?b.scrollHeight:0);
+          if(h) this.shellH = h + 'px';
+        }); },
         orWord(){ return ({en:'or',fr:'ou',es:'o',pt:'ou',sw:'au',ar:'أو'})[this.lang] || 'or'; },
         initGoogle(tries=0){
           if(window.google && window.google.accounts && window.google.accounts.id){
@@ -412,11 +435,11 @@
         onGoogle(resp){
           if(!resp || !resp.credential){ this.showToast(this.t('t_badlogin')); return; }
           this.isGoogle=true;
-          axios.post('/api/auth/google/', { token:resp.credential })
-            .then(res=>{ lsSet('access_token',res.data.access); lsSet('refresh_token',res.data.refresh);
-              this.showToast(res.data.created ? this.t('t_created') : this.t('t_welcome'), true); this.finishAndRedirect(); })
+          apiPost('/api/auth/google/', { token:resp.credential })
+            .then(res=>{ lsSet('access_token',res.access); lsSet('refresh_token',res.refresh);
+              this.showToast(res.created ? this.t('t_created') : this.t('t_welcome'), true); this.finishAndRedirect(); })
             .catch(err=>{ this.isGoogle=false;
-              const d=err.response && err.response.data;
+              const d=err.data;
               this.showToast((d && (d.detail||d.error)) || this.t('t_badlogin')); });
         },
         t(key){ const d=DICT[this.lang]; return (d && d[key]) || DICT.en[key] || key; },
@@ -435,12 +458,12 @@
         async register(){
           if(this.isSigningUp) return; this.isSigningUp=true;
           try{
-            await axios.post('/api/users/', { username:this.signup.username, email:this.signup.email, password:this.signup.password });
-            const tok=await axios.post('/api/auth/token/', { username:this.signup.username, password:this.signup.password });
-            lsSet('access_token', tok.data.access); lsSet('refresh_token', tok.data.refresh);
+            await apiPost('/api/users/', { username:this.signup.username, email:this.signup.email, password:this.signup.password });
+            const tok=await apiPost('/api/auth/token/', { username:this.signup.username, password:this.signup.password });
+            lsSet('access_token', tok.access); lsSet('refresh_token', tok.refresh);
             this.showToast(this.t('t_created'), true); this.finishAndRedirect();
           }catch(err){
-            const data=err.response && err.response.data;
+            const data=err.data;
             this.showToast(data ? Object.values(data).flat().join(' ') : this.t('t_regfail'));
           }finally{ this.isSigningUp=false; }
         },
@@ -448,11 +471,11 @@
           if(!this.login.username || !this.login.password){ this.showToast(this.t('t_need')); return; }
           if(this.isLoggingIn) return; this.isLoggingIn=true;
           try{
-            const res=await axios.post('/api/auth/token/', { username:this.login.username, password:this.login.password });
-            lsSet('access_token', res.data.access); lsSet('refresh_token', res.data.refresh);
+            const res=await apiPost('/api/auth/token/', { username:this.login.username, password:this.login.password });
+            lsSet('access_token', res.access); lsSet('refresh_token', res.refresh);
             this.showToast(this.t('t_welcome'), true); this.finishAndRedirect();
           }catch(err){
-            this.showToast((err.response && err.response.data && err.response.data.detail) || this.t('t_badlogin'));
+            this.showToast((err.data && err.data.detail) || this.t('t_badlogin'));
           }finally{ this.isLoggingIn=false; }
         }
       }
