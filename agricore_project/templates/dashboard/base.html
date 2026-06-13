@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
-{# ============================================================
+{% comment %}
    AGRICORE — SHARED DASHBOARD SHELL
    Carries the real product identity (welcome/landing/auth) so
    every dashboard page inherits it. Child pages extend this and
-   fill {% block dashboard_content %}. Non-breaking: same block.
-   ============================================================ #}
+   fill the dashboard_content block. Non-breaking: same block.
+{% endcomment %}
 {% block content %}
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
