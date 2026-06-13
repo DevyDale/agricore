@@ -4,615 +4,265 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-    * {
-        font-family: 'Inter', system-ui, sans-serif;
-    }
+    * { font-family: 'Inter', system-ui, sans-serif; }
     h1, h2, h3, .font-display { font-family: 'Fraunces', serif; letter-spacing: -.01em; }
     body { background: radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f4efe3 62%); min-height: 100vh; }
 
-    /* Header section with green theme */
-    .page-header {
-        background: linear-gradient(120deg, #0c3d22 0%, #1f5a32 55%, #2f6b3c 100%);
-        border-radius: 1.5rem;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 18px 40px -22px rgba(8, 30, 18, 0.7);
-        position: relative;
-        overflow: hidden;
-    }
-    #lm-farmland { position: absolute; inset: -2%; z-index: 0; }
-    #lm-farmland svg { width: 100%; height: 100%; }
-    .lm-scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(100deg, rgba(8,30,18,.84), rgba(8,30,18,.5)); }
-    .page-header > .mb-4, .page-header > #farm-details-bar { position: relative; z-index: 2; }
-
-    .header-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
+    :root{
+        --g500:#10b981; --g600:#059669; --g700:#047857; --g900:#064e3b;
+        --line:#ece4d6; --ink:#16271c; --cream:#faf6ee; --parch:#f4efe3; --muted:#6b7280;
     }
 
-    .header-btn {
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        color: white;
-        font-weight: 700;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.875rem;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        cursor: pointer;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
+    /* ===== Hero ===== */
+    .lm-hero{
+        position:relative; overflow:hidden; border-radius:1.5rem;
+        padding:2.25rem 2rem; margin-bottom:1.75rem;
+        background:linear-gradient(120deg,#0c3d22 0%,#1f5a32 55%,#2f6b3c 100%);
+        box-shadow:0 22px 48px -26px rgba(8,30,18,.7);
     }
+    #lm-farmland{ position:absolute; inset:-2%; z-index:0; }
+    #lm-farmland svg{ width:100%; height:100%; }
+    .lm-scrim{ position:absolute; inset:0; z-index:1;
+        background:
+          radial-gradient(120% 160% at 85% -30%, rgba(255,214,138,.40), rgba(255,214,138,0) 45%),
+          linear-gradient(100deg, rgba(8,30,18,.86), rgba(8,30,18,.5)); }
+    .lm-hero-inner{ position:relative; z-index:2; }
+    .lm-hero-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; }
+    .lm-eyebrow{ font-size:.72rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:.45rem; }
+    .lm-eyebrow.dark{ color:var(--g600); }
+    .lm-title{ font-size:2rem; font-weight:800; color:#fff; display:flex; align-items:center; gap:.6rem; line-height:1.05; margin:0; }
+    .lm-title i{ color:#ffd98a; font-size:1.5rem; }
+    #farm-title-brackets{ font-family:'Inter',sans-serif; font-size:1.02rem; font-weight:600; color:rgba(255,255,255,.82); letter-spacing:0; }
+    .lm-sub{ color:rgba(255,255,255,.78); margin-top:.55rem; max-width:52ch; }
+    .lm-ghost-btn{ background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; font-weight:700; padding:.7rem 1.2rem; border-radius:.85rem; cursor:pointer; display:inline-flex; align-items:center; gap:.5rem; backdrop-filter:blur(6px); transition:all .2s; white-space:nowrap; }
+    .lm-ghost-btn:hover{ background:rgba(255,255,255,.24); border-color:rgba(255,255,255,.5); transform:translateY(-2px); }
+    .lm-chip{ display:inline-flex; align-items:center; gap:.6rem; margin-top:1.5rem; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.26); backdrop-filter:blur(6px); padding:.6rem 1.1rem; border-radius:999px; color:#fff; }
+    .lm-chip i{ color:#ffd98a; }
+    .lm-chip .k{ font-size:.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:rgba(255,255,255,.7); }
+    .lm-chip .v{ font-family:'Fraunces',serif; font-weight:800; font-size:1.05rem; }
 
-    .header-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        border-color: rgba(255, 255, 255, 0.5);
-        transform: translateY(-2px);
+    /* ===== Page padding ===== */
+    .lm-page{ padding:1.5rem 1.75rem 2.5rem; max-width:1440px; margin:0 auto; }
+    @media (max-width:640px){ .lm-page{ padding:1rem 1rem 2rem; } }
+
+    /* ===== Dashboard grid ===== */
+    .lm-grid{ display:grid; grid-template-columns:1fr 360px; gap:1.5rem; align-items:start; }
+    .lm-aside{ position:sticky; top:1.25rem; }
+    @media (max-width:1024px){ .lm-grid{ grid-template-columns:1fr; } .lm-aside{ position:static; } }
+
+    .lm-sec-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:1rem; margin-bottom:1.1rem; flex-wrap:wrap; }
+    .lm-h2{ font-size:1.5rem; font-weight:800; color:var(--ink); display:flex; align-items:center; gap:.55rem; margin:0; }
+    .lm-h2 i{ color:var(--g500); }
+    .lm-h2.sm{ font-size:1.2rem; }
+
+    /* ===== Primary button ===== */
+    .btn-primary{
+        background:linear-gradient(135deg, var(--g500), var(--g700)); color:#fff; font-weight:700;
+        padding:.8rem 1.5rem; border-radius:.85rem; border:none; cursor:pointer;
+        transition:all .3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 6px 16px rgba(5,95,70,.26);
+        display:inline-flex; align-items:center; gap:.5rem; font-size:.95rem;
     }
+    .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 10px 24px rgba(5,95,70,.4); }
 
-    /* Quick statistics cards */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+    /* ===== Form inputs (dialogs) ===== */
+    .input-field{ background:#fffdf8; border:1.5px solid var(--line); color:var(--ink); border-radius:.75rem; padding:.75rem 1rem; font-size:.9375rem; transition:all .2s; font-weight:500; width:100%; }
+    .input-field:focus{ outline:none; border-color:var(--g500); background:#fff; box-shadow:0 0 0 4px rgba(16,185,129,.12); }
+    .form-label{ display:block; font-weight:700; color:#475569; margin-bottom:.5rem; font-size:.875rem; }
+    .form-label i{ color:var(--g500); margin-right:.5rem; }
+
+    /* ===== Land allocation panel ===== */
+    .alloc-card{ background:#fff; border:1px solid var(--line); border-radius:1.25rem; padding:1.6rem; box-shadow:0 12px 34px -26px rgba(20,40,25,.55); }
+    .alloc-grid{ display:flex; flex-wrap:wrap; gap:1.4rem; align-items:center; margin-top:1rem; }
+    .alloc-ring{ flex:none; width:100%; text-align:center; }
+    .alloc-ring .lbl{ margin-top:.4rem; font-size:.72rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+    .alloc-body{ flex:1; min-width:200px; }
+    .alloc-bar{ display:flex; height:30px; border-radius:10px; overflow:hidden; background:#f2ecdf; border:1px solid var(--line); }
+    .alloc-bar .seg{ height:100%; transition:width .6s cubic-bezier(.2,.8,.2,1); }
+    .alloc-bar .seg.avail{ background:repeating-linear-gradient(45deg,#efe7d6,#efe7d6 7px,#e7dcc6 7px,#e7dcc6 14px); }
+    .alloc-legend{ display:grid; grid-template-columns:1fr 1fr; gap:1rem 1.25rem; margin-top:1.2rem; }
+    .alloc-fig .n{ font-family:'Fraunces',serif; font-size:1.5rem; font-weight:800; color:var(--ink); line-height:1; }
+    .alloc-fig .k{ font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin-top:.35rem; }
+    .alloc-fig .dot{ display:inline-block; width:9px; height:9px; border-radius:3px; margin-right:.4rem; vertical-align:middle; }
+
+    /* ===== Land portion plot tiles ===== */
+    .plot-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:1.1rem; }
+    .plot-tile{ position:relative; border:1px solid var(--line); border-radius:1rem; overflow:hidden; background:#fff; box-shadow:0 10px 26px -22px rgba(20,40,25,.5); transition:transform .25s, box-shadow .25s; }
+    .plot-tile:hover{ transform:translateY(-4px); box-shadow:0 20px 38px -22px rgba(5,120,80,.42); }
+    .plot-tile .field{ height:88px; position:relative; }
+    .plot-tile .field::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(0,0,0,.12)); }
+    .plot-tile .field .sz{ position:absolute; right:.6rem; bottom:.55rem; z-index:2; background:rgba(8,30,18,.62); color:#fff; font-weight:700; font-size:.78rem; padding:.18rem .6rem; border-radius:999px; }
+    .plot-tile .meta{ padding:.9rem 1rem 1.05rem; }
+    .plot-tile .nm{ font-family:'Fraunces',serif; font-weight:700; font-size:1.05rem; color:var(--ink); }
+    .plot-tile .sub{ font-size:.8rem; color:var(--muted); margin-top:.15rem; }
+    .plot-tile .tags{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.7rem; }
+    .lp-badge{ font-size:.68rem; font-weight:700; padding:.22rem .6rem; border-radius:999px; letter-spacing:.02em; }
+    .lp-badge.use{ background:#e7f4ec; color:#0f7a4b; border:1px solid #cdead8; }
+    .lp-badge.soil{ background:#f6efe1; color:#8a6d2f; border:1px solid #e8d8b8; }
+    .lp-badge.status{ background:#eef2f7; color:#475569; border:1px solid #dde4ec; }
+    .plot-empty{ border:2px dashed #e3d9c6; border-radius:1rem; padding:3rem 2rem; text-align:center; background:#fbf7ee; }
+
+    @media (max-width:768px){
+        .lm-hero{ padding:1.6rem 1.25rem; }
+        .lm-title{ font-size:1.6rem; }
+        .lm-ghost-btn{ width:100%; justify-content:center; }
     }
-
-    .stat-card {
-        background: white;
-        border: 1px solid #f1f5f9;
-        border-radius: 1.25rem;
-        padding: 1.5rem;
-        text-align: center;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    }
-
-    .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.12);
-        border-color: #10b981;
-    }
-
-    .stat-icon {
-        font-size: 2rem;
-        margin-bottom: 0.75rem;
-    }
-
-    .stat-value {
-        font-size: 2rem;
-        font-weight: 900;
-        color: #1e293b;
-        margin-bottom: 0.25rem;
-    }
-
-    .stat-label {
-        font-size: 0.8125rem;
-        font-weight: 700;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    /* View mode section */
-    .view-mode-section {
-        background: white;
-        border-radius: 1.25rem;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        border: 1px solid #f1f5f9;
-    }
-
-    .view-toggle {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    .view-btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.875rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s;
-        border: 2px solid #e2e8f0;
-        background: white;
-        color: #64748b;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .view-btn.active {
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: white;
-        border-color: transparent;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-    }
-
-    .view-btn:hover:not(.active) {
-        border-color: #cbd5e1;
-        background: #f8fafc;
-    }
-
-    /* Land details section */
-    .land-details-section {
-        background: white;
-        border-radius: 1.25rem;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        border: 1px solid #f1f5f9;
-    }
-
-    .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #f1f5f9;
-    }
-
-    .section-title {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: #1e293b;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .section-title i {
-        color: #10b981;
-    }
-
-    .collapse-btn {
-        background: #f1f5f9;
-        color: #64748b;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .collapse-btn:hover {
-        background: #e2e8f0;
-    }
-
-    /* Form inputs */
-    .input-field {
-        background: #f8fafc;
-        border: 2px solid #e2e8f0;
-        color: #1e293b;
-        border-radius: 0.75rem;
-        padding: 0.75rem 1rem;
-        font-size: 0.9375rem;
-        transition: all 0.2s;
-        font-weight: 500;
-        width: 100%;
-    }
-
-    .input-field:focus {
-        outline: none;
-        border-color: #10b981;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-    }
-
-    .form-label {
-        display: block;
-        font-weight: 700;
-        color: #475569;
-        margin-bottom: 0.5rem;
-        font-size: 0.875rem;
-    }
-
-    .form-label i {
-        color: #10b981;
-        margin-right: 0.5rem;
-    }
-
-    /* Buttons */
-    .btn-primary {
-        background: linear-gradient(135deg, #10b981, #047857);
-        color: white;
-        font-weight: 700;
-        padding: 0.875rem 1.75rem;
-        border-radius: 0.875rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 1rem;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-    }
-
-    /* Table styles */
-    .table-container {
-        background: white;
-        border-radius: 1.25rem;
-        padding: 2rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        border: 1px solid #f1f5f9;
-        overflow-x: auto;
-    }
-
-    .data-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-    }
-
-    .data-table thead {
-        background: #16a34a;
-    }
-
-    .data-table th {
-        padding: 1rem 1.25rem;
-        text-align: left;
-        font-weight: 700;
-        font-size: 0.8125rem;
-        color: #fff;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        white-space: nowrap;
-    }
-
-    .data-table tbody tr {
-        border-top: 1px solid #f1f5f9;
-        transition: all 0.2s;
-    }
-
-    .data-table tbody tr:hover {
-        background: #f8fafc;
-    }
-
-    .data-table td {
-        padding: 1rem 1.25rem;
-        color: #475569;
-        font-weight: 500;
-    }
-
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.375rem 0.875rem;
-        border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
-    }
-
-    .badge-success {
-        background: #d1fae5;
-        color: #059669;
-    }
-
-    .badge-warning {
-        background: #fef3c7;
-        color: #b45309;
-    }
-
-    .badge-info {
-        background: #dbeafe;
-        color: #1e40af;
-    }
-
-    .action-btn {
-        padding: 0.5rem 0.875rem;
-        border-radius: 0.5rem;
-        font-size: 0.8125rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.375rem;
-    }
-
-    .action-btn-view {
-        background: #dbeafe;
-        color: #1e40af;
-    }
-
-    .action-btn-edit {
-        background: #fef3c7;
-        color: #b45309;
-    }
-
-    .action-btn-delete {
-        background: #fee2e2;
-        color: #b91c1c;
-    }
-
-    .action-btn:hover {
-        opacity: 0.8;
-        transform: translateY(-1px);
-    }
-
-
-    /* Error message */
-    .error-message {
-        background: #fee2e2;
-        border-left: 4px solid #ef4444;
-        color: #b91c1c;
-        padding: 1rem 1.5rem;
-        border-radius: 0.875rem;
-        margin-bottom: 1.5rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .page-header {
-            padding: 1.5rem;
-        }
-
-        .header-actions {
-            flex-direction: column;
-        }
-
-        .header-btn {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .view-toggle {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .view-btn {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .section-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-    }
-
-    /* Land allocation panel */
-    .alloc-card { background:#fff; border:1px solid #ece4d6; border-radius:1.25rem; padding:1.75rem; box-shadow:0 10px 30px -24px rgba(20,40,25,.5); }
-    .alloc-grid { display:flex; flex-wrap:wrap; gap:1.75rem; align-items:center; }
-    .alloc-ring { flex:none; width:148px; text-align:center; }
-    .alloc-ring .lbl { margin-top:.4rem; font-size:.72rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#6b7280; }
-    .alloc-body { flex:1; min-width:240px; }
-    .alloc-bar { display:flex; height:30px; border-radius:10px; overflow:hidden; background:#f2ecdf; border:1px solid #ece4d6; }
-    .alloc-bar .seg { height:100%; transition:width .6s cubic-bezier(.2,.8,.2,1); }
-    .alloc-bar .seg.avail { background:repeating-linear-gradient(45deg,#efe7d6,#efe7d6 7px,#e7dcc6 7px,#e7dcc6 14px); }
-    .alloc-legend { display:flex; flex-wrap:wrap; gap:1.5rem; margin-top:1.1rem; }
-    .alloc-fig .n { font-family:'Fraunces',serif; font-size:1.6rem; font-weight:800; color:#16271c; line-height:1; }
-    .alloc-fig .k { font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:#6b7280; margin-top:.3rem; }
-    .alloc-fig .dot { display:inline-block; width:9px; height:9px; border-radius:3px; margin-right:.4rem; vertical-align:middle; }
-
-    /* Land portion plot tiles */
-    .plot-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1rem; }
-    .plot-tile { position:relative; border:1px solid #ece4d6; border-radius:1rem; overflow:hidden; background:#fff; box-shadow:0 8px 22px -20px rgba(20,40,25,.5); transition:transform .25s, box-shadow .25s; }
-    .plot-tile:hover { transform:translateY(-3px); box-shadow:0 18px 34px -22px rgba(5,120,80,.4); }
-    .plot-tile .field { height:74px; position:relative; }
-    .plot-tile .field .sz { position:absolute; right:.6rem; bottom:.5rem; background:rgba(8,30,18,.6); color:#fff; font-weight:700; font-size:.78rem; padding:.15rem .55rem; border-radius:999px; }
-    .plot-tile .meta { padding:.85rem 1rem 1rem; }
-    .plot-tile .nm { font-family:'Fraunces',serif; font-weight:700; color:#16271c; }
-    .plot-tile .sub { font-size:.8rem; color:#6b7280; margin-top:.1rem; }
-    .plot-tile .tags { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.6rem; }
-    .lp-badge { font-size:.68rem; font-weight:700; padding:.2rem .55rem; border-radius:999px; letter-spacing:.02em; }
-    .lp-badge.use { background:#e7f4ec; color:#0f7a4b; border:1px solid #cdead8; }
-    .lp-badge.soil { background:#f6efe1; color:#8a6d2f; border:1px solid #e8d8b8; }
-    .lp-badge.status { background:#eef2f7; color:#475569; border:1px solid #dde4ec; }
-    .plot-empty { border:2px dashed #e3d9c6; border-radius:1rem; padding:3rem 2rem; text-align:center; background:#fbf7ee; }
 </style>
 
 
-<!-- 1. GREEN HEADER BAR -->
-<div class="page-header">
+<!-- ===== PAGE ===== -->
+<div class="lm-page">
+
+<!-- ===== HERO ===== -->
+<header class="lm-hero">
     <div id="lm-farmland"></div>
-            <div class="mb-4">
-                <div class="flex items-center justify-between w-full">
-                    <h1 class="text-3xl md:text-4xl font-black text-white mb-1 flex items-center gap-2">
-                        <i class="fas fa-layer-group mr-2"></i>Land Management
-                        <span id="farm-title-brackets" class="text-emerald-100 font-bold text-lg"></span>
-                    </h1>
-                    <button id="open-farm-details-btn" class="flex items-center gap-2 text-base px-4 py-2 border-2 border-emerald-600 bg-white text-emerald-700 font-bold rounded-lg shadow hover:bg-emerald-50 transition">
-                        <i class="fas fa-info-circle"></i> Farm Details
-                    </button>
+    <div class="lm-hero-inner">
+        <div class="lm-hero-top">
+            <div>
+                <div class="lm-eyebrow">Farm workspace</div>
+                <h1 class="lm-title">
+                    <i class="fas fa-layer-group"></i> Land Management
+                    <span id="farm-title-brackets"></span>
+                </h1>
+                <p class="lm-sub">Divide your farm into plots and see how every hectare is being used.</p>
+            </div>
+            <button id="open-farm-details-btn" class="lm-ghost-btn">
+                <i class="fas fa-circle-info"></i> Farm Details
+            </button>
+        </div>
+        <div id="farm-details-bar" class="lm-chip">
+            <i class="fas fa-ruler-combined"></i>
+            <span class="k">Farm size</span>
+            <span id="farm-details-size" class="v">0 ha</span>
+        </div>
+    </div>
+</header>
+
+<!-- ===== DASHBOARD GRID ===== -->
+<div class="lm-grid">
+
+    <!-- MAIN: land portions -->
+    <section class="lm-main">
+        <div class="lm-sec-head">
+            <div>
+                <div class="lm-eyebrow dark">Your land</div>
+                <h2 class="lm-h2"><i class="fas fa-seedling"></i> Land portions</h2>
+            </div>
+            <button class="btn-primary" id="add-portion-btn"><i class="fas fa-plus"></i> Add Portion</button>
+        </div>
+        <div id="portions-grid" class="plot-grid">
+            <div class="plot-empty" style="grid-column:1/-1">
+                <i class="fas fa-seedling text-5xl mb-3 block" style="color:#cbb994"></i>
+                <p class="text-lg font-semibold text-gray-700 mb-1">No land portions yet</p>
+                <p class="text-gray-500">Click "Add Portion" to divide your farm into plots.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ASIDE: land allocation summary -->
+    <aside class="lm-aside">
+        <div class="alloc-card">
+            <div class="lm-eyebrow dark">Overview</div>
+            <h2 class="lm-h2 sm"><i class="fas fa-chart-pie"></i> Land allocation</h2>
+            <div class="alloc-grid">
+                <div class="alloc-ring">
+                    <svg viewBox="0 0 120 120" width="150" height="150">
+                        <circle cx="60" cy="60" r="52" fill="none" stroke="#eee4d2" stroke-width="14"></circle>
+                        <circle id="util-arc" cx="60" cy="60" r="52" fill="none" stroke="#10b981" stroke-width="14" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)"></circle>
+                        <text id="utilization" x="60" y="68" text-anchor="middle" font-family="Fraunces,serif" font-size="26" font-weight="800" fill="#16271c">0%</text>
+                    </svg>
+                    <div class="lbl">Utilization</div>
                 </div>
-                <p class="text-emerald-100 font-medium">Manage and organize your farm's land portions</p>
-            </div>
-            <!-- Farm Size Only Bar -->
-            <div id="farm-details-bar" class="bg-emerald-50/60 rounded-xl px-6 py-3 mb-4 flex items-center gap-4 border border-emerald-200 w-full max-w-xl">
-                <span class="font-bold text-emerald-900 text-lg flex items-center gap-2">
-                    <i class="fas fa-ruler-combined"></i> Farm Size:
-                </span>
-                <span id="farm-details-size" class="text-gray-800 text-lg">0 ha</span>
-            </div>
-            <!-- Farm Details Dialog -->
-            <div id="farm-details-dialog" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
-                <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative">
-                    <button id="close-farm-details-dialog" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
-                    <h3 class="text-2xl font-extrabold text-emerald-700 mb-4 flex items-center gap-2"><i class="fas fa-tractor"></i> Farm Details</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-emerald-900"><i class="fas fa-tractor"></i> Name:</span>
-                            <span id="dialog-farm-name" class="text-gray-800">Farm Name</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-emerald-900"><i class="fas fa-flag"></i> Country:</span>
-                            <span id="dialog-farm-country" class="text-gray-800">Country</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-emerald-900"><i class="fas fa-city"></i> City:</span>
-                            <span id="dialog-farm-city" class="text-gray-800">City</span>
-                        </div>
+                <div class="alloc-body">
+                    <div class="alloc-bar" id="alloc-bar"><div class="seg avail" style="width:100%"></div></div>
+                    <div class="alloc-legend">
+                        <div class="alloc-fig"><div class="n" id="total-area">0</div><div class="k"><span class="dot" style="background:#2f6b3c"></span>Total area</div></div>
+                        <div class="alloc-fig"><div class="n" id="used-area">0</div><div class="k"><span class="dot" style="background:#10b981"></span>Used</div></div>
+                        <div class="alloc-fig"><div class="n" id="available-area">0</div><div class="k"><span class="dot" style="background:#e7dcc6"></span>Available</div></div>
+                        <div class="alloc-fig"><div class="n" id="portion-count">0</div><div class="k">Portions</div></div>
                     </div>
                 </div>
             </div>
         </div>
+    </aside>
 
-        <!-- Land allocation -->
-        <div class="mb-8">
-            <h2 class="text-xl md:text-2xl font-extrabold text-emerald-800 mb-3 flex items-center gap-2">
-                <i class="fas fa-chart-pie text-emerald-500"></i> Land allocation
-            </h2>
-            <div class="alloc-card">
-                <div class="alloc-grid">
-                    <div class="alloc-ring">
-                        <svg viewBox="0 0 120 120" width="148" height="148">
-                            <circle cx="60" cy="60" r="52" fill="none" stroke="#eee4d2" stroke-width="14"></circle>
-                            <circle id="util-arc" cx="60" cy="60" r="52" fill="none" stroke="#10b981" stroke-width="14" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)"></circle>
-                            <text id="utilization" x="60" y="68" text-anchor="middle" font-family="Fraunces,serif" font-size="26" font-weight="800" fill="#16271c">0%</text>
-                        </svg>
-                        <div class="lbl">Utilization</div>
-                    </div>
-                    <div class="alloc-body">
-                        <div class="alloc-bar" id="alloc-bar"><div class="seg avail" style="width:100%"></div></div>
-                        <div class="alloc-legend">
-                            <div class="alloc-fig"><div class="n" id="total-area">0</div><div class="k"><span class="dot" style="background:#2f6b3c"></span>Total area</div></div>
-                            <div class="alloc-fig"><div class="n" id="used-area">0</div><div class="k"><span class="dot" style="background:#10b981"></span>Used</div></div>
-                            <div class="alloc-fig"><div class="n" id="available-area">0</div><div class="k"><span class="dot" style="background:#e7dcc6"></span>Available</div></div>
-                            <div class="alloc-fig"><div class="n" id="portion-count">0</div><div class="k">Portions</div></div>
-                        </div>
-                    </div>
-                </div>
+</div>
+</div><!-- /lm-page -->
+
+<!-- ===== Farm Details Dialog ===== -->
+<div id="farm-details-dialog" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative">
+        <button id="close-farm-details-dialog" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+        <h3 class="text-2xl font-extrabold text-emerald-700 mb-4 flex items-center gap-2"><i class="fas fa-tractor"></i> Farm Details</h3>
+        <div class="space-y-4">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-emerald-900"><i class="fas fa-tractor"></i> Name:</span>
+                <span id="dialog-farm-name" class="text-gray-800">Farm Name</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-emerald-900"><i class="fas fa-flag"></i> Country:</span>
+                <span id="dialog-farm-country" class="text-gray-800">Country</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-emerald-900"><i class="fas fa-city"></i> City:</span>
+                <span id="dialog-farm-city" class="text-gray-800">City</span>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Land portions -->
-        <div class="mb-8">
-            <div class="section-header" style="margin-bottom:1rem;">
-                <h2 class="section-title"><i class="fas fa-layer-group"></i> Land portions</h2>
-                <button class="btn-primary" id="add-portion-btn"><i class="fas fa-plus"></i> Add Portion</button>
-            </div>
-            <div id="portions-grid" class="plot-grid">
-                <div class="plot-empty" style="grid-column:1/-1">
-                    <i class="fas fa-seedling text-5xl mb-3 block" style="color:#cbb994"></i>
-                    <p class="text-lg font-semibold text-gray-700 mb-1">No land portions yet</p>
-                    <p class="text-gray-500">Click "Add Portion" to divide your farm into plots.</p>
+<!-- ===== Add Portion Dialog ===== -->
+<div id="add-portion-dialog" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden" style="padding:1rem;">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl relative" style="padding:1.75rem;max-height:90vh;overflow-y:auto;">
+        <button id="close-add-portion-dialog" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+        <h3 class="text-2xl font-extrabold text-emerald-700 mb-1 flex items-center gap-2"><i class="fas fa-plus-circle"></i> Add Land Portion</h3>
+        <div class="text-sm text-gray-500 mb-5">(Max: <span id="portion-size-max-top"></span>)</div>
+        <form id="add-portion-form">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="form-label" for="portion-name"><i class="fas fa-tag"></i> Portion Name</label>
+                    <input type="text" id="portion-name" name="portion_name" class="input-field" placeholder="e.g., North Field, Plot A" required>
+                </div>
+                <div>
+                    <label class="form-label" for="portion-size"><i class="fas fa-ruler-combined"></i> Portion Size</label>
+                    <div class="flex items-center gap-2">
+                        <input type="number" step="0.01" min="0.01" id="portion-size" name="portion_size" class="input-field" placeholder="e.g., 2.5" required style="flex:1;min-width:0;">
+                        <span id="portion-size-unit" class="text-gray-500 whitespace-nowrap"></span>
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label" for="soil-type"><i class="fas fa-mountain"></i> Soil Type</label>
+                    <select id="soil-type" name="soil_type" class="input-field" required>
+                        <option value="">Select soil type</option>
+                        <option value="Loam">Loam</option>
+                        <option value="Clay">Clay</option>
+                        <option value="Sandy">Sandy</option>
+                        <option value="Silty">Silty</option>
+                        <option value="Peaty">Peaty</option>
+                        <option value="Chalky">Chalky</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label" for="current-use"><i class="fas fa-user"></i> Current Use</label>
+                    <select id="current-use" name="current_use" class="input-field" required></select>
+                </div>
+                <div>
+                    <label class="form-label" for="portion-status"><i class="fas fa-circle"></i> Status</label>
+                    <select id="portion-status" name="status" class="input-field" required></select>
+                </div>
+                <div>
+                    <label class="form-label" for="portion-actions"><i class="fas fa-tasks"></i> Actions Pending</label>
+                    <input type="text" id="portion-actions" name="actions" class="input-field" placeholder="e.g., Ploughing, Irrigation">
                 </div>
             </div>
-        </div>
-
-        <!-- Custom Dialog for Land Details -->
-        <div id="land-details-dialog" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
-            <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg relative">
-                <button id="close-land-details-dialog" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
-                <h3 class="text-2xl font-extrabold text-emerald-700 mb-4 flex items-center gap-2"><i class="fas fa-plus-circle"></i> Add Land Details</h3>
-                <form id="custom-land-details-form">
-                    <!-- Insert the same questions/fields as the current land details section here -->
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="form-label" for="dialog-land-location"><i class="fas fa-map-marker-alt"></i>Location</label>
-                            <input type="text" id="dialog-land-location" name="location" class="input-field" placeholder="Village, District, GPS coordinates">
-                        </div>
-                        <div>
-                            <label class="form-label" for="dialog-land-area"><i class="fas fa-ruler-combined"></i>Total Area (ha)</label>
-                            <input type="number" step="0.01" id="dialog-land-area" name="area" class="input-field" placeholder="e.g., 10.5">
-                        </div>
-                        <div>
-                            <label class="form-label" for="dialog-land-soil"><i class="fas fa-mountain"></i>Soil Type</label>
-                            <input type="text" id="dialog-land-soil" name="soil_type" class="input-field" placeholder="Loam, Clay, Sandy, etc.">
-                        </div>
-                        <div>
-                            <label class="form-label" for="dialog-land-irrigation"><i class="fas fa-tint"></i>Irrigation System</label>
-                            <input type="text" id="dialog-land-irrigation" name="irrigation" class="input-field" placeholder="Rainfed, Drip, Canal, etc.">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="form-label" for="dialog-land-boundaries"><i class="fas fa-border-style"></i>Boundaries Description</label>
-                            <input type="text" id="dialog-land-boundaries" name="boundaries" class="input-field" placeholder="Describe boundaries or upload map">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="form-label" for="dialog-land-notes"><i class="fas fa-sticky-note"></i>Additional Notes</label>
-                            <textarea id="dialog-land-notes" name="notes" class="input-field" rows="3" placeholder="Any special characteristics, remarks, or observations"></textarea>
-                        </div>
-                    </div>
-                    <div class="flex justify-end mt-6">
-                        <button type="button" id="save-land-details-btn" class="btn-primary">
-                            <i class="fas fa-save"></i> Save Land Details
-                        </button>
-                    </div>
-                </form>
+            <div class="flex justify-end mt-6">
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-save"></i> Save Portion
+                </button>
             </div>
-        </div>
-
-        <!-- Land details section at the bottom removed as requested -->
-
-
-        <!-- Land portions section at the bottom removed as requested -->
-
-
-            <!-- Add Portion Dialog -->
-            <div id="add-portion-dialog" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
-                <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative">
-                    <button id="close-add-portion-dialog" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
-                    <h3 class="text-2xl font-extrabold text-emerald-700 mb-4 flex items-center gap-2"><i class="fas fa-plus-circle"></i> Add Land Portion</h3>
-                                        <div class="text-sm text-gray-500 mb-2" style="margin-top:-1rem; margin-bottom:1.5rem;">(Max: <span id="portion-size-max-top"></span>)</div>
-                    <form id="add-portion-form">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="form-label" for="portion-name"><i class="fas fa-tag"></i> Portion Name</label>
-                                <input type="text" id="portion-name" name="portion_name" class="input-field" placeholder="e.g., North Field, Plot A" required>
-                            </div>
-                            <div>
-                                <label class="form-label" for="portion-size"><i class="fas fa-ruler-combined"></i> Portion Size</label>
-                                <input type="number" step="0.01" min="0.01" id="portion-size" name="portion_size" class="input-field" placeholder="e.g., 2.5" required>
-                                <span id="portion-size-unit" class="ml-2 text-gray-500"></span>
-                                <!-- Max info moved to top -->
-                            </div>
-                            <div>
-                                <label class="form-label" for="soil-type"><i class="fas fa-mountain"></i> Soil Type</label>
-                                <select id="soil-type" name="soil_type" class="input-field" required>
-                                    <option value="">Select soil type</option>
-                                    <option value="Loam">Loam</option>
-                                    <option value="Clay">Clay</option>
-                                    <option value="Sandy">Sandy</option>
-                                    <option value="Silty">Silty</option>
-                                    <option value="Peaty">Peaty</option>
-                                    <option value="Chalky">Chalky</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="form-label" for="current-use"><i class="fas fa-user"></i> Current Use</label>
-                                <select id="current-use" name="current_use" class="input-field" required></select>
-                            </div>
-                            <!-- Current User field removed as requested -->
-                            <div>
-                                <label class="form-label" for="portion-status"><i class="fas fa-circle"></i> Status</label>
-                                <select id="portion-status" name="status" class="input-field" required></select>
-                            </div>
-                            <div>
-                                <label class="form-label" for="portion-actions"><i class="fas fa-tasks"></i> Actions Pending</label>
-                                <input type="text" id="portion-actions" name="actions" class="input-field" placeholder="e.g., Ploughing, Irrigation">
-                            </div>
-                        </div>
-                        <div class="flex justify-end mt-6">
-                            <button type="submit" class="btn-primary">
-                                <i class="fas fa-save"></i> Save Portion
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+        </form>
+    </div>
+</div>
 
 <script>
 
@@ -954,6 +604,9 @@ async function fetchAndDisplayFarmDetails() {
             var sz = farm.total_size ? (farm.total_size + (farm.size_unit ? ' ' + farm.size_unit : '')) : '';
             ftb.textContent = nm && sz ? `(${nm}, ${sz})` : (nm ? `(${nm})` : (sz ? `(${sz})` : ''));
         }
+        // Farm size is now known -> refresh limits + analytics
+        setPortionSizeLimits();
+        updateAnalytics();
     } catch (e) {
         document.getElementById('farm-details-bar').classList.add('hidden');
     }
