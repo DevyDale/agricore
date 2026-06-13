@@ -508,6 +508,50 @@
             <main class="max-w-7xl w-full mx-auto px-6 py-10 flex-1">
                 <!-- Farm summary stats -->
                 <div id="farm-stats" class="mb-12"></div>
+
+                <!-- Produce Collection History -->
+                <section class="glass rounded-2xl shadow-xl p-8 fade-in fade-in-2 mb-12">
+                    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
+                        <div>
+                            <h3 class="font-display text-3xl font-bold text-gray-900 mb-1">Produce Collection History</h3>
+                            <p class="text-gray-600">Track and manage all your harvest records</p>
+                        </div>
+                        <button id="open-log-produce-modal" class="btn-primary flex items-center gap-2 whitespace-nowrap">
+                            <i class="fas fa-plus"></i>
+                            <span>Log New Produce</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input 
+                                id="produce-search" 
+                                type="text" 
+                                placeholder="Search produce..." 
+                                class="input-field w-full pl-12"
+                            />
+                        </div>
+                        <select id="produce-source-filter" class="input-field">
+                            <option value="all">All Sources</option>
+                            <option value="crop">Crops</option>
+                            <option value="livestock">Livestock</option>
+                        </select>
+                    </div>
+
+                    <div id="produce-table-container">
+                        <div id="produce-loading-spinner" class="flex flex-col items-center justify-center py-20">
+                            <div class="spinner mb-4"></div>
+                            <p class="text-gray-600 font-medium">Loading produce history...</p>
+                        </div>
+                        <div id="produce-empty-state" class="empty-state text-center hidden">
+                            <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-600 text-lg font-medium">No produce history found</p>
+                            <p class="text-gray-500 text-sm mt-2">Start by logging your first produce collection</p>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Quick Access Cards -->
                 <div class="mb-12">
                     <h2 class="font-display text-2xl font-bold text-gray-900 mb-6">Quick Access</h2>
@@ -581,52 +625,7 @@
                     </div>
                 </div>
 
-                <!-- Summary Stats -->
                 <!-- summary stats render into #farm-stats above -->
-                <div class="mb-10"></div>
-
-                <!-- Produce Collection History -->
-                <section class="glass rounded-2xl shadow-xl p-8 fade-in fade-in-4">
-                    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
-                        <div>
-                            <h3 class="font-display text-3xl font-bold text-gray-900 mb-1">Produce Collection History</h3>
-                            <p class="text-gray-600">Track and manage all your harvest records</p>
-                        </div>
-                        <button id="open-log-produce-modal" class="btn-primary flex items-center gap-2 whitespace-nowrap">
-                            <i class="fas fa-plus"></i>
-                            <span>Log New Produce</span>
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div class="relative">
-                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input 
-                                id="produce-search" 
-                                type="text" 
-                                placeholder="Search produce..." 
-                                class="input-field w-full pl-12"
-                            />
-                        </div>
-                        <select id="produce-source-filter" class="input-field">
-                            <option value="all">All Sources</option>
-                            <option value="crop">Crops</option>
-                            <option value="livestock">Livestock</option>
-                        </select>
-                    </div>
-
-                    <div id="produce-table-container">
-                        <div id="produce-loading-spinner" class="flex flex-col items-center justify-center py-20">
-                            <div class="spinner mb-4"></div>
-                            <p class="text-gray-600 font-medium">Loading produce history...</p>
-                        </div>
-                        <div id="produce-empty-state" class="empty-state text-center hidden">
-                            <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
-                            <p class="text-gray-600 text-lg font-medium">No produce history found</p>
-                            <p class="text-gray-500 text-sm mt-2">Start by logging your first produce collection</p>
-                        </div>
-                    </div>
-                </section>
             </main>
         </div>
     </div>
