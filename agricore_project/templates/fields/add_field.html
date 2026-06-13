@@ -1,5 +1,5 @@
 {% extends 'dashboard/base.html' %}
-{# AGRICORE - Field list. Switched {% block content %} -> dashboard_content. field.* vars and field_create/update/delete url names unchanged. #}
+{# AGRICORE - Add Field. Switched {% block content %} -> dashboard_content. Field names, POST and field_list url kept verbatim. #}
 {% block dashboard_content %}
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
@@ -156,45 +156,36 @@
 <div class="lk">
   <section class="lk-hero">
     <div class="lk-scene">
-      <div class="farmland" id="lkFieldList"></div>
+      <div class="farmland" id="lkFieldAdd"></div>
       <div class="sun"></div><div class="grade"></div><div class="sweep"></div>
       <div class="pin" style="left:24%;top:44%"><i></i></div><div class="pin" style="left:66%;top:60%"><i></i></div>
       <div class="vignette"></div>
     </div>
     <div class="lk-hero-in">
       <div class="lk-emblem"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M15 3v18"/><path d="M3 9h18"/><path d="M3 15h18"/></svg></div>
-      <span class="lk-kick"><span class="dot"></span> Land &amp; fields</span>
-      <h1>Field <span class="em">list</span></h1>
+      <span class="lk-kick"><span class="dot"></span> New field</span>
+      <h1>Add a <span class="em">field</span></h1>
     </div>
   </section>
-  <div class="lk-wrap">
-    <div class="lk-actions" style="margin-top:-1.4rem">
-      <a class="lk-btn" href="{% url 'field_create' %}"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Add field</a>
-    </div>
-
-    <p class="lk-eyebrow">All fields</p>
-    <div class="lk-tablewrap">
-      <table class="lk-table">
-        <thead><tr><th>ID</th><th>Name</th><th>Purpose</th><th>Farm</th><th>Size</th><th>Soil type</th><th>Actions</th></tr></thead>
-        <tbody>
-          {% for field in field_list %}
-          <tr>
-            <td>{{ field.id }}</td>
-            <td class="strong">{{ field.name }}</td>
-            <td>{{ field.purpose }}</td>
-            <td>{{ field.farm }}</td>
-            <td>{{ field.total_size }} {{ field.size_unit }}</td>
-            <td>{{ field.soil_type }}</td>
-            <td>
-              <a class="lk-link" href="{% url 'field_update' field.id %}">Edit</a>
-              <a class="lk-link danger" href="{% url 'field_delete' field.id %}">Delete</a>
-            </td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="7"><div class="lk-empty" style="border:0;box-shadow:none;padding:1.8rem"><svg class="ic" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>No fields found.</div></td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+  <div class="lk-wrap lk-wrap--narrow">
+    <div class="lk-card lk-overlap">
+      <p class="lk-intro">Register a field and the land it covers.</p>
+      <form method="post">
+        {% csrf_token %}
+        <div class="lk-field"><label class="lk-label">Name <span class="opt">(required)</span></label>
+          <input type="text" name="name" class="lk-input" placeholder="e.g. North Paddock" required></div>
+        <div class="lk-grid">
+          <div class="lk-field"><label class="lk-label">Purpose</label><input type="text" name="purpose" class="lk-input" placeholder="e.g. Grazing, Maize"></div>
+          <div class="lk-field"><label class="lk-label">Farm</label><input type="text" name="farm" class="lk-input" placeholder="e.g. Home Farm"></div>
+          <div class="lk-field"><label class="lk-label">Total size</label><input type="number" name="total_size" class="lk-input" placeholder="e.g. 12"></div>
+          <div class="lk-field"><label class="lk-label">Size unit</label><input type="text" name="size_unit" class="lk-input" placeholder="e.g. acres, ha"></div>
+        </div>
+        <div class="lk-field" style="margin-top:1rem"><label class="lk-label">Soil type</label><input type="text" name="soil_type" class="lk-input" placeholder="e.g. Loam, Clay"></div>
+        <div class="lk-formfoot">
+          <button type="submit" class="lk-btn"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Save</button>
+          <a class="lk-cancel" href="{% url 'field_list' %}">Cancel</a>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -211,16 +202,16 @@
       var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],
                ['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']];
       var ang=[0,16,90,74,16,0,90,30,16], defs='';
-      pal.forEach(function(c,i){ defs+='<pattern id="lkFA'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
+      pal.forEach(function(c,i){ defs+='<pattern id="lkFB'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
       var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8], cells='';
       for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){
         var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e=P[r2+1][c2];
         var fi=bag[Math.floor(Math.random()*bag.length)];
-        cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#lkFA'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>';
+        cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#lkFB'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>';
       }
       return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
     }
-    var host=document.getElementById('lkFieldList'); if(host) host.innerHTML=build();
+    var host=document.getElementById('lkFieldAdd'); if(host) host.innerHTML=build();
   })();
 </script>
 {% endblock %}
