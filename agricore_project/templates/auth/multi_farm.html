@@ -1,1 +1,446 @@
-{% include "multi_farm.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Farms — Agricore</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{ --g500:#10b981; --g600:#059669; --g700:#047857; --g900:#064e3b; --line:#ece4d6; --ink:#16271c; --cream:#faf6ee;
+               --crops:#4f8438; --livestock:#c39a48; --mixed:#7c8c42 }
+        *{ box-sizing:border-box; font-family:'Inter',system-ui,sans-serif }
+        h1,h2,h3,h4,.fr{ font-family:'Fraunces',serif; letter-spacing:-.01em }
+        body{ margin:0; min-height:100vh; color:var(--ink); background:radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f4efe3 62%) }
+        a{ text-decoration:none; color:inherit }
+
+        /* ---------- hero ---------- */
+        .hero{ position:relative; overflow:hidden; background:#22432c; color:#fff }
+        #farmland{ position:absolute; inset:-2% } #farmland svg{ width:100%; height:100% }
+        .hero-ov{ position:absolute; inset:0; background:linear-gradient(100deg, rgba(8,30,18,.9) 0%, rgba(8,30,18,.55) 58%, rgba(8,30,18,.28) 100%) }
+        .hero-in{ position:relative; z-index:2; max-width:1500px; margin:0 auto; padding:1rem 1.5rem 1.6rem }
+        .topbar{ display:flex; align-items:center; gap:1rem; flex-wrap:wrap }
+        .brand{ display:flex; align-items:center; gap:.6rem; font-family:Fraunces; font-weight:800; font-size:1.3rem }
+        .brand .mk{ width:38px; height:38px; border-radius:11px; display:grid; place-items:center; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28) }
+        .nav{ margin-left:auto; display:flex; gap:.5rem; flex-wrap:wrap; align-items:center }
+        .nbtn{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); color:#fff; padding:.5rem .85rem; border-radius:999px; font-size:.84rem; font-weight:600; cursor:pointer; transition:transform .2s, background .2s; white-space:nowrap; display:inline-flex; align-items:center; gap:.4rem }
+        .nbtn:hover{ background:rgba(255,255,255,.22); transform:translateY(-1px) }
+        .nbtn.out{ background:linear-gradient(135deg,#f87171,#ef4444); border-color:transparent }
+        .eyebrow{ display:inline-flex; align-items:center; gap:.5rem; margin:1.3rem 0 .5rem; padding:.34rem .8rem; border-radius:999px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); font-size:.74rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#bbf7d0 }
+        .eyebrow .pulse-dot{ width:8px; height:8px; border-radius:50%; background:#4ade80; animation:ring 2s infinite }
+        @keyframes ring{ 0%{ box-shadow:0 0 0 0 rgba(74,222,128,.5) } 70%{ box-shadow:0 0 0 9px rgba(74,222,128,0) } 100%{ box-shadow:0 0 0 0 rgba(74,222,128,0) } }
+        h1.title{ font-size:clamp(2rem,5vw,3rem); font-weight:900; margin:.1rem 0 .3rem; text-shadow:0 2px 14px rgba(0,0,0,.35) }
+        .sub{ color:rgba(255,255,255,.86); font-size:1.04rem; max-width:46ch }
+
+        main{ max-width:1500px; margin:0 auto; padding:0 1.5rem 4rem }
+
+        /* ---------- toolbar ---------- */
+        .toolbar{ display:flex; gap:.7rem; flex-wrap:wrap; align-items:center; margin:1.4rem 0 .4rem }
+        .field{ background:#fff; border:1.5px solid #e2ddd0; border-radius:12px; padding:.7rem .95rem; font-size:.92rem; color:#1e293b; transition:border-color .2s, box-shadow .2s }
+        .field:focus{ outline:none; border-color:var(--g500); box-shadow:0 0 0 3px rgba(16,185,129,.12) }
+        .search{ flex:1; min-width:210px; position:relative; display:flex; align-items:center }
+        .search i{ position:absolute; left:.95rem; color:#a9b3a3 } .search input{ width:100%; padding-left:2.4rem }
+        .btn{ background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; font-weight:700; padding:.72rem 1.3rem; border:0; border-radius:12px; font-size:.92rem; cursor:pointer; transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s; box-shadow:0 6px 16px -6px rgba(5,120,80,.5); display:inline-flex; align-items:center; gap:.5rem; white-space:nowrap }
+        .btn:hover{ transform:translateY(-2px); box-shadow:0 12px 24px -8px rgba(5,120,80,.6) }
+        .count{ font-size:.84rem; color:#8a9588; margin:.4rem 0 1rem; font-weight:500 } .count b{ color:var(--g700) }
+
+        /* ---------- estate map ---------- */
+        .estate{ background:#fff; border:1px solid var(--line); border-radius:20px; box-shadow:0 22px 54px -34px rgba(20,40,25,.55); padding:1.3rem 1.4rem 1.5rem; opacity:0; transform:translateY(14px); animation:rise .55s .04s cubic-bezier(.2,.8,.2,1) forwards }
+        @keyframes rise{ to{ opacity:1; transform:none } }
+        .estate-head{ display:flex; align-items:flex-start; gap:1rem; flex-wrap:wrap; margin-bottom:1rem }
+        .estate-head h2{ font-size:1.2rem; font-weight:800; margin:0 } .estate-head .hint{ font-size:.82rem; color:#8a9588; margin:.2rem 0 0 }
+        .metrics{ margin-left:auto; display:flex; gap:1.5rem; flex-wrap:wrap }
+        .metric{ display:flex; align-items:center; gap:.7rem }
+        .metric .mi{ width:42px; height:42px; border-radius:12px; display:grid; place-items:center; font-size:1rem; color:#fff; flex:none }
+        .mi.a{ background:linear-gradient(135deg,#10b981,#047857) } .mi.b{ background:linear-gradient(135deg,#c39a48,#a9772e) } .mi.c{ background:linear-gradient(135deg,#7c8c42,#5c6b1f) }
+        .metric .mv{ font-family:Fraunces; font-weight:800; font-size:1.5rem; line-height:1; color:var(--ink) }
+        .metric .mu{ font-size:.86rem; font-weight:600; color:#94a39a; margin-left:.15rem }
+        .metric .ml{ font-size:.74rem; color:#8a9588; margin-top:.2rem }
+        .legend{ display:flex; gap:1.1rem; flex-wrap:wrap; margin:0 0 .9rem; font-size:.8rem; color:#5b6b60 }
+        .legend span{ display:inline-flex; align-items:center; gap:.45rem; font-weight:600 }
+        .legend i{ width:11px; height:11px; border-radius:3px; display:inline-block }
+        .lg-crops{ background:var(--crops) } .lg-livestock{ background:var(--livestock) } .lg-mixed{ background:var(--mixed) }
+
+        .map{ position:relative; min-height:240px }
+        .plots{ display:grid; grid-template-columns:repeat(auto-fill,minmax(228px,1fr)); gap:.9rem }
+        .plot{ position:relative; height:168px; border-radius:13px; overflow:hidden; cursor:pointer; color:#fff;
+               box-shadow:inset 0 0 0 1px rgba(255,255,255,.16), 0 8px 22px -16px rgba(20,40,25,.6);
+               transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s, filter .2s;
+               opacity:0; transform:translateY(14px) scale(.985); animation:plotin .5s forwards }
+        @keyframes plotin{ to{ opacity:1; transform:none } }
+        .plot:hover{ transform:translateY(-5px); z-index:6; box-shadow:inset 0 0 0 1px rgba(255,255,255,.3), 0 20px 40px -16px rgba(5,120,80,.5); filter:brightness(1.05) }
+        .plot-share{ position:absolute; left:0; right:0; bottom:0; height:5px; background:rgba(255,255,255,.25) }
+        .plot-share i{ display:block; height:100%; width:0; background:rgba(255,255,255,.9); transition:width .9s cubic-bezier(.2,.8,.2,1) }
+        .plot.crops{ background:repeating-linear-gradient(118deg, rgba(0,0,0,.13) 0 3px, rgba(255,255,255,.06) 3px 8px), linear-gradient(160deg,#549040,#3c7330) }
+        .plot.livestock{ background-color:#bd8f3e; background-image:radial-gradient(rgba(255,255,255,.2) 1.5px, transparent 1.8px), linear-gradient(160deg, rgba(220,176,96,.18), rgba(150,110,48,.4)); background-size:15px 15px, 100% 100% }
+        .plot.mixed{ background:repeating-linear-gradient(45deg, rgba(0,0,0,.13) 0 6px, transparent 6px 12px), repeating-linear-gradient(-45deg, rgba(255,255,255,.08) 0 6px, transparent 6px 12px), linear-gradient(160deg,#7e9046,#5f722d) }
+        .plot-tex{ position:absolute; inset:0; background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(0,0,0,.3)); pointer-events:none }
+        .plot-lab{ position:absolute; inset:0; padding:.6rem .7rem; display:flex; flex-direction:column; justify-content:flex-end; gap:.1rem; text-shadow:0 1px 5px rgba(0,0,0,.55); pointer-events:none; transition:opacity .2s }
+        .plot-lab .ptag{ align-self:flex-start; font-size:.56rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; background:rgba(0,0,0,.3); padding:.18rem .45rem; border-radius:999px; margin-bottom:.2rem }
+        .plot-lab h4{ font-weight:800; font-size:.98rem; margin:0; line-height:1.1 }
+        .plot-lab .parea{ font-size:.76rem; font-weight:700 } .plot-lab .ploc{ font-size:.7rem; opacity:.88 }
+        .plot.small .plot-lab{ opacity:0 } .plot.small:hover .plot-lab{ opacity:1 }
+        .plot-acts{ position:absolute; top:.55rem; right:.55rem; display:flex; gap:.35rem; opacity:0; transform:translateY(-4px); transition:opacity .2s, transform .2s }
+        .plot:hover .plot-acts{ opacity:1; transform:none }
+        .pa{ border:0; border-radius:9px; padding:.42rem .55rem; font-size:.75rem; font-weight:700; cursor:pointer; background:rgba(0,0,0,.45); color:#fff; backdrop-filter:blur(3px); display:inline-flex; align-items:center; gap:.3rem }
+        .pa:hover{ background:rgba(0,0,0,.66) } .pa.manage{ background:rgba(5,120,80,.92) } .pa.manage:hover{ background:rgba(4,100,66,1) } .pa.del:hover{ background:#dc2626 }
+
+        .empty{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:3.6rem 2rem; min-height:300px }
+        .empty .ei{ width:84px; height:84px; margin:0 0 1.1rem; border-radius:50%; display:grid; place-items:center; background:#e4ede2; color:#6f9b7c; font-size:2.1rem }
+        .empty h3{ font-size:1.5rem; color:#3f4f45; margin:.1rem 0 .45rem } .empty p{ color:#7a857c; margin:0 auto 1.4rem; max-width:36ch }
+
+        /* ---------- modals ---------- */
+        .modal{ display:none; position:fixed; inset:0; background:rgba(15,23,42,.55); backdrop-filter:blur(6px); z-index:1000; padding:1rem; overflow-y:auto }
+        .modal.show{ display:flex; align-items:center; justify-content:center }
+        .mc{ background:#fff; border:1px solid var(--line); border-radius:20px; padding:2rem; width:100%; max-width:640px; max-height:90vh; overflow-y:auto; box-shadow:0 30px 70px -20px rgba(6,28,15,.5); margin:auto; animation:rise .35s cubic-bezier(.2,.8,.2,1) }
+        .mc h2{ font-size:1.55rem; font-weight:800; margin:0 0 1.3rem; padding-bottom:.9rem; border-bottom:2px solid #f1ece1 }
+        label{ display:block; font-weight:600; color:#475569; font-size:.86rem; margin-bottom:.4rem }
+        .fg{ display:grid; grid-template-columns:1fr 1fr; gap:1rem } .fg .full{ grid-column:1/-1 }
+        .fg .field, .mc .field{ width:100% }
+        .mf{ display:flex; justify-content:flex-end; gap:.7rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid #f1ece1; flex-wrap:wrap }
+        .mbtn{ padding:.75rem 1.4rem; border-radius:12px; font-weight:600; cursor:pointer; border:0 }
+        .mb-cancel{ background:#f6f1e6; color:#5b6b60; border:1.5px solid var(--line) }
+        .mb-save{ background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff }
+        #form-error{ background:#fee2e2; border:1px solid #fca5a5; color:#dc2626; border-radius:12px; padding:.85rem; margin-bottom:1rem; white-space:pre-line }
+
+        #snack{ position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%); background:#2c2f36; color:#fff; padding:.9rem 1.2rem; border-radius:14px; box-shadow:0 12px 30px rgba(0,0,0,.25); display:none; align-items:center; gap:1rem; z-index:1100 }
+        #snack button{ background:var(--g500); color:#fff; border:0; padding:.45rem 1rem; border-radius:9px; font-weight:600; cursor:pointer }
+        .spin{ display:none; justify-content:center; padding:3rem } .spin.on{ display:flex }
+        .sp{ width:3rem; height:3rem; border:3px solid var(--line); border-top-color:var(--g500); border-radius:50%; animation:spin 1s linear infinite }
+        @keyframes spin{ to{ transform:rotate(360deg) } }
+
+        @media(max-width:720px){ .metrics{ margin-left:0; width:100% } }
+        @media(max-width:620px){ .fg{ grid-template-columns:1fr } .nav .lbl{ display:none } }
+        @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important } }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <div id="farmland"></div><div class="hero-ov"></div>
+        <div class="hero-in">
+            <div class="topbar">
+                <div class="brand"><span class="mk"><i class="fas fa-tractor"></i></span> Agricore</div>
+                <nav class="nav">
+                    <a href="marketplace.html" class="nbtn"><i class="fas fa-store"></i><span class="lbl">Marketplace</span></a>
+                    <a href="digitalstores.html" class="nbtn"><i class="fas fa-shopping-cart"></i><span class="lbl">My Stores</span></a>
+                    <a href="chats.html" class="nbtn"><i class="fas fa-comments"></i><span class="lbl">Chats</span></a>
+                    <a href="workforce.html" class="nbtn"><i class="fas fa-briefcase"></i><span class="lbl">Network</span></a>
+                    <button id="settings-btn" class="nbtn"><i class="fas fa-cog"></i><span class="lbl">Settings</span></button>
+                    <button id="logout-btn" class="nbtn out"><i class="fas fa-sign-out-alt"></i><span class="lbl">Log out</span></button>
+                </nav>
+            </div>
+            <span class="eyebrow"><span class="pulse-dot"></span> <span id="hero-greet">Welcome back</span></span>
+            <h1 class="title">Your Farms</h1>
+            <p class="sub">Your whole operation, seen from above — every plot sized by the land it works.</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="toolbar">
+            <span class="search"><i class="fas fa-search"></i><input type="text" id="farm-search" placeholder="Search farms by name or place..." class="field"></span>
+            <select id="farm-filter" class="field">
+                <option value="">All types</option>
+                <option value="crops">Crops</option>
+                <option value="livestock">Livestock</option>
+                <option value="mixed">Mixed</option>
+            </select>
+            <button id="create-farm-btn" class="btn"><i class="fas fa-plus"></i> Add Farm</button>
+        </div>
+        <div class="count" id="count"></div>
+
+        <section class="estate">
+            <div class="estate-head">
+                <div>
+                    <h2>Your land from above</h2>
+                    <p class="hint">Each plot is a farm, sized by its area. Hover for detail, click to manage.</p>
+                </div>
+                <div class="metrics">
+                    <div class="metric"><div class="mi a"><i class="fas fa-tractor"></i></div><div><div><span class="mv" id="m-farms">0</span></div><div class="ml">Total farms</div></div></div>
+                    <div class="metric"><div class="mi b"><i class="fas fa-ruler-combined"></i></div><div><div><span class="mv" id="m-land">0</span><span class="mu">ha</span></div><div class="ml">Total land</div></div></div>
+                    <div class="metric"><div class="mi c"><i class="fas fa-seedling"></i></div><div><div><span class="mv" id="m-types">0</span></div><div class="ml">Active types</div></div></div>
+                </div>
+            </div>
+            <div class="legend">
+                <span><i class="lg-crops"></i> Crops <b id="lc-crops" style="margin-left:.2rem">0</b></span>
+                <span><i class="lg-livestock"></i> Livestock <b id="lc-livestock" style="margin-left:.2rem">0</b></span>
+                <span><i class="lg-mixed"></i> Mixed <b id="lc-mixed" style="margin-left:.2rem">0</b></span>
+            </div>
+            <div class="map" id="map"><div class="spin on" id="spinner"><div class="sp"></div></div></div>
+        </section>
+    </main>
+
+    <!-- Farm Modal -->
+    <div id="farm-modal" class="modal">
+        <div class="mc">
+            <h2 id="farm-modal-title">Add New Farm</h2>
+            <form id="farm-form">
+                <div id="form-error" style="display:none"></div>
+                <div class="fg">
+                    <div><label>Farm Name *</label><input id="f-name" class="field" placeholder="e.g. Green Acres"></div>
+                    <div><label>Farm Type *</label><select id="f-type" class="field"><option value="">Select type</option><option value="crops">Crops</option><option value="livestock">Livestock</option><option value="mixed">Mixed</option></select></div>
+                    <div><label>Country *</label><input id="f-country" class="field" placeholder="Country"></div>
+                    <div><label>State / Province *</label><input id="f-state" class="field" placeholder="State"></div>
+                    <div><label>City *</label><input id="f-city" class="field" placeholder="City"></div>
+                    <div><label>Address</label><input id="f-address" class="field" placeholder="Street address"></div>
+                    <div><label>Total Size *</label><input id="f-size" type="number" step="0.01" min="0" class="field" placeholder="e.g. 150"></div>
+                    <div><label>Size Unit</label><select id="f-unit" class="field"><option value="acres">acres</option><option value="hectares">hectares</option><option value="square_meters">square meters</option></select></div>
+                    <div class="full"><label>Additional Notes</label><textarea id="f-notes" class="field" rows="3" placeholder="Soil type, main crops, livestock..."></textarea></div>
+                </div>
+                <div class="mf">
+                    <button type="button" id="f-cancel" class="mbtn mb-cancel">Cancel</button>
+                    <button type="submit" class="mbtn mb-save">Save Farm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="mc" style="max-width:440px">
+            <h2>Settings</h2>
+            <div style="margin-bottom:1.2rem"><label>Language</label>
+                <select id="set-language" class="field"><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option><option value="pt">Português</option><option value="sw">Kiswahili</option><option value="ar">العربية</option></select></div>
+            <div style="margin-bottom:1.2rem"><label>Currency</label>
+                <select id="set-currency" class="field"><option value="USD">USD ($)</option><option value="NGN">NGN (₦)</option><option value="KES">KES (KSh)</option><option value="GHS">GHS (₵)</option><option value="ZAR">ZAR (R)</option><option value="EUR">EUR (€)</option></select></div>
+            <div class="mf"><button type="button" id="set-close" class="mbtn mb-cancel">Close</button></div>
+        </div>
+    </div>
+
+    <div id="snack"></div>
+
+    <script>
+        /* ---------- farmland hero mosaic ---------- */
+        (function(){ function bf(){var W=1200,H=520,cols=7,rows=4,jx=(W/cols)*.32,jy=(H/rows)*.32,P=[];for(var r=0;r<=rows;r++){P[r]=[];for(var c=0;c<=cols;c++){var e=(r===0||r===rows||c===0||c===cols);P[r][c]={x:(c/cols)*W+(e?0:(Math.random()*2-1)*jx),y:(r/rows)*H+(e?0:(Math.random()*2-1)*jy)};}}var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']],ang=[0,16,90,74,16,0,90,30,16],defs='';pal.forEach(function(c,i){defs+='<pattern id="mp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>';});var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8],cells='';for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e2=P[r2+1][c2],fi=bag[Math.floor(Math.random()*bag.length)];cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e2.x.toFixed(1)+','+e2.y.toFixed(1)+'" fill="url(#mp'+fi+')" stroke="rgba(22,15,7,.16)" stroke-width="1.2"/>';}return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';}var el=document.getElementById('farmland'); if(el) el.innerHTML=bf(); })();
+
+        const token = localStorage.getItem('access_token');
+        if(!token || token==='null') window.location.href='authentication.html';
+
+        function decodeJWT(t){ try{ return JSON.parse(decodeURIComponent(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''))); }catch(e){ return null; } }
+        let currentUser = { name:'' };
+        const dec = token && decodeJWT(token);
+        if(dec) currentUser = { name: dec.name||dec.full_name||dec.username||'', email: dec.email||'', id: dec.user_id||dec.id||null };
+        function setGreet(){ document.getElementById('hero-greet').textContent = 'Welcome back, ' + (currentUser.name || 'farmer'); }
+        setGreet();
+        (async function loadMe(){
+            try{ const r = await fetch('/api/users/me/', { headers:{'Authorization':'Bearer '+token} });
+                if(r.ok){ const u = await r.json(); currentUser = { name: u.username || u.email || currentUser.name, email: u.email||'', id: u.id||currentUser.id }; setGreet(); } }catch(_){}
+        })();
+
+        let editingId = null, allFarms = [];
+        window.userFarmsContext = [];
+        const $ = id => document.getElementById(id);
+        const UNIT_TO_HA = { acres:0.404686, hectares:1, square_meters:0.0001 };
+        function toHa(f){ const n=parseFloat(f.total_size); if(!isFinite(n)||n<=0) return 0; const u=(f.size_unit||'acres'); return n*(UNIT_TO_HA[u]!=null?UNIT_TO_HA[u]:1); }
+        function cap(s){ return s? s[0].toUpperCase()+s.slice(1):''; }
+        function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+        function countUp(el, to, decimals){
+            if(!el) return; const dur=900, start=performance.now();
+            if(matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent = decimals? to.toFixed(decimals): Math.round(to); return; }
+            function step(t){ let p=Math.min(1,(t-start)/dur); p=1-Math.pow(1-p,3); const v=to*p; el.textContent = decimals? v.toFixed(decimals): Math.round(v); if(p<1) requestAnimationFrame(step); }
+            requestAnimationFrame(step);
+        }
+
+        /* farms render as fixed-size plot tiles in a responsive grid */
+
+        function renderOverview(){
+            const farms=allFarms;
+            const totalHa=farms.reduce((s,f)=>s+toHa(f),0);
+            const byType={crops:0,livestock:0,mixed:0};
+            farms.forEach(f=>{ const t=(f.type||'').toLowerCase(); if(byType[t]!=null) byType[t]++; });
+            countUp($('m-farms'), farms.length, 0);
+            countUp($('m-land'), totalHa, totalHa>0&&totalHa<100?1:0);
+            countUp($('m-types'), Object.values(byType).filter(v=>v>0).length, 0);
+            $('lc-crops').textContent=byType.crops; $('lc-livestock').textContent=byType.livestock; $('lc-mixed').textContent=byType.mixed;
+        }
+
+        function applyView(){
+            const q=$('farm-search').value.trim().toLowerCase(), t=$('farm-filter').value;
+            return allFarms.filter(f=>{ const hay=((f.name||'')+' '+(f.city||'')+' '+(f.country||'')+' '+(f.state||'')).toLowerCase(); return (!q||hay.includes(q)) && (!t||(f.type||'').toLowerCase()===t); });
+        }
+
+        function renderMap(){
+            const map=$('map'); const view=applyView();
+            $('count').innerHTML = allFarms.length ? 'Showing <b>'+view.length+'</b> of <b>'+allFarms.length+'</b> '+(allFarms.length===1?'farm':'farms') : '';
+            if(!allFarms.length){ map.innerHTML='<div class="empty"><div class="ei"><i class="fas fa-seedling"></i></div><h3>No farms yet</h3><p>Add your first farm and it’ll appear here as a plot on your estate map.</p><button class="btn" onclick="document.getElementById(\'create-farm-btn\').click()"><i class="fas fa-plus"></i> Add your first farm</button></div>'; return; }
+            if(!view.length){ map.innerHTML='<div class="empty"><div class="ei"><i class="fas fa-magnifying-glass"></i></div><h3>No matches</h3><p>Try a different search or clear the type filter.</p></div>'; return; }
+
+            const totalHa = allFarms.reduce((s,f)=>s+toHa(f),0);
+            const tiles = view.map((f,idx)=>{
+                const t=(f.type||'mixed').toLowerCase(), cls=(t==='crops'||t==='livestock')?t:'mixed';
+                const ha=toHa(f); const areaTxt = ha>0? ha.toFixed(ha<100?1:0)+' ha' : (f.total_size? esc(f.total_size)+' '+esc(f.size_unit||''):'size not set');
+                const sharePct = totalHa>0 ? (ha/totalHa*100) : 0;
+                const icon = cls==='crops'?'fa-wheat-awn':cls==='livestock'?'fa-cow':'fa-tractor';
+                const loc=[f.city,f.country].filter(Boolean).map(esc).join(', ');
+                const titleShare = totalHa>0 ? ' ('+sharePct.toFixed(0)+'% of your land)' : '';
+                return '<div class="plot '+cls+'" data-id="'+f.id+'" style="animation-delay:'+Math.min(idx*55,520)+'ms" onclick="manageFarm('+f.id+')" title="'+esc(f.name||'Farm')+' — '+areaTxt+titleShare+'">'
+                    + '<div class="plot-tex"></div>'
+                    + '<div class="plot-lab"><span class="ptag"><i class="fas '+icon+'"></i> '+cap(cls)+'</span>'
+                    + '<h4>'+esc(f.name||'Untitled')+'</h4>'
+                    + '<span class="parea"><i class="fas fa-ruler-combined"></i> '+areaTxt+'</span>'
+                    + (loc?'<span class="ploc">'+loc+'</span>':'')+'</div>'
+                    + '<div class="plot-acts">'
+                    + '<button class="pa manage" onclick="event.stopPropagation();manageFarm('+f.id+')"><i class="fas fa-arrow-right"></i> Manage</button>'
+                    + '<button class="pa" onclick="event.stopPropagation();editFarm('+f.id+')" title="Edit"><i class="fas fa-pen"></i></button>'
+                    + '<button class="pa del" onclick="event.stopPropagation();deleteFarm('+f.id+')" title="Delete"><i class="fas fa-trash"></i></button>'
+                    + '</div>'
+                    + '<div class="plot-share" title="Share of your total land"><i data-w="'+Math.max(sharePct,2)+'"></i></div>'
+                    + '</div>';
+            }).join('');
+            map.innerHTML = '<div class="plots">'+tiles+'</div>';
+            requestAnimationFrame(()=>requestAnimationFrame(()=>{ map.querySelectorAll('.plot-share i').forEach(el=>{ el.style.width=el.dataset.w+'%'; }); }));
+        }
+        window.manageFarm = id => { window.location.href='individual_farm.html?id='+id; };
+
+        async function loadFarms(){
+            const map=$('map'); map.innerHTML='<div class="spin on"><div class="sp"></div></div>';
+            try{
+                const res = await fetch('/api/farms/', { headers:{'Authorization':'Bearer '+token} });
+                if(res.status===401){ localStorage.clear(); window.location.href='authentication.html'; return; }
+                if(!res.ok) throw new Error();
+                let farms = await res.json(); farms = Array.isArray(farms)?farms:(farms.results||[]);
+                allFarms=farms; window.userFarmsContext=farms;
+                renderOverview(); renderMap();
+            }catch(e){
+                map.innerHTML='<div class="empty"><div class="ei" style="background:#fee2e2;color:#dc2626"><i class="fas fa-triangle-exclamation"></i></div><h3>Couldn’t load your farms</h3><p>Check your connection, then try again.</p><button class="btn" onclick="loadFarms()"><i class="fas fa-rotate-right"></i> Retry</button></div>';
+            }
+        }
+        $('farm-search').addEventListener('input', renderMap);
+        $('farm-filter').addEventListener('change', renderMap);
+        let rzt; window.addEventListener('resize', ()=>{ clearTimeout(rzt); rzt=setTimeout(()=>{ if(allFarms.length) renderMap(); }, 180); });
+
+        /* ---------- create / edit ---------- */
+        $('create-farm-btn').addEventListener('click', ()=>{ editingId=null; $('farm-modal-title').textContent='Add New Farm'; $('farm-form').reset(); $('f-unit').value='acres'; $('form-error').style.display='none'; $('farm-modal').classList.add('show'); });
+        $('f-cancel').addEventListener('click', ()=> $('farm-modal').classList.remove('show'));
+        $('farm-form').addEventListener('submit', async e=>{
+            e.preventDefault();
+            const sv=$('f-size').value.trim(); const size = sv===''?null:parseFloat(sv);
+            const data = { name:$('f-name').value.trim(), type:$('f-type').value.trim().toLowerCase(), country:$('f-country').value.trim(), state:$('f-state').value.trim(), city:$('f-city').value.trim(), address:$('f-address').value.trim(), total_size:size, size_unit:$('f-unit').value.trim(), additional_notes:$('f-notes').value.trim() };
+            const err=$('form-error');
+            if(!data.name||!data.type||!data.country||!data.state||!data.city){ err.textContent='Please fill all fields marked with *'; err.style.display='block'; return; }
+            try{
+                const url = editingId?'/api/farms/'+editingId+'/':'/api/farms/';
+                const res = await fetch(url, { method: editingId?'PATCH':'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body:JSON.stringify(data) });
+                if(!res.ok){ const txt=await res.text(); let j=null; try{j=JSON.parse(txt);}catch(_){} err.textContent = j?Object.entries(j).map(([k,v])=>k+': '+(Array.isArray(v)?v.join(', '):v)).join('\n'):(res.statusText||txt); err.style.display='block'; return; }
+                $('farm-modal').classList.remove('show'); loadFarms();
+            }catch(_){ err.textContent='Couldn’t save the farm. Please try again.'; err.style.display='block'; }
+        });
+        window.editFarm = async id=>{
+            event?.stopPropagation();
+            let farm = allFarms.find(f=>f.id===id);
+            try{ const res=await fetch('/api/farms/'+id+'/',{headers:{'Authorization':'Bearer '+token}}); if(res.ok) farm=await res.json(); }catch(_){}
+            if(!farm) return;
+            editingId=id; $('farm-modal-title').textContent='Edit Farm: '+farm.name;
+            $('f-name').value=farm.name||''; $('f-type').value=farm.type||''; $('f-country').value=farm.country||''; $('f-state').value=farm.state||''; $('f-city').value=farm.city||''; $('f-address').value=farm.address||''; $('f-size').value=farm.total_size||''; $('f-unit').value=farm.size_unit||'acres'; $('f-notes').value=farm.additional_notes||'';
+            $('form-error').style.display='none'; $('farm-modal').classList.add('show');
+        };
+        let lastDeleted=null;
+        window.deleteFarm = async id=>{
+            event?.stopPropagation();
+            if(!confirm('Delete this farm? This cannot be undone.')) return;
+            const farm = allFarms.find(f=>f.id===id);
+            try{
+                const res = await fetch('/api/farms/'+id+'/', { method:'DELETE', headers:{'Authorization':'Bearer '+token} });
+                if(res.ok){ lastDeleted={data:farm}; loadFarms(); snackbar('Farm “'+(farm?.name||'')+'” deleted', async ()=>{ if(!lastDeleted) return; const d=Object.assign({},lastDeleted.data); delete d.id; try{ await fetch('/api/farms/',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(d)}); loadFarms(); }catch(_){} lastDeleted=null; }); }
+                else alert('Failed to delete farm.');
+            }catch(_){ alert('Error deleting farm.'); }
+        };
+        function snackbar(msg,onUndo){ const b=$('snack'); b.innerHTML='<span>'+msg+'</span><button>Undo</button>'; b.style.display='flex'; b.querySelector('button').onclick=()=>{ onUndo&&onUndo(); b.style.display='none'; }; setTimeout(()=>b.style.display='none',8000); }
+
+        /* ---------- settings ---------- */
+        $('settings-btn').addEventListener('click', ()=> $('settings-modal').classList.add('show'));
+        $('set-close').addEventListener('click', ()=> $('settings-modal').classList.remove('show'));
+        $('logout-btn').addEventListener('click', ()=>{ localStorage.clear(); window.location.href='authentication.html'; });
+        (function(){ $('set-language').value=localStorage.getItem('preferred_language')||'en'; $('set-currency').value=localStorage.getItem('preferred_currency')||'USD'; })();
+        function syncSettings(){ const d={ language:$('set-language').value, currency:$('set-currency').value }; localStorage.setItem('preferred_language',d.language); localStorage.setItem('preferred_currency',d.currency); fetch('/api/user/settings/',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(d)}).catch(()=>{}); }
+        $('set-language').addEventListener('change', syncSettings);
+        $('set-currency').addEventListener('change', syncSettings);
+        document.querySelectorAll('.modal').forEach(m=> m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('show'); }));
+
+        /* ---------- Dale context ---------- */
+        window.__daleCtx = function(){ const farms=(allFarms||[]).map(f=>({name:f.name,type:f.type,size:(f.total_size||'')+' '+(f.size_unit||''),location:[f.city,f.country].filter(Boolean).join(', ')})); return { page:'Multi-Farm Dashboard', type:'multi_farm', farms:farms, user:{name:currentUser.name}, extras:{ farm_count:farms.length, total_hectares:Number((allFarms||[]).reduce((s,f)=>s+toHa(f),0).toFixed(1)) } }; };
+        window.__daleIntro = "Hi, I'm Dale. I can see your farms — ask me to compare them, summarise your land, or suggest what to focus on next.";
+        window.__daleChips = ["How many farms do I have?","Which is my largest farm?","Summarise my farms","What should I prioritise?"];
+
+        loadFarms();
+    </script>
+
+    <!-- ===== Dale AI assistant (context-aware, brand) ===== -->
+    <script>
+    (function(){
+      if (window.__daleInit) return; window.__daleInit = true;
+      var ENDPOINT = '/api/ai/dale/ask/';
+      var history = [];
+      var css = ''
+        + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:62px;height:62px;border:0;border-radius:50%;cursor:pointer;z-index:1000;background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}'
+        + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
+        + '#daleFab svg{width:28px;height:28px}'
+        + '#daleFab .dot{position:absolute;top:10px;right:11px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857}'
+        + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
+        + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
+        + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
+        + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
+        + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+        + '.dale-head .mk svg{width:20px;height:20px}'
+        + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
+        + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
+        + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+        + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
+        + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+        + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
+        + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
+        + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+        + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
+        + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
+        + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
+        + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
+        + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
+        + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
+        + '.dale-chip:hover{background:#d6efdf}'
+        + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
+        + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
+        + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
+        + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
+        + '.dale-input button svg{width:18px;height:18px}'
+        + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
+      var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+      var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+      var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
+      fab.innerHTML = '<span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>';
+      document.body.appendChild(fab);
+      var panel = document.createElement('div'); panel.id='dalePanel';
+      panel.innerHTML =
+        '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
+        + '<div class="dale-msgs" id="daleMsgs"></div><div class="dale-chips" id="daleChips"></div>'
+        + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
+        + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
+      document.body.appendChild(panel);
+      var msgs = panel.querySelector('#daleMsgs'); var text = panel.querySelector('#daleText'); var greeted=false;
+      function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+      function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+      function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+      function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
+      function renderChips(){ var chips=(window.__daleChips||[]); var box=panel.querySelector('#daleChips'); box.innerHTML=''; chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); }); }
+      async function send(q){
+        q = (q!==undefined ? q : text.value).trim(); if(!q) return;
+        text.value=''; bubble(q,'me'); history.push({role:'user',content:q}); var t=typing();
+        try{
+          var token = localStorage.getItem('access_token');
+          var res = await fetch(ENDPOINT, { method:'POST', headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}), body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) }) });
+          t.remove();
+          if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
+          var data = await res.json(); var reply = data.reply || data.detail || 'No response.';
+          bubble(reply,'ai'); history.push({role:'assistant',content:reply});
+        }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
+      }
+      function open(){ panel.classList.add('open'); if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); } setTimeout(function(){ text.focus(); }, 50); }
+      function close(){ panel.classList.remove('open'); }
+      fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
+      panel.querySelector('.x').addEventListener('click', close);
+      panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
+      text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+      text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
+    })();
+    </script>
+</body>
+</html>
