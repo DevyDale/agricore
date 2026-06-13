@@ -1,48 +1,85 @@
 {% extends 'dashboard/base.html' %}
-{% block content %}
-<div class="container mx-auto px-4 py-6">
-    <h1 class="text-2xl font-bold mb-4">{% if animal %}Edit Animal{% else %}Add Animal{% endif %}</h1>
-    <form method="post">
+{% block title %}{% if animal %}Edit Animal{% else %}Add Animal{% endif %} — Agricore{% endblock %}
+{% block dashboard_content %}
+<style>
+    .lf-hero{ position:relative; overflow:hidden; color:#fff; background:linear-gradient(120deg,#0c3d22,#1f5a32 55%,#2f6b3c); border-radius:0 0 26px 26px; }
+    .lf-hero::before{ content:''; position:absolute; inset:0; background-image:repeating-linear-gradient(45deg,transparent,transparent 12px,rgba(255,255,255,.035) 12px,rgba(255,255,255,.035) 24px); }
+    .lf-card{ background:#fff; border:1px solid #ece4d6; border-radius:20px; box-shadow:0 24px 60px -34px rgba(20,40,25,.55); }
+    .lf-label{ display:block; font-size:.8rem; font-weight:700; color:#475569; margin-bottom:.4rem; letter-spacing:.01em; }
+    .lf-field{ width:100%; height:50px; border:1.5px solid #e2ddd0; border-radius:13px; padding:0 .95rem; font-size:.95rem; color:#16271c; background:#fff; transition:border-color .2s, box-shadow .2s; }
+    .lf-field:focus{ outline:none; border-color:#10b981; box-shadow:0 0 0 4px rgba(16,185,129,.13); }
+    select.lf-field{ appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23047857' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .9rem center; padding-right:2.4rem; }
+    .lf-save{ display:inline-flex; align-items:center; gap:.55rem; background:linear-gradient(135deg,#10b981,#047857); color:#fff; font-weight:700; padding:.8rem 1.6rem; border:0; border-radius:13px; cursor:pointer; box-shadow:0 10px 22px -10px rgba(5,120,80,.55); transition:transform .2s; font-size:.98rem; }
+    .lf-save:hover{ transform:translateY(-2px); }
+    .lf-cancel{ display:inline-flex; align-items:center; gap:.45rem; color:#5b6b60; font-weight:600; text-decoration:none; padding:.8rem 1.2rem; border-radius:13px; }
+    .lf-cancel:hover{ background:#f4efe3; }
+    @media(max-width:560px){ .lf-grid{ grid-template-columns:1fr !important; } }
+</style>
+
+<section class="lf-hero py-10 px-6 mb-8">
+    <div class="max-w-3xl mx-auto relative" style="z-index:2">
+        <a href="{% url 'livestock:livestock_list' %}" style="display:inline-flex;align-items:center;gap:.45rem;color:rgba(255,255,255,.85);text-decoration:none;font-size:.86rem;font-weight:600;margin-bottom:.9rem"><i class="fas fa-arrow-left"></i> Back to livestock</a>
+        <div style="display:flex;align-items:center;gap:1rem">
+            <div style="width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25)"><i class="fas fa-cow text-2xl"></i></div>
+            <div>
+                <h1 style="font-family:'Fraunces',serif;font-weight:900;font-size:clamp(1.8rem,4vw,2.6rem);margin:0">{% if animal %}Edit Animal{% else %}Add Animal{% endif %}</h1>
+                <p style="color:rgba(255,255,255,.85);margin:.2rem 0 0">{% if animal %}Update the details for this animal.{% else %}Register a new animal in your herd.{% endif %}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="max-w-3xl mx-auto px-6 pb-14">
+    <form method="post" class="lf-card" style="padding:1.8rem">
         {% csrf_token %}
-        <div class="mb-4">
-            <label class="block mb-1">Tag ID</label>
-            <input type="text" name="tag_id" class="border rounded px-3 py-2 w-full" value="{{ animal.tag_id|default:'' }}" required>
+        <div class="lf-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1.1rem">
+            <div>
+                <label class="lf-label">Tag ID <span style="color:#dc2626">*</span></label>
+                <input type="text" name="tag_id" class="lf-field" value="{{ animal.tag_id|default:'' }}" placeholder="e.g. UG-0421" required>
+            </div>
+            <div>
+                <label class="lf-label">Name</label>
+                <input type="text" name="name" class="lf-field" value="{{ animal.name|default:'' }}" placeholder="e.g. Bessie">
+            </div>
+            <div>
+                <label class="lf-label">Sex</label>
+                <select name="sex" class="lf-field">
+                    <option value="" {% if not animal or not animal.sex %}selected{% endif %}>Select</option>
+                    <option value="Male" {% if animal and animal.sex == 'Male' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if animal and animal.sex == 'Female' %}selected{% endif %}>Female</option>
+                </select>
+            </div>
+            <div>
+                <label class="lf-label">Age Group</label>
+                <input type="text" name="age_group" class="lf-field" value="{{ animal.age_group|default:'' }}" placeholder="e.g. Adult, Calf">
+            </div>
+            <div>
+                <label class="lf-label">Breed</label>
+                <input type="text" name="breed" class="lf-field" value="{{ animal.breed|default:'' }}" placeholder="e.g. Ankole">
+            </div>
+            <div>
+                <label class="lf-label">Status</label>
+                <select name="status" class="lf-field">
+                    <option value="" {% if not animal or not animal.status %}selected{% endif %}>Select</option>
+                    <option value="Active" {% if animal and animal.status|lower == 'active' %}selected{% endif %}>Active</option>
+                    <option value="Sold" {% if animal and animal.status|lower == 'sold' %}selected{% endif %}>Sold</option>
+                    <option value="Deceased" {% if animal and animal.status|lower == 'deceased' %}selected{% endif %}>Deceased</option>
+                </select>
+            </div>
+            <div style="grid-column:1/-1">
+                <label class="lf-label">Livestock Unit</label>
+                <select name="livestock_unit" class="lf-field">
+                    <option value="">Select Unit</option>
+                    {% for unit in units %}
+                    <option value="{{ unit.id }}" {% if animal and animal.livestock_unit and animal.livestock_unit.id == unit.id %}selected{% endif %}>{{ unit.unit_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
-        <div class="mb-4">
-            <label class="block mb-1">Name</label>
-            <input type="text" name="name" class="border rounded px-3 py-2 w-full" value="{{ animal.name|default:'' }}">
+        <div style="display:flex;align-items:center;gap:.4rem;margin-top:1.8rem;padding-top:1.3rem;border-top:1px solid #f1ece1">
+            <button type="submit" class="lf-save"><i class="fas fa-check"></i> {% if animal %}Save changes{% else %}Add animal{% endif %}</button>
+            <a href="{% url 'livestock:livestock_list' %}" class="lf-cancel">Cancel</a>
         </div>
-        <div class="mb-4">
-            <label class="block mb-1">Sex</label>
-            <select name="sex" class="border rounded px-3 py-2 w-full">
-                <option value="" {% if not animal or not animal.sex %}selected{% endif %}>Select</option>
-                <option value="Male" {% if animal and animal.sex == 'Male' %}selected{% endif %}>Male</option>
-                <option value="Female" {% if animal and animal.sex == 'Female' %}selected{% endif %}>Female</option>
-            </select>
-        </div>
-        <div class="mb-4">
-            <label class="block mb-1">Age Group</label>
-            <input type="text" name="age_group" class="border rounded px-3 py-2 w-full" value="{{ animal.age_group|default:'' }}">
-        </div>
-        <div class="mb-4">
-            <label class="block mb-1">Breed</label>
-            <input type="text" name="breed" class="border rounded px-3 py-2 w-full" value="{{ animal.breed|default:'' }}">
-        </div>
-        <div class="mb-4">
-            <label class="block mb-1">Status</label>
-            <input type="text" name="status" class="border rounded px-3 py-2 w-full" value="{{ animal.status|default:'' }}">
-        </div>
-        <div class="mb-4">
-            <label class="block mb-1">Livestock Unit</label>
-            <select name="livestock_unit" class="border rounded px-3 py-2 w-full">
-                <option value="">Select Unit</option>
-                {% for unit in units %}
-                <option value="{{ unit.id }}" {% if animal and animal.livestock_unit and animal.livestock_unit.id == unit.id %}selected{% endif %}>{{ unit.unit_name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded">Save</button>
-        <a href="{% url 'livestock_list' %}" class="ml-4 text-gray-600">Cancel</a>
     </form>
 </div>
 {% endblock %}
