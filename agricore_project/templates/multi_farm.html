@@ -71,9 +71,9 @@
         .plot:hover{ transform:translateY(-5px); z-index:6; box-shadow:inset 0 0 0 1px rgba(255,255,255,.3), 0 20px 40px -16px rgba(5,120,80,.5); filter:brightness(1.05) }
         .plot-share{ position:absolute; left:0; right:0; bottom:0; height:5px; background:rgba(255,255,255,.25) }
         .plot-share i{ display:block; height:100%; width:0; background:rgba(255,255,255,.9); transition:width .9s cubic-bezier(.2,.8,.2,1) }
-        .plot.crops{ background:repeating-linear-gradient(118deg,#437634 0 7px,#508639 7px 14px) }
-        .plot.livestock{ background:repeating-linear-gradient(64deg,#b98f3f 0 8px,#cba656 8px 16px) }
-        .plot.mixed{ background:repeating-linear-gradient(100deg,#6c7d36 0 7px,#7e8f44 7px 14px) }
+        .plot.crops{ background:repeating-linear-gradient(118deg, rgba(0,0,0,.13) 0 3px, rgba(255,255,255,.06) 3px 8px), linear-gradient(160deg,#549040,#3c7330) }
+        .plot.livestock{ background-color:#bd8f3e; background-image:radial-gradient(rgba(255,255,255,.2) 1.5px, transparent 1.8px), linear-gradient(160deg, rgba(220,176,96,.18), rgba(150,110,48,.4)); background-size:15px 15px, 100% 100% }
+        .plot.mixed{ background:repeating-linear-gradient(45deg, rgba(0,0,0,.13) 0 6px, transparent 6px 12px), repeating-linear-gradient(-45deg, rgba(255,255,255,.08) 0 6px, transparent 6px 12px), linear-gradient(160deg,#7e9046,#5f722d) }
         .plot-tex{ position:absolute; inset:0; background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(0,0,0,.3)); pointer-events:none }
         .plot-lab{ position:absolute; inset:0; padding:.6rem .7rem; display:flex; flex-direction:column; justify-content:flex-end; gap:.1rem; text-shadow:0 1px 5px rgba(0,0,0,.55); pointer-events:none; transition:opacity .2s }
         .plot-lab .ptag{ align-self:flex-start; font-size:.56rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; background:rgba(0,0,0,.3); padding:.18rem .45rem; border-radius:999px; margin-bottom:.2rem }
