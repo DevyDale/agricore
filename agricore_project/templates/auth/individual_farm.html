@@ -507,10 +507,18 @@
 
             <main class="max-w-7xl w-full mx-auto px-6 py-10 flex-1">
                 <!-- Farm summary stats -->
-                <div id="farm-stats" class="mb-12"></div>
+                <div id="farm-stats" class="mb-8"></div>
+
+                <!-- Hidden global loading overlay -->
+                <div id="page-loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(255,255,255,0.7); z-index:9999; align-items:center; justify-content:center;">
+                    <div class="spinner" style="width:64px; height:64px; border-width:6px;"></div>
+                </div>
+
+                <!-- Work area: produce table (main) + manage rail (side) -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
                 <!-- Produce Collection History -->
-                <section class="glass rounded-2xl shadow-xl p-8 fade-in fade-in-2 mb-12">
+                <section class="lg:col-span-2 glass rounded-2xl shadow-xl p-8 fade-in fade-in-2">
                     <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
                         <div>
                             <h3 class="font-display text-3xl font-bold text-gray-900 mb-1">Produce Collection History</h3>
@@ -552,80 +560,45 @@
                     </div>
                 </section>
 
-                <!-- Quick Access Cards -->
-                <div class="mb-12">
-                    <h2 class="font-display text-2xl font-bold text-gray-900 mb-6">Quick Access</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                                <a id="land-management-link" href="#" class="action-card p-8 block group fade-in fade-in-4" style="position:relative;">
-                                                    <div class="icon-wrapper w-16 h-16 rounded-2xl mb-5 flex items-center justify-center">
-                                                        <i class="fas fa-tractor text-green-600 text-3xl"></i>
-                                                    </div>
-                                                    <h3 class="font-display text-xl font-bold mb-2 text-gray-900">Land Management</h3>
-                                                    <p class="text-gray-600 leading-relaxed">Organize fields, plots, and land assets.</p>
-                                                    <div class="mt-4 flex items-center text-green-600 font-semibold text-sm" id="land-tab-action">
-                                                        <span>Manage land</span>
-                                                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
-                                                    </div>
-                                                    </a>
-                        <script>
-                        // Dynamically set the Land Management link to include the farm id from the URL
-                        document.addEventListener('DOMContentLoaded', function() {
-                            function getFarmIdFromUrl() {
-                                const params = new URLSearchParams(window.location.search);
-                                return params.get('id');
-                            }
-                            var farmId = getFarmIdFromUrl();
-                            var landLink = document.getElementById('land-management-link');
-                            if (landLink && farmId) {
-                                landLink.href = '/landmanaggement.html?id=' + encodeURIComponent(farmId);
-                            } else if (landLink) {
-                                landLink.href = '/landmanaggement.html';
-                            }
-                        });
-                        </script>
-                        <a href="/livestock.html" class="action-card p-8 block group fade-in fade-in-1" style="position:relative;">
-                            <div class="icon-wrapper w-16 h-16 rounded-2xl mb-5 flex items-center justify-center">
-                                <i class="fas fa-cow text-green-600 text-3xl"></i>
+                    <!-- Manage this farm -->
+                    <aside class="lg:col-span-1 fade-in fade-in-3">
+                        <div class="glass rounded-2xl shadow-xl p-6">
+                            <h3 class="font-display text-xl font-bold text-gray-900 mb-1">Manage this farm</h3>
+                            <p class="text-gray-500 text-sm mb-5">Jump straight into a working area.</p>
+                            <div class="space-y-3">
+                                <a id="land-management-link" href="#" class="group flex items-center gap-4 p-4 rounded-2xl border border-[#ece4d6] bg-white hover:border-green-500 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                                    <span class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg flex-none" style="background:linear-gradient(135deg,#3f7a31,#2f5a24)"><i class="fas fa-tractor"></i></span>
+                                    <span class="flex-1 min-w-0"><span class="block font-display font-bold text-gray-900 leading-tight">Land Management</span><span class="block text-sm text-gray-500">Fields, plots &amp; assets</span></span>
+                                    <i class="fas fa-arrow-right text-gray-300 group-hover:text-green-600 group-hover:translate-x-1 transition-transform"></i>
+                                </a>
+                                <a href="/livestock.html" class="group flex items-center gap-4 p-4 rounded-2xl border border-[#ece4d6] bg-white hover:border-amber-500 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                                    <span class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg flex-none" style="background:linear-gradient(135deg,#c39a48,#a9772e)"><i class="fas fa-cow"></i></span>
+                                    <span class="flex-1 min-w-0"><span class="block font-display font-bold text-gray-900 leading-tight">Livestock</span><span class="block text-sm text-gray-500">Animals &amp; herds</span></span>
+                                    <i class="fas fa-arrow-right text-gray-300 group-hover:text-amber-600 group-hover:translate-x-1 transition-transform"></i>
+                                </a>
+                                <a href="/crops.html" class="group flex items-center gap-4 p-4 rounded-2xl border border-[#ece4d6] bg-white hover:border-green-500 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                                    <span class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg flex-none" style="background:linear-gradient(135deg,#6aa83a,#4f8a2f)"><i class="fas fa-leaf"></i></span>
+                                    <span class="flex-1 min-w-0"><span class="block font-display font-bold text-gray-900 leading-tight">Crops</span><span class="block text-sm text-gray-500">Cycles, yields &amp; health</span></span>
+                                    <i class="fas fa-arrow-right text-gray-300 group-hover:text-green-600 group-hover:translate-x-1 transition-transform"></i>
+                                </a>
+                                <a href="/expenses.html" class="group flex items-center gap-4 p-4 rounded-2xl border border-[#ece4d6] bg-white hover:border-teal-500 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                                    <span class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg flex-none" style="background:linear-gradient(135deg,#0d9488,#0f766e)"><i class="fas fa-coins"></i></span>
+                                    <span class="flex-1 min-w-0"><span class="block font-display font-bold text-gray-900 leading-tight">Expenses</span><span class="block text-sm text-gray-500">Costs &amp; spending</span></span>
+                                    <i class="fas fa-arrow-right text-gray-300 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                                </a>
                             </div>
-                            <h3 class="font-display text-xl font-bold mb-2 text-gray-900">Livestock</h3>
-                            <p class="text-gray-600 leading-relaxed">Manage and track all animals on your farm.</p>
-                            <div class="mt-4 flex items-center text-green-600 font-semibold text-sm" id="livestock-tab-action">
-                                <span>View livestock</span>
-                                <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
-                            </div>
-                        </a>
-
-                        <a href="/crops.html" class="action-card p-8 block group fade-in fade-in-2" style="position:relative;">
-                            <div class="icon-wrapper w-16 h-16 rounded-2xl mb-5 flex items-center justify-center">
-                                <i class="fas fa-leaf text-green-600 text-3xl"></i>
-                            </div>
-                            <h3 class="font-display text-xl font-bold mb-2 text-gray-900">Crops</h3>
-                            <p class="text-gray-600 leading-relaxed">Monitor crop cycles, yields, and health.</p>
-                            <div class="mt-4 flex items-center text-green-600 font-semibold text-sm" id="crops-tab-action">
-                                <span>View crops</span>
-                                <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
-                            </div>
-                        </a>
-
-                        <a href="/expenses.html" class="action-card p-8 block group fade-in fade-in-3" style="position:relative;">
-                                            <!-- Loading Overlay -->
-                                            <div id="page-loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(255,255,255,0.7); z-index:9999; align-items:center; justify-content:center;">
-                                                <div class="spinner" style="width:64px; height:64px; border-width:6px;"></div>
-                                            </div>
-                            <div class="icon-wrapper w-16 h-16 rounded-2xl mb-5 flex items-center justify-center">
-                                <i class="fas fa-coins text-green-600 text-3xl"></i>
-                            </div>
-                            <h3 class="font-display text-xl font-bold mb-2 text-gray-900">Expenses</h3>
-                            <p class="text-gray-600 leading-relaxed">Track and manage farm expenses.</p>
-                            <div class="mt-4 flex items-center text-green-600 font-semibold text-sm" id="expenses-tab-action">
-                                <span>View expenses</span>
-                                <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
-                            </div>
-                        </a>
-                    </div>
+                        </div>
+                    </aside>
                 </div>
+                <script>
+                // Land Management link → include farm id from URL
+                document.addEventListener('DOMContentLoaded', function() {
+                    var farmId = new URLSearchParams(window.location.search).get('id');
+                    var landLink = document.getElementById('land-management-link');
+                    if (landLink) landLink.href = '/landmanaggement.html' + (farmId ? ('?id=' + encodeURIComponent(farmId)) : '');
+                });
+                </script>
 
-                <!-- summary stats render into #farm-stats above -->
             </main>
         </div>
     </div>
