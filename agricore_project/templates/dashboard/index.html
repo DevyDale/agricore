@@ -1,65 +1,300 @@
 {% extends 'base.html' %}
+{% block title %}Dashboard — Agricore{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-  <h1>Farm Dashboard</h1>
-  <hr>
-  <div class="row">
-    <div class="col-md-4">
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Farms</h5>
-          <p class="card-text">Manage your farm profiles and fields.</p>
-          <a href="{% url 'farms:list' %}" class="btn btn-primary">View Farms</a>
+{# ============================================================
+   AGRICORE — FARM DASHBOARD
+   Rebuilt to match the live product identity used on welcome /
+   landing / auth: procedural farmland mosaic + atmosphere stack,
+   Fraunces 900 + Inter, leaf emblem, .ic stroke icons, the
+   chip palette and card treatment from .feat / .intro-card.
+   Verified URL names only: livestock:livestock_list,
+   analytics:expense_list / sale_list / activity_log_list.
+   farms:/crops: namespaces don't exist server-side -> /multi_farm.html
+   ============================================================ #}
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  /* everything scoped under .agx so it can't collide with base.html */
+  .agx{
+    --g500:#10b981; --g600:#059669; --g700:#047857; --g900:#064e3b;
+    --ink:#16271c; --s700:#334155; --s600:#475569; --s500:#64748b;
+    --cream:#faf6ee; --line:#ece4d6;
+    font-family:'Inter',system-ui,sans-serif; color:var(--ink);
+    background:var(--cream); -webkit-font-smoothing:antialiased;
+  }
+  .agx h1,.agx h2,.agx h3{ font-family:'Fraunces',serif; letter-spacing:-.02em; }
+  .agx .ic{ stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .agx svg{ display:block; }
+  .agx a{ text-decoration:none; color:inherit; }
+  .agx .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(1.2rem,4vw,2.5rem); }
+
+  /* ===== HERO BANNER (farmland scene scoped to the banner, not fixed) ===== */
+  .agx-hero{ position:relative; overflow:hidden; background:#22432c;
+    border-radius:0 0 28px 28px; min-height:clamp(230px,34vh,330px);
+    display:flex; align-items:flex-end; }
+  .agx-scene{ position:absolute; inset:0; overflow:hidden; }
+  .agx-scene #dashFarmland{ position:absolute; inset:-2%; }
+  .agx-scene #dashFarmland svg{ width:100%; height:100%; }
+  .agx-scene .sun{ position:absolute; top:-30%; right:-8%; width:46vmax; height:46vmax; pointer-events:none;
+    background:radial-gradient(circle, rgba(255,231,168,.55), rgba(255,205,120,.18) 42%, transparent 66%); }
+  .agx-scene .grade{ position:absolute; inset:0; pointer-events:none; mix-blend-mode:soft-light;
+    background:linear-gradient(175deg, rgba(255,226,160,.45) 0%, rgba(120,150,90,0) 26%, rgba(14,38,22,.55) 100%); }
+  .agx-scene .sweep{ position:absolute; top:-30%; left:-50%; width:55%; height:160%; pointer-events:none;
+    transform:rotate(13deg); filter:blur(10px); mix-blend-mode:screen;
+    background:linear-gradient(90deg,transparent,rgba(255,246,222,.12),transparent); animation:agx-sweep 11s linear infinite; }
+  @keyframes agx-sweep{ from{transform:translateX(-10%) rotate(13deg)} to{transform:translateX(360%) rotate(13deg)} }
+  .agx-scene .grain{ position:absolute; inset:0; opacity:.05; mix-blend-mode:overlay; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .agx-scene .vignette{ position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(130% 120% at 45% 25%, transparent 42%, rgba(8,22,13,.66)); }
+  .agx-scene .pin{ position:absolute; width:13px; height:13px; pointer-events:none; transform:translate(-50%,-50%); }
+  .agx-scene .pin i{ position:absolute; inset:0; border-radius:50%; background:#fff;
+    box-shadow:0 0 0 3px rgba(255,255,255,.35),0 6px 14px rgba(0,0,0,.4); }
+  .agx-scene .pin::after{ content:""; position:absolute; inset:-9px; border-radius:50%;
+    border:2px solid rgba(255,255,255,.5); animation:agx-ping 2.6s ease-out infinite; }
+  @keyframes agx-ping{ 0%{transform:scale(.5);opacity:.8} 100%{transform:scale(1.8);opacity:0} }
+  .agx-mote{ position:absolute; border-radius:50%; background:rgba(255,244,214,.85); filter:blur(.6px);
+    pointer-events:none; animation:agx-float linear infinite; opacity:0; }
+  @keyframes agx-float{ 0%{transform:translateY(20px) translateX(0);opacity:0} 15%{opacity:.9}
+    85%{opacity:.7} 100%{transform:translateY(-120px) translateX(24px);opacity:0} }
+
+  .agx-hero-in{ position:relative; z-index:3; width:100%; max-width:1180px; margin:0 auto;
+    padding:clamp(1.4rem,4vw,2.5rem) clamp(1.2rem,4vw,2.5rem) clamp(1.8rem,4vw,2.6rem); color:#fff; }
+  .agx-emblem{ width:60px; height:60px; border-radius:18px; display:grid; place-items:center; color:#fff;
+    background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.32); backdrop-filter:blur(8px);
+    box-shadow:0 18px 40px -16px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.4);
+    animation:agx-pop .8s cubic-bezier(.2,.9,.3,1.3) both; }
+  .agx-emblem svg{ width:32px; height:32px; stroke-width:1.7; }
+  .agx-kick{ display:inline-flex; align-items:center; gap:.5rem; margin:1rem 0 .8rem;
+    font-size:.74rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.85);
+    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); padding:.4rem .85rem; border-radius:999px;
+    backdrop-filter:blur(6px); animation:agx-rise .8s ease .1s both; }
+  .agx-kick .dot{ width:7px; height:7px; border-radius:50%; background:#86efac; box-shadow:0 0 10px #86efac; }
+  .agx-hero h1{ font-weight:900; font-size:clamp(2.1rem,5vw,3.4rem); line-height:1.02;
+    text-shadow:0 4px 36px rgba(0,0,0,.4); animation:agx-rise .8s ease .18s both; }
+  .agx-hero h1 .em{ font-style:italic; font-weight:500; color:#ffe6a8; }
+  .agx-hero .sub{ margin-top:.7rem; font-size:clamp(1rem,1.4vw,1.15rem); line-height:1.55;
+    color:rgba(255,255,255,.9); max-width:48ch; text-shadow:0 2px 18px rgba(0,0,0,.35);
+    animation:agx-rise .8s ease .26s both; }
+
+  /* ===== MODULES ===== */
+  .agx-sec{ padding:clamp(2.4rem,5vw,3.6rem) 0 clamp(2.8rem,6vw,4rem); }
+  .agx-eyebrow{ display:inline-block; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
+    font-size:.74rem; color:var(--g600); margin-bottom:1.1rem; }
+  .agx-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; }
+
+  .agx-card{ position:relative; background:#fff; border:1px solid var(--line); border-radius:22px;
+    padding:1.9rem 1.7rem 1.6rem; box-shadow:0 12px 30px -22px rgba(20,40,25,.5);
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s, border-color .3s; }
+  .agx-card:hover{ transform:translateY(-6px); border-color:#cfe6d6; box-shadow:0 24px 44px -26px rgba(16,120,75,.5); }
+  .agx-card .chip{ width:58px; height:58px; border-radius:16px; display:grid; place-items:center; margin-bottom:1.15rem;
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1); }
+  .agx-card:hover .chip{ transform:translateY(-2px) rotate(-3deg); }
+  .agx-card .chip svg{ width:28px; height:28px; stroke-width:1.9; }
+  .agx-card h3{ font-weight:700; font-size:1.28rem; margin-bottom:.45rem; }
+  .agx-card p{ color:var(--s600); font-size:.96rem; line-height:1.55; margin-bottom:1.3rem; }
+  .agx-go{ display:inline-flex; align-items:center; gap:.45rem; font-weight:700; font-size:.92rem; color:var(--g700); }
+  .agx-go svg{ width:17px; height:17px; transition:transform .25s; }
+  .agx-card:hover .agx-go svg{ transform:translateX(4px); }
+
+  /* chip palette — identical to the live pages */
+  .chip-green{background:#e7f4ec;color:#0f7a4b}.chip-gold{background:#f7eed6;color:#a9791d}
+  .chip-clay{background:#f6e6df;color:#b15a36}.chip-sage{background:#eef2e2;color:#5c7a2e}
+  .chip-sky{background:#e4eef6;color:#2f6f9e}.chip-plum{background:#efe7f4;color:#7c4fa0}
+  .chip-rose{background:#fbe7ee;color:#b13a63}.chip-teal{background:#d9f2ee;color:#0f766e}
+  .chip-amber{background:#fdecd2;color:#b45309}
+
+  /* quick links */
+  .agx-quick{ display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.6rem; }
+  .agx-chip{ display:inline-flex; align-items:center; gap:.5rem; padding:.62rem 1.05rem; background:#fff;
+    border:1.5px solid var(--line); border-radius:12px; color:var(--g700); font-weight:700; font-size:.9rem;
+    transition:all .2s; }
+  .agx-chip svg{ width:17px; height:17px; }
+  .agx-chip:hover{ border-color:#cfe6d6; background:#f5fbf7; transform:translateY(-2px); }
+
+  /* scroll reveal + entrances */
+  .agx .reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+  .agx .reveal.in{ opacity:1; transform:none; }
+  @keyframes agx-rise{ from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
+  @keyframes agx-pop{ from{opacity:0;transform:scale(.7)} to{opacity:1;transform:scale(1)} }
+
+  @media (max-width:980px){ .agx-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:600px){ .agx-grid{ grid-template-columns:1fr; } }
+  @media (prefers-reduced-motion:reduce){
+    .agx *{ animation:none!important }
+    .agx .reveal{ opacity:1; transform:none; transition:none }
+  }
+</style>
+
+<div class="agx">
+
+  {# ---------- HERO BANNER ---------- #}
+  <section class="agx-hero">
+    <div class="agx-scene">
+      <div id="dashFarmland"></div>
+      <div class="sun"></div>
+      <div class="grade"></div>
+      <div class="sweep"></div>
+      <div class="grain"></div>
+      <div class="pin" style="left:22%;top:42%"><i></i></div>
+      <div class="pin" style="left:68%;top:60%"><i></i></div>
+      <div class="pin" style="left:46%;top:28%"><i></i></div>
+      <div class="vignette"></div>
+    </div>
+    <div class="agx-hero-in">
+      <div class="agx-emblem">
+        {# leaf brand mark — same path as welcome/landing/auth #}
+        <svg class="ic" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>
+      </div>
+      <span class="agx-kick"><span class="dot"></span> Your farm command center</span>
+      <h1>Farm <span class="em">dashboard</span></h1>
+      <p class="sub">Every farm, herd, field and shilling — gathered in one place.</p>
+    </div>
+  </section>
+
+  {# ---------- MODULES ---------- #}
+  <section class="agx-sec">
+    <div class="wrap">
+      <span class="agx-eyebrow reveal">Manage your operation</span>
+      <div class="agx-grid">
+
+        {# FARMS — namespace 'farms:list' doesn't exist -> static page #}
+        <div class="agx-card reveal">
+          <div class="chip chip-green">
+            <svg class="ic" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+          </div>
+          <h3>Farms</h3>
+          <p>Manage farm profiles, fields and land portions in one portfolio.</p>
+          <a class="agx-go" href="/multi_farm.html">View farms
+            <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
         </div>
+
+        {# LIVESTOCK #}
+        <div class="agx-card reveal">
+          <div class="chip chip-gold">
+            <svg class="ic" viewBox="0 0 24 24"><rect x="5" y="6.5" width="14" height="11.5" rx="5.5"/><path d="M5.2 8.4C3.4 6.6 3.4 4.4 5.6 4.4"/><path d="M18.8 8.4c1.8-1.8 1.8-4 -0.4-4"/><ellipse cx="12" cy="14" rx="4.2" ry="3"/><circle cx="10.3" cy="14.2" r=".55"/><circle cx="13.7" cy="14.2" r=".55"/><circle cx="9" cy="10.3" r=".6"/><circle cx="15" cy="10.3" r=".6"/></svg>
+          </div>
+          <h3>Livestock</h3>
+          <p>Track herds, units and individual animals across your farms.</p>
+          <a class="agx-go" href="{% url 'livestock:livestock_list' %}">View livestock
+            <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        </div>
+
+        {# CROPS — no 'crops:' namespace server-side -> static page #}
+        <div class="agx-card reveal">
+          <div class="chip chip-sage">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>
+          </div>
+          <h3>Crops</h3>
+          <p>Monitor crop fields, tasks and yields inside each farm.</p>
+          <a class="agx-go" href="/multi_farm.html">Manage crops
+            <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        </div>
+
+        {# EXPENSES #}
+        <div class="agx-card reveal">
+          <div class="chip chip-clay">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="M9 16h4"/></svg>
+          </div>
+          <h3>Expenses</h3>
+          <p>Log and review every farm cost, by category and date.</p>
+          <a class="agx-go" href="{% url 'analytics:expense_list' %}">View expenses
+            <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        </div>
+
+        {# SALES #}
+        <div class="agx-card reveal">
+          <div class="chip chip-amber">
+            <svg class="ic" viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01"/><path d="M18 12h.01"/></svg>
+          </div>
+          <h3>Sales</h3>
+          <p>Track produce and livestock sales and revenue over time.</p>
+          <a class="agx-go" href="{% url 'analytics:sale_list' %}">View sales
+            <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        </div>
+
+        {# ACTIVITY LOG #}
+        <div class="agx-card reveal">
+          <div class="chip chip-plum">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+          </div>
+          <h3>Activity log</h3>
+          <p>See every action and change for full, auditable transparency.</p>
+          <a class="agx-go" href="{% url 'analytics:activity_log_list' %}">View activity
+            <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        </div>
+
+      </div>
+
+      {# ---------- QUICK LINKS ---------- #}
+      <p class="agx-eyebrow reveal" style="margin-top:2.6rem">Jump to</p>
+      <div class="agx-quick reveal">
+        <a class="agx-chip" href="/marketplace.html">
+          <svg class="ic" viewBox="0 0 24 24"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M2 7h20"/></svg>
+          Marketplace
+        </a>
+        <a class="agx-chip" href="/digitalstores.html">
+          <svg class="ic" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          My stores
+        </a>
+        <a class="agx-chip" href="/workforce.html">
+          <svg class="ic" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Professional network
+        </a>
+        <a class="agx-chip" href="/finances.html">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          Finances
+        </a>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Livestock</h5>
-          <p class="card-text">Track and manage livestock units and animals.</p>
-          <a href="{% url 'livestock:list' %}" class="btn btn-primary">View Livestock</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Crops</h5>
-          <p class="card-text">Monitor crop fields, tasks, and yields.</p>
-          <a href="{% url 'crops:list' %}" class="btn btn-primary">View Crops</a>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-4">
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Expenses</h5>
-          <p class="card-text">Log and review all farm expenses.</p>
-          <a href="{% url 'analytics:expense_list' %}" class="btn btn-primary">View Expenses</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Sales</h5>
-          <p class="card-text">Track produce and livestock sales.</p>
-          <a href="{% url 'analytics:sale_list' %}" class="btn btn-primary">View Sales</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Activity Logs</h5>
-          <p class="card-text">See all actions and changes for transparency.</p>
-          <a href="{% url 'analytics:activity_log_list' %}" class="btn btn-primary">View Activity Logs</a>
-        </div>
-      </div>
-    </div>
-  </div>
+  </section>
 </div>
+
+<script>
+  /* procedural farmland mosaic — same generator as welcome/landing/auth */
+  (function(){
+    function buildFarmland(){
+      var W=1200,H=820,cols=7,rows=6;
+      var jx=(W/cols)*0.32, jy=(H/rows)*0.32, P=[];
+      for(var r=0;r<=rows;r++){ P[r]=[]; for(var c=0;c<=cols;c++){
+        var edge=(r===0||r===rows||c===0||c===cols);
+        P[r][c]={ x:(c/cols)*W + (edge?0:(Math.random()*2-1)*jx),
+                  y:(r/rows)*H + (edge?0:(Math.random()*2-1)*jy) };
+      }}
+      var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],
+               ['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']];
+      var ang=[0,16,90,74,16,0,90,30,16], defs='';
+      pal.forEach(function(c,i){ defs+='<pattern id="cp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
+      var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8], cells='';
+      for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){
+        var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e=P[r2+1][c2];
+        var fi=bag[Math.floor(Math.random()*bag.length)];
+        cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#cp'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>';
+      }
+      return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
+    }
+    function spawnMotes(){
+      var sc=document.querySelector('.agx-scene'); if(!sc) return;
+      for(var i=0;i<9;i++){
+        var m=document.createElement('div'); m.className='agx-mote';
+        var s=2+Math.random()*4;
+        m.style.width=s+'px'; m.style.height=s+'px';
+        m.style.left=(Math.random()*100)+'%'; m.style.top=(60+Math.random()*40)+'%';
+        m.style.animationDuration=(7+Math.random()*8)+'s';
+        m.style.animationDelay=(-Math.random()*10)+'s';
+        sc.appendChild(m);
+      }
+    }
+    var host=document.getElementById('dashFarmland');
+    if(host) host.innerHTML=buildFarmland();
+    spawnMotes();
+
+    /* scroll reveal */
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    },{ threshold:0.12, rootMargin:'0px 0px -40px 0px' });
+    document.querySelectorAll('.agx .reveal').forEach(function(el){ io.observe(el); });
+  })();
+</script>
 {% endblock %}

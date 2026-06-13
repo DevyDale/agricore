@@ -1,8 +1,83 @@
 {% extends 'base.html' %}
+{# ============================================================
+   AGRICORE — SHARED DASHBOARD SHELL
+   Carries the real product identity (welcome/landing/auth) so
+   every dashboard page inherits it. Child pages extend this and
+   fill {% block dashboard_content %}. Non-breaking: same block.
+   ============================================================ #}
 {% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  .agricore-dashboard{
+    /* real palette, matching the live pages */
+    --g500:#10b981; --g600:#059669; --g700:#047857; --g900:#064e3b;
+    --ink:#16271c; --s700:#334155; --s600:#475569; --s500:#64748b;
+    --cream:#faf6ee; --line:#ece4d6; --r:18px;
+    font-family:'Inter',system-ui,sans-serif; color:var(--ink); background:var(--cream);
+    -webkit-font-smoothing:antialiased; min-height:100vh;
+  }
+  .agricore-dashboard h1,.agricore-dashboard h2,.agricore-dashboard h3{ font-family:'Fraunces',serif; letter-spacing:-.02em; }
+  .agricore-dashboard .ic{ stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .agricore-dashboard svg{ display:block; }
+  .ag-shell{ max-width:1180px; margin:0 auto; padding:0 clamp(1.2rem,4vw,2.5rem) 3rem; }
+
+  /* ---- farmland scene (drop a .ag-scene inside a positioned banner) ---- */
+  .ag-scene{ position:absolute; inset:0; overflow:hidden; }
+  .ag-scene .farmland{ position:absolute; inset:-2%; }
+  .ag-scene .farmland svg{ width:100%; height:100%; }
+  .ag-scene .sun{ position:absolute; top:-30%; right:-8%; width:46vmax; height:46vmax; pointer-events:none;
+    background:radial-gradient(circle, rgba(255,231,168,.55), rgba(255,205,120,.18) 42%, transparent 66%); }
+  .ag-scene .grade{ position:absolute; inset:0; pointer-events:none; mix-blend-mode:soft-light;
+    background:linear-gradient(175deg, rgba(255,226,160,.45) 0%, rgba(120,150,90,0) 26%, rgba(14,38,22,.55) 100%); }
+  .ag-scene .sweep{ position:absolute; top:-30%; left:-50%; width:55%; height:160%; pointer-events:none;
+    transform:rotate(13deg); filter:blur(10px); mix-blend-mode:screen;
+    background:linear-gradient(90deg,transparent,rgba(255,246,222,.12),transparent); animation:ag-sweep 11s linear infinite; }
+  @keyframes ag-sweep{ from{transform:translateX(-10%) rotate(13deg)} to{transform:translateX(360%) rotate(13deg)} }
+  .ag-scene .vignette{ position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(130% 120% at 45% 25%, transparent 42%, rgba(8,22,13,.66)); }
+
+  /* ---- page header banner ---- */
+  .ag-head{ position:relative; overflow:hidden; background:#22432c; border-radius:0 0 28px 28px;
+    color:#fff; min-height:clamp(180px,26vh,250px); display:flex; align-items:flex-end; }
+  .ag-head__in{ position:relative; z-index:3; width:100%; max-width:1180px; margin:0 auto;
+    padding:clamp(1.3rem,4vw,2.2rem) clamp(1.2rem,4vw,2.5rem); }
+  .ag-head h1{ font-weight:900; font-size:clamp(1.7rem,3.6vw,2.6rem); text-shadow:0 4px 36px rgba(0,0,0,.4); }
+  .ag-head p{ color:rgba(255,255,255,.9); margin-top:.4rem; }
+
+  /* ---- reusable building blocks ---- */
+  .ag-panel{ background:#fff; border:1px solid var(--line); border-radius:var(--r);
+    box-shadow:0 12px 30px -22px rgba(20,40,25,.5); }
+  .ag-btn{ position:relative; overflow:hidden; display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+    height:52px; padding:0 1.6rem; border:0; border-radius:999px; cursor:pointer; text-decoration:none;
+    font:800 1rem 'Inter',sans-serif; color:#fff; background:linear-gradient(135deg,#10b981,#047857);
+    box-shadow:0 16px 34px -12px rgba(5,120,80,.6); transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s; }
+  .ag-btn:hover{ transform:translateY(-3px); color:#fff; box-shadow:0 22px 44px -12px rgba(5,120,80,.7); }
+  .ag-btn svg{ width:18px; height:18px; transition:transform .25s; }
+  .ag-btn:hover svg.arr{ transform:translateX(4px); }
+  .ag-btn.ghost{ background:#fff; color:var(--g700); box-shadow:0 10px 26px -14px rgba(0,0,0,.4); }
+  .ag-btn.ghost:hover{ background:#f5fbf7; }
+
+  /* chip palette shared across pages */
+  .chip-green{background:#e7f4ec;color:#0f7a4b}.chip-gold{background:#f7eed6;color:#a9791d}
+  .chip-clay{background:#f6e6df;color:#b15a36}.chip-sage{background:#eef2e2;color:#5c7a2e}
+  .chip-sky{background:#e4eef6;color:#2f6f9e}.chip-plum{background:#efe7f4;color:#7c4fa0}
+  .chip-rose{background:#fbe7ee;color:#b13a63}.chip-teal{background:#d9f2ee;color:#0f766e}
+  .chip-amber{background:#fdecd2;color:#b45309}
+
+  /* shared motion */
+  .agricore-dashboard .reveal{ opacity:0; transform:translateY(22px);
+    transition:opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+  .agricore-dashboard .reveal.in{ opacity:1; transform:none; }
+  @keyframes ag-rise{ from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
+  .ag-rise{ animation:ag-rise .55s ease both; }
+  @media (prefers-reduced-motion:reduce){
+    .agricore-dashboard *{ animation:none!important }
+    .agricore-dashboard .reveal{ opacity:1; transform:none; transition:none }
+  }
+</style>
+
 <div class="agricore-dashboard">
-    {% block dashboard_content %}
-    <!-- Dashboard content goes here -->
-    {% endblock %}
+  {% block crumb %}{% endblock %}
+  {% block dashboard_content %}{% endblock %}
 </div>
 {% endblock %}
