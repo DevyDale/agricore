@@ -3,16 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Farm Management{% endblock %}</title>
-    <!-- WARNING: Remove Tailwind CDN in production. Use Tailwind via PostCSS or CLI for production builds. See https://tailwindcss.com/docs/installation -->
+    <title>{% block title %}Agricore — Farm Management{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     {% block extra_head %}{% endblock %}
+    <!-- Agricore farmland theme — applied last so it overrides per-page styles -->
+    <style id="agricore-farmland">
+        body{ background:radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f4efe3 62%) !important; color:#16271c !important; }
+        body, body *:not(i):not(.fa):not([class^="fa-"]):not([class*=" fa-"]){ font-family:'Inter',system-ui,sans-serif !important; }
+        h1,h2,h3,.font-display,.fr{ font-family:'Fraunces',serif !important; letter-spacing:-.01em; }
+
+        /* Hero headers (livestock / expenses / land all use .page-header) */
+        .page-header{ background:linear-gradient(120deg,#0c3d22 0%,#1f5a32 55%,#2f6b3c 100%) !important; border-radius:0 0 26px 26px; }
+
+        /* Cards & surfaces */
+        .stat-card{ border:1px solid #ece4d6 !important; border-radius:18px !important; box-shadow:0 14px 36px -26px rgba(20,40,25,.5) !important; }
+        .stat-card:hover{ box-shadow:0 20px 44px -22px rgba(5,120,80,.4) !important; border-color:#cdead8 !important; }
+
+        /* Primary buttons → farmland green pill */
+        .btn-primary, .header-btn{ background:linear-gradient(135deg,#10b981,#047857) !important; box-shadow:0 6px 16px -6px rgba(5,120,80,.5) !important; }
+        .btn-primary:hover{ transform:translateY(-2px) !important; }
+
+        /* Tables */
+        .modern-table thead, .data-table thead{ background:linear-gradient(135deg,#0c6b46,#065f3c) !important; }
+        .modern-table thead th, .data-table thead th{ color:#fff !important; }
+        .modern-table{ border:1px solid #ece4d6 !important; }
+
+        /* Inputs focus */
+        .input-field:focus, .field:focus{ border-color:#10b981 !important; box-shadow:0 0 0 3px rgba(16,185,129,.12) !important; }
+
+        /* Tone accent text/icons toward emerald (links, primary accents) */
+        .text-emerald-600,.text-emerald-700,.text-green-600,.text-green-700{ color:#047857 !important; }
+    </style>
 </head>
 <body class="min-h-screen">
     {% block content %}{% endblock %}
