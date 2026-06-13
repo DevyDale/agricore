@@ -1,898 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>My Digital Stores - Agricore Solutions</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Digital Stores — Agricore</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
-            min-height: 100vh;
-        }
+        :root{ --g500:#10b981; --g600:#059669; --g700:#047857; --line:#ece4d6; --ink:#16271c; }
+        *{ box-sizing:border-box; font-family:'Inter',system-ui,sans-serif }
+        h1,h2,h3,.fr{ font-family:'Fraunces',serif; letter-spacing:-.01em }
+        body{ margin:0; min-height:100vh; color:var(--ink); background:radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f4efe3 62%) }
 
-        /* Header */
-        .header-gradient {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
-        }
+        .hero{ position:relative; overflow:hidden; color:#fff }
+        #ds-farmland{ position:absolute; inset:-2% } #ds-farmland svg{ width:100%; height:100% }
+        .hero-ov{ position:absolute; inset:0; background:linear-gradient(100deg, rgba(8,30,18,.86), rgba(8,30,18,.5)) }
+        .hero-in{ position:relative; z-index:2; max-width:1400px; margin:0 auto; padding:1rem 1.5rem 1.6rem }
+        .topbar{ display:flex; align-items:center; gap:1rem; flex-wrap:wrap }
+        .brand{ display:flex; align-items:center; gap:.6rem; font-family:Fraunces; font-weight:800; font-size:1.3rem }
+        .brand .mk{ width:38px; height:38px; border-radius:11px; display:grid; place-items:center; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28) }
+        .nav{ margin-left:auto; display:flex; gap:.5rem; flex-wrap:wrap }
+        .nbtn{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); color:#fff; padding:.5rem .85rem; border-radius:999px; font-size:.84rem; font-weight:600; cursor:pointer; transition:all .2s; white-space:nowrap; text-decoration:none; display:inline-flex; align-items:center; gap:.4rem }
+        .nbtn:hover{ background:rgba(255,255,255,.22); transform:translateY(-1px) }
+        .nbtn.go{ background:linear-gradient(135deg,var(--g500),var(--g700)); border-color:transparent }
+        h1.title{ font-size:clamp(2rem,5vw,3rem); font-weight:900; margin:1.2rem 0 .2rem }
+        .sub{ color:rgba(255,255,255,.86); font-size:1.05rem }
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        /* Navigation */
-        .nav-btn {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.625rem 1.125rem;
-            border-radius: 0.875rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            white-space: nowrap;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        
-        .nav-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .nav-btn i {
-            margin-right: 0.5rem;
-        }
+        main{ max-width:1400px; margin:0 auto; padding:1.6rem 1.5rem 4rem }
+        .card{ background:#fff; border:1px solid var(--line); border-radius:18px; box-shadow:0 14px 36px -26px rgba(20,40,25,.5) }
+        .controls{ display:flex; gap:.7rem; flex-wrap:wrap; padding:1rem 1.1rem; margin-bottom:1.4rem }
+        .field{ background:#fff; border:1.5px solid #e2ddd0; border-radius:12px; padding:.7rem .95rem; font-size:.92rem; transition:all .2s; width:100% }
+        .field:focus{ outline:none; border-color:var(--g500); box-shadow:0 0 0 3px rgba(16,185,129,.12) }
+        .grow{ flex:1; min-width:220px }
+        .btn{ background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; font-weight:700; padding:.7rem 1.3rem; border:0; border-radius:12px; font-size:.92rem; cursor:pointer; transition:all .25s cubic-bezier(.34,1.56,.64,1); box-shadow:0 6px 16px -6px rgba(5,120,80,.5); display:inline-flex; align-items:center; gap:.5rem; white-space:nowrap }
+        .btn:hover{ transform:translateY(-2px) }
 
-        /* Container */
-        .main-container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-        }
+        .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:1.4rem }
+        .store{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:1.5rem; transition:all .3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 8px 22px -18px rgba(20,40,25,.5) }
+        .store:hover{ transform:translateY(-6px); border-color:var(--g500); box-shadow:0 18px 40px -20px rgba(5,120,80,.45) }
+        .savatar{ width:48px; height:48px; border-radius:13px; background:#dcfce7; color:var(--g700); display:grid; place-items:center; font-size:1.3rem; flex:none }
+        .badge{ display:inline-flex; align-items:center; gap:.3rem; padding:.3rem .75rem; border-radius:999px; font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em }
+        .b-v{ background:#dcfce7; color:#166534 } .b-p{ background:#fef3c7; color:#92400e }
+        .srow{ display:flex; align-items:center; gap:.55rem; color:#64748b; font-size:.9rem; margin:.4rem 0 } .srow i{ color:var(--g600); width:16px }
+        .manage{ display:block; text-align:center; background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; font-weight:600; padding:.7rem; border-radius:11px; text-decoration:none; margin-top:1rem }
 
-        /* Glass container */
-        .glass-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-        }
+        .empty{ grid-column:1/-1; text-align:center; padding:4rem 2rem; background:#fbf7ee; border:2px dashed var(--line); border-radius:18px }
+        .empty i{ font-size:3.4rem; color:#cbd5c5; margin-bottom:1rem } .empty h3{ font-size:1.4rem; color:#475569 } .empty p{ color:#64748b }
 
-        /* Store cards */
-        .store-card {
-            background: white;
-            border: 1px solid #f1f5f9;
-            border-radius: 1.25rem;
-            padding: 1.75rem;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-
-        .store-card:hover {
-            transform: translateY(-8px);
-            border-color: #10b981;
-            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15);
-        }
-
-        /* Input fields */
-        .input-field {
-            background: white;
-            border: 2px solid #e2e8f0;
-            color: #1e293b;
-            border-radius: 1rem;
-            padding: 0.875rem 1.125rem;
-            font-size: 0.9375rem;
-            transition: all 0.2s;
-            width: 100%;
-        }
-
-        .input-field::placeholder {
-            color: #94a3b8;
-        }
-        
-        .input-field:focus {
-            outline: none;
-            border-color: #10b981;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-        }
-
-        /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            font-weight: 700;
-            padding: 0.875rem 1.75rem;
-            border-radius: 1rem;
-            border: none;
-            font-size: 0.9375rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            font-weight: 600;
-            padding: 0.75rem 1.5rem;
-            border-radius: 1rem;
-            border: 2px solid #e2e8f0;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-secondary:hover {
-            background: #e2e8f0;
-            transform: translateY(-2px);
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            padding: 1rem;
-            overflow-y: auto;
-        }
-
-        .modal.show {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            border: 1px solid #e2e8f0;
-            padding: 2rem;
-            border-radius: 1.5rem;
-            width: 100%;
-            max-width: 650px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            margin: auto;
-        }
-
-        /* Badge */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            padding: 0.375rem 0.875rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .badge-verified {
-            background: #dcfce7;
-            color: #166534;
-            border: 1px solid #bbf7d0;
-        }
-
-        .badge-pending {
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fde68a;
-        }
-
-        /* FAB */
-        .fab {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 100;
-            font-size: 1.5rem;
-        }
-        
-        .fab:hover {
-            transform: scale(1.15) rotate(10deg);
-            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
-        }
-
-        /* Loading spinner */
-        .spinner-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .spinner {
-            width: 3rem;
-            height: 3rem;
-            border: 3px solid #e2e8f0;
-            border-top-color: #10b981;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: #fafafa;
-            border-radius: 1.25rem;
-            border: 2px dashed #e2e8f0;
-        }
-        
-        .empty-state i {
-            font-size: 5rem;
-            color: #cbd5e1;
-            margin-bottom: 1.5rem;
-        }
-
-        /* AI Modal */
-        .ai-modal {
-            display: none;
-            position: fixed;
-            bottom: 100px;
-            right: 24px;
-            z-index: 1100;
-            width: 420px;
-            max-width: calc(100vw - 48px);
-        }
-        
-        .ai-modal.show {
-            display: block;
-            animation: ai-pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        @keyframes ai-pop-in {
-            0% { transform: scale(0.8) translateY(20px); opacity: 0; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-
-        .ai-content {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 1.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-            padding: 1.25rem;
-        }
-
-        .ai-messages {
-            max-height: 320px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            padding: 0.5rem;
-        }
-
-        .ai-bubble {
-            max-width: 85%;
-            padding: 0.875rem 1.125rem;
-            border-radius: 1.125rem;
-            font-size: 0.9375rem;
-            line-height: 1.5;
-        }
-
-        .ai-bubble.bot {
-            background: #f0fdf4;
-            color: #166534;
-            border: 1px solid #dcfce7;
-            align-self: flex-start;
-            border-bottom-left-radius: 0.25rem;
-        }
-
-        .ai-bubble.user {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 0.25rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-container {
-                padding: 1.5rem 1rem;
-            }
-
-            .glass-container {
-                padding: 1.5rem;
-            }
-
-            .store-card {
-                padding: 1.25rem;
-            }
-
-            .fab, .ai-modal {
-                bottom: 1rem;
-                right: 1rem;
-            }
-
-            .fab {
-                width: 56px;
-                height: 56px;
-            }
-
-            .ai-modal {
-                right: 12px;
-                left: 12px;
-                width: auto;
-            }
-        }
+        .modal{ display:none; position:fixed; inset:0; background:rgba(15,23,42,.55); backdrop-filter:blur(6px); z-index:1000; padding:1rem; overflow-y:auto }
+        .modal.show{ display:flex; align-items:center; justify-content:center }
+        .mc{ background:#fff; border-radius:20px; padding:2rem; width:100%; max-width:640px; max-height:90vh; overflow-y:auto; box-shadow:0 30px 70px -20px rgba(6,28,15,.5); margin:auto }
+        .mc h2{ font-size:1.6rem; font-weight:800; margin:0 0 1.3rem }
+        label{ display:block; font-weight:600; color:#475569; font-size:.86rem; margin-bottom:.4rem }
+        .fg{ display:grid; grid-template-columns:1fr 1fr; gap:1rem } .fg .full{ grid-column:1/-1 }
+        .mf{ display:flex; justify-content:flex-end; gap:.7rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid #f1ece1 }
+        .mbtn{ padding:.75rem 1.4rem; border-radius:12px; font-weight:600; cursor:pointer; border:0 }
+        .mb-cancel{ background:#f6f1e6; color:#5b6b60; border:1.5px solid var(--line) }
+        .mb-save{ background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff }
+        .spin{ display:none; justify-content:center; padding:3rem } .spin.on{ display:flex }
+        .sp{ width:3rem; height:3rem; border:3px solid var(--line); border-top-color:var(--g500); border-radius:50%; animation:spin 1s linear infinite }
+        @keyframes spin{ to{ transform:rotate(360deg) } }
+        @media(max-width:620px){ .fg{ grid-template-columns:1fr } .nav .lbl{ display:none } }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header-gradient shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-4 header-content">
-            <div class="flex items-center space-x-3">
-                <i class="fas fa-store text-2xl md:text-3xl text-white"></i>
-                <h1 class="text-xl md:text-2xl font-bold text-white">My Digital Stores</h1>
+    <header class="hero">
+        <div id="ds-farmland"></div><div class="hero-ov"></div>
+        <div class="hero-in">
+            <div class="topbar">
+                <div class="brand"><span class="mk"><i class="fas fa-store"></i></span> Agricore</div>
+                <nav class="nav">
+                    <a href="marketplace.html" class="nbtn"><i class="fas fa-shopping-bag"></i><span class="lbl">Marketplace</span></a>
+                    <a href="chats.html" class="nbtn"><i class="fas fa-comments"></i><span class="lbl">Chats</span></a>
+                    <a href="multi_farm.html" class="nbtn"><i class="fas fa-tractor"></i><span class="lbl">Your Farms</span></a>
+                    <button id="openModalBtn" class="nbtn go"><i class="fas fa-plus"></i><span class="lbl">Create Store</span></button>
+                </nav>
             </div>
-            
-            <div class="flex items-center gap-2 flex-wrap">
-                <button onclick="window.location.href='marketplace.html'" class="nav-btn">
-                    <i class="fas fa-shopping-bag"></i>
-                    <span class="hidden sm:inline">Marketplace</span>
-                </button>
-                <button onclick="window.location.href='chats.html'" class="nav-btn">
-                    <i class="fas fa-comments"></i>
-                    <span class="hidden sm:inline">Chats</span>
-                </button>
-                <button onclick="window.location.href='multi_farm.html'" class="nav-btn">
-                    <i class="fas fa-tractor"></i>
-                    <span class="hidden sm:inline">Your Farms</span>
-                </button>
-                <button id="openModalBtn" class="btn-primary">
-                    <i class="fas fa-plus mr-2"></i>
-                    <span class="hidden sm:inline">Create Store</span>
-                    <span class="sm:hidden">New</span>
-                </button>
-            </div>
+            <h1 class="title">Your Digital Stores</h1>
+            <p class="sub">Manage your marketplace presence — one storefront at a time.</p>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="main-container">
-        <div class="glass-container">
-            <!-- Page Header -->
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-                <div>
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Your Digital Stores</h2>
-                    <p class="text-gray-600">Manage your agricultural marketplace presence</p>
-                </div>
-            </div>
-
-            <!-- Search and Filter -->
-            <div class="flex flex-col sm:flex-row gap-4 mb-8">
-                <div class="flex-1">
-                    <input id="searchInput" type="text" placeholder="Search by store name or country..." class="input-field">
-                </div>
-                <select id="verificationFilter" class="input-field sm:w-64">
-                    <option value="all">All Stores</option>
-                    <option value="verified">Verified Only</option>
-                    <option value="not_verified">Pending Verification</option>
-                </select>
-            </div>
-
-            <!-- Stores Grid -->
-            <div id="storesGrid" class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"></div>
+    <main>
+        <div class="card controls">
+            <input id="searchInput" type="text" placeholder="Search by store name or country..." class="field grow">
+            <select id="verificationFilter" class="field" style="max-width:240px">
+                <option value="all">All stores</option>
+                <option value="verified">Verified only</option>
+                <option value="not_verified">Pending verification</option>
+            </select>
         </div>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="storesLoading" class="spinner-overlay hidden">
-        <div class="flex flex-col items-center">
-            <div class="spinner"></div>
-            <span class="text-emerald-700 font-semibold mt-4">Loading stores...</span>
-        </div>
-    </div>
+        <div id="storesLoading" class="spin"><div class="sp"></div></div>
+        <div id="storesGrid" class="grid"></div>
+    </main>
 
     <!-- Create Store Modal -->
     <div id="modal" class="modal">
-        <div class="modal-content">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Create Digital Store</h2>
-            <form id="createStoreForm" class="space-y-4">
-                <div>
-                    <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Store Name *</label>
-                    <input type="text" id="name" name="name" class="input-field" placeholder="e.g., Green Valley Marketplace" required />
+        <div class="mc">
+            <h2>Create Digital Store</h2>
+            <form id="createStoreForm">
+                <div class="fg">
+                    <div class="full"><label>Store Name *</label><input id="name" name="name" class="field" placeholder="e.g. Green Valley Marketplace" required></div>
+                    <div><label>Owner Name</label><input id="ownerName" name="ownerName" class="field" placeholder="Your name"></div>
+                    <div><label>Owner Phone</label><input id="ownerPhone" name="ownerPhone" type="tel" class="field" placeholder="+1 234 567 8900"></div>
+                    <div class="full"><label>Owner Email</label><input id="ownerEmail" name="ownerEmail" type="email" class="field" placeholder="you@email.com"></div>
+                    <div class="full"><label>Countries of Operation</label><input id="countries" name="countries" class="field" placeholder="e.g. Uganda, Kenya, Nigeria"><p style="font-size:.78rem;color:#94a3b8;margin:.3rem 0 0">Separate with commas</p></div>
+                    <div class="full"><label>Description</label><textarea id="description" name="description" class="field" rows="3" placeholder="What does your store offer?"></textarea></div>
+                    <div class="full" style="display:flex;align-items:center;gap:.7rem;background:#fbf7ee;border:1px solid var(--line);border-radius:12px;padding:.8rem 1rem"><input type="checkbox" id="isVerified" style="width:18px;height:18px"><label for="isVerified" style="margin:0">Request verification</label></div>
                 </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="ownerName" class="block text-sm font-semibold text-gray-700 mb-2">Owner Name</label>
-                        <input type="text" id="ownerName" name="ownerName" class="input-field" placeholder="Your name" />
-                    </div>
-                    <div>
-                        <label for="ownerPhone" class="block text-sm font-semibold text-gray-700 mb-2">Owner Phone</label>
-                        <input type="tel" id="ownerPhone" name="ownerPhone" class="input-field" placeholder="+1 234 567 8900" />
-                    </div>
-                </div>
-                
-                <div>
-                    <label for="ownerEmail" class="block text-sm font-semibold text-gray-700 mb-2">Owner Email</label>
-                    <input type="email" id="ownerEmail" name="ownerEmail" class="input-field" placeholder="your@email.com" />
-                </div>
-                
-                <div>
-                    <label for="countries" class="block text-sm font-semibold text-gray-700 mb-2">Countries of Operation</label>
-                    <input type="text" id="countries" name="countries" placeholder="e.g., USA, Canada, Mexico" class="input-field" />
-                    <p class="text-xs text-gray-500 mt-1">Separate countries with commas</p>
-                </div>
-                
-                <div>
-                    <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Store Description</label>
-                    <textarea id="description" name="description" class="input-field" rows="3" placeholder="Describe what your store offers..."></textarea>
-                </div>
-                
-                <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                    <input type="checkbox" id="isVerified" name="isVerified" class="w-5 h-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded" />
-                    <label for="isVerified" class="text-sm font-medium text-gray-700">Request Verification</label>
-                </div>
-                
-                <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                    <button type="button" id="cancelBtn" class="btn-secondary">Cancel</button>
-                    <button type="submit" class="btn-primary">Create Store</button>
-                </div>
+                <div class="mf"><button type="button" id="cancelBtn" class="mbtn mb-cancel">Cancel</button><button type="submit" class="mbtn mb-save">Create Store</button></div>
             </form>
         </div>
     </div>
 
-    <!-- Dale AI FAB -->
-    <div id="dale-ai-btn" class="fab" title="Ask Dale AI">
-        <i class="fas fa-robot"></i>
-    </div>
-
-    <!-- Dale AI Modal -->
-    <div id="ai-modal" class="ai-modal">
-        <div class="ai-content">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-robot text-emerald-600 text-xl"></i>
-                    </div>
-                    <div>
-                        <span class="font-bold text-gray-800">Dale AI</span>
-                        <p class="text-xs text-gray-500" id="ai-user-greeting"></p>
-                    </div>
-                </div>
-                <button id="ai-close-btn" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition">
-                    <i class="fas fa-times text-gray-600"></i>
-                </button>
-            </div>
-            
-            <div id="ai-chat-messages" class="ai-messages mb-4">
-                <div class="ai-bubble bot" id="ai-welcome-message">
-                    Hi! I'm Dale, your AI-powered agricultural assistant. Ask me anything about farming, stores, or marketplace management!
-                </div>
-            </div>
-            
-            <div class="flex gap-2">
-                <input type="text" id="ai-input" class="input-field" placeholder="Type your question..." />
-                <button id="ai-send-btn" class="btn-primary px-4">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Session check
-        function decodeJWT(token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
-            } catch (e) {
-                return null;
-            }
-        }
+        (function(){ function bf(){var W=1200,H=560,cols=7,rows=4,jx=(W/cols)*.32,jy=(H/rows)*.32,P=[];for(var r=0;r<=rows;r++){P[r]=[];for(var c=0;c<=cols;c++){var e=(r===0||r===rows||c===0||c===cols);P[r][c]={x:(c/cols)*W+(e?0:(Math.random()*2-1)*jx),y:(r/rows)*H+(e?0:(Math.random()*2-1)*jy)};}}var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']],ang=[0,16,90,74,16,0,90,30,16],defs='';pal.forEach(function(c,i){defs+='<pattern id="dp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>';});var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8],cells='';for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e2=P[r2+1][c2],fi=bag[Math.floor(Math.random()*bag.length)];cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e2.x.toFixed(1)+','+e2.y.toFixed(1)+'" fill="url(#dp'+fi+')" stroke="rgba(22,15,7,.16)" stroke-width="1.2"/>';}return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';}var el=document.getElementById('ds-farmland'); if(el) el.innerHTML=bf(); })();
 
-        function checkSessionAndAlert() {
-            let token = localStorage.getItem('access_token');
-            let expired = false;
-            if (!token) {
-                expired = true;
-            } else {
-                const decoded = decodeJWT(token);
-                if (!decoded || !decoded.exp) {
-                    expired = true;
-                } else {
-                    const now = Math.floor(Date.now() / 1000);
-                    if (decoded.exp < now) {
-                        expired = true;
-                    }
-                }
-            }
-            if (expired) {
-                alert('Your session has expired. Please log in again.');
-                setTimeout(function() {
-                    window.location.href = 'authentication.html';
-                }, 800);
-                return false;
-            }
-            return true;
-        }
-
-        // Current user
         const token = localStorage.getItem('access_token');
-        let currentUser = { name: 'Guest', email: '', id: null };
-        
-        if (token) {
-            const decoded = decodeJWT(token);
-            if (decoded) {
-                currentUser = {
-                    name: decoded.name || decoded.full_name || decoded.username || 'User',
-                    email: decoded.email || '',
-                    id: decoded.user_id || decoded.sub || decoded.id || null
-                };
-            }
+        function decodeJWT(t){ try{ return JSON.parse(decodeURIComponent(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''))); }catch(e){ return null; } }
+        let currentUser={name:'User',email:''}; const dec=token&&decodeJWT(token); if(dec) currentUser={ name:dec.name||dec.username||'User', email:dec.email||'' };
+        function sessionOk(){ if(!token){ window.location.href='authentication.html'; return false; } const d=decodeJWT(token); if(!d||!d.exp||d.exp<Math.floor(Date.now()/1000)){ alert('Your session has expired. Please log in again.'); setTimeout(()=>window.location.href='authentication.html',600); return false; } return true; }
+
+        const $ = id=>document.getElementById(id);
+        let tiles=[];
+        function normC(c){ if(!c) return []; if(Array.isArray(c)) return c; if(typeof c==='string'){ const t=c.trim(); if(t.startsWith('[')){ try{ const p=JSON.parse(t); return Array.isArray(p)?p:[t]; }catch(e){ return [t]; } } return t.includes(',')?t.split(',').map(s=>s.trim()).filter(Boolean):[t]; } return []; }
+
+        function filter(){ const q=$('searchInput').value.trim().toLowerCase(), v=$('verificationFilter').value;
+            tiles.forEach(t=>{ const n=t.dataset.name||'', c=t.dataset.countries||'', ver=t.dataset.verified; t.style.display=((n.includes(q)||c.includes(q))&&(v==='all'||ver===v))?'':'none'; }); }
+
+        async function fetchStores(){ try{ const res=await fetch('/api/stores/',{headers:{'Authorization':'Bearer '+(token||'')}}); if(!res.ok) return []; const d=await res.json(); return Array.isArray(d)?d:(d.results||[]); }catch(e){ return []; } }
+
+        async function refresh(){
+            $('storesLoading').classList.add('on');
+            const stores=await fetchStores();
+            window.__stores=stores;
+            const grid=$('storesGrid');
+            if(!stores.length){ grid.innerHTML='<div class="empty"><i class="fas fa-store"></i><h3>No stores yet</h3><p>Create your first digital store to start selling.</p><button onclick="document.getElementById(\'openModalBtn\').click()" class="btn" style="margin-top:1.2rem"><i class="fas fa-plus"></i> Create your first store</button></div>'; $('storesLoading').classList.remove('on'); tiles=[]; return; }
+            grid.innerHTML=stores.map(s=>{ const c=normC(s.countries_of_operation); const tv=typeof s.total_value!=='undefined'?s.total_value:0;
+                return `<div class="store" data-name="${(s.name||'').toLowerCase()}" data-countries="${c.join('|').toLowerCase()}" data-verified="${s.is_verified?'verified':'not_verified'}">
+                    <div style="display:flex;align-items:flex-start;gap:.8rem;margin-bottom:1rem">
+                        <div class="savatar"><i class="fas fa-store"></i></div>
+                        <h3 style="flex:1;font-size:1.25rem;font-weight:800;margin:.2rem 0">${s.name||''}</h3>
+                        ${s.is_verified?'<span class="badge b-v"><i class="fas fa-check-circle"></i>Verified</span>':'<span class="badge b-p">Pending</span>'}
+                    </div>
+                    <div class="srow"><i class="fas fa-user"></i><span>${s.owner_name||'—'}</span></div>
+                    <div class="srow"><i class="fas fa-envelope"></i><span>${s.owner_email||'—'}</span></div>
+                    <div class="srow"><i class="fas fa-phone"></i><span>${s.owner_phone||'—'}</span></div>
+                    <div class="srow"><i class="fas fa-globe"></i><span>${c.join(', ')||'Not specified'}</span></div>
+                    <div class="srow"><i class="fas fa-dollar-sign"></i><strong style="color:var(--g700)">$${Number(tv).toLocaleString()}</strong></div>
+                    <a href="digital_store.html?id=${s.id}" class="manage"><i class="fas fa-cog"></i> Manage Store</a>
+                </div>`;
+            }).join('');
+            tiles=Array.from(grid.getElementsByClassName('store')); filter(); $('storesLoading').classList.remove('on');
         }
 
-        let storesGrid = document.getElementById('storesGrid');
-        let storeTiles = [];
+        $('searchInput').addEventListener('input', filter);
+        $('verificationFilter').addEventListener('change', filter);
 
-        // Helper functions
-        function normCountries(c) {
-            if (!c) return [];
-            if (Array.isArray(c)) return c;
-            if (typeof c === 'string') {
-                const trimmed = c.trim();
-                if (trimmed.startsWith('[')) {
-                    try {
-                        const parsed = JSON.parse(trimmed);
-                        return Array.isArray(parsed) ? parsed : [trimmed];
-                    } catch (e) {
-                        return [trimmed];
-                    }
-                }
-                if (trimmed.includes(',')) {
-                    return trimmed.split(',').map(s => s.trim()).filter(Boolean);
-                }
-                // Defensive: if it's only letters (no comma, no brackets), treat as single country
-                if (/^[a-zA-Z\s'-]+$/.test(trimmed)) {
-                    return [trimmed];
-                }
-                // Otherwise, fallback
-                return [trimmed];
-            }
-            return [];
-        }
-
-        function showLoading() {
-            document.getElementById('storesLoading').classList.remove('hidden');
-        }
-
-        function hideLoading() {
-            document.getElementById('storesLoading').classList.add('hidden');
-        }
-
-        function filterStores() {
-            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-            const verificationValue = document.getElementById('verificationFilter').value;
-
-            storeTiles.forEach(tile => {
-                const name = tile.getAttribute('data-name') || '';
-                const countries = tile.getAttribute('data-countries') || '';
-                const verified = tile.getAttribute('data-verified');
-
-                const matchesSearch = name.includes(searchTerm) || countries.includes(searchTerm);
-                const matchesVerification = (verificationValue === 'all') || (verified === verificationValue);
-
-                if (matchesSearch && matchesVerification) {
-                    tile.classList.remove('hidden');
-                } else {
-                    tile.classList.add('hidden');
-                }
-            });
-        }
-
-        async function fetchUserStores() {
-            try {
-                const res = await fetch('/api/stores/', {
-                    headers: { 'Authorization': `Bearer ${token || ''}` }
-                });
-                if (!res.ok) return [];
-                const data = await res.json();
-                return Array.isArray(data) ? data : (data.results || []);
-            } catch (err) {
-                console.error('Failed to fetch stores', err);
-                return [];
-            }
-        }
-
-        async function refreshStoresGrid() {
-            try {
-                showLoading();
-                const stores = await fetchUserStores();
-                
-                if (!stores || stores.length === 0) {
-                    storesGrid.innerHTML = `
-                        <div class="empty-state col-span-full">
-                            <i class="fas fa-store"></i>
-                            <h3 class="text-2xl font-bold text-gray-800 mb-2">No stores yet</h3>
-                            <p class="text-gray-600 mb-6">Create your first digital store to get started</p>
-                            <button onclick="document.getElementById('openModalBtn').click()" class="btn-primary">
-                                <i class="fas fa-plus mr-2"></i>Create Your First Store
-                            </button>
-                        </div>
-                    `;
-                    hideLoading();
-                    return;
-                }
-
-                storesGrid.innerHTML = stores.map(store => {
-                    const dataName = (store.name || '').toLowerCase();
-                    const countries = normCountries(store.countries_of_operation);
-                    const dataCountries = countries.join('|').toLowerCase();
-                    const dataVerified = store.is_verified ? 'verified' : 'not_verified';
-                    const countriesDisplay = countries.join(', ') || 'Not specified';
-                    const totalValue = typeof store.total_value !== 'undefined' ? store.total_value : 0;
-
-                    return `
-                        <div class="store-card" data-name="${dataName}" data-countries="${dataCountries}" data-verified="${dataVerified}">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i class="fas fa-store text-emerald-600 text-xl"></i>
-                                    </div>
-                                    <h3 class="text-xl font-bold text-gray-800 truncate">${store.name}</h3>
-                                </div>
-                                ${store.is_verified
-                                    ? '<span class="badge badge-verified flex-shrink-0"><i class="fas fa-check-circle"></i>Verified</span>'
-                                    : '<span class="badge badge-pending flex-shrink-0">Pending</span>'
-                                }
-                            </div>
-                            
-                            <div class="space-y-2 text-sm text-gray-700 mb-4">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-user text-emerald-600 w-4"></i>
-                                    <span class="truncate">${store.owner_name || 'N/A'}</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-envelope text-emerald-600 w-4"></i>
-                                    <span class="truncate">${store.owner_email || 'N/A'}</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-phone text-emerald-600 w-4"></i>
-                                    <span class="truncate">${store.owner_phone || 'N/A'}</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-globe text-emerald-600 w-4"></i>
-                                    <span class="truncate">${countriesDisplay}</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-dollar-sign text-emerald-600 w-4"></i>
-                                    <span class="font-bold text-emerald-700">$${totalValue.toLocaleString()}</span>
-                                </div>
-                            </div>
-                            
-                            <a href="digital_store.html?id=${store.id}" class="block w-full text-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3 px-4 rounded-xl transition shadow-sm hover:shadow-md">
-                                <i class="fas fa-cog mr-2"></i>Manage Store
-                            </a>
-                        </div>
-                    `;
-                }).join('');
-
-                storeTiles = Array.from(storesGrid.getElementsByClassName('store-card'));
-                filterStores();
-                hideLoading();
-            } catch (error) {
-                console.error('Error refreshing stores:', error);
-                hideLoading();
-            }
-        }
-
-        async function fetchCurrentUserAndPrefill() {
-            if (!token) return;
-            try {
-                const res = await fetch('/api/users/me/', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!res.ok) return;
-                const u = await res.json();
-                window.currentUser = u;
-                
-                const ownerNameEl = document.getElementById('ownerName');
-                const ownerPhoneEl = document.getElementById('ownerPhone');
-                const ownerEmailEl = document.getElementById('ownerEmail');
-                
-                if (ownerNameEl && !ownerNameEl.value) ownerNameEl.value = u.username || u.name || '';
-                if (ownerPhoneEl && !ownerPhoneEl.value) ownerPhoneEl.value = u.phone || '';
-                if (ownerEmailEl && !ownerEmailEl.value) ownerEmailEl.value = u.email || '';
-            } catch (err) {
-                console.error('Failed to fetch user:', err);
-            }
-        }
-
-        // Event listeners
-        document.getElementById('searchInput').addEventListener('input', filterStores);
-        document.getElementById('verificationFilter').addEventListener('change', filterStores);
-
-        // Modal
-        const modal = document.getElementById('modal');
-        const openModalBtn = document.getElementById('openModalBtn');
-        const cancelBtn = document.getElementById('cancelBtn');
-
-        openModalBtn.addEventListener('click', () => {
-            modal.classList.add('show');
-            fetchCurrentUserAndPrefill();
+        const modal=$('modal');
+        $('openModalBtn').addEventListener('click', async ()=>{ modal.classList.add('show');
+            if(token){ try{ const r=await fetch('/api/users/me/',{headers:{'Authorization':'Bearer '+token}}); if(r.ok){ const u=await r.json(); if(!$('ownerName').value) $('ownerName').value=u.username||''; if(!$('ownerEmail').value) $('ownerEmail').value=u.email||''; if(!$('ownerPhone').value) $('ownerPhone').value=u.phone||''; } }catch(e){} }
         });
+        $('cancelBtn').addEventListener('click', ()=> modal.classList.remove('show'));
+        modal.addEventListener('click', e=>{ if(e.target===modal) modal.classList.remove('show'); });
 
-        cancelBtn.addEventListener('click', () => {
-            modal.classList.remove('show');
-        });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('show');
-            }
-        });
-
-        // Form submit
-        document.getElementById('createStoreForm').addEventListener('submit', async (e) => {
+        $('createStoreForm').addEventListener('submit', async e=>{
             e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const countries_raw = formData.get('countries');
-            const countries_of_operation = countries_raw.split(',').map(s => s.trim()).filter(Boolean);
-            
-            const payload = {
-                name: formData.get('name'),
-                owner_name: formData.get('ownerName') || currentUser.name,
-                owner_phone: formData.get('ownerPhone') || '',
-                owner_email: formData.get('ownerEmail') || currentUser.email,
-                description: formData.get('description') || '',
-                countries_of_operation,
-                verified: document.getElementById('isVerified').checked
-            };
-
-            try {
-                const response = await fetch('/api/stores/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    alert('Failed to create store. Please check your input.');
-                    return;
-                }
-
-                modal.classList.remove('show');
-                e.target.reset();
-                await refreshStoresGrid();
-            } catch (err) {
-                alert('An error occurred. Please try again.');
-                console.error('Error creating store:', err);
-            }
+            const countries=( $('countries').value||'').split(',').map(s=>s.trim()).filter(Boolean);
+            const payload={ name:$('name').value, owner_name:$('ownerName').value||currentUser.name, owner_phone:$('ownerPhone').value||'', owner_email:$('ownerEmail').value||currentUser.email, description:$('description').value||'', countries_of_operation:countries, is_verified:$('isVerified').checked };
+            try{ const r=await fetch('/api/stores/',{ method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body:JSON.stringify(payload) });
+                if(!r.ok){ alert('Failed to create store. Please check your input.'); return; }
+                modal.classList.remove('show'); e.target.reset(); refresh();
+            }catch(e){ alert('An error occurred. Please try again.'); }
         });
 
-        // Dale AI
-        const daleFab = document.getElementById('dale-ai-btn');
-        const aiModal = document.getElementById('ai-modal');
-        const aiInput = document.getElementById('ai-input');
-        const aiSendBtn = document.getElementById('ai-send-btn');
-        const aiCloseBtn = document.getElementById('ai-close-btn');
-        const aiMessages = document.getElementById('ai-chat-messages');
-        const aiUserGreeting = document.getElementById('ai-user-greeting');
-        const aiWelcomeMessage = document.getElementById('ai-welcome-message');
+        /* Dale context */
+        window.__daleCtx = function(){ const s=(window.__stores||[]).map(x=>({name:x.name, verified:x.is_verified, countries:normC(x.countries_of_operation), value:x.total_value})); return { page:'Digital Store', type:'digital_stores', user:{name:currentUser.name}, extras:{ store_count:s.length, stores:s } }; };
+        window.__daleIntro = "Hi, I'm Dale. Ask me about your stores, how to get verified, or what to sell next.";
+        window.__daleChips = ["How do I get my store verified?","What should I sell?","Summarise my stores","Tips to grow sales"];
 
-        if (currentUser.name !== 'Guest') {
-            aiUserGreeting.textContent = `Hi, ${currentUser.name}!`;
-            aiWelcomeMessage.textContent = `Hello ${currentUser.name}! I'm Dale, your AI assistant. How can I help with your stores?`;
-        }
-
-        daleFab.addEventListener('click', () => {
-            aiModal.classList.add('show');
-            setTimeout(() => aiInput.focus(), 100);
-        });
-
-        aiCloseBtn.addEventListener('click', () => {
-            aiModal.classList.remove('show');
-        });
-
-        function addAiMessage(text, isUser = false) {
-            const bubble = document.createElement('div');
-            bubble.className = `ai-bubble ${isUser ? 'user' : 'bot'}`;
-            bubble.textContent = text;
-            aiMessages.appendChild(bubble);
-            aiMessages.scrollTop = aiMessages.scrollHeight;
-            return bubble;
-        }
-
-        aiSendBtn.addEventListener('click', async () => {
-            const question = aiInput.value.trim();
-            if (!question) return;
-            
-            addAiMessage(question, true);
-            aiInput.value = '';
-            const thinking = addAiMessage('Thinking...', false);
-            
-            try {
-                const res = await fetch('/api/ai/dale/ask/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                    },
-                    body: JSON.stringify({
-                        prompt: question,
-                        context: { type: 'digital_stores', user: currentUser }
-                    })
-                });
-                const data = await res.json();
-                thinking.textContent = data.reply || 'Sorry, I could not process that.';
-            } catch (err) {
-                thinking.textContent = 'Error: Could not reach Dale AI.';
-            }
-        });
-
-        aiInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') aiSendBtn.click();
-        });
-
-        // Init
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!checkSessionAndAlert()) return;
-            refreshStoresGrid();
-        });
+        document.addEventListener('DOMContentLoaded', ()=>{ if(!sessionOk()) return; refresh(); });
     </script>
+    <!-- ===== Dale AI assistant (context-aware, brand) ===== -->
+    <script>
+    (function(){
+      if (window.__daleInit) return; window.__daleInit = true;
+      var ENDPOINT = '/api/ai/dale/ask/';
+      var history = [];
+
+      var css = ''
+        + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:62px;height:62px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
+        + 'background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);'
+        + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}'
+        + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
+        + '#daleFab svg{width:28px;height:28px}'
+        + '#daleFab .dot{position:absolute;top:10px;right:11px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857}'
+        + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;'
+        + 'background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);'
+        + 'display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
+        + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
+        + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
+        + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
+        + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+        + '.dale-head .mk svg{width:20px;height:20px}'
+        + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
+        + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
+        + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+        + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
+        + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+        + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
+        + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
+        + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+        + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
+        + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
+        + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
+        + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
+        + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
+        + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
+        + '.dale-chip:hover{background:#d6efdf}'
+        + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
+        + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
+        + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
+        + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
+        + '.dale-input button svg{width:18px;height:18px}'
+        + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
+      var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+      var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+      var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
+      fab.innerHTML = '<span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>';
+      document.body.appendChild(fab);
+
+      var panel = document.createElement('div'); panel.id='dalePanel';
+      panel.innerHTML =
+        '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
+        + '<div class="dale-msgs" id="daleMsgs"></div>'
+        + '<div class="dale-chips" id="daleChips"></div>'
+        + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
+        + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
+      document.body.appendChild(panel);
+
+      var msgs = panel.querySelector('#daleMsgs');
+      var text = panel.querySelector('#daleText');
+      var greeted = false;
+
+      function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+      function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+      function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+
+      function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
+
+      function renderChips(){
+        var chips = (window.__daleChips || []);
+        var box = panel.querySelector('#daleChips'); box.innerHTML='';
+        chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); });
+      }
+
+      async function send(q){
+        q = (q!==undefined ? q : text.value).trim();
+        if(!q) return;
+        text.value=''; bubble(q,'me'); history.push({role:'user',content:q});
+        var t = typing();
+        try{
+          var token = localStorage.getItem('access_token');
+          var res = await fetch(ENDPOINT, {
+            method:'POST',
+            headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}),
+            body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) })
+          });
+          t.remove();
+          if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
+          var data = await res.json();
+          var reply = data.reply || data.detail || 'No response.';
+          bubble(reply,'ai'); history.push({role:'assistant',content:reply});
+        }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
+      }
+
+      function open(){
+        panel.classList.add('open');
+        if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); }
+        setTimeout(function(){ text.focus(); }, 50);
+      }
+      function close(){ panel.classList.remove('open'); }
+
+      fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
+      panel.querySelector('.x').addEventListener('click', close);
+      panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
+      text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+      text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
+    })();
+    </script>
+
 </body>
 </html>
