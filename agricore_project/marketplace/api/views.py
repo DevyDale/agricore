@@ -103,6 +103,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             stock_quantity=product.stock_quantity,
             unit=product.unit,
             is_dropshippable=True,
+            is_published=False,
             image=product.image,
             image_url=product.image_url,
             source_produce=product.source_produce
@@ -212,6 +213,15 @@ class ProductViewSet(viewsets.ModelViewSet):
                 store.save()
 
         return super().create(request, *args, **kwargs)
+
+
+    @action(detail=True, methods=['patch'], url_path='release')
+    def release(self, request, pk=None):
+        """Publish a dropshipped product so it appears in the marketplace."""
+        product = self.get_object()
+        product.is_published = True
+        product.save(update_fields=['is_published'])
+        return Response(self.get_serializer(product).data)
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()

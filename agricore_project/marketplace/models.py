@@ -17,6 +17,7 @@ class Store(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 class Product(models.Model):
+    is_published = models.BooleanField(default=True)
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
