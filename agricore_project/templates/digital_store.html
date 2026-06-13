@@ -1782,17 +1782,21 @@
                 }
             });
 
-        // --- Bank Details Logic ---
+        // --- Bank Details Logic (payout account) ---
+        let payoutAccountId = null;
         async function fetchBankDetails() {
             try {
-                // Replace with your actual API endpoint
-                const resp = await fetch('/api/stores/bank-details/', { credentials: 'include' });
+                const resp = await fetch('/api/payout-accounts/', {
+                    headers: { 'Authorization': 'Bearer ' + (token || '') }
+                });
                 if (!resp.ok) throw new Error('No bank details found');
-                const data = await resp.json();
-                if (data.account_name && data.account_number && data.bank_name) {
+                const list = await resp.json();
+                const data = Array.isArray(list) ? list[0] : (list.results ? list.results[0] : list);
+                if (data && data.account_name && data.account_number && data.account_bank) {
+                    payoutAccountId = data.id;
                     document.getElementById('display-account-name').textContent = data.account_name;
                     document.getElementById('display-account-number').textContent = data.account_number;
-                    document.getElementById('display-bank-name').textContent = data.bank_name;
+                    document.getElementById('display-bank-name').textContent = data.account_bank;
                     document.getElementById('bank-details-display').classList.remove('hidden');
                 }
             } catch (e) {
@@ -1804,17 +1808,18 @@
             e.preventDefault();
             const account_name = document.getElementById('bank-account-name').value.trim();
             const account_number = document.getElementById('bank-account-number').value.trim();
-            const bank_name = document.getElementById('bank-name').value.trim();
+            const account_bank = document.getElementById('bank-name').value.trim();
             const status = document.getElementById('bank-details-status');
             status.textContent = 'Saving...';
             try {
-                // Replace with your actual API endpoint
-                const resp = await fetch('/api/stores/bank-details/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ account_name, account_number, bank_name })
-                });
+                const resp = await fetch(
+                    payoutAccountId ? `/api/payout-accounts/${payoutAccountId}/` : '/api/payout-accounts/',
+                    {
+                        method: payoutAccountId ? 'PATCH' : 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') },
+                        body: JSON.stringify({ account_name, account_number, account_bank })
+                    }
+                );
                 if (!resp.ok) throw new Error('Failed to save');
                 status.textContent = 'Saved!';
                 fetchBankDetails();
