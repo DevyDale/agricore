@@ -7,59 +7,109 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root{ --g500:#10b981; --g600:#059669; --g700:#047857; --g900:#064e3b; --line:#ece4d6; --ink:#16271c; }
+        :root{ --g500:#10b981; --g600:#059669; --g700:#047857; --g900:#064e3b; --line:#ece4d6; --ink:#16271c; --cream:#faf6ee;
+               --crops:#4f8438; --livestock:#c39a48; --mixed:#7c8c42 }
         *{ box-sizing:border-box; font-family:'Inter',system-ui,sans-serif }
         h1,h2,h3,.fr{ font-family:'Fraunces',serif; letter-spacing:-.01em }
         body{ margin:0; min-height:100vh; color:var(--ink); background:radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f4efe3 62%) }
+        a{ text-decoration:none; color:inherit }
 
-        /* farmland hero header */
+        /* ---------- farmland hero ---------- */
         .hero{ position:relative; overflow:hidden; background:#22432c; color:#fff }
         #farmland{ position:absolute; inset:-2% } #farmland svg{ width:100%; height:100% }
-        .hero-ov{ position:absolute; inset:0; background:linear-gradient(100deg, rgba(8,30,18,.86) 0%, rgba(8,30,18,.55) 60%, rgba(8,30,18,.3) 100%) }
-        .hero-in{ position:relative; z-index:2; max-width:1500px; margin:0 auto; padding:1rem 1.5rem 1.6rem }
+        .hero-ov{ position:absolute; inset:0; background:linear-gradient(100deg, rgba(8,30,18,.88) 0%, rgba(8,30,18,.55) 58%, rgba(8,30,18,.28) 100%) }
+        .hero-in{ position:relative; z-index:2; max-width:1500px; margin:0 auto; padding:1rem 1.5rem 2rem }
         .topbar{ display:flex; align-items:center; gap:1rem; flex-wrap:wrap }
         .brand{ display:flex; align-items:center; gap:.6rem; font-family:Fraunces; font-weight:800; font-size:1.3rem }
         .brand .mk{ width:38px; height:38px; border-radius:11px; display:grid; place-items:center; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28) }
         .nav{ margin-left:auto; display:flex; gap:.5rem; flex-wrap:wrap; align-items:center }
-        .nbtn{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); color:#fff; padding:.5rem .85rem; border-radius:999px; font-size:.84rem; font-weight:600; cursor:pointer; transition:all .2s; white-space:nowrap; text-decoration:none; display:inline-flex; align-items:center; gap:.4rem }
+        .nbtn{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); color:#fff; padding:.5rem .85rem; border-radius:999px; font-size:.84rem; font-weight:600; cursor:pointer; transition:transform .2s, background .2s; white-space:nowrap; display:inline-flex; align-items:center; gap:.4rem }
         .nbtn:hover{ background:rgba(255,255,255,.22); transform:translateY(-1px) }
         .nbtn.out{ background:linear-gradient(135deg,#f87171,#ef4444); border-color:transparent }
-        h1.title{ font-size:clamp(2rem,5vw,3rem); font-weight:900; margin:1.2rem 0 .2rem; drop-shadow:0 2px 8px rgba(0,0,0,.3) }
-        .sub{ color:rgba(255,255,255,.86); font-size:1.05rem }
+        .eyebrow{ display:inline-flex; align-items:center; gap:.5rem; margin:1.4rem 0 .5rem; padding:.34rem .8rem; border-radius:999px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); font-size:.74rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#bbf7d0 }
+        .eyebrow .pulse-dot{ width:8px; height:8px; border-radius:50%; background:#4ade80; box-shadow:0 0 0 0 rgba(74,222,128,.6); animation:ring 2s infinite }
+        @keyframes ring{ 0%{ box-shadow:0 0 0 0 rgba(74,222,128,.5) } 70%{ box-shadow:0 0 0 9px rgba(74,222,128,0) } 100%{ box-shadow:0 0 0 0 rgba(74,222,128,0) } }
+        h1.title{ font-size:clamp(2.1rem,5.4vw,3.3rem); font-weight:900; margin:.1rem 0 .35rem; text-shadow:0 2px 14px rgba(0,0,0,.35) }
+        .sub{ color:rgba(255,255,255,.86); font-size:1.06rem; max-width:46ch }
 
-        main{ max-width:1500px; margin:0 auto; padding:1.6rem 1.5rem 4rem }
-        .card{ background:#fff; border:1px solid var(--line); border-radius:18px; box-shadow:0 14px 36px -26px rgba(20,40,25,.5) }
-        .controls{ display:flex; gap:.7rem; flex-wrap:wrap; align-items:center; padding:1rem 1.1rem; margin-bottom:1.4rem }
-        .field{ background:#fff; border:1.5px solid #e2ddd0; border-radius:12px; padding:.7rem .95rem; font-size:.92rem; color:#1e293b; transition:all .2s }
+        main{ max-width:1500px; margin:0 auto; padding:0 1.5rem 4rem }
+
+        /* ---------- overview: land at a glance ---------- */
+        .glance{ position:relative; margin-top:-1.4rem; z-index:5; background:#fff; border:1px solid var(--line); border-radius:20px; box-shadow:0 26px 60px -34px rgba(20,40,25,.55); padding:1.4rem 1.5rem 1.6rem; opacity:0; transform:translateY(14px); animation:rise .6s .05s cubic-bezier(.2,.8,.2,1) forwards }
+        @keyframes rise{ to{ opacity:1; transform:none } }
+        .glance-head{ display:flex; align-items:baseline; gap:.7rem; flex-wrap:wrap; margin-bottom:1.1rem }
+        .glance-head h2{ font-size:1.15rem; font-weight:800; margin:0 }
+        .glance-head .hint{ font-size:.82rem; color:#8a9588 }
+        .metrics{ display:flex; gap:1.6rem; flex-wrap:wrap; margin-bottom:1.3rem }
+        .metric{ display:flex; align-items:center; gap:.8rem }
+        .metric .mi{ width:46px; height:46px; border-radius:13px; display:grid; place-items:center; font-size:1.05rem; color:#fff; flex:none }
+        .mi.a{ background:linear-gradient(135deg,#10b981,#047857) } .mi.b{ background:linear-gradient(135deg,#c39a48,#a9772e) } .mi.c{ background:linear-gradient(135deg,#7c8c42,#5c6b1f) }
+        .metric .mv{ font-family:Fraunces; font-weight:800; font-size:1.7rem; line-height:1; color:var(--ink) }
+        .metric .mu{ font-size:.92rem; font-weight:600; color:#94a39a; margin-left:.18rem }
+        .metric .ml{ font-size:.78rem; color:#8a9588; margin-top:.25rem }
+
+        .strip-wrap{ margin-top:.2rem }
+        .strip{ display:flex; height:30px; width:100%; border-radius:10px; overflow:hidden; background:#f2ede2; border:1px solid var(--line) }
+        .seg{ height:100%; min-width:3px; cursor:pointer; position:relative; display:flex; align-items:center; padding:0 .55rem; color:#fff; font-size:.72rem; font-weight:700; white-space:nowrap; overflow:hidden;
+              width:0; transition:width .9s cubic-bezier(.2,.8,.2,1), filter .15s }
+        .seg:hover{ filter:brightness(1.08) saturate(1.1) }
+        .seg.crops{ background:linear-gradient(180deg,#5b9444,var(--crops)) } .seg.livestock{ background:linear-gradient(180deg,#d4ab57,var(--livestock)) } .seg.mixed{ background:linear-gradient(180deg,#94a44f,var(--mixed)) }
+        .seg-empty{ flex:1; display:flex; align-items:center; justify-content:center; color:#a9b3a3; font-size:.8rem; font-weight:600 }
+        .legend{ display:flex; gap:1.2rem; flex-wrap:wrap; margin-top:.8rem; font-size:.82rem; color:#5b6b60 }
+        .legend span{ display:inline-flex; align-items:center; gap:.45rem; font-weight:600 }
+        .legend i{ width:11px; height:11px; border-radius:3px; display:inline-block }
+        .lg-crops{ background:var(--crops) } .lg-livestock{ background:var(--livestock) } .lg-mixed{ background:var(--mixed) }
+        .tip{ position:fixed; z-index:1200; background:#16271c; color:#fff; font-size:.78rem; padding:.45rem .7rem; border-radius:9px; pointer-events:none; opacity:0; transform:translateY(4px); transition:opacity .12s; white-space:nowrap; box-shadow:0 8px 20px rgba(0,0,0,.25) }
+        .tip.on{ opacity:1; transform:none }
+
+        /* ---------- toolbar ---------- */
+        .toolbar{ display:flex; gap:.7rem; flex-wrap:wrap; align-items:center; margin:1.6rem 0 1.2rem }
+        .field{ background:#fff; border:1.5px solid #e2ddd0; border-radius:12px; padding:.7rem .95rem; font-size:.92rem; color:#1e293b; transition:border-color .2s, box-shadow .2s }
         .field:focus{ outline:none; border-color:var(--g500); box-shadow:0 0 0 3px rgba(16,185,129,.12) }
-        .grow{ flex:1; min-width:200px }
-        .btn{ background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; font-weight:700; padding:.7rem 1.3rem; border:0; border-radius:12px; font-size:.92rem; cursor:pointer; transition:all .25s cubic-bezier(.34,1.56,.64,1); box-shadow:0 6px 16px -6px rgba(5,120,80,.5); display:inline-flex; align-items:center; gap:.5rem; white-space:nowrap }
+        .search{ flex:1; min-width:210px; position:relative; display:flex; align-items:center }
+        .search i{ position:absolute; left:.95rem; color:#a9b3a3 } .search input{ width:100%; padding-left:2.4rem }
+        .btn{ background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; font-weight:700; padding:.72rem 1.3rem; border:0; border-radius:12px; font-size:.92rem; cursor:pointer; transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s; box-shadow:0 6px 16px -6px rgba(5,120,80,.5); display:inline-flex; align-items:center; gap:.5rem; white-space:nowrap }
         .btn:hover{ transform:translateY(-2px); box-shadow:0 12px 24px -8px rgba(5,120,80,.6) }
+        .count{ width:100%; font-size:.84rem; color:#8a9588; margin:-.3rem 0 1rem; font-weight:500 }
+        .count b{ color:var(--g700) }
 
-        .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1.4rem }
-        .farm{ background:#fff; border:1px solid var(--line); border-left:5px solid var(--g500); border-radius:16px; padding:1.5rem; position:relative; transition:all .3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 8px 22px -18px rgba(20,40,25,.5) }
-        .farm:hover{ transform:translateY(-6px); box-shadow:0 18px 40px -20px rgba(5,120,80,.45) }
-        .farm h3{ font-size:1.35rem; font-weight:800; margin:.1rem 0 .6rem }
-        .tbadge{ display:inline-flex; align-items:center; gap:.35rem; padding:.3rem .8rem; border-radius:999px; font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.05em; margin-bottom:.7rem }
-        .t-crops{ background:#dcfce7; color:#166534 } .t-livestock{ background:#fef3c7; color:#92400e } .t-mixed{ background:#dbeafe; color:#1e40af }
-        .farm p{ color:#64748b; display:flex; align-items:center; gap:.55rem; margin:.4rem 0; font-size:.92rem }
-        .farm p i{ color:var(--g600); width:18px }
-        .note{ background:#f0fdf4; border-left:3px solid var(--g500); border-radius:10px; padding:.6rem .8rem; margin:.7rem 0; color:#166534; font-size:.88rem }
-        .acts{ display:flex; gap:.5rem; margin-top:1.1rem; padding-top:1.1rem; border-top:1px solid #f1ece1; flex-wrap:wrap }
-        .cbtn{ flex:1; min-width:72px; padding:.6rem .8rem; border-radius:10px; font-size:.82rem; font-weight:600; cursor:pointer; border:1.5px solid transparent; transition:all .2s; display:inline-flex; align-items:center; justify-content:center; gap:.35rem }
+        /* ---------- farm cards ---------- */
+        .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:1.4rem }
+        .farm{ background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden; position:relative; box-shadow:0 8px 22px -18px rgba(20,40,25,.5);
+               transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s; opacity:0; transform:translateY(18px); animation:cardin .5s forwards }
+        @keyframes cardin{ to{ opacity:1; transform:none } }
+        .farm:hover{ transform:translateY(-6px); box-shadow:0 22px 44px -20px rgba(5,120,80,.4) }
+        .farm.pulse{ animation:pulsehi 1.1s ease }
+        @keyframes pulsehi{ 0%{ box-shadow:0 0 0 0 rgba(16,185,129,.55) } 100%{ box-shadow:0 0 0 16px rgba(16,185,129,0) } }
+        .band{ height:62px; position:relative; overflow:hidden }
+        .band .rows{ position:absolute; inset:0 }
+        .band .gloss{ position:absolute; inset:0; background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(0,0,0,.18)) }
+        .band.crops{ background:var(--crops) } .band.livestock{ background:var(--livestock) } .band.mixed{ background:var(--mixed) }
+        .band .ic{ position:absolute; right:.9rem; bottom:.55rem; width:40px; height:40px; border-radius:11px; display:grid; place-items:center; background:rgba(255,255,255,.22); border:1px solid rgba(255,255,255,.35); color:#fff; backdrop-filter:blur(3px) }
+        .body{ padding:1.2rem 1.3rem 1.3rem }
+        .tbadge{ display:inline-flex; align-items:center; gap:.35rem; padding:.28rem .7rem; border-radius:999px; font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; margin-bottom:.55rem }
+        .t-crops{ background:#dcfce7; color:#166534 } .t-livestock{ background:#fef3c7; color:#92400e } .t-mixed{ background:#eef2d8; color:#5c6b1f }
+        .farm h3{ font-size:1.32rem; font-weight:800; margin:.1rem 0 .7rem }
+        .meta{ display:flex; flex-direction:column; gap:.42rem }
+        .meta p{ color:#64748b; display:flex; align-items:center; gap:.55rem; margin:0; font-size:.9rem }
+        .meta p i{ color:var(--g600); width:18px; text-align:center }
+        .meta b{ color:var(--ink); font-weight:700 }
+        .note{ background:#f0fdf4; border-left:3px solid var(--g500); border-radius:10px; padding:.55rem .75rem; margin-top:.8rem; color:#166534; font-size:.86rem; display:flex; gap:.5rem; align-items:flex-start }
+        .acts{ display:flex; gap:.5rem; margin-top:1.1rem; padding-top:1.05rem; border-top:1px solid #f4efe4 }
+        .cbtn{ padding:.6rem .85rem; border-radius:11px; font-size:.84rem; font-weight:700; cursor:pointer; border:1.5px solid transparent; transition:transform .2s, background .2s; display:inline-flex; align-items:center; justify-content:center; gap:.4rem }
+        .c-manage{ flex:1; background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff } .c-manage:hover{ transform:translateY(-1px) }
         .c-edit{ background:#f6f1e6; color:#5b6b60; border-color:var(--line) } .c-edit:hover{ background:#ece4d6 }
-        .c-manage{ background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff } .c-manage:hover{ transform:translateY(-1px) }
-        .c-del{ position:absolute; top:1rem; right:1rem; width:34px; height:34px; border-radius:10px; background:#fee2e2; color:#dc2626; border:0; cursor:pointer }
-        .c-del:hover{ background:#fecaca }
+        .c-del{ background:#fee2e2; color:#dc2626 } .c-del:hover{ background:#fecaca }
 
         .empty{ grid-column:1/-1; text-align:center; padding:4rem 2rem; background:#fbf7ee; border:2px dashed var(--line); border-radius:18px }
-        .empty i{ font-size:3.4rem; color:#cbd5c5; margin-bottom:1rem }
-        .empty h3{ font-size:1.4rem; color:#475569 } .empty p{ color:#64748b }
+        .empty .ei{ width:84px; height:84px; margin:0 auto 1rem; border-radius:50%; display:grid; place-items:center; background:#eef5ee; color:#7fae8b; font-size:2.2rem }
+        .empty h3{ font-size:1.45rem; color:#3f4f45; margin:.2rem 0 } .empty p{ color:#7a857c; margin:0 0 1.3rem }
 
+        /* ---------- modals ---------- */
         .modal{ display:none; position:fixed; inset:0; background:rgba(15,23,42,.55); backdrop-filter:blur(6px); z-index:1000; padding:1rem; overflow-y:auto }
         .modal.show{ display:flex; align-items:center; justify-content:center }
-        .mc{ background:#fff; border:1px solid var(--line); border-radius:20px; padding:2rem; width:100%; max-width:640px; max-height:90vh; overflow-y:auto; box-shadow:0 30px 70px -20px rgba(6,28,15,.5); margin:auto }
-        .mc h2{ font-size:1.6rem; font-weight:800; margin:0 0 1.3rem; padding-bottom:.9rem; border-bottom:2px solid #f1ece1 }
+        .mc{ background:#fff; border:1px solid var(--line); border-radius:20px; padding:2rem; width:100%; max-width:640px; max-height:90vh; overflow-y:auto; box-shadow:0 30px 70px -20px rgba(6,28,15,.5); margin:auto; animation:rise .35s cubic-bezier(.2,.8,.2,1) }
+        .mc h2{ font-size:1.55rem; font-weight:800; margin:0 0 1.3rem; padding-bottom:.9rem; border-bottom:2px solid #f1ece1 }
         label{ display:block; font-weight:600; color:#475569; font-size:.86rem; margin-bottom:.4rem }
         .fg{ display:grid; grid-template-columns:1fr 1fr; gap:1rem } .fg .full{ grid-column:1/-1 }
         .fg .field, .mc .field{ width:100% }
@@ -67,14 +117,16 @@
         .mbtn{ padding:.75rem 1.4rem; border-radius:12px; font-weight:600; cursor:pointer; border:0 }
         .mb-cancel{ background:#f6f1e6; color:#5b6b60; border:1.5px solid var(--line) }
         .mb-save{ background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff }
-        #form-error{ background:#fee2e2; border:1px solid #fca5a5; color:#dc2626; border-radius:12px; padding:.85rem; margin-bottom:1rem }
+        #form-error{ background:#fee2e2; border:1px solid #fca5a5; color:#dc2626; border-radius:12px; padding:.85rem; margin-bottom:1rem; white-space:pre-line }
 
         #snack{ position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%); background:#2c2f36; color:#fff; padding:.9rem 1.2rem; border-radius:14px; box-shadow:0 12px 30px rgba(0,0,0,.25); display:none; align-items:center; gap:1rem; z-index:1100 }
         #snack button{ background:var(--g500); color:#fff; border:0; padding:.45rem 1rem; border-radius:9px; font-weight:600; cursor:pointer }
         .spin{ display:none; justify-content:center; padding:3rem } .spin.on{ display:flex }
         .sp{ width:3rem; height:3rem; border:3px solid var(--line); border-top-color:var(--g500); border-radius:50%; animation:spin 1s linear infinite }
         @keyframes spin{ to{ transform:rotate(360deg) } }
-        @media(max-width:620px){ .fg{ grid-template-columns:1fr } .nav .lbl{ display:none } }
+
+        @media(max-width:620px){ .fg{ grid-template-columns:1fr } .nav .lbl{ display:none } .metrics{ gap:1.1rem } }
+        @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important } .seg{ width:auto } }
     </style>
 </head>
 <body>
@@ -92,26 +144,57 @@
                     <button id="logout-btn" class="nbtn out"><i class="fas fa-sign-out-alt"></i><span class="lbl">Log out</span></button>
                 </nav>
             </div>
+            <span class="eyebrow"><span class="pulse-dot"></span> <span id="hero-greet">Welcome back</span></span>
             <h1 class="title">Your Farms</h1>
-            <p class="sub">Every field, herd and harvest — in one place.</p>
+            <p class="sub">Every field, herd and harvest — mapped, measured and managed in one place.</p>
         </div>
     </header>
 
     <main>
-        <div class="card controls">
-            <input type="text" id="farm-search" placeholder="Search farms..." class="field grow">
+        <!-- land at a glance -->
+        <section class="glance" id="glance">
+            <div class="glance-head">
+                <h2>Your land at a glance</h2>
+                <span class="hint">Each band is a farm, sized by its area. Click one to jump to it.</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="mi a"><i class="fas fa-tractor"></i></div><div><div><span class="mv" id="m-farms">0</span></div><div class="ml">Total farms</div></div></div>
+                <div class="metric"><div class="mi b"><i class="fas fa-ruler-combined"></i></div><div><div><span class="mv" id="m-land">0</span><span class="mu">ha</span></div><div class="ml">Total land</div></div></div>
+                <div class="metric"><div class="mi c"><i class="fas fa-seedling"></i></div><div><div><span class="mv" id="m-types">0</span></div><div class="ml">Active types</div></div></div>
+            </div>
+            <div class="strip-wrap">
+                <div class="strip" id="strip"></div>
+                <div class="legend">
+                    <span><i class="lg-crops"></i> Crops <b id="lc-crops" style="margin-left:.2rem">0</b></span>
+                    <span><i class="lg-livestock"></i> Livestock <b id="lc-livestock" style="margin-left:.2rem">0</b></span>
+                    <span><i class="lg-mixed"></i> Mixed <b id="lc-mixed" style="margin-left:.2rem">0</b></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- toolbar -->
+        <div class="toolbar">
+            <span class="search"><i class="fas fa-search"></i><input type="text" id="farm-search" placeholder="Search farms by name or place..." class="field"></span>
             <select id="farm-filter" class="field">
                 <option value="">All types</option>
                 <option value="crops">Crops</option>
                 <option value="livestock">Livestock</option>
                 <option value="mixed">Mixed</option>
             </select>
+            <select id="farm-sort" class="field">
+                <option value="name">Sort: Name (A–Z)</option>
+                <option value="size">Sort: Largest first</option>
+                <option value="type">Sort: By type</option>
+            </select>
             <button id="create-farm-btn" class="btn"><i class="fas fa-plus"></i> Add Farm</button>
         </div>
+        <div class="count" id="count"></div>
 
         <div id="spinner" class="spin"><div class="sp"></div></div>
         <div id="farms-list" class="grid"></div>
     </main>
+
+    <div class="tip" id="tip"></div>
 
     <!-- Farm Modal -->
     <div id="farm-modal" class="modal">
@@ -153,8 +236,11 @@
     <div id="snack"></div>
 
     <script>
-        /* farmland hero */
-        (function(){ function bf(){var W=1200,H=560,cols=7,rows=4,jx=(W/cols)*.32,jy=(H/rows)*.32,P=[];for(var r=0;r<=rows;r++){P[r]=[];for(var c=0;c<=cols;c++){var e=(r===0||r===rows||c===0||c===cols);P[r][c]={x:(c/cols)*W+(e?0:(Math.random()*2-1)*jx),y:(r/rows)*H+(e?0:(Math.random()*2-1)*jy)};}}var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']],ang=[0,16,90,74,16,0,90,30,16],defs='';pal.forEach(function(c,i){defs+='<pattern id="cp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>';});var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8],cells='';for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e2=P[r2+1][c2],fi=bag[Math.floor(Math.random()*bag.length)];cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e2.x.toFixed(1)+','+e2.y.toFixed(1)+'" fill="url(#cp'+fi+')" stroke="rgba(22,15,7,.16)" stroke-width="1.2"/>';}return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';}var el=document.getElementById('farmland'); if(el) el.innerHTML=bf(); })();
+        /* ---------- farmland hero mosaic ---------- */
+        (function(){ function bf(){var W=1200,H=560,cols=7,rows=4,jx=(W/cols)*.32,jy=(H/rows)*.32,P=[];for(var r=0;r<=rows;r++){P[r]=[];for(var c=0;c<=cols;c++){var e=(r===0||r===rows||c===0||c===cols);P[r][c]={x:(c/cols)*W+(e?0:(Math.random()*2-1)*jx),y:(r/rows)*H+(e?0:(Math.random()*2-1)*jy)};}}var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']],ang=[0,16,90,74,16,0,90,30,16],defs='';pal.forEach(function(c,i){defs+='<pattern id="mp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>';});var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8],cells='';for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e2=P[r2+1][c2],fi=bag[Math.floor(Math.random()*bag.length)];cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e2.x.toFixed(1)+','+e2.y.toFixed(1)+'" fill="url(#mp'+fi+')" stroke="rgba(22,15,7,.16)" stroke-width="1.2"/>';}return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';}var el=document.getElementById('farmland'); if(el) el.innerHTML=bf(); })();
+
+        /* crop-row texture for each card band */
+        function bandRows(){ return '<svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 200 62" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="cr" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(12)"><rect width="7" height="7" fill="rgba(255,255,255,0)"/><rect width="7" height="2.6" fill="rgba(255,255,255,.16)"/></pattern></defs><rect width="200" height="62" fill="url(#cr)"/></svg>'; }
 
         const token = localStorage.getItem('access_token');
         if(!token || token==='null') window.location.href='authentication.html';
@@ -163,43 +249,125 @@
         let currentUser = { name:'User' };
         const dec = token && decodeJWT(token);
         if(dec) currentUser = { name: dec.name||dec.full_name||dec.username||'User', email: dec.email||'', id: dec.user_id||dec.id||null };
+        document.getElementById('hero-greet').textContent = 'Welcome back, ' + (currentUser.name||'farmer');
 
         let editingId = null;
+        let allFarms = [];
         window.userFarmsContext = [];
         const $ = id => document.getElementById(id);
 
+        const UNIT_TO_HA = { acres:0.404686, hectares:1, square_meters:0.0001 };
+        function toHa(f){ const n=parseFloat(f.total_size); if(!isFinite(n)||n<=0) return 0; const u=(f.size_unit||'acres'); return n*(UNIT_TO_HA[u]!=null?UNIT_TO_HA[u]:1); }
+        function cap(s){ return s? s[0].toUpperCase()+s.slice(1):''; }
+
+        /* animated count-up */
+        function countUp(el, to, decimals){
+            if(!el) return; const dur=900, start=performance.now(), from=0;
+            const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if(reduce){ el.textContent = decimals? to.toFixed(decimals): Math.round(to); return; }
+            function step(t){ let p=Math.min(1,(t-start)/dur); p=1-Math.pow(1-p,3); const v=from+(to-from)*p; el.textContent = decimals? v.toFixed(decimals): Math.round(v); if(p<1) requestAnimationFrame(step); }
+            requestAnimationFrame(step);
+        }
+
+        function renderOverview(){
+            const farms = allFarms;
+            const totalHa = farms.reduce((s,f)=>s+toHa(f),0);
+            const byType = { crops:0, livestock:0, mixed:0 };
+            farms.forEach(f=>{ const t=(f.type||'').toLowerCase(); if(byType[t]!=null) byType[t]++; });
+            const types = Object.values(byType).filter(v=>v>0).length;
+
+            countUp($('m-farms'), farms.length, 0);
+            countUp($('m-land'), totalHa, totalHa>0 && totalHa<100?1:0);
+            countUp($('m-types'), types, 0);
+            $('lc-crops').textContent=byType.crops; $('lc-livestock').textContent=byType.livestock; $('lc-mixed').textContent=byType.mixed;
+
+            const strip=$('strip'); strip.innerHTML='';
+            if(!farms.length){ strip.innerHTML='<div class="seg-empty">No land added yet</div>'; return; }
+            const areas=farms.map(toHa); const sum=areas.reduce((a,b)=>a+b,0);
+            const useEqual = sum<=0; // every farm zero-size: show equal shares so the strip still reads
+            farms.forEach((f,i)=>{
+                const t=(f.type||'mixed').toLowerCase(); const cls = (t==='crops'||t==='livestock')?t:'mixed';
+                const share = useEqual ? (100/farms.length) : (areas[i]/sum*100);
+                const ha = areas[i];
+                const seg=document.createElement('div');
+                seg.className='seg '+cls; seg.dataset.fid=f.id;
+                seg.dataset.tip=(f.name||'Farm')+' — '+(ha>0? ha.toFixed(ha<100?1:0)+' ha':'size not set');
+                if(share>14) seg.textContent=f.name||'';
+                seg.addEventListener('click',()=>{ const card=document.querySelector('.farm[data-id="'+f.id+'"]'); if(card){ card.scrollIntoView({behavior:'smooth',block:'center'}); card.classList.remove('pulse'); void card.offsetWidth; card.classList.add('pulse'); } });
+                seg.addEventListener('mousemove',e=>{ const tip=$('tip'); tip.textContent=seg.dataset.tip; tip.classList.add('on'); tip.style.left=(e.clientX+12)+'px'; tip.style.top=(e.clientY-34)+'px'; });
+                seg.addEventListener('mouseleave',()=>$('tip').classList.remove('on'));
+                strip.appendChild(seg);
+                requestAnimationFrame(()=>requestAnimationFrame(()=>{ seg.style.width=Math.max(share,0.6)+'%'; }));
+            });
+        }
+
+        function applyView(){
+            const q=$('farm-search').value.trim().toLowerCase(), t=$('farm-filter').value, sort=$('farm-sort').value;
+            let view = allFarms.filter(f => {
+                const hay=((f.name||'')+' '+(f.city||'')+' '+(f.country||'')+' '+(f.state||'')).toLowerCase();
+                return (!q || hay.includes(q)) && (!t || (f.type||'').toLowerCase()===t);
+            });
+            view.sort((a,b)=>{
+                if(sort==='size') return toHa(b)-toHa(a);
+                if(sort==='type') return (a.type||'').localeCompare(b.type||'') || (a.name||'').localeCompare(b.name||'');
+                return (a.name||'').localeCompare(b.name||'');
+            });
+            return view;
+        }
+
+        function renderGrid(){
+            const list=$('farms-list'); const view=applyView();
+            $('count').innerHTML = allFarms.length ? 'Showing <b>'+view.length+'</b> of <b>'+allFarms.length+'</b> '+(allFarms.length===1?'farm':'farms') : '';
+            if(!allFarms.length){
+                list.innerHTML='<div class="empty"><div class="ei"><i class="fas fa-seedling"></i></div><h3>No farms yet</h3><p>Add your first farm to start tracking fields, livestock and harvests.</p><button class="btn" onclick="document.getElementById(\'create-farm-btn\').click()"><i class="fas fa-plus"></i> Add your first farm</button></div>';
+                return;
+            }
+            if(!view.length){
+                list.innerHTML='<div class="empty"><div class="ei"><i class="fas fa-magnifying-glass"></i></div><h3>No matches</h3><p>Try a different search or clear the type filter.</p></div>';
+                return;
+            }
+            list.innerHTML = view.map((f,i)=>{
+                const t=(f.type||'mixed').toLowerCase(); const cls=(t==='crops'||t==='livestock')?t:'mixed';
+                const icon = cls==='crops'?'fa-wheat-awn':cls==='livestock'?'fa-cow':'fa-tractor';
+                const loc = [f.city,f.country].filter(Boolean).join(', ') || 'Location not set';
+                return '<div class="farm" data-id="'+f.id+'" style="animation-delay:'+(i*60)+'ms">'
+                    + '<div class="band '+cls+'"><div class="rows">'+bandRows()+'</div><div class="gloss"></div><div class="ic"><i class="fas '+icon+'"></i></div></div>'
+                    + '<div class="body">'
+                    + '<span class="tbadge t-'+cls+'"><i class="fas fa-leaf"></i> '+cap(t)+'</span>'
+                    + '<h3>'+(f.name||'Untitled farm')+'</h3>'
+                    + '<div class="meta">'
+                    + '<p><i class="fas fa-map-marker-alt"></i> '+loc+'</p>'
+                    + '<p><i class="fas fa-ruler-combined"></i> <b>'+(f.total_size||'—')+'</b> '+(f.size_unit||'')+'</p>'
+                    + '</div>'
+                    + (f.additional_notes?'<div class="note"><i class="fas fa-info-circle" style="margin-top:2px"></i><span>'+f.additional_notes+'</span></div>':'')
+                    + '<div class="acts">'
+                    + '<button class="cbtn c-manage" onclick="window.location.href=\'individual_farm.html?id='+f.id+'\'"><i class="fas fa-arrow-right"></i> Manage</button>'
+                    + '<button class="cbtn c-edit" onclick="editFarm('+f.id+')" title="Edit"><i class="fas fa-pen"></i></button>'
+                    + '<button class="cbtn c-del" onclick="deleteFarm('+f.id+')" title="Delete"><i class="fas fa-trash"></i></button>'
+                    + '</div></div></div>';
+            }).join('');
+        }
+
         async function loadFarms(){
-            const list = $('farms-list'), spin = $('spinner');
-            spin.classList.add('on'); list.innerHTML='';
+            const spin=$('spinner'); spin.classList.add('on'); $('farms-list').innerHTML='';
             try{
                 const res = await fetch('/api/farms/', { headers:{'Authorization':'Bearer '+token} });
                 if(res.status===401){ localStorage.clear(); window.location.href='authentication.html'; return; }
                 if(!res.ok) throw new Error();
                 let farms = await res.json(); farms = Array.isArray(farms)?farms:(farms.results||[]);
-                window.userFarmsContext = farms;
-                const q = $('farm-search').value.trim().toLowerCase(), t = $('farm-filter').value;
-                let view = farms.filter(f => (!q || (f.name||'').toLowerCase().includes(q)) && (!t || (f.type||'').toLowerCase()===t));
+                allFarms = farms; window.userFarmsContext = farms;
                 spin.classList.remove('on');
-                if(!view.length){ list.innerHTML='<div class="empty"><i class="fas fa-tractor"></i><h3>No farms found</h3><p>'+(farms.length?'Try a different search or filter.':'Add your first farm to get started.')+'</p></div>'; return; }
-                list.innerHTML = view.map(f=>{
-                    const tc = f.type==='crops'?'t-crops':f.type==='livestock'?'t-livestock':'t-mixed';
-                    return `<div class="farm">
-                        <button class="c-del" onclick="deleteFarm(${f.id})" title="Delete"><i class="fas fa-trash"></i></button>
-                        <span class="tbadge ${tc}"><i class="fas fa-leaf"></i> ${f.type?f.type[0].toUpperCase()+f.type.slice(1):''}</span>
-                        <h3>${f.name||''}</h3>
-                        <p><i class="fas fa-map-marker-alt"></i> ${f.city||''}${f.country?', '+f.country:''}</p>
-                        <p><i class="fas fa-ruler-combined"></i> ${f.total_size||''} ${f.size_unit||''}</p>
-                        ${f.additional_notes?`<div class="note"><i class="fas fa-info-circle"></i> ${f.additional_notes}</div>`:''}
-                        <div class="acts">
-                            <button class="cbtn c-edit" onclick="editFarm(${f.id})"><i class="fas fa-edit"></i>Edit</button>
-                            <button class="cbtn c-manage" onclick="window.location.href='individual_farm.html?id=${f.id}'"><i class="fas fa-cog"></i>Manage</button>
-                        </div></div>`;
-                }).join('');
-            }catch(e){ spin.classList.remove('on'); list.innerHTML='<div class="empty" style="background:#fef2f2;border-color:#fca5a5"><i class="fas fa-exclamation-triangle" style="color:#dc2626"></i><h3>Couldn\'t load farms</h3><p>Check your connection and try again.</p></div>'; }
+                renderOverview(); renderGrid();
+            }catch(e){
+                spin.classList.remove('on');
+                $('farms-list').innerHTML='<div class="empty" style="background:#fef2f2;border-color:#fca5a5"><div class="ei" style="background:#fee2e2;color:#dc2626"><i class="fas fa-triangle-exclamation"></i></div><h3>Couldn’t load your farms</h3><p>Check your connection, then try again.</p><button class="btn" onclick="loadFarms()"><i class="fas fa-rotate-right"></i> Retry</button></div>';
+            }
         }
-        $('farm-search').addEventListener('input', loadFarms);
-        $('farm-filter').addEventListener('change', loadFarms);
+        $('farm-search').addEventListener('input', renderGrid);
+        $('farm-filter').addEventListener('change', renderGrid);
+        $('farm-sort').addEventListener('change', renderGrid);
 
+        /* ---------- create / edit ---------- */
         $('create-farm-btn').addEventListener('click', ()=>{
             editingId=null; $('farm-modal-title').textContent='Add New Farm'; $('farm-form').reset(); $('f-unit').value='acres'; $('form-error').style.display='none'; $('farm-modal').classList.add('show');
         });
@@ -212,17 +380,17 @@
             const err=$('form-error');
             if(!data.name||!data.type||!data.country||!data.state||!data.city){ err.textContent='Please fill all fields marked with *'; err.style.display='block'; return; }
             try{
-                const url = editingId?`/api/farms/${editingId}/`:'/api/farms/';
+                const url = editingId?'/api/farms/'+editingId+'/':'/api/farms/';
                 const res = await fetch(url, { method: editingId?'PATCH':'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body:JSON.stringify(data) });
-                if(!res.ok){ const txt=await res.text(); let j=null; try{j=JSON.parse(txt);}catch(_){} err.textContent = j?Object.entries(j).map(([k,v])=>`${k}: ${Array.isArray(v)?v.join(', '):v}`).join('\n'):(res.statusText||txt); err.style.display='block'; return; }
+                if(!res.ok){ const txt=await res.text(); let j=null; try{j=JSON.parse(txt);}catch(_){} err.textContent = j?Object.entries(j).map(([k,v])=>k+': '+(Array.isArray(v)?v.join(', '):v)).join('\n'):(res.statusText||txt); err.style.display='block'; return; }
                 $('farm-modal').classList.remove('show'); loadFarms();
-            }catch(_){ err.textContent='Failed to save farm. Please try again.'; err.style.display='block'; }
+            }catch(_){ err.textContent='Couldn’t save the farm. Please try again.'; err.style.display='block'; }
         });
 
         window.editFarm = async id=>{
             event?.stopPropagation();
-            let farm = window.userFarmsContext.find(f=>f.id===id);
-            try{ const res=await fetch(`/api/farms/${id}/`,{headers:{'Authorization':'Bearer '+token}}); if(res.ok) farm=await res.json(); }catch(_){}
+            let farm = allFarms.find(f=>f.id===id);
+            try{ const res=await fetch('/api/farms/'+id+'/',{headers:{'Authorization':'Bearer '+token}}); if(res.ok) farm=await res.json(); }catch(_){}
             if(!farm) return;
             editingId=id; $('farm-modal-title').textContent='Edit Farm: '+farm.name;
             $('f-name').value=farm.name||''; $('f-type').value=farm.type||''; $('f-country').value=farm.country||''; $('f-state').value=farm.state||''; $('f-city').value=farm.city||''; $('f-address').value=farm.address||''; $('f-size').value=farm.total_size||''; $('f-unit').value=farm.size_unit||'acres'; $('f-notes').value=farm.additional_notes||'';
@@ -233,10 +401,10 @@
         window.deleteFarm = async id=>{
             event?.stopPropagation();
             if(!confirm('Delete this farm? This cannot be undone.')) return;
-            const farm = window.userFarmsContext.find(f=>f.id===id);
+            const farm = allFarms.find(f=>f.id===id);
             try{
-                const res = await fetch(`/api/farms/${id}/`, { method:'DELETE', headers:{'Authorization':'Bearer '+token} });
-                if(res.ok){ lastDeleted={data:farm}; loadFarms(); snackbar(`Farm "${farm?.name||''}" deleted`, async ()=>{
+                const res = await fetch('/api/farms/'+id+'/', { method:'DELETE', headers:{'Authorization':'Bearer '+token} });
+                if(res.ok){ lastDeleted={data:farm}; loadFarms(); snackbar('Farm “'+(farm?.name||'')+'” deleted', async ()=>{
                     if(!lastDeleted) return; const d=Object.assign({},lastDeleted.data); delete d.id;
                     try{ await fetch('/api/farms/',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(d)}); loadFarms(); }catch(_){}
                     lastDeleted=null;
@@ -244,9 +412,9 @@
                 else alert('Failed to delete farm.');
             }catch(_){ alert('Error deleting farm.'); }
         };
-        function snackbar(msg,onUndo){ const b=$('snack'); b.innerHTML=`<span>${msg}</span><button>Undo</button>`; b.style.display='flex'; b.querySelector('button').onclick=()=>{ onUndo&&onUndo(); b.style.display='none'; }; setTimeout(()=>b.style.display='none',8000); }
+        function snackbar(msg,onUndo){ const b=$('snack'); b.innerHTML='<span>'+msg+'</span><button>Undo</button>'; b.style.display='flex'; b.querySelector('button').onclick=()=>{ onUndo&&onUndo(); b.style.display='none'; }; setTimeout(()=>b.style.display='none',8000); }
 
-        /* settings */
+        /* ---------- settings ---------- */
         $('settings-btn').addEventListener('click', ()=> $('settings-modal').classList.add('show'));
         $('set-close').addEventListener('click', ()=> $('settings-modal').classList.remove('show'));
         $('logout-btn').addEventListener('click', ()=>{ localStorage.clear(); window.location.href='authentication.html'; });
@@ -257,13 +425,14 @@
 
         document.querySelectorAll('.modal').forEach(m=> m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('show'); }));
 
-        /* Dale context for this page */
-        window.__daleCtx = function(){ const farms=(window.userFarmsContext||[]).map(f=>({name:f.name,type:f.type,size:(f.total_size||'')+' '+(f.size_unit||''),location:[f.city,f.country].filter(Boolean).join(', ')})); return { page:'Multi-Farm Dashboard', type:'multi_farm', farms:farms, user:{name:currentUser.name}, extras:{ farm_count:farms.length } }; };
+        /* ---------- Dale context ---------- */
+        window.__daleCtx = function(){ const farms=(allFarms||[]).map(f=>({name:f.name,type:f.type,size:(f.total_size||'')+' '+(f.size_unit||''),location:[f.city,f.country].filter(Boolean).join(', ')})); return { page:'Multi-Farm Dashboard', type:'multi_farm', farms:farms, user:{name:currentUser.name}, extras:{ farm_count:farms.length, total_hectares:Number((allFarms||[]).reduce((s,f)=>s+toHa(f),0).toFixed(1)) } }; };
         window.__daleIntro = "Hi, I'm Dale. I can see your farms — ask me to compare them, summarise your land, or suggest what to focus on next.";
         window.__daleChips = ["How many farms do I have?","Which is my largest farm?","Summarise my farms","What should I prioritise?"];
 
         loadFarms();
     </script>
+
     <!-- ===== Dale AI assistant (context-aware, brand) ===== -->
     <script>
     (function(){
@@ -373,6 +542,5 @@
       text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
     })();
     </script>
-
 </body>
 </html>
