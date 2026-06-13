@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             font-family: 'DM Sans', sans-serif;
@@ -391,6 +391,56 @@
             border-radius: 1rem;
             padding: 4rem 2rem;
         }
+    </style>    <style id="farmland-skin">
+      :root{ --primary:#10b981; --primary-dark:#047857; --primary-light:#34d399; --secondary:#0d9488; --accent:#c39a48; --border:#ece4d6; --line:#ece4d6; --text:#16271c; --text-secondary:#6b7280; }
+      *{ font-family:'Inter',system-ui,sans-serif }
+      h1,h2,h3,h4,.font-display{ font-family:'Fraunces',serif !important; letter-spacing:-.01em }
+      body{ background:radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f4efe3 62%) !important; color:#16271c; min-height:100vh }
+      body::before{ display:none !important }
+
+      /* hero */
+      .hero-section{ background:#22432c !important; position:relative; overflow:hidden }
+      .hero-section::before{ display:none !important }
+      #farmland{ position:absolute; inset:-2% } #farmland svg{ width:100%; height:100% }
+      .hero-ov{ position:absolute; inset:0; background:linear-gradient(100deg, rgba(8,30,18,.9) 0%, rgba(8,30,18,.55) 58%, rgba(8,30,18,.28) 100%) }
+      .hero-section .brand{ display:flex; align-items:center; gap:.6rem; font-family:'Fraunces',serif; font-weight:800; font-size:1.3rem; color:#fff }
+      .hero-section .brand .mk{ width:38px; height:38px; border-radius:11px; display:grid; place-items:center; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28) }
+      .hero-section .hnav{ margin-left:auto; display:flex; gap:.5rem; flex-wrap:wrap; align-items:center }
+      .hero-section .nbtn{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); color:#fff; padding:.5rem .85rem; border-radius:999px; font-size:.84rem; font-weight:600; display:inline-flex; align-items:center; gap:.4rem; transition:transform .2s, background .2s; white-space:nowrap }
+      .hero-section .nbtn:hover{ background:rgba(255,255,255,.22); transform:translateY(-1px) }
+      .hero-section .eyebrow{ display:inline-flex; align-items:center; gap:.5rem; margin:1.3rem 0 .5rem; padding:.34rem .8rem; border-radius:999px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); font-size:.78rem; font-weight:700; letter-spacing:.04em; color:#bbf7d0 }
+      .hero-section .pulse-dot{ width:8px; height:8px; border-radius:50%; background:#4ade80; animation:ifring 2s infinite; flex:none }
+      @keyframes ifring{ 0%{ box-shadow:0 0 0 0 rgba(74,222,128,.5) } 70%{ box-shadow:0 0 0 9px rgba(74,222,128,0) } 100%{ box-shadow:0 0 0 0 rgba(74,222,128,0) } }
+      .hero-section .title{ font-size:clamp(2rem,5vw,3rem); font-weight:900; color:#fff; margin:.1rem 0 .35rem; text-shadow:0 2px 14px rgba(0,0,0,.35) }
+      .hero-section .sub{ color:rgba(255,255,255,.86); font-size:1.04rem; max-width:52ch }
+      .hero-section .hero-acts{ display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.2rem }
+      .hero-section .hbtn{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28); color:#fff; padding:.6rem 1.05rem; border-radius:12px; font-size:.88rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:.5rem; transition:transform .2s, background .2s }
+      .hero-section .hbtn:hover{ background:rgba(255,255,255,.22); transform:translateY(-1px) }
+      @media(max-width:680px){ .hero-section .nbtn .lbl{ display:none } }
+
+      /* cards & components */
+      .glass{ background:#fff !important; backdrop-filter:none !important; border:1px solid var(--line) !important; }
+      .stat-card{ background:#fff !important; border:1px solid var(--line) !important; box-shadow:0 10px 26px -22px rgba(20,40,25,.55); transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s }
+      .stat-card::before{ background:linear-gradient(90deg,var(--primary),var(--accent)) !important }
+      .stat-card:hover{ transform:translateY(-4px); box-shadow:0 20px 40px -22px rgba(5,120,80,.4); border-color:rgba(16,185,129,.25) !important }
+      .action-card{ background:#fff !important; border:1px solid var(--line) !important; box-shadow:0 10px 26px -22px rgba(20,40,25,.5) }
+      .action-card:hover{ transform:translateY(-6px); border-color:var(--primary) !important; box-shadow:0 24px 46px -22px rgba(5,120,80,.4) !important }
+      .action-card .icon-wrapper{ background:linear-gradient(135deg,#f0fbf4,#dcf5e3) !important }
+      .action-card:hover .icon-wrapper{ background:linear-gradient(135deg,var(--primary),var(--primary-dark)) !important }
+      .btn-primary{ background:linear-gradient(135deg,var(--primary),var(--primary-dark)) !important; border-radius:12px !important; box-shadow:0 6px 16px -6px rgba(5,120,80,.5) !important }
+      .btn-primary:hover{ box-shadow:0 12px 24px -8px rgba(5,120,80,.6) !important }
+      .modern-table{ border:1px solid var(--line) }
+      .modern-table thead{ background:linear-gradient(135deg,#faf6ee,#f3ecdf) !important }
+      .modern-table thead th{ color:#3f4f45 !important; border-bottom:2px solid var(--line) !important }
+      .modern-table tbody tr:hover{ background:linear-gradient(135deg, rgba(240,253,244,.6), rgba(236,253,245,.6)) !important }
+      .badge-crop{ background:#dcfce7 !important; color:#166534 !important; border:1px solid #86efac !important }
+      .badge-livestock{ background:#fef3c7 !important; color:#92400e !important; border:1px solid #fcd9a0 !important }
+      .input-field:focus{ border-color:var(--primary) !important; box-shadow:0 0 0 3px rgba(16,185,129,.12) !important }
+      .modal-content{ border:1px solid var(--line); border-radius:20px !important }
+      .empty-state{ background:#fbf7ee !important; border:2px dashed var(--line) !important }
+      .spinner{ border:4px solid var(--line) !important; border-top-color:var(--primary) !important }
+      .action-btn:hover{ border-color:var(--primary) !important; background:rgba(16,185,129,.06) !important; color:var(--primary) !important }
+      ::-webkit-scrollbar-thumb{ background:linear-gradient(180deg,var(--primary),var(--primary-dark)) !important }
     </style>
 </head>
 <body class="min-h-screen">
@@ -409,54 +459,55 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col">
             <!-- Hero Section with Nav Buttons -->
-            <section class="hero-section py-12 px-6 shadow-xl relative">
-                <div class="max-w-7xl mx-auto relative z-10">
-                    <div class="flex flex-col items-start gap-3 w-full">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 mr-3">
-                                <i class="fas fa-seedling text-white text-2xl"></i>
-                            </div>
-                            <div class="flex flex-col">
-                                <h1 class="font-display text-3xl md:text-4xl font-black text-white whitespace-nowrap flex items-center gap-4">
-                                    Farm Dashboard <span id="farm-dashboard-meta" class="text-3xl font-extrabold text-emerald-200 ml-2"></span>
-                                </h1>
-                                <span class="text-emerald-50 text-lg font-medium mt-1">Monitor and manage your agricultural operations</span>
-                            </div>
-                        </div>
-                        <nav class="flex flex-wrap gap-3 mt-3">
-                            <nav class="flex flex-row gap-3 mt-3 overflow-x-auto scrollbar-thin scrollbar-thumb-emerald-400 scrollbar-track-emerald-50 w-full" style="white-space:nowrap;">
-                                <a href="/chats/" class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-white text-white rounded-xl font-semibold transition hover:bg-white/10"><i class="fas fa-comments"></i>Chats</a>
-                                <button id="view-linked-stores-btn" type="button" class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-white text-white rounded-xl font-semibold transition hover:bg-white/10 bg-transparent"><i class="fas fa-store"></i>View Digital Stores linked to this farm</button>
-                                <a href="/marketplace/" class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-white text-white rounded-xl font-semibold transition hover:bg-white/10"><i class="fas fa-store"></i>Marketplace</a>
-                                <a href="/digitalstores/" class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-white text-white rounded-xl font-semibold transition hover:bg-white/10"><i class="fas fa-box"></i>Digital Stores</a>
-                                <a href="#" id="top-transfer-btn" class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-white text-white rounded-xl font-semibold transition hover:bg-white/10"><i class="fas fa-link"></i>Link to Store</a>
-                            </nav>
-
-                                <script>
-                                // Show only the farm name in brackets beside dashboard title
-                                async function setFarmDashboardMeta() {
-                                    if (!window.currentFarm) {
-                                        await loadFarmDetails();
-                                    }
-                                    const meta = document.getElementById('farm-dashboard-meta');
-                                    if (meta && window.currentFarm) {
-                                        const name = window.currentFarm.name || '';
-                                        meta.textContent = name ? `(${name})` : '';
-                                    }
-                                }
-                                document.addEventListener('DOMContentLoaded', setFarmDashboardMeta);
-                                const origLoadFarmDetails = loadFarmDetails;
-                                loadFarmDetails = async function() {
-                                    await origLoadFarmDetails.apply(this, arguments);
-                                    setFarmDashboardMeta();
-                                };
-                                </script>
+            <section class="hero-section relative overflow-hidden">
+                <div id="farmland"></div><div class="hero-ov"></div>
+                <div class="relative z-10 max-w-7xl mx-auto px-6 pt-5 pb-9">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <div class="brand"><span class="mk"><i class="fas fa-tractor"></i></span> Agricore</div>
+                        <nav class="hnav">
+                            <a href="multi_farm.html" class="nbtn"><i class="fas fa-arrow-left"></i><span class="lbl">Farms</span></a>
+                            <a href="chats.html" class="nbtn"><i class="fas fa-comments"></i><span class="lbl">Chats</span></a>
+                            <a href="marketplace.html" class="nbtn"><i class="fas fa-store"></i><span class="lbl">Marketplace</span></a>
+                            <a href="digitalstores.html" class="nbtn"><i class="fas fa-box"></i><span class="lbl">Digital Stores</span></a>
                         </nav>
+                    </div>
+                    <span class="eyebrow" id="farm-eyebrow"><span class="pulse-dot"></span> Farm</span>
+                    <h1 class="title" id="farm-title">Farm</h1>
+                    <p class="sub" id="farm-sub">Manage produce, land, livestock, crops and trade — all for this farm.</p>
+                    <div class="hero-acts">
+                        <button id="top-farm-details-btn" type="button" class="hbtn"><i class="fas fa-circle-info"></i> Farm details</button>
+                        <button id="view-linked-stores-btn" type="button" class="hbtn"><i class="fas fa-store"></i> Linked stores</button>
+                        <a href="#" id="top-transfer-btn" class="hbtn"><i class="fas fa-link"></i> Link to store</a>
                     </div>
                 </div>
             </section>
+            <script>
+                /* hero farmland mosaic */
+                (function(){ function bf(){var W=1200,H=520,cols=7,rows=4,jx=(W/cols)*.32,jy=(H/rows)*.32,P=[];for(var r=0;r<=rows;r++){P[r]=[];for(var c=0;c<=cols;c++){var e=(r===0||r===rows||c===0||c===cols);P[r][c]={x:(c/cols)*W+(e?0:(Math.random()*2-1)*jx),y:(r/rows)*H+(e?0:(Math.random()*2-1)*jy)};}}var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']],ang=[0,16,90,74,16,0,90,30,16],defs='';pal.forEach(function(c,i){defs+='<pattern id="ifp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>';});var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8],cells='';for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e2=P[r2+1][c2],fi=bag[Math.floor(Math.random()*bag.length)];cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e2.x.toFixed(1)+','+e2.y.toFixed(1)+'" fill="url(#ifp'+fi+')" stroke="rgba(22,15,7,.16)" stroke-width="1.2"/>';}return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';}var el=document.getElementById('farmland'); if(el) el.innerHTML=bf(); })();
+
+                function ifCountUp(el,to,dec){ if(!el) return; var dur=900,start=performance.now(); if(matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent=dec?(+to).toFixed(dec):Math.round(to); return; } requestAnimationFrame(function step(t){ var p=Math.min(1,(t-start)/dur); p=1-Math.pow(1-p,3); var v=to*p; el.textContent=dec?v.toFixed(dec):Math.round(v); if(p<1) requestAnimationFrame(step); }); }
+                window.ifCountUp = ifCountUp;
+
+                function setFarmHeader(){
+                    var f = window.currentFarm; if(!f) return;
+                    var titleEl=document.getElementById('farm-title'); if(titleEl) titleEl.textContent=f.name||'Farm';
+                    var bits=[]; if(f.type) bits.push(f.type.charAt(0).toUpperCase()+f.type.slice(1));
+                    var loc=[f.city,f.state,f.country].filter(Boolean).join(', '); if(loc) bits.push(loc);
+                    if(f.total_size) bits.push(f.total_size+' '+(f.size_unit||''));
+                    var ey=document.getElementById('farm-eyebrow'); if(ey) ey.innerHTML='<span class="pulse-dot"></span> '+(bits.join('  &middot;  ')||'Farm');
+                    document.title = (f.name||'Farm') + ' — Agricore';
+                }
+                window.setFarmHeader = setFarmHeader;
+
+                /* Dale assistant context for this farm */
+                window.__daleCtx = function(){ var f=window.currentFarm||{}; return { page:'Farm Dashboard', type:'farm', farm:{ name:f.name, type:f.type, location:[f.city,f.state,f.country].filter(Boolean).join(', '), size:(f.total_size||'')+' '+(f.size_unit||'') }, user:(window.currentUser?{name:window.currentUser.username||window.currentUser.email}:{}) }; };
+                window.__daleIntro = "Hi, I'm Dale. Ask me about this farm — its produce, what to plant next, or how to lift your yields.";
+                window.__daleChips = ["Summarise this farm","What should I focus on?","Tips to improve yield","How do I log produce?"];
+            </script>
 
             <main class="max-w-7xl w-full mx-auto px-6 py-10 flex-1">
+                <!-- Farm summary stats -->
+                <div id="farm-stats" class="mb-12"></div>
                 <!-- Quick Access Cards -->
                 <div class="mb-12">
                     <h2 class="font-display text-2xl font-bold text-gray-900 mb-6">Quick Access</h2>
@@ -531,7 +582,8 @@
                 </div>
 
                 <!-- Summary Stats -->
-                <div id="farm-modules" class="mb-10"></div>
+                <!-- summary stats render into #farm-stats above -->
+                <div class="mb-10"></div>
 
                 <!-- Produce Collection History -->
                 <section class="glass rounded-2xl shadow-xl p-8 fade-in fade-in-4">
@@ -903,28 +955,6 @@
                     linkedStoresModal.classList.add('hidden');
                 });
         }});
-                        // Enable navigation for Livestock, Crops, and Expenses quick access cards
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const farmId = new URLSearchParams(window.location.search).get('id');
-                            document.getElementById('livestock-link').addEventListener('click', function(e) {
-                                e.preventDefault();
-                                if (farmId) {
-                                    window.location.href = `/livestock/?id=${farmId}`;
-                                }
-                            });
-                            document.getElementById('crops-link').addEventListener('click', function(e) {
-                                e.preventDefault();
-                                if (farmId) {
-                                    window.location.href = `/crops/?id=${farmId}`;
-                                }
-                            });
-                            document.getElementById('expenses-link').addEventListener('click', function(e) {
-                                e.preventDefault();
-                                if (farmId) {
-                                    window.location.href = `/expenses/?id=${farmId}`;
-                                }
-                            });
-                        });
                 // Get farmId from URL
                 const farmIdParam = new URLSearchParams(window.location.search).get('id');
 
@@ -983,12 +1013,7 @@
                     return;
                 }
                 window.currentFarm = await res.json();
-                const topNameEl = document.getElementById('top-farm-name');
-                if (topNameEl) {
-                    topNameEl.innerHTML = `<i class=\"fas fa-seedling text-emerald-600\"></i> Produce Management for **${currentFarm.name}**`;
-                } else {
-                    console.warn('Missing element: top-farm-name');
-                }
+                if (typeof setFarmHeader === 'function') setFarmHeader();
             } catch (error) {
                 console.error("Failed to load farm details:", error);
                 alert('Failed to load farm. Session may have expired.');
@@ -1189,6 +1214,55 @@
             }
         }
         
+        function renderSummaryCards(summary) {
+            const c = document.getElementById('farm-stats');
+            if (!c) return;
+            const tc = summary.total_collections || 0;
+            const tq = summary.total_quantity || 0;
+            const last = summary.last_collection ? new Date(summary.last_collection).toLocaleDateString() : 'N/A';
+            c.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="stat-card p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#10b981,#047857)"><i class="fas fa-boxes-stacked text-white text-xl"></i></div>
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Collections</span>
+                        </div>
+                        <div class="font-display text-3xl font-black text-gray-900" id="stat-collections">0</div>
+                        <p class="text-sm text-gray-600 mt-1">Produce records</p>
+                    </div>
+                    <div class="stat-card p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#c39a48,#a9772e)"><i class="fas fa-weight-hanging text-white text-xl"></i></div>
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Quantity</span>
+                        </div>
+                        <div class="font-display text-3xl font-black text-gray-900" id="stat-quantity">0</div>
+                        <p class="text-sm text-gray-600 mt-1">Total units collected</p>
+                    </div>
+                    <div class="stat-card p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#0d9488,#0f766e)"><i class="fas fa-calendar-check text-white text-xl"></i></div>
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Latest</span>
+                        </div>
+                        <div class="font-display text-lg font-bold text-gray-900">${last}</div>
+                        <p class="text-sm text-gray-600 mt-1">Last collection</p>
+                    </div>
+                    <div class="stat-card p-6 rounded-2xl cursor-pointer" id="open-linked-stores-card">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#7c8c42,#5c6b1f)"><i class="fas fa-store text-white text-xl"></i></div>
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Stores</span>
+                        </div>
+                        <div class="font-display text-3xl font-black text-gray-900">&mdash;</div>
+                        <p class="text-sm font-semibold mt-1" style="color:var(--primary)">View linked stores &rarr;</p>
+                    </div>
+                </div>`;
+            if (typeof ifCountUp === 'function') {
+                ifCountUp(document.getElementById('stat-collections'), tc, 0);
+                ifCountUp(document.getElementById('stat-quantity'), tq, (tq>0 && tq<100)?1:0);
+            }
+            const openBtn = document.getElementById('open-linked-stores-card');
+            if (openBtn) openBtn.onclick = async () => { await loadLinkedStores(); document.getElementById('linked-stores-modal').classList.remove('hidden'); };
+        }
+
         function renderProduceTable(produceRecords) {
             const tableContainer = document.getElementById('produce-table-container');
 
@@ -1384,12 +1458,12 @@
                     if (modal && content && window.currentFarm) {
                         content.innerHTML = `
                             <div><strong>Name:</strong> ${window.currentFarm.name || ''}</div>
-                            <div><strong>Location:</strong> ${window.currentFarm.location || ''}</div>
-                            <div><strong>Size:</strong> ${window.currentFarm.size || ''}</div>
-                            <div><strong>Owner:</strong> ${window.currentFarm.owner_name || ''}</div>
-                            <div><strong>Country:</strong> ${window.currentFarm.country || ''}</div>
+                            <div><strong>Type:</strong> ${window.currentFarm.type ? (window.currentFarm.type.charAt(0).toUpperCase()+window.currentFarm.type.slice(1)) : ''}</div>
+                            <div><strong>Location:</strong> ${[window.currentFarm.city, window.currentFarm.state, window.currentFarm.country].filter(Boolean).join(', ')}</div>
+                            <div><strong>Address:</strong> ${window.currentFarm.address || '—'}</div>
+                            <div><strong>Size:</strong> ${window.currentFarm.total_size || '—'} ${window.currentFarm.size_unit || ''}</div>
                             <div><strong>Created:</strong> ${window.currentFarm.created_at ? new Date(window.currentFarm.created_at).toLocaleDateString() : ''}</div>
-                            <div><strong>Description:</strong> ${window.currentFarm.description || ''}</div>
+                            <div class="md:col-span-2 lg:col-span-3"><strong>Notes:</strong> ${window.currentFarm.additional_notes || '—'}</div>
                         `;
                         modal.classList.remove('hidden');
                         modal.classList.add('flex');
@@ -2136,7 +2210,7 @@
                 if (isSessionExpired) {
                     showSnackbar('Session expired. Redirecting to login...', 'error');
                     setTimeout(() => {
-                        window.location.href = '/auth/authentication.html';
+                        window.location.href = 'authentication.html';
                     }, 1800);
                 } else {
                     const container = document.getElementById('produce-table-container');
@@ -2252,6 +2326,60 @@
             }
             console.log('=== TEST COMPLETE ===');
         };
+    </script>    <!-- ===== Dale AI assistant ===== -->
+    <script>
+    (function(){
+      if (window.__daleInit) return; window.__daleInit = true;
+      var ENDPOINT = '/api/ai/dale/ask/'; var history = [];
+      var css = ''
+        + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:62px;height:62px;border:0;border-radius:50%;cursor:pointer;z-index:1000;background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}'
+        + '#daleFab:hover{transform:scale(1.08) rotate(-6deg)}#daleFab svg{width:28px;height:28px}'
+        + '#daleFab .dot{position:absolute;top:10px;right:11px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857}'
+        + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
+        + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
+        + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
+        + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}.dale-head .mk svg{width:20px;height:20px}'
+        + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
+        + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+        + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
+        + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+        + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
+        + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
+        + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+        + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
+        + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
+        + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer}'
+        + '.dale-chip:hover{background:#d6efdf}.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
+        + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
+        + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}.dale-input button svg{width:18px;height:18px}'
+        + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
+      var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+      var leaf='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+      var fab=document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
+      fab.innerHTML='<span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>';
+      document.body.appendChild(fab);
+      var panel=document.createElement('div'); panel.id='dalePanel';
+      panel.innerHTML='<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div><div class="dale-msgs" id="daleMsgs"></div><div class="dale-chips" id="daleChips"></div><div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea><button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
+      document.body.appendChild(panel);
+      var msgs=panel.querySelector('#daleMsgs'), text=panel.querySelector('#daleText'), greeted=false;
+      function esc(s){ return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+      function bubble(content,cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+      function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+      function ctx(){ try{ return (typeof window.__daleCtx==='function'?(window.__daleCtx()||{}):{}); }catch(e){ return {}; } }
+      function renderChips(){ var chips=(window.__daleChips||[]); var box=panel.querySelector('#daleChips'); box.innerHTML=''; chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); }); }
+      async function send(q){ q=(q!==undefined?q:text.value).trim(); if(!q) return; text.value=''; bubble(q,'me'); history.push({role:'user',content:q}); var t=typing();
+        try{ var tk=localStorage.getItem('access_token'); var res=await fetch(ENDPOINT,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},tk?{'Authorization':'Bearer '+tk}:{}),body:JSON.stringify({prompt:q,context:ctx(),history:history.slice(-8)})}); t.remove();
+          if(!res.ok){ bubble(res.status===401?'Please log in again to use Dale.':'Dale had trouble answering. Try again.','err'); return; }
+          var data=await res.json(); var reply=data.reply||data.detail||'No response.'; bubble(reply,'ai'); history.push({role:'assistant',content:reply});
+        }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.','err'); } }
+      function open(){ panel.classList.add('open'); if(!greeted){ greeted=true; bubble(window.__daleIntro||"Hi, I'm Dale. How can I help with this page?",'ai'); renderChips(); } setTimeout(function(){ text.focus(); },50); }
+      function close(){ panel.classList.remove('open'); }
+      fab.addEventListener('click',function(){ panel.classList.contains('open')?close():open(); });
+      panel.querySelector('.x').addEventListener('click',close);
+      panel.querySelector('#daleSend').addEventListener('click',function(){ send(); });
+      text.addEventListener('keydown',function(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send(); } });
+      text.addEventListener('input',function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
+    })();
     </script>
 </body>
 </html>
