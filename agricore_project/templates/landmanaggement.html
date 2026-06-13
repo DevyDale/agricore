@@ -391,6 +391,36 @@
             gap: 1rem;
         }
     }
+
+    /* Land allocation panel */
+    .alloc-card { background:#fff; border:1px solid #ece4d6; border-radius:1.25rem; padding:1.75rem; box-shadow:0 10px 30px -24px rgba(20,40,25,.5); }
+    .alloc-grid { display:flex; flex-wrap:wrap; gap:1.75rem; align-items:center; }
+    .alloc-ring { flex:none; width:148px; text-align:center; }
+    .alloc-ring .lbl { margin-top:.4rem; font-size:.72rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#6b7280; }
+    .alloc-body { flex:1; min-width:240px; }
+    .alloc-bar { display:flex; height:30px; border-radius:10px; overflow:hidden; background:#f2ecdf; border:1px solid #ece4d6; }
+    .alloc-bar .seg { height:100%; transition:width .6s cubic-bezier(.2,.8,.2,1); }
+    .alloc-bar .seg.avail { background:repeating-linear-gradient(45deg,#efe7d6,#efe7d6 7px,#e7dcc6 7px,#e7dcc6 14px); }
+    .alloc-legend { display:flex; flex-wrap:wrap; gap:1.5rem; margin-top:1.1rem; }
+    .alloc-fig .n { font-family:'Fraunces',serif; font-size:1.6rem; font-weight:800; color:#16271c; line-height:1; }
+    .alloc-fig .k { font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:#6b7280; margin-top:.3rem; }
+    .alloc-fig .dot { display:inline-block; width:9px; height:9px; border-radius:3px; margin-right:.4rem; vertical-align:middle; }
+
+    /* Land portion plot tiles */
+    .plot-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1rem; }
+    .plot-tile { position:relative; border:1px solid #ece4d6; border-radius:1rem; overflow:hidden; background:#fff; box-shadow:0 8px 22px -20px rgba(20,40,25,.5); transition:transform .25s, box-shadow .25s; }
+    .plot-tile:hover { transform:translateY(-3px); box-shadow:0 18px 34px -22px rgba(5,120,80,.4); }
+    .plot-tile .field { height:74px; position:relative; }
+    .plot-tile .field .sz { position:absolute; right:.6rem; bottom:.5rem; background:rgba(8,30,18,.6); color:#fff; font-weight:700; font-size:.78rem; padding:.15rem .55rem; border-radius:999px; }
+    .plot-tile .meta { padding:.85rem 1rem 1rem; }
+    .plot-tile .nm { font-family:'Fraunces',serif; font-weight:700; color:#16271c; }
+    .plot-tile .sub { font-size:.8rem; color:#6b7280; margin-top:.1rem; }
+    .plot-tile .tags { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.6rem; }
+    .lp-badge { font-size:.68rem; font-weight:700; padding:.2rem .55rem; border-radius:999px; letter-spacing:.02em; }
+    .lp-badge.use { background:#e7f4ec; color:#0f7a4b; border:1px solid #cdead8; }
+    .lp-badge.soil { background:#f6efe1; color:#8a6d2f; border:1px solid #e8d8b8; }
+    .lp-badge.status { background:#eef2f7; color:#475569; border:1px solid #dde4ec; }
+    .plot-empty { border:2px dashed #e3d9c6; border-radius:1rem; padding:3rem 2rem; text-align:center; background:#fbf7ee; }
 </style>
 
 
@@ -439,76 +469,45 @@
             </div>
         </div>
 
-        <!-- Quick Analytics -->
-        <div class="mb-2">
+        <!-- Land allocation -->
+        <div class="mb-8">
             <h2 class="text-xl md:text-2xl font-extrabold text-emerald-800 mb-3 flex items-center gap-2">
-                <i class="fas fa-bolt text-emerald-500"></i> Quick Analytics
+                <i class="fas fa-chart-pie text-emerald-500"></i> Land allocation
             </h2>
-        </div>
-        <div class="w-full flex flex-col md:flex-row gap-4 mb-8 mt-2">
-            <div class="flex-1 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-2xl shadow-lg p-6 flex flex-col items-center border-2 border-emerald-200 hover:shadow-emerald-200 transition">
-                <div class="text-4xl font-extrabold text-emerald-700 mb-1" id="total-area">0 ha</div>
-                <div class="uppercase text-xs font-bold tracking-wider text-emerald-800 mb-1">Total Land Portions Area</div>
-                <i class="fas fa-chart-area text-emerald-400 text-2xl"></i>
-            </div>
-            <div class="flex-1 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl shadow-lg p-6 flex flex-col items-center border-2 border-amber-200 hover:shadow-amber-200 transition">
-                <div class="text-4xl font-extrabold text-amber-700 mb-1" id="portion-count">0</div>
-                <div class="uppercase text-xs font-bold tracking-wider text-amber-800 mb-1">Land Portions</div>
-                <i class="fas fa-th-large text-amber-500 text-2xl"></i>
-            </div>
-            <div class="flex-1 bg-gradient-to-br from-teal-100 to-teal-50 rounded-2xl shadow-lg p-6 flex flex-col items-center border-2 border-teal-200 hover:shadow-teal-200 transition">
-                <div class="text-4xl font-extrabold text-teal-700 mb-1" id="used-area">0 ha</div>
-                <div class="uppercase text-xs font-bold tracking-wider text-teal-800 mb-1">Used Land</div>
-                <i class="fas fa-check-circle text-teal-500 text-2xl"></i>
-            </div>
-            <div class="flex-1 bg-gradient-to-br from-orange-100 to-orange-50 rounded-2xl shadow-lg p-6 flex flex-col items-center border-2 border-orange-200 hover:shadow-orange-200 transition">
-                <div class="text-4xl font-extrabold text-orange-700 mb-1" id="utilization">0%</div>
-                <div class="uppercase text-xs font-bold tracking-wider text-orange-800 mb-1">Utilization Rate</div>
-                <i class="fas fa-percentage text-orange-400 text-2xl"></i>
+            <div class="alloc-card">
+                <div class="alloc-grid">
+                    <div class="alloc-ring">
+                        <svg viewBox="0 0 120 120" width="148" height="148">
+                            <circle cx="60" cy="60" r="52" fill="none" stroke="#eee4d2" stroke-width="14"></circle>
+                            <circle id="util-arc" cx="60" cy="60" r="52" fill="none" stroke="#10b981" stroke-width="14" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)"></circle>
+                            <text id="utilization" x="60" y="68" text-anchor="middle" font-family="Fraunces,serif" font-size="26" font-weight="800" fill="#16271c">0%</text>
+                        </svg>
+                        <div class="lbl">Utilization</div>
+                    </div>
+                    <div class="alloc-body">
+                        <div class="alloc-bar" id="alloc-bar"><div class="seg avail" style="width:100%"></div></div>
+                        <div class="alloc-legend">
+                            <div class="alloc-fig"><div class="n" id="total-area">0</div><div class="k"><span class="dot" style="background:#2f6b3c"></span>Total area</div></div>
+                            <div class="alloc-fig"><div class="n" id="used-area">0</div><div class="k"><span class="dot" style="background:#10b981"></span>Used</div></div>
+                            <div class="alloc-fig"><div class="n" id="available-area">0</div><div class="k"><span class="dot" style="background:#e7dcc6"></span>Available</div></div>
+                            <div class="alloc-fig"><div class="n" id="portion-count">0</div><div class="k">Portions</div></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Land Size Breakdown Section -->
+        <!-- Land portions -->
         <div class="mb-8">
-            <h2 class="text-xl md:text-2xl font-extrabold text-emerald-800 mb-3 flex items-center gap-2">
-                <i class="fas fa-layer-group text-emerald-500"></i> Land Size Breakdown
-            </h2>
-            <div class="flex gap-3 mb-4">
-                <!-- List View and Add Land Details buttons removed as requested -->
+            <div class="section-header" style="margin-bottom:1rem;">
+                <h2 class="section-title"><i class="fas fa-layer-group"></i> Land portions</h2>
+                <button class="btn-primary" id="add-portion-btn"><i class="fas fa-plus"></i> Add Portion</button>
             </div>
-            <div id="breakdown-list-section">
-                <!-- Existing land portions table/list goes here -->
-                <div class="table-container">
-                    <div class="section-header">
-                        <h2 class="section-title">
-                            <i class="fas fa-th-list"></i>
-                            Land Portions
-                        </h2>
-                        <button class="btn-primary" id="add-portion-btn">
-                            <i class="fas fa-plus"></i>
-                            Add Portion
-                        </button>
-                    </div>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th><i class="fas fa-tag mr-2"></i>Name</th>
-                                <th><i class="fas fa-ruler mr-2"></i>Size</th>
-                                <th><i class="fas fa-mountain mr-2"></i>Type</th>
-                                <th><i class="fas fa-seedling mr-2"></i>Current Use</th>
-                                <th><i class="fas fa-circle mr-2"></i>Status</th>
-                                <th><i class="fas fa-cog mr-2"></i>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="land-portions-tbody">
-                            <tr>
-                                <td colspan="6" class="text-center text-gray-500 py-8">
-                                    <i class="fas fa-inbox text-4xl mb-2 block text-gray-300"></i>
-                                    No land portions added yet. Click "Add Portion" to get started.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div id="portions-grid" class="plot-grid">
+                <div class="plot-empty" style="grid-column:1/-1">
+                    <i class="fas fa-seedling text-5xl mb-3 block" style="color:#cbb994"></i>
+                    <p class="text-lg font-semibold text-gray-700 mb-1">No land portions yet</p>
+                    <p class="text-gray-500">Click "Add Portion" to divide your farm into plots.</p>
                 </div>
             </div>
         </div>
@@ -623,7 +622,7 @@ const addPortionBtn = document.getElementById('add-portion-btn');
 const closeAddPortionDialogBtn = document.getElementById('close-add-portion-dialog');
 const addPortionDialog = document.getElementById('add-portion-dialog');
 const addPortionForm = document.getElementById('add-portion-form');
-const landPortionsTbody = document.getElementById('land-portions-tbody');
+const portionsGrid = document.getElementById('portions-grid');
 
 // Fetch land portions from backend on page load
 async function fetchLandPortions() {
@@ -637,10 +636,10 @@ async function fetchLandPortions() {
         if (!res.ok) throw new Error('Failed to fetch land portions');
         const data = await res.json();
         landPortions = Array.isArray(data) ? data : (data.results || []);
-        renderLandPortionsTable();
+        renderPortions();
     } catch (e) {
         landPortions = [];
-        renderLandPortionsTable();
+        renderPortions();
     }
 }
 
@@ -658,37 +657,44 @@ function getFarmUnit() {
 }
 
 function getTotalPortionSize() {
-    return landPortions.reduce((sum, p) => sum + (parseFloat(p.size) || 0), 0);
+    return landPortions.reduce((sum, p) => sum + (parseFloat(p.total_size || p.size) || 0), 0);
 }
 
-function renderLandPortionsTable() {
-    landPortionsTbody.innerHTML = '';
-    if (landPortions.length === 0) {
-        landPortionsTbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500 py-8">
-            <i class="fas fa-inbox text-4xl mb-2 block text-gray-300"></i>
-            No land portions added yet. Click \"Add Portion\" to get started.
-        </td></tr>`;
-    } else {
-        landPortions.forEach((portion, idx) => {
-            landPortionsTbody.innerHTML += `
-                <tr>
-                    <td>${portion.name || 'Portion ' + (idx+1)}</td>
-                    <td>${portion.total_size ? portion.total_size : ''} ${portion.size_unit ? portion.size_unit : getFarmUnit()}</td>
-                    <td>${portion.soil_type || ''}</td>
-                    <td>${portion.purpose || ''}</td>
-                    <td>${portion.status || ''}</td>
-                    <td>${portion.additional_notes || ''}</td>
-                </tr>
-            `;
-        });
+function renderPortions() {
+    if (!portionsGrid) return;
+    var unit = getFarmUnit();
+    function esc(v){ return String(v==null?'':v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+    function plotStyle(use){
+        use=(use||'').toLowerCase();
+        if(use.indexOf('graz')>-1||use.indexOf('live')>-1) return 'background-color:#bd8f3e;background-image:radial-gradient(rgba(255,255,255,.28) 1.5px,transparent 1.8px);background-size:13px 13px';
+        if(use.indexOf('fallow')>-1||use.indexOf('forest')>-1) return 'background-color:#7e9046;background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.12) 0 3px,rgba(255,255,255,.05) 3px 8px)';
+        if(use.indexOf('orchard')>-1||use.indexOf('green')>-1) return 'background-color:#4f8a2f;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.12) 0 4px,rgba(255,255,255,.05) 4px 9px)';
+        return 'background-color:#549040;background-image:repeating-linear-gradient(118deg,rgba(0,0,0,.13) 0 3px,rgba(255,255,255,.06) 3px 8px)';
     }
+    if (!landPortions.length) {
+        portionsGrid.innerHTML = '<div class="plot-empty" style="grid-column:1/-1"><i class="fas fa-seedling text-5xl mb-3 block" style="color:#cbb994"></i><p class="text-lg font-semibold text-gray-700 mb-1">No land portions yet</p><p class="text-gray-500">Click \'Add Portion\' to divide your farm into plots.</p></div>';
+        updateAddPortionButtonState(); updateAnalytics(); return;
+    }
+    portionsGrid.innerHTML = landPortions.map(function(p, idx){
+        var nm = esc(p.name || ('Portion ' + (idx+1)));
+        var sz = (p.total_size!=null && p.total_size!=='') ? (p.total_size + ' ' + (p.size_unit || unit || '')) : '';
+        var use = p.purpose ? esc(p.purpose) : '';
+        var soil = p.soil_type ? esc(p.soil_type) : '';
+        var status = p.status ? esc(p.status) : '';
+        var tags = '';
+        if (use) tags += '<span class="lp-badge use">'+use+'</span>';
+        if (soil) tags += '<span class="lp-badge soil">'+soil+'</span>';
+        if (status) tags += '<span class="lp-badge status">'+status+'</span>';
+        return '<div class="plot-tile"><div class="field" style="'+plotStyle(p.purpose)+'">'+(sz?'<span class="sz">'+esc(sz)+'</span>':'')+'</div>'
+            + '<div class="meta"><div class="nm">'+nm+'</div>'+(p.additional_notes?'<div class="sub">'+esc(p.additional_notes)+'</div>':'')
+            + '<div class="tags">'+(tags||'<span class="lp-badge status">No details</span>')+'</div></div></div>';
+    }).join('');
     updateAddPortionButtonState();
     updateAnalytics();
 }
-
 function removePortion(idx) {
     landPortions.splice(idx, 1);
-    renderLandPortionsTable();
+    renderPortions();
 }
 window.removePortion = removePortion;
 
@@ -703,15 +709,38 @@ function updateAddPortionButtonState() {
 }
 
 function updateAnalytics() {
-    // Update quick analytics section
-    document.getElementById('portion-count').textContent = landPortions.length;
-    const unit = getFarmUnit();
-    document.getElementById('used-area').textContent = getTotalPortionSize() + (unit ? ' ' + unit : '');
-    document.getElementById('total-area').textContent = getTotalPortionSize() + (unit ? ' ' + unit : '');
-    const max = getFarmMaxSize();
-    document.getElementById('utilization').textContent = max > 0 ? Math.round(getTotalPortionSize()/max*100) + '%' : '0%';
+    var unit = getFarmUnit();
+    var max = getFarmMaxSize();
+    var used = getTotalPortionSize();
+    var avail = Math.max(0, max - used);
+    function fmt(v){ var n = Math.round(v*100)/100; return (Number.isInteger(n)?n:n.toFixed(2)) + (unit?(' '+unit):''); }
+    var elTotal=document.getElementById('total-area'); if(elTotal) elTotal.textContent = max>0?fmt(max):'—';
+    var elUsed=document.getElementById('used-area'); if(elUsed) elUsed.textContent = fmt(used);
+    var elAvail=document.getElementById('available-area'); if(elAvail) elAvail.textContent = max>0?fmt(avail):'—';
+    var elCount=document.getElementById('portion-count'); if(elCount) elCount.textContent = landPortions.length;
+    var pct = max>0 ? (used/max*100) : 0;
+    var elU=document.getElementById('utilization'); if(elU) elU.textContent = Math.round(pct) + '%';
+    var C = 2*Math.PI*52;
+    var arc=document.getElementById('util-arc');
+    if(arc){ var capped=Math.min(100,pct); arc.style.strokeDashoffset = (C*(1-capped/100)).toFixed(1); arc.setAttribute('stroke', pct>100?'#dc2626':(pct>=90?'#c39a48':'#10b981')); }
+    var bar=document.getElementById('alloc-bar');
+    if(bar){
+        var pal=['#2f6b3c','#10b981','#3c7a3c','#6aa83a','#c39a48','#8a9a4e','#0d9488'];
+        var html='';
+        if(max>0){
+            landPortions.forEach(function(p,i){
+                var sz=parseFloat(p.total_size||p.size)||0; if(sz<=0) return;
+                var w=Math.max(0,Math.min(100, sz/max*100));
+                html+='<div class="seg" style="width:'+w.toFixed(2)+'%;background:'+pal[i%pal.length]+'"></div>';
+            });
+            var availPct=Math.max(0, 100 - Math.min(100, used/max*100));
+            html+='<div class="seg avail" style="width:'+availPct.toFixed(2)+'%"></div>';
+        } else {
+            html='<div class="seg avail" style="width:100%"></div>';
+        }
+        bar.innerHTML=html;
+    }
 }
-
 // Add Portion Form Submission (now POSTs to backend with correct field names)
 if (addPortionForm) {
     addPortionForm.addEventListener('submit', async function(e) {
