@@ -1,139 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agricore Solutions - Chat Detail</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        .fab {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background-color: #34d399;
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-        }
-        .modal.show {
-            display: flex;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conversation — Agricore</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root{ --g500:#10b981; --g700:#047857; --line:#ece4d6; --ink:#16271c; }
+    *{ box-sizing:border-box; font-family:'Inter',system-ui,sans-serif; margin:0; padding:0 }
+    .fr{ font-family:'Fraunces',serif }
+    html,body{ height:100% }
+    body{ background:radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f4efe3 62%); color:var(--ink); display:flex; flex-direction:column; height:100vh }
+
+    .topbar{ position:relative; overflow:hidden; color:#fff; flex:none }
+    #cd-farmland{ position:absolute; inset:-2% } #cd-farmland svg{ width:100%; height:100% }
+    .tb-ov{ position:absolute; inset:0; background:linear-gradient(100deg, rgba(8,30,18,.9), rgba(8,30,18,.6)) }
+    .tb-in{ position:relative; z-index:2; max-width:900px; margin:0 auto; width:100%; padding:.9rem 1.1rem; display:flex; align-items:center; gap:.85rem }
+    .back{ width:40px; height:40px; border-radius:12px; display:grid; place-items:center; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25); color:#fff; text-decoration:none; flex:none }
+    .back:hover{ background:rgba(255,255,255,.24) }
+    .peer{ width:44px; height:44px; border-radius:13px; background:rgba(255,255,255,.16); display:grid; place-items:center; font-size:1.2rem; flex:none }
+    .ti h1{ font-family:'Fraunces',serif; font-size:1.2rem; font-weight:800; line-height:1.1 }
+    .ti p{ font-size:.8rem; color:rgba(255,255,255,.8) }
+
+    .thread{ flex:1; overflow-y:auto; padding:1.4rem 1.1rem; }
+    .thread-in{ max-width:900px; margin:0 auto; display:flex; flex-direction:column; gap:.7rem }
+    .day{ text-align:center; margin:.6rem 0 }
+    .day span{ background:#efe7d8; color:#7a6c55; font-size:.72rem; font-weight:600; padding:.25rem .75rem; border-radius:999px }
+    .b{ max-width:74%; padding:.65rem .9rem; border-radius:16px; font-size:.94rem; line-height:1.45; box-shadow:0 4px 14px -10px rgba(20,40,25,.5); word-wrap:break-word }
+    .b .t{ font-size:.68rem; margin-top:.3rem; opacity:.6 }
+    .me{ align-self:flex-end; background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; border-bottom-right-radius:5px }
+    .them{ align-self:flex-start; background:#fff; border:1px solid var(--line); border-bottom-left-radius:5px }
+    .empty{ text-align:center; color:#94a3b8; padding:3.5rem 1rem }
+    .empty i{ font-size:2.6rem; color:#cbd5c5; display:block; margin-bottom:.7rem }
+
+    .composer{ flex:none; border-top:1px solid var(--line); background:#fffdf8 }
+    .composer-in{ max-width:900px; margin:0 auto; padding:.8rem 1.1rem; display:flex; gap:.6rem; align-items:flex-end }
+    #message-input{ flex:1; resize:none; border:1.5px solid #e2ddd0; border-radius:14px; padding:.75rem 1rem; font-size:.95rem; max-height:140px; background:#fff }
+    #message-input:focus{ outline:none; border-color:var(--g500); box-shadow:0 0 0 3px rgba(16,185,129,.12) }
+    .send{ width:48px; height:48px; border-radius:14px; border:0; background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; font-size:1.05rem; cursor:pointer; flex:none; transition:transform .2s; box-shadow:0 6px 16px -6px rgba(5,120,80,.5) }
+    .send:hover{ transform:translateY(-2px) } .send:disabled{ opacity:.5; cursor:default; transform:none }
+</style>
 </head>
-<body class="p-6">
-    <h2 class="text-2xl font-semibold">Chat Detail</h2>
-    <div id="messages-list" class="mt-4 space-y-4">
-        <!-- Populated by API -->
-    </div>
-    <div class="mt-4 flex">
-        <input type="text" id="message-input" placeholder="Type a message..." class="flex-1 p-2 border rounded">
-        <button id="send-message-btn" class="ml-2 px-4 py-2 bg-green-500 text-white rounded">Send</button>
-    </div>
-    <div class="fab" id="dale-ai-btn">AI</div>
-    <div id="ai-modal" class="modal">
-        <div class="modal-content">
-            <h2 class="text-xl font-semibold">Dale AI</h2>
-            <input type="text" id="ai-input" class="w-full p-2 border rounded mt-4" placeholder="Ask for advice...">
-            <div id="ai-response" class="mt-4 text-gray-600"></div>
-            <button id="ai-close-btn" class="mt-4 px-4 py-2 bg-gray-300 text-gray-800 rounded">Close</button>
+<body>
+    <header class="topbar">
+        <div id="cd-farmland"></div><div class="tb-ov"></div>
+        <div class="tb-in">
+            <a href="chats.html" class="back" title="Back to chats"><i class="fas fa-arrow-left"></i></a>
+            <div class="peer"><i class="fas fa-comments"></i></div>
+            <div class="ti">
+                <h1 id="conv-title">Conversation</h1>
+                <p id="conv-sub">Loading…</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="thread" id="thread">
+        <div class="thread-in" id="messages-list">
+            <div class="empty"><i class="fas fa-spinner fa-spin"></i>Loading messages…</div>
         </div>
     </div>
-    <nav class="fixed bottom-0 w-full bg-white shadow p-4 flex justify-around">
-        <button id="nav-farms" class="text-gray-600">Farms</button>
-        <button id="nav-switch-role" class="text-gray-600">Switch Role</button>
-        <button id="nav-marketplace" class="text-gray-600">Marketplace</button>
-        <button id="nav-workforce" class="text-gray-600">Workforce</button>
-        <button id="nav-chats" class="text-green-500">Chats</button>
-    </nav>
+
+    <div class="composer">
+        <div class="composer-in">
+            <textarea id="message-input" rows="1" placeholder="Write a message…"></textarea>
+            <button id="send-message-btn" class="send" title="Send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+<script>
+    (function(){ function bf(){var W=1200,H=240,cols=9,rows=2,jx=(W/cols)*.3,jy=(H/rows)*.3,P=[];for(var r=0;r<=rows;r++){P[r]=[];for(var c=0;c<=cols;c++){var e=(r===0||r===rows||c===0||c===cols);P[r][c]={x:(c/cols)*W+(e?0:(Math.random()*2-1)*jx),y:(r/rows)*H+(e?0:(Math.random()*2-1)*jy)};}}var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']],ang=[0,16,90,74,16,0,90,30,16],defs='';pal.forEach(function(c,i){defs+='<pattern id="cdp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>';});var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8],cells='';for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e2=P[r2+1][c2],fi=bag[Math.floor(Math.random()*bag.length)];cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e2.x.toFixed(1)+','+e2.y.toFixed(1)+'" fill="url(#cdp'+fi+')" stroke="rgba(22,15,7,.16)" stroke-width="1.1"/>';}return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';}var el=document.getElementById('cd-farmland'); if(el) el.innerHTML=bf(); })();
+
+    const token = localStorage.getItem('access_token');
+    if(!token) window.location.href = 'authentication.html';
+    const H = { 'Authorization':'Bearer '+token };
+    const HJ = { 'Authorization':'Bearer '+token, 'Content-Type':'application/json' };
+    const convId = new URLSearchParams(window.location.search).get('id');
+    const $ = id => document.getElementById(id);
+    const esc = s => (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const arr = d => Array.isArray(d)?d:(d&&d.results?d.results:[]);
+    let myId = null, lastCount = -1;
+
+    function fmtTime(s){ try{ return new Date(s).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
+    function fmtDay(s){ try{ const d=new Date(s), t=new Date(); const same=d.toDateString()===t.toDateString(); return same?'Today':d.toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'}); }catch(e){ return ''; } }
+
+    async function me(){ try{ const r=await fetch('/api/users/me/',{headers:H}); if(r.ok){ const u=await r.json(); myId=u.id; } }catch(e){} }
+
+    async function loadConv(){
+        if(!convId){ $('conv-sub').textContent='No conversation selected'; return; }
+        try{ const r=await fetch('/api/conversations/'+convId+'/',{headers:H});
+            if(r.ok){ const c=await r.json(); $('conv-title').textContent=c.title||('Conversation #'+convId); }
+        }catch(e){}
+    }
+
+    let lastRendered = '';
+    async function loadMessages(){
+        if(!convId) return;
+        try{
+            const r=await fetch('/api/messages/?conversation='+convId,{headers:H});
+            if(!r.ok) return;
+            const msgs=arr(await r.json());
+            const sig = msgs.map(m=>m.id).join(',');
+            if(sig===lastRendered) return; // nothing new
+            lastRendered = sig;
+            const list=$('messages-list');
+            if(!msgs.length){ list.innerHTML='<div class="empty"><i class="fas fa-comment-dots"></i>No messages yet — say hello.</div>'; $('conv-sub').textContent='No messages yet'; return; }
+            let html='', lastDay='';
+            msgs.forEach(m=>{
+                const day=fmtDay(m.created_at);
+                if(day!==lastDay){ html+=`<div class="day"><span>${day}</span></div>`; lastDay=day; }
+                const mine = myId!==null && String(m.sender)===String(myId);
+                html+=`<div class="b ${mine?'me':'them'}">${esc(m.content)}<div class="t">${fmtTime(m.created_at)}</div></div>`;
+            });
+            list.innerHTML=html;
+            $('conv-sub').textContent = msgs.length+' message'+(msgs.length!==1?'s':'');
+            const th=$('thread'); th.scrollTop=th.scrollHeight;
+            window.__lastMsgs = msgs.slice(-8).map(m=>({from:(String(m.sender)===String(myId))?'me':'them', content:m.content}));
+        }catch(e){ console.error(e); }
+    }
+
+    const input=$('message-input');
+    input.addEventListener('input', ()=>{ input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,140)+'px'; });
+    input.addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+    $('send-message-btn').addEventListener('click', send);
+
+    async function send(){
+        const content=input.value.trim(); if(!content||!convId) return;
+        const btn=$('send-message-btn'); btn.disabled=true;
+        try{
+            const r=await fetch('/api/messages/',{ method:'POST', headers:HJ, body:JSON.stringify({ conversation:convId, content }) });
+            if(r.ok){ input.value=''; input.style.height='auto'; lastRendered=''; await loadMessages(); }
+            else { const e=await r.json().catch(()=>({})); alert('Could not send: '+(e.detail||JSON.stringify(e))); }
+        }catch(e){ alert('Network error sending message.'); }
+        finally{ btn.disabled=false; input.focus(); }
+    }
+
+    /* Dale context */
+    window.__daleCtx = function(){ return { page:'Chats', type:'conversation', id:convId, extras:{ recent_messages: window.__lastMsgs||[] } }; };
+    window.__daleIntro = "Hi, I'm Dale. I can help you reply, summarise this conversation, or draft a message.";
+    window.__daleChips = ["Summarise this chat","Help me reply politely","Draft a price offer"];
+
+    (async function(){ await me(); await loadConv(); await loadMessages(); setInterval(loadMessages, 5000); })();
+</script>
+    <!-- ===== Dale AI assistant (context-aware, brand) ===== -->
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const convId = urlParams.get('id');
-        async function loadMessages() {
-            try {
-                const response = await fetch(`/api/messages/?conversation=${convId}`, {
-                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('access_token') }
-                });
-                const messages = await response.json();
-                const list = document.getElementById('messages-list');
-                list.innerHTML = messages.map(msg => `
-                    <div class="p-2 bg-gray-100 rounded">
-                        <p class="text-gray-800">${msg.content}</p>
-                        <p class="text-gray-500 text-sm">From: ${msg.sender} at ${msg.created_at}</p>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Error loading messages:', error);
-            }
-        }
-        document.getElementById('send-message-btn').addEventListener('click', async () => {
-            const content = document.getElementById('message-input').value;
-            if (content) {
-                try {
-                    await fetch('/api/messages/', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('access_token') },
-                        body: JSON.stringify({ conversation: convId, content }),
-                    });
-                    document.getElementById('message-input').value = '';
-                    loadMessages();
-                } catch (error) {
-                    console.error('Error sending message:', error);
-                }
-            }
-        });
-        document.getElementById('nav-farms').addEventListener('click', () => window.location.href = 'multi-farm.html');
-        document.getElementById('nav-switch-role').addEventListener('click', () => window.location.href = 'role-selection.html');
-        document.getElementById('nav-marketplace').addEventListener('click', () => window.location.href = 'marketplace.html');
-        document.getElementById('nav-workforce').addEventListener('click', () => window.location.href = 'workforce.html');
-        document.getElementById('nav-chats').addEventListener('click', () => window.location.href = 'chats.html');
-        document.getElementById('dale-ai-btn').addEventListener('click', () => {
-            document.getElementById('ai-modal').classList.add('show');
-        });
-        document.getElementById('ai-close-btn').addEventListener('click', () => {
-            document.getElementById('ai-modal').classList.remove('show');
-        });
-        document.getElementById('ai-input').addEventListener('keypress', async (e) => {
-            if (e.key === 'Enter') {
-                const query = e.target.value;
-                document.getElementById('ai-response').textContent = 'Processing...';
-                try {
-                    const response = await fetch('/api/ai/dale/ask/', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('access_token') },
-                        body: JSON.stringify({ prompt: query }),
-                    });
-                    const data = await response.json();
-                    document.getElementById('ai-response').textContent = data.reply || 'No response';
-                } catch (error) {
-                    document.getElementById('ai-response').textContent = 'Error: ' + error.message;
-                }
-            }
-        });
-        window.onload = loadMessages;
+    (function(){
+      if (window.__daleInit) return; window.__daleInit = true;
+      var ENDPOINT = '/api/ai/dale/ask/';
+      var history = [];
+
+      var css = ''
+        + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:62px;height:62px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
+        + 'background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);'
+        + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}'
+        + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
+        + '#daleFab svg{width:28px;height:28px}'
+        + '#daleFab .dot{position:absolute;top:10px;right:11px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857}'
+        + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;'
+        + 'background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);'
+        + 'display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
+        + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
+        + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
+        + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
+        + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+        + '.dale-head .mk svg{width:20px;height:20px}'
+        + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
+        + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
+        + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+        + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
+        + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+        + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
+        + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
+        + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+        + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
+        + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
+        + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
+        + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
+        + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
+        + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
+        + '.dale-chip:hover{background:#d6efdf}'
+        + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
+        + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
+        + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
+        + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
+        + '.dale-input button svg{width:18px;height:18px}'
+        + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
+      var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+      var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+      var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
+      fab.innerHTML = '<span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>';
+      document.body.appendChild(fab);
+
+      var panel = document.createElement('div'); panel.id='dalePanel';
+      panel.innerHTML =
+        '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
+        + '<div class="dale-msgs" id="daleMsgs"></div>'
+        + '<div class="dale-chips" id="daleChips"></div>'
+        + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
+        + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
+      document.body.appendChild(panel);
+
+      var msgs = panel.querySelector('#daleMsgs');
+      var text = panel.querySelector('#daleText');
+      var greeted = false;
+
+      function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+      function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+      function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+
+      function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
+
+      function renderChips(){
+        var chips = (window.__daleChips || []);
+        var box = panel.querySelector('#daleChips'); box.innerHTML='';
+        chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); });
+      }
+
+      async function send(q){
+        q = (q!==undefined ? q : text.value).trim();
+        if(!q) return;
+        text.value=''; bubble(q,'me'); history.push({role:'user',content:q});
+        var t = typing();
+        try{
+          var token = localStorage.getItem('access_token');
+          var res = await fetch(ENDPOINT, {
+            method:'POST',
+            headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}),
+            body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) })
+          });
+          t.remove();
+          if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
+          var data = await res.json();
+          var reply = data.reply || data.detail || 'No response.';
+          bubble(reply,'ai'); history.push({role:'assistant',content:reply});
+        }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
+      }
+
+      function open(){
+        panel.classList.add('open');
+        if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); }
+        setTimeout(function(){ text.focus(); }, 50);
+      }
+      function close(){ panel.classList.remove('open'); }
+
+      fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
+      panel.querySelector('.x').addEventListener('click', close);
+      panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
+      text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+      text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
+    })();
     </script>
+
 </body>
 </html>
