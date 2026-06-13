@@ -61,13 +61,16 @@
         .legend i{ width:11px; height:11px; border-radius:3px; display:inline-block }
         .lg-crops{ background:var(--crops) } .lg-livestock{ background:var(--livestock) } .lg-mixed{ background:var(--mixed) }
 
-        .map{ position:relative; width:100%; height:480px; border-radius:14px; overflow:hidden; background:#eef0e6; border:1px solid var(--line) }
-        .plot{ position:absolute; border-radius:9px; overflow:hidden; cursor:pointer; color:#fff;
-               box-shadow:inset 0 0 0 1px rgba(255,255,255,.18), 0 2px 8px rgba(0,0,0,.14);
+        .map{ position:relative; min-height:240px }
+        .plots{ display:grid; grid-template-columns:repeat(auto-fill,minmax(288px,1fr)); gap:1rem }
+        .plot{ position:relative; height:212px; border-radius:14px; overflow:hidden; cursor:pointer; color:#fff;
+               box-shadow:inset 0 0 0 1px rgba(255,255,255,.16), 0 8px 22px -16px rgba(20,40,25,.6);
                transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s, filter .2s;
-               opacity:0; transform:scale(.95); animation:plotin .45s forwards }
+               opacity:0; transform:translateY(14px) scale(.985); animation:plotin .5s forwards }
         @keyframes plotin{ to{ opacity:1; transform:none } }
-        .plot:hover{ transform:scale(1.02); z-index:6; box-shadow:inset 0 0 0 1px rgba(255,255,255,.32), 0 16px 34px -8px rgba(0,0,0,.45); filter:brightness(1.06) }
+        .plot:hover{ transform:translateY(-5px); z-index:6; box-shadow:inset 0 0 0 1px rgba(255,255,255,.3), 0 20px 40px -16px rgba(5,120,80,.5); filter:brightness(1.05) }
+        .plot-share{ position:absolute; left:0; right:0; bottom:0; height:5px; background:rgba(255,255,255,.25) }
+        .plot-share i{ display:block; height:100%; width:0; background:rgba(255,255,255,.9); transition:width .9s cubic-bezier(.2,.8,.2,1) }
         .plot.crops{ background:repeating-linear-gradient(118deg,#437634 0 7px,#508639 7px 14px) }
         .plot.livestock{ background:repeating-linear-gradient(64deg,#b98f3f 0 8px,#cba656 8px 16px) }
         .plot.mixed{ background:repeating-linear-gradient(100deg,#6c7d36 0 7px,#7e8f44 7px 14px) }
@@ -82,7 +85,7 @@
         .pa{ border:0; border-radius:9px; padding:.42rem .55rem; font-size:.75rem; font-weight:700; cursor:pointer; background:rgba(0,0,0,.45); color:#fff; backdrop-filter:blur(3px); display:inline-flex; align-items:center; gap:.3rem }
         .pa:hover{ background:rgba(0,0,0,.66) } .pa.manage{ background:rgba(5,120,80,.92) } .pa.manage:hover{ background:rgba(4,100,66,1) } .pa.del:hover{ background:#dc2626 }
 
-        .empty{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem }
+        .empty{ text-align:center; padding:3.2rem 2rem }
         .empty .ei{ width:84px; height:84px; margin-bottom:1rem; border-radius:50%; display:grid; place-items:center; background:#e4ede2; color:#6f9b7c; font-size:2.1rem }
         .empty h3{ font-size:1.4rem; color:#3f4f45; margin:.2rem 0 } .empty p{ color:#7a857c; margin:0 0 1.2rem; max-width:34ch }
 
@@ -102,7 +105,7 @@
 
         #snack{ position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%); background:#2c2f36; color:#fff; padding:.9rem 1.2rem; border-radius:14px; box-shadow:0 12px 30px rgba(0,0,0,.25); display:none; align-items:center; gap:1rem; z-index:1100 }
         #snack button{ background:var(--g500); color:#fff; border:0; padding:.45rem 1rem; border-radius:9px; font-weight:600; cursor:pointer }
-        .spin{ position:absolute; inset:0; display:none; align-items:center; justify-content:center } .spin.on{ display:flex }
+        .spin{ display:none; justify-content:center; padding:3rem } .spin.on{ display:flex }
         .sp{ width:3rem; height:3rem; border:3px solid var(--line); border-top-color:var(--g500); border-radius:50%; animation:spin 1s linear infinite }
         @keyframes spin{ to{ transform:rotate(360deg) } }
 
@@ -238,25 +241,7 @@
             requestAnimationFrame(step);
         }
 
-        /* squarified treemap → assigns _x,_y,_w,_h within W×H */
-        function treemap(items, W, H){
-            const nodes = items.map(d=>Object.assign({}, d));
-            const total = nodes.reduce((s,n)=>s+Math.max(n._v,0),0);
-            const area = W*H;
-            nodes.forEach(n=> n._area = total>0 ? (Math.max(n._v,0)/total)*area : area/nodes.length);
-            nodes.sort((a,b)=>b._area-a._area);
-            const rect={x:0,y:0,w:W,h:H}, out=[];
-            const shortest=()=>Math.min(rect.w,rect.h);
-            function worst(row,w){ if(!row.length) return Infinity; const s=row.reduce((a,r)=>a+r._area,0); const mx=Math.max.apply(null,row.map(r=>r._area)); const mn=Math.min.apply(null,row.map(r=>r._area)); return Math.max((w*w*mx)/(s*s),(s*s)/(w*w*mn)); }
-            function layout(row){ const w=shortest(); const s=row.reduce((a,r)=>a+r._area,0); const thick=s/w;
-                if(rect.w>=rect.h){ let y=rect.y; row.forEach(r=>{ const hh=r._area/thick; r._x=rect.x; r._y=y; r._w=thick; r._h=hh; y+=hh; out.push(r); }); rect.x+=thick; rect.w-=thick; }
-                else { let x=rect.x; row.forEach(r=>{ const ww=r._area/thick; r._x=x; r._y=rect.y; r._w=ww; r._h=thick; x+=ww; out.push(r); }); rect.y+=thick; rect.h-=thick; } }
-            let i=0,row=[];
-            while(i<nodes.length){ const w=shortest(); const cand=row.concat([nodes[i]]);
-                if(row.length===0 || worst(cand,w)<=worst(row,w)){ row=cand; i++; } else { layout(row); row=[]; } }
-            if(row.length) layout(row);
-            return out;
-        }
+        /* farms render as fixed-size plot tiles in a responsive grid */
 
         function renderOverview(){
             const farms=allFarms;
@@ -277,24 +262,18 @@
         function renderMap(){
             const map=$('map'); const view=applyView();
             $('count').innerHTML = allFarms.length ? 'Showing <b>'+view.length+'</b> of <b>'+allFarms.length+'</b> '+(allFarms.length===1?'farm':'farms') : '';
-            if(!allFarms.length){ map.style.height='480px'; map.innerHTML='<div class="empty"><div class="ei"><i class="fas fa-seedling"></i></div><h3>No farms yet</h3><p>Add your first farm and it’ll appear here as a plot on your estate map.</p><button class="btn" onclick="document.getElementById(\'create-farm-btn\').click()"><i class="fas fa-plus"></i> Add your first farm</button></div>'; return; }
-            if(!view.length){ map.style.height='480px'; map.innerHTML='<div class="empty"><div class="ei"><i class="fas fa-magnifying-glass"></i></div><h3>No matches</h3><p>Try a different search or clear the type filter.</p></div>'; return; }
+            if(!allFarms.length){ map.innerHTML='<div class="empty"><div class="ei"><i class="fas fa-seedling"></i></div><h3>No farms yet</h3><p>Add your first farm and it’ll appear here as a plot on your estate map.</p><button class="btn" onclick="document.getElementById(\'create-farm-btn\').click()"><i class="fas fa-plus"></i> Add your first farm</button></div>'; return; }
+            if(!view.length){ map.innerHTML='<div class="empty"><div class="ei"><i class="fas fa-magnifying-glass"></i></div><h3>No matches</h3><p>Try a different search or clear the type filter.</p></div>'; return; }
 
-            const H=Math.max(440, Math.min(440 + Math.max(0,view.length-6)*18, 820));
-            map.style.height=H+'px';
-            const W=map.clientWidth || map.getBoundingClientRect().width || 900;
-            let data=view.map(f=>({ f, _v:toHa(f) }));
-            if(data.reduce((s,d)=>s+d._v,0)<=0) data.forEach(d=> d._v=1); // all sizes unset → equal plots
-            const nodes=treemap(data, W, H);
-            const gap=5;
-            map.innerHTML = nodes.map((n,idx)=>{
-                const f=n.f, t=(f.type||'mixed').toLowerCase(), cls=(t==='crops'||t==='livestock')?t:'mixed';
-                const x=n._x+gap/2, y=n._y+gap/2, w=Math.max(n._w-gap,2), h=Math.max(n._h-gap,2);
-                const small=(w<108||h<76);
+            const totalHa = allFarms.reduce((s,f)=>s+toHa(f),0);
+            const tiles = view.map((f,idx)=>{
+                const t=(f.type||'mixed').toLowerCase(), cls=(t==='crops'||t==='livestock')?t:'mixed';
                 const ha=toHa(f); const areaTxt = ha>0? ha.toFixed(ha<100?1:0)+' ha' : (f.total_size? esc(f.total_size)+' '+esc(f.size_unit||''):'size not set');
+                const sharePct = totalHa>0 ? (ha/totalHa*100) : 0;
                 const icon = cls==='crops'?'fa-wheat-awn':cls==='livestock'?'fa-cow':'fa-tractor';
                 const loc=[f.city,f.country].filter(Boolean).map(esc).join(', ');
-                return '<div class="plot '+cls+(small?' small':'')+'" data-id="'+f.id+'" style="left:'+x+'px;top:'+y+'px;width:'+w+'px;height:'+h+'px;animation-delay:'+Math.min(idx*40,420)+'ms" onclick="manageFarm('+f.id+')" title="'+esc(f.name||'Farm')+' — '+areaTxt+'">'
+                const titleShare = totalHa>0 ? ' ('+sharePct.toFixed(0)+'% of your land)' : '';
+                return '<div class="plot '+cls+'" data-id="'+f.id+'" style="animation-delay:'+Math.min(idx*55,520)+'ms" onclick="manageFarm('+f.id+')" title="'+esc(f.name||'Farm')+' — '+areaTxt+titleShare+'">'
                     + '<div class="plot-tex"></div>'
                     + '<div class="plot-lab"><span class="ptag"><i class="fas '+icon+'"></i> '+cap(cls)+'</span>'
                     + '<h4>'+esc(f.name||'Untitled')+'</h4>'
@@ -304,13 +283,17 @@
                     + '<button class="pa manage" onclick="event.stopPropagation();manageFarm('+f.id+')"><i class="fas fa-arrow-right"></i> Manage</button>'
                     + '<button class="pa" onclick="event.stopPropagation();editFarm('+f.id+')" title="Edit"><i class="fas fa-pen"></i></button>'
                     + '<button class="pa del" onclick="event.stopPropagation();deleteFarm('+f.id+')" title="Delete"><i class="fas fa-trash"></i></button>'
-                    + '</div></div>';
+                    + '</div>'
+                    + '<div class="plot-share" title="Share of your total land"><i data-w="'+Math.max(sharePct,2)+'"></i></div>'
+                    + '</div>';
             }).join('');
+            map.innerHTML = '<div class="plots">'+tiles+'</div>';
+            requestAnimationFrame(()=>requestAnimationFrame(()=>{ map.querySelectorAll('.plot-share i').forEach(el=>{ el.style.width=el.dataset.w+'%'; }); }));
         }
         window.manageFarm = id => { window.location.href='individual_farm.html?id='+id; };
 
         async function loadFarms(){
-            const map=$('map'); map.style.height='480px'; map.innerHTML='<div class="spin on"><div class="sp"></div></div>';
+            const map=$('map'); map.innerHTML='<div class="spin on"><div class="sp"></div></div>';
             try{
                 const res = await fetch('/api/farms/', { headers:{'Authorization':'Bearer '+token} });
                 if(res.status===401){ localStorage.clear(); window.location.href='authentication.html'; return; }
