@@ -1,6 +1,6 @@
-{% extends 'dashboard/base.html' %}
-{# AGRICORE - Expense records. Already dashboard_content. analytics:expense_create + expense.* + ${{ amount }} verbatim. #}
-{% block dashboard_content %}
+{% extends 'base.html' %}
+{# AGRICORE - Farm finances. base.html page. {% if finances %}/{% else %} structure + finance.* vars verbatim. #}
+{% block content %}
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
   .lk{
@@ -171,38 +171,33 @@
 <div class="lk">
   <section class="lk-hero">
     <div class="lk-scene">
-      <div class="farmland" id="lkExpList"></div>
+      <div class="farmland" id="lkFin"></div>
       <div class="sun"></div><div class="grade"></div><div class="sweep"></div>
       <div class="pin" style="left:24%;top:44%"><i></i></div><div class="pin" style="left:66%;top:60%"><i></i></div>
       <div class="vignette"></div>
     </div>
     <div class="lk-hero-in">
-      <div class="lk-emblem"><svg class="ic" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="M9 16h4"/></svg></div>
-      <span class="lk-kick"><span class="dot"></span> Expenses</span>
-      <h1>Expense <span class="em">records</span></h1>
+      <div class="lk-emblem"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
+      <span class="lk-kick"><span class="dot"></span> Finances</span>
+      <h1>Farm <span class="em">finances</span></h1>
     </div>
   </section>
   <div class="lk-wrap">
-    <div class="lk-actions" style="margin-top:-1.4rem">
-      <a class="lk-btn" href="{% url 'analytics:expense_create' %}"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Add expense</a>
-    </div>
-
-    <p class="lk-eyebrow">All expenses</p>
+    <p class="lk-eyebrow" style="margin-top:-1rem">Income &amp; expenditure</p>
+    {% if finances %}
     <div class="lk-tablewrap">
       <table class="lk-table">
-        <thead><tr><th>Date</th><th>Farm</th><th>Category</th><th>Description</th><th>Amount</th><th>Created by</th></tr></thead>
+        <thead><tr><th>Type</th><th>Category</th><th>Amount</th><th>Currency</th><th>Date</th></tr></thead>
         <tbody>
-          {% for expense in expenses %}
-          <tr>
-            <td>{{ expense.date }}</td><td>{{ expense.farm }}</td><td>{{ expense.category }}</td><td>{{ expense.description }}</td>
-            <td><span class="lk-amt">${{ expense.amount }}</span></td><td>{{ expense.created_by }}</td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="6"><div class="lk-empty" style="border:0;box-shadow:none;padding:1.8rem"><svg class="ic" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>No expenses found.</div></td></tr>
+          {% for finance in finances %}
+          <tr><td class="strong">{{ finance.type }}</td><td>{{ finance.category }}</td><td><span class="lk-amt">{{ finance.amount }}</span></td><td>{{ finance.currency }}</td><td>{{ finance.date }}</td></tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
+    {% else %}
+    <div class="lk-empty"><svg class="ic" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>No finance records found.</div>
+    {% endif %}
   </div>
 </div>
 
@@ -218,16 +213,16 @@
       var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],
                ['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']];
       var ang=[0,16,90,74,16,0,90,30,16], defs='';
-      pal.forEach(function(c,i){ defs+='<pattern id="lkEA'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
+      pal.forEach(function(c,i){ defs+='<pattern id="lkFI'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
       var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8], cells='';
       for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){
         var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e=P[r2+1][c2];
         var fi=bag[Math.floor(Math.random()*bag.length)];
-        cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#lkEA'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>';
+        cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#lkFI'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>';
       }
       return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
     }
-    var host=document.getElementById('lkExpList'); if(host) host.innerHTML=build();
+    var host=document.getElementById('lkFin'); if(host) host.innerHTML=build();
   })();
 </script>
 {% endblock %}

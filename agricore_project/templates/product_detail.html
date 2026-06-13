@@ -492,6 +492,29 @@
             box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Agricore farmland brand override ===== */
+        :root{ --ag-cream:#faf6ee; --ag-line:#ece4d6; --ag-green:#10b981; --ag-green-d:#047857; }
+        *{ font-family:'Inter',system-ui,sans-serif !important; }
+        h1,h2,h3,h4,.brand-display{ font-family:'Fraunces',serif !important; letter-spacing:-.01em; }
+        body{ background:radial-gradient(130% 100% at 50% -8%, #fffdf8 0%, #f4efe3 60%) !important; color:#16271c; }
+        body::before{ background:radial-gradient(circle, rgba(16,185,129,.07) 0%, transparent 70%) !important; }
+        body::after{ background:radial-gradient(circle, rgba(201,154,72,.06) 0%, transparent 70%) !important; }
+        .glass-card,.glass{ background:#fff !important; border:1px solid var(--ag-line) !important; box-shadow:0 14px 36px -26px rgba(20,40,25,.5) !important; }
+        .gradient-header{ background:linear-gradient(135deg,#10b981 0%,#047857 100%) !important; }
+        .btn-primary{ background:linear-gradient(135deg,#10b981,#047857) !important; }
+        .btn-secondary{ color:#047857 !important; border-color:#10b981 !important; }
+        .gradient-text{ background:linear-gradient(135deg,#0f7a4b,#065f3c) !important; -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; }
+        .review-card{ background:#fbf7ee !important; border:1px solid var(--ag-line) !important; }
+        .tab-btn.active{ background:linear-gradient(135deg,#10b981,#047857) !important; }
+        .fab{ background:linear-gradient(135deg,#10b981,#047857) !important; }
+        .stat-card{ background:linear-gradient(135deg, rgba(16,185,129,.06), rgba(201,154,72,.06)) !important; border:1px solid rgba(16,185,129,.16) !important; }
+        .stat-value{ background:linear-gradient(135deg,#0f7a4b,#065f3c) !important; -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; }
+        .price-badge{ background:linear-gradient(135deg,#eafaf1,#d6f0e0) !important; border-color:#9fe0bb !important; }
+        .contact-icon{ background:linear-gradient(135deg,#10b981,#047857) !important; }
+        a[href="marketplace.html"], .text-emerald-700{ color:#047857 !important; }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
     <div class="container mx-auto px-4 py-8 relative z-10">
@@ -734,7 +757,7 @@
 
 
     <script>
-        const API_BASE = 'http://127.0.0.1:8000/api';
+        const API_BASE = '/api';
         const token = localStorage.getItem('access_token');
         if (!token) window.location.href = 'authentication.html';
         const wsScheme = location.protocol === 'https:' ? 'wss' : 'ws';
@@ -795,8 +818,8 @@
             
             document.getElementById('product-title').textContent = productData.title;
             document.getElementById('product-description').textContent = productData.description || '';
-            document.getElementById('product-image').src = productData.image || 'https://via.placeholder.com/1200x800?text=Product';
-            document.getElementById('zoom-image').src = productData.image || 'https://via.placeholder.com/1200x800?text=Product';
+            document.getElementById('product-image').src = productData.image_display || 'https://via.placeholder.com/1200x800?text=Product';
+            document.getElementById('zoom-image').src = productData.image_display || 'https://via.placeholder.com/1200x800?text=Product';
             
             const price = parseFloat(productData.price || 0);
             document.getElementById('product-price').textContent = `₦${price.toFixed(2)}`;
@@ -857,7 +880,7 @@
                 container.innerHTML = related.map(p => `
                     <a href="product_detail.html?id=${p.id}" class="related-product-card">
                         <div class="aspect-square bg-gray-100">
-                            <img src="${p.image || 'https://via.placeholder.com/300'}" alt="${p.title}" class="w-full h-full object-cover">
+                            <img src="${p.image_display || 'https://via.placeholder.com/300'}" alt="${p.title}" class="w-full h-full object-cover">
                         </div>
                         <div class="p-3">
                             <h4 class="font-bold text-sm text-gray-800 line-clamp-2 mb-1">${p.title}</h4>
@@ -925,13 +948,13 @@
 
         async function loadProductReviews() {
             try {
-                const res = await fetch(`${API_BASE}/reviews/?product=${productId}`, {
+                const res = await fetch(`${API_BASE}/product-reviews/?product=${productId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const reviews = await res.json();
                 document.getElementById('reviews-count').textContent = `${reviews.length} review(s)`;
                 document.getElementById('product-reviews-list').innerHTML = reviews.length ? reviews.map(r => {
-                    const avatar = `<div class='w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg mr-3'>${(r.reviewer_name||'U')[0]}</div>`;
+                    const avatar = `<div class='w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg mr-3'>${(r.user_name||'U')[0]}</div>`;
                     let time = '';
                     if (r.created_at) {
                         const d = new Date(r.created_at);
@@ -942,7 +965,7 @@
                         ${avatar}
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-1">
-                                <span class="font-bold text-gray-800">${r.reviewer_name || 'User'}</span>
+                                <span class="font-bold text-gray-800">${r.user_name || 'User'}</span>
                                 <span class="text-sm text-emerald-700 font-bold">${r.rating} ★</span>
                                 ${time}
                             </div>
@@ -962,7 +985,7 @@
             const comment = document.getElementById('product-review-comment').value.trim();
             if (!rating) return alert('Please select a rating.');
             try {
-                const res = await fetch(`${API_BASE}/reviews/`, {
+                const res = await fetch(`${API_BASE}/product-reviews/`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ product: productId, rating: rating, comment: comment })
@@ -981,13 +1004,13 @@
         async function loadStoreReviews(storeId) {
             if (!storeId) return;
             try {
-                const res = await fetch(`${API_BASE}/reviews/?store=${storeId}`, {
+                const res = await fetch(`${API_BASE}/store-reviews/?store=${storeId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const reviews = await res.json();
                 document.getElementById('store-reviews-count').textContent = `${reviews.length} review(s)`;
                 document.getElementById('store-reviews-list').innerHTML = reviews.length ? reviews.map(r => {
-                    const avatar = `<div class='w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg mr-3'>${(r.reviewer_name||'U')[0]}</div>`;
+                    const avatar = `<div class='w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg mr-3'>${(r.user_name||'U')[0]}</div>`;
                     let time = '';
                     if (r.created_at) {
                         const d = new Date(r.created_at);
@@ -998,7 +1021,7 @@
                         ${avatar}
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-1">
-                                <span class="font-bold text-gray-800">${r.reviewer_name || 'User'}</span>
+                                <span class="font-bold text-gray-800">${r.user_name || 'User'}</span>
                                 <span class="text-sm text-emerald-700 font-bold">${r.rating} ★</span>
                                 ${time}
                             </div>
@@ -1018,7 +1041,7 @@
             const comment = document.getElementById('store-review-comment').value.trim();
             if (!rating) return alert('Please select a rating.');
             try {
-                const res = await fetch(`${API_BASE}/reviews/`, {
+                const res = await fetch(`${API_BASE}/store-reviews/`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ store: productData.store, rating: rating, comment: comment })
@@ -1070,21 +1093,130 @@
             }
         });
 
-        // Dale AI Toggle
-        document.getElementById('dale-ai-btn').addEventListener('click', () => {
-            document.getElementById('ai-modal').classList.toggle('active');
-        });
-
-        document.getElementById('ai-close-btn').addEventListener('click', () => {
-            document.getElementById('ai-modal').classList.remove('active');
-        });
-
         (async () => {
             await loadProduct();
             await loadProductReviews();
             await loadStoreReviews(productData.store);
         })();
     </script>
-    <script src="/static/js/dale.js" defer></script>
+    <!-- Dale AI context for this page -->
+    <script>
+      window.__daleCtx = function(){
+        var p={}; try{ if(typeof productData!=='undefined' && productData) p=productData; }catch(e){}
+        return { page:'Product', type:'product', id:(p&&p.id)||null, extras:{ name:p.name, price:p.price, category:p.category, store:p.store_name, description:p.description, average_rating:p.average_rating } };
+      };
+      window.__daleIntro = "Hi, I'm Dale. Ask me about this product, whether it's a fair price, or get help drafting a description or a message to the seller.";
+      window.__daleChips = ["Is this a fair price?","Help me message the seller","Write a product description","What should I ask the seller?"];
+    </script>
+    <!-- ===== Dale AI assistant (context-aware, brand) ===== -->
+    <script>
+    (function(){
+      if (window.__daleInit) return; window.__daleInit = true;
+      var ENDPOINT = '/api/ai/dale/ask/';
+      var history = [];
+
+      var css = ''
+        + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:62px;height:62px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
+        + 'background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);'
+        + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}'
+        + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
+        + '#daleFab svg{width:28px;height:28px}'
+        + '#daleFab .dot{position:absolute;top:10px;right:11px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857}'
+        + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;'
+        + 'background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);'
+        + 'display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
+        + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
+        + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
+        + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
+        + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+        + '.dale-head .mk svg{width:20px;height:20px}'
+        + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
+        + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
+        + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+        + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
+        + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+        + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
+        + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
+        + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+        + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
+        + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
+        + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
+        + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
+        + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
+        + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
+        + '.dale-chip:hover{background:#d6efdf}'
+        + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
+        + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
+        + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
+        + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
+        + '.dale-input button svg{width:18px;height:18px}'
+        + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
+      var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+      var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+      var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
+      fab.innerHTML = '<span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>';
+      document.body.appendChild(fab);
+
+      var panel = document.createElement('div'); panel.id='dalePanel';
+      panel.innerHTML =
+        '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
+        + '<div class="dale-msgs" id="daleMsgs"></div>'
+        + '<div class="dale-chips" id="daleChips"></div>'
+        + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
+        + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
+      document.body.appendChild(panel);
+
+      var msgs = panel.querySelector('#daleMsgs');
+      var text = panel.querySelector('#daleText');
+      var greeted = false;
+
+      function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+      function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+      function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+
+      function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
+
+      function renderChips(){
+        var chips = (window.__daleChips || []);
+        var box = panel.querySelector('#daleChips'); box.innerHTML='';
+        chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); });
+      }
+
+      async function send(q){
+        q = (q!==undefined ? q : text.value).trim();
+        if(!q) return;
+        text.value=''; bubble(q,'me'); history.push({role:'user',content:q});
+        var t = typing();
+        try{
+          var token = localStorage.getItem('access_token');
+          var res = await fetch(ENDPOINT, {
+            method:'POST',
+            headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}),
+            body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) })
+          });
+          t.remove();
+          if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
+          var data = await res.json();
+          var reply = data.reply || data.detail || 'No response.';
+          bubble(reply,'ai'); history.push({role:'assistant',content:reply});
+        }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
+      }
+
+      function open(){
+        panel.classList.add('open');
+        if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); }
+        setTimeout(function(){ text.focus(); }, 50);
+      }
+      function close(){ panel.classList.remove('open'); }
+
+      fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
+      panel.querySelector('.x').addEventListener('click', close);
+      panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
+      text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+      text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
+    })();
+    </script>
+
 </body>
 </html>

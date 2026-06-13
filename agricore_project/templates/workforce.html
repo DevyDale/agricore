@@ -3,234 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Network - Agricore Solutions</title>
+    <title>Professional Network — Agricore</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/static/i18n.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            font-family: 'Inter', sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
-            min-height: 100vh;
-        }
+        :root{ --g500:#10b981; --g600:#059669; --g700:#047857; --cream:#faf6ee; --line:#ece4d6; --ink:#16271c; }
+        *{ font-family:'Inter',sans-serif }
+        body{ background:radial-gradient(130% 100% at 50% -8%, #fffdf8 0%, #f4efe3 60%); min-height:100vh; color:var(--ink) }
+        #hero-title,.sec-title,.brand-name,.professional-card h3,.modal-content h2{ font-family:'Fraunces',serif; letter-spacing:-.01em }
 
-        /* Header */
-        .header-gradient {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
-        }
+        .header-gradient{ background:linear-gradient(135deg,#10b981 0%,#047857 100%); box-shadow:0 6px 24px rgba(5,120,80,.22) }
 
-        /* Hero Section */
-        .hero-container {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
-                        url('https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
-            border-radius: 1.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
+        /* farmland hero */
+        .hero-container{ position:relative; overflow:hidden; border-radius:26px; background:#22432c; box-shadow:0 24px 60px -28px rgba(6,28,15,.55) }
+        #hero-farmland{ position:absolute; inset:-2% }
+        #hero-farmland svg{ width:100%; height:100% }
+        .hero-overlay{ position:absolute; inset:0; background:linear-gradient(102deg, rgba(8,30,18,.8) 0%, rgba(8,30,18,.5) 48%, rgba(8,30,18,.22) 100%) }
+        .hero-inner{ position:relative; z-index:2 }
 
-        /* Glass container */
-        .glass-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 1.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-        }
+        .glass-container{ background:#fff; border:1px solid var(--line); border-radius:22px; box-shadow:0 14px 36px -26px rgba(20,40,25,.5) }
 
-        /* Professional cards */
-        .professional-card {
-            background: white;
-            border: 1px solid #f1f5f9;
-            border-radius: 1.25rem;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
+        .professional-card{ background:#fff; border:1px solid var(--line); border-radius:20px; overflow:hidden; transition:all .3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 4px 14px rgba(20,40,25,.05) }
+        .professional-card:hover{ transform:translateY(-8px); border-color:#bfe3cd; box-shadow:0 22px 46px -22px rgba(16,120,75,.4) }
 
-        .professional-card:hover {
-            transform: translateY(-8px);
-            border-color: #10b981;
-            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15);
-        }
+        .filter-btn{ background:#fff; border:2px solid var(--line); color:#5b6b60; padding:.6rem 1.1rem; border-radius:.85rem; font-weight:600; font-size:.875rem; transition:all .2s; cursor:pointer }
+        .filter-btn:hover{ border-color:#cde3d4; background:#f6faf6 }
+        .filter-btn.active{ background:linear-gradient(135deg,#10b981,#047857); color:#fff; border-color:transparent; box-shadow:0 6px 16px -4px rgba(5,120,80,.4) }
 
-        /* Filter buttons */
-        .filter-btn {
-            background: white;
-            border: 2px solid #e2e8f0;
-            color: #64748b;
-            padding: 0.625rem 1.125rem;
-            border-radius: 0.875rem;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
+        .input-field{ background:#fff; border:2px solid var(--line); color:#1e293b; border-radius:.85rem; padding:.7rem 1rem; font-size:.9375rem; transition:all .2s }
+        .input-field:focus{ outline:none; border-color:var(--g500); box-shadow:0 0 0 4px rgba(16,185,129,.12) }
 
-        .filter-btn:hover {
-            border-color: #cbd5e1;
-            background: #f8fafc;
-        }
+        .btn-primary{ background:linear-gradient(135deg,#10b981,#047857); color:#fff; font-weight:700; padding:.8rem 1.6rem; border-radius:.9rem; border:none; cursor:pointer; transition:all .3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 6px 16px -4px rgba(5,120,80,.4) }
+        .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 12px 24px -6px rgba(5,120,80,.5) }
 
-        .filter-btn.active {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-        }
+        .rating-stars{ color:#f5b301 }
 
-        /* Input fields */
-        .input-field {
-            background: white;
-            border: 2px solid #e2e8f0;
-            color: #1e293b;
-            border-radius: 0.875rem;
-            padding: 0.75rem 1rem;
-            font-size: 0.9375rem;
-            transition: all 0.2s;
-        }
+        .modal-backdrop{ background:rgba(15,30,20,.6); backdrop-filter:blur(8px) }
+        .modal-content{ background:#fff; border:1px solid var(--line); border-radius:24px; box-shadow:0 30px 70px -20px rgba(0,0,0,.4) }
 
-        .input-field:focus {
-            outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-        }
+        /* flutter-style snackbar */
+        .toast{ background:#2c2f36 !important; border:none !important; box-shadow:0 10px 30px rgba(0,0,0,.4) !important }
+        .toast .fa-check-circle{ color:#6ee7b7 !important }
+        .toast #toast-message{ color:#fff !important }
 
-        /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            font-weight: 700;
-            padding: 0.875rem 1.75rem;
-            border-radius: 1rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-        }
-
-        /* Stars */
-        .rating-stars {
-            color: #fbbf24;
-        }
-
-        /* Modal */
-        .modal-backdrop {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(8px);
-        }
-
-        .modal-content {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 1.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Toast */
-        .toast {
-            background: white;
-            border: 1px solid #10b981;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
-        }
-
-        /* FAB */
-        .fab {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
-            cursor: pointer;
-            transition: all 0.3s;
-            z-index: 100;
-        }
-        
-        .fab:hover {
-            transform: scale(1.15) rotate(10deg);
-            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
-        }
+        .fab{ position:fixed; bottom:1.5rem; right:1.5rem; background:linear-gradient(135deg,#10b981,#047857); color:#fff; width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 28px -6px rgba(5,120,80,.5); cursor:pointer; transition:all .3s; z-index:100 }
+        .fab:hover{ transform:scale(1.12) rotate(8deg); box-shadow:0 16px 36px -6px rgba(5,120,80,.6) }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="header-gradient shadow-lg sticky top-0 z-50">
+    <header class="header-gradient sticky top-0 z-50">
         <div class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <a href="marketplace.html" class="text-2xl font-black text-white flex items-center gap-2">
-                        <i class="fas fa-leaf"></i>
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-4 min-w-0">
+                    <a href="marketplace.html" class="brand-name text-2xl font-bold text-white flex items-center gap-2 shrink-0">
+                        <span class="w-9 h-9 rounded-xl bg-white/15 border border-white/25 grid place-items-center">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>
+                        </span>
                         Agricore
                     </a>
-                    <span class="text-white/40">|</span>
-                    <h1 class="text-lg font-bold text-white" id="heading-prof-network">Professional Network</h1>
+                    <span class="text-white/30 hidden sm:inline">|</span>
+                    <h1 class="text-lg font-semibold text-white truncate hidden sm:block" id="heading-prof-network">Professional Network</h1>
                 </div>
-                <nav class="flex items-center gap-3">
-                    <a href="{% url 'marketplace' %}" class="px-4 py-2 bg-white/10 backdrop-blur-sm border-2 border-white/20 text-white hover:bg-white/20 font-semibold rounded-xl transition flex items-center gap-2">
-                        <i class="fas fa-store"></i>
-                        <span class="hidden sm:inline">Marketplace</span>
+                <nav class="flex items-center gap-2 sm:gap-3 shrink-0">
+                    <a href="marketplace.html" class="px-3.5 py-2 bg-white/10 border border-white/20 text-white hover:bg-white/20 font-semibold rounded-xl transition flex items-center gap-2">
+                        <i class="fas fa-store"></i><span class="hidden md:inline">Marketplace</span>
                     </a>
-                    <a href="{% url 'multi_farm' %}" class="px-4 py-2 bg-white/10 backdrop-blur-sm border-2 border-white/20 text-white hover:bg-white/20 font-semibold rounded-xl transition flex items-center gap-2">
-                        <i class="fas fa-tractor"></i>
-                        <span class="hidden sm:inline">My Farms</span>
+                    <a href="multi_farm.html" class="px-3.5 py-2 bg-white/10 border border-white/20 text-white hover:bg-white/20 font-semibold rounded-xl transition flex items-center gap-2">
+                        <i class="fas fa-tractor"></i><span class="hidden md:inline">My Farms</span>
                     </a>
-                    <button id="profile-btn" class="px-4 py-2 bg-white text-emerald-700 rounded-xl font-bold hover:bg-emerald-50 transition flex items-center gap-2">
-                        <i class="fas fa-user"></i>
-                        <span class="hidden sm:inline">Profile</span>
+                    <button id="profile-btn" class="px-3.5 py-2 bg-white text-emerald-700 rounded-xl font-bold hover:bg-emerald-50 transition flex items-center gap-2">
+                        <i class="fas fa-user"></i><span class="hidden md:inline">Profile</span>
                     </button>
-                    <select id="settings-language" class="ml-2 px-2 py-1 rounded border border-gray-200 text-sm font-semibold text-gray-700" style="min-width:120px;">
-                        <option value="en">English</option>
-                        <option value="fr">Français</option>
-                        <option value="es">Español</option>
-                        <option value="pt">Português</option>
-                        <option value="sw">Kiswahili</option>
-                        <option value="ar">العربية</option>
+                    <select id="settings-language" class="px-2 py-1.5 rounded-lg border border-white/30 bg-white/10 text-white text-sm font-semibold focus:outline-none" style="min-width:96px;">
+                        <option class="text-gray-800" value="en">English</option>
+                        <option class="text-gray-800" value="fr">Français</option>
+                        <option class="text-gray-800" value="es">Español</option>
+                        <option class="text-gray-800" value="pt">Português</option>
+                        <option class="text-gray-800" value="sw">Kiswahili</option>
+                        <option class="text-gray-800" value="ar">العربية</option>
                     </select>
                 </nav>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="container mx-auto px-6 pt-6 mb-10">
-        <div class="hero-container text-white py-16 md:py-24 px-6">
-            <div class="max-w-4xl mx-auto text-center">
+        <div class="hero-container px-6 py-16 md:py-24">
+            <div id="hero-farmland"></div>
+            <div class="hero-overlay"></div>
+            <div class="hero-inner max-w-4xl mx-auto text-center text-white">
+                <span class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.16em] text-white/85 bg-white/12 border border-white/20 px-3 py-1.5 rounded-full mb-5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span> Agricore Network
+                </span>
                 <h2 class="text-4xl md:text-6xl font-black mb-4 drop-shadow-2xl" id="hero-title">
                     Agricore Professional Network
                 </h2>
-                <p class="text-xl md:text-2xl mb-10 opacity-95 drop-shadow-lg" id="hero-desc">
+                <p class="text-lg md:text-2xl mb-10 text-white/90 drop-shadow-lg" id="hero-desc">
                     Connect with skilled professionals to power your farm work
                 </p>
-                
-                <!-- Search Bar -->
                 <div class="max-w-3xl mx-auto">
-                    <div class="flex gap-4 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-2xl">
-                        <input 
-                            type="text" 
-                            id="search-input" 
-                            placeholder="Search by name, skills, or location..." 
-                            class="flex-1 px-6 py-4 bg-transparent text-gray-800 text-lg focus:outline-none"
-                        >
-                        <button 
-                            id="search-btn" 
-                            class="btn-primary whitespace-nowrap flex items-center gap-2"
-                        >
-                            <i class="fas fa-search"></i>
-                            <span class="hidden sm:inline">Search</span>
+                    <div class="flex gap-3 bg-white/95 backdrop-blur-sm rounded-2xl p-2.5 shadow-2xl">
+                        <input type="text" id="search-input" placeholder="Search by name, skills, or location..."
+                            class="flex-1 px-5 py-3.5 bg-transparent text-gray-800 text-lg focus:outline-none">
+                        <button id="search-btn" class="btn-primary whitespace-nowrap flex items-center gap-2">
+                            <i class="fas fa-search"></i><span class="hidden sm:inline">Search</span>
                         </button>
                     </div>
                 </div>
@@ -238,7 +118,7 @@
         </div>
     </section>
 
-    <!-- Filters & Stats -->
+    <!-- Filters -->
     <section class="container mx-auto px-6 mb-8">
         <div class="glass-container p-6">
             <div class="mb-6">
@@ -252,7 +132,6 @@
                     <button class="filter-btn" data-specialty="livestock_handler" id="filter-livestock-handler">Livestock Handlers</button>
                 </div>
             </div>
-
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2" id="label-min-rating">Minimum Rating</label>
@@ -288,8 +167,8 @@
 
     <!-- Professionals Grid -->
     <section class="container mx-auto px-6 pb-12">
-        <div class="flex items-center justify-between mb-6">
-            <h3 class="text-2xl font-bold text-gray-800">
+        <div class="flex items-center justify-between mb-6 gap-3 flex-wrap">
+            <h3 class="sec-title text-2xl font-bold text-gray-800">
                 <span id="professional-count">0</span> <span id="label-pros-available">Professionals Available</span>
             </h3>
             <select id="sort-select" class="input-field">
@@ -301,20 +180,15 @@
             </select>
         </div>
 
-        <div id="professionals-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- Populated by JavaScript -->
-        </div>
+        <div id="professionals-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 
-        <!-- Empty State -->
-        <div id="empty-state" class="hidden text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+        <div id="empty-state" class="hidden text-center py-20 bg-white rounded-2xl border-2 border-dashed" style="border-color:var(--line)">
             <i class="fas fa-users text-gray-300 text-6xl mb-4"></i>
             <h3 class="text-xl font-bold text-gray-600 mb-2" id="label-no-pros">No professionals found</h3>
             <p class="text-gray-500" id="label-try-filters">Try adjusting your filters</p>
         </div>
 
-        <!-- Loading State -->
         <div id="loading-state" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 hidden">
-            <!-- Skeleton cards would go here -->
             <div class="professional-card p-6 animate-pulse">
                 <div class="w-full h-48 bg-gray-200 rounded-xl mb-4"></div>
                 <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
@@ -328,29 +202,39 @@
         <div class="modal-content max-w-4xl w-full mx-auto my-8 p-8">
             <div class="flex justify-between items-start mb-6">
                 <h2 class="text-3xl font-bold text-gray-800">Professional Details</h2>
-                <button id="close-modal" class="text-gray-600 hover:text-gray-900 text-2xl">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-900 text-2xl"><i class="fas fa-times"></i></button>
             </div>
-            <div id="modal-content">
-                <!-- Populated by JavaScript -->
-            </div>
+            <div id="modal-content"></div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <div id="toast" class="fixed bottom-6 right-6 toast px-6 py-4 rounded-xl transform translate-x-full transition-transform z-50">
         <div class="flex items-center gap-3">
-            <i class="fas fa-check-circle text-emerald-600 text-xl"></i>
-            <span id="toast-message" class="text-gray-800 font-semibold"></span>
+            <i class="fas fa-check-circle text-xl"></i>
+            <span id="toast-message" class="font-semibold"></span>
         </div>
     </div>
 
-    <!-- Dale AI FAB -->
-    <div class="fab" id="dale-ai-btn" title="Ask Dale AI">
-        <i class="fas fa-robot text-2xl"></i>
-    </div>
 
+    <script>
+        /* farmland hero background — shared visual identity */
+        (function(){
+            function buildFarmland(){
+                const W=1200,H=820,cols=7,rows=6, jx=(W/cols)*0.32, jy=(H/rows)*0.32, P=[];
+                for(let r=0;r<=rows;r++){ P[r]=[]; for(let c=0;c<=cols;c++){ const edge=(r===0||r===rows||c===0||c===cols);
+                    P[r][c]={ x:(c/cols)*W+(edge?0:(Math.random()*2-1)*jx), y:(r/rows)*H+(edge?0:(Math.random()*2-1)*jy) }; } }
+                const pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']];
+                const ang=[0,16,90,74,16,0,90,30,16]; let defs='';
+                pal.forEach((c,i)=>{ defs+='<pattern id="cp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
+                const bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8]; let cells='';
+                for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){ const a=P[r][c],b=P[r][c+1],d=P[r+1][c+1],e=P[r+1][c], fi=bag[Math.floor(Math.random()*bag.length)];
+                    cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#cp'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>'; }
+                return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
+            }
+            const el=document.getElementById('hero-farmland'); if(el) el.innerHTML=buildFarmland();
+        })();
+    </script>
     <script>
         // Language selector logic for workforce
         document.addEventListener('DOMContentLoaded', function() {
@@ -737,10 +621,6 @@
             }, 3000);
         }
 
-        // Dale AI
-        document.getElementById('dale-ai-btn').addEventListener('click', () => {
-            showToast('Dale AI chat coming soon!');
-        });
 
         // --- Apply i18n on static UI ---
         function applyI18nStatic() {
@@ -778,5 +658,126 @@
         // --- End i18n static ---
         loadProfessionals();
     </script>
+    <!-- Dale AI context for this page -->
+    <script>
+      window.__daleCtx = function(){
+        var list=[]; try{ if(typeof professionals!=='undefined' && Array.isArray(professionals)){
+          list=professionals.slice(0,20).map(function(p){return {name:p.user_name,specialty:p.specialty_display||p.specialty,rating:p.average_rating,rate:p.hourly_rate,experience:p.years_experience,location:p.location,verified:p.is_verified};}); } }catch(e){}
+        var filters={}; try{ if(typeof currentFilters!=='undefined') filters=currentFilters; }catch(e){}
+        return { page:'Workforce', type:'professional', extras:{ filters:filters, visible_count:list.length, professionals:list } };
+      };
+      window.__daleIntro = "Hi, I'm Dale. I can see the professionals you're browsing — ask me to help shortlist someone, compare rates, or write a job post.";
+      window.__daleChips = ["Who fits a tight budget?","Compare the top-rated ones","Help me write a job post","What should I look for?"];
+    </script>
+    <!-- ===== Dale AI assistant (context-aware, brand) ===== -->
+    <script>
+    (function(){
+      if (window.__daleInit) return; window.__daleInit = true;
+      var ENDPOINT = '/api/ai/dale/ask/';
+      var history = [];
+
+      var css = ''
+        + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:62px;height:62px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
+        + 'background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);'
+        + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}'
+        + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
+        + '#daleFab svg{width:28px;height:28px}'
+        + '#daleFab .dot{position:absolute;top:10px;right:11px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857}'
+        + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;'
+        + 'background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);'
+        + 'display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
+        + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
+        + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
+        + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
+        + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+        + '.dale-head .mk svg{width:20px;height:20px}'
+        + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
+        + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
+        + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+        + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
+        + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+        + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
+        + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
+        + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+        + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
+        + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
+        + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
+        + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
+        + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
+        + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
+        + '.dale-chip:hover{background:#d6efdf}'
+        + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
+        + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
+        + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
+        + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
+        + '.dale-input button svg{width:18px;height:18px}'
+        + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
+      var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+      var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+      var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
+      fab.innerHTML = '<span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>';
+      document.body.appendChild(fab);
+
+      var panel = document.createElement('div'); panel.id='dalePanel';
+      panel.innerHTML =
+        '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
+        + '<div class="dale-msgs" id="daleMsgs"></div>'
+        + '<div class="dale-chips" id="daleChips"></div>'
+        + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
+        + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
+      document.body.appendChild(panel);
+
+      var msgs = panel.querySelector('#daleMsgs');
+      var text = panel.querySelector('#daleText');
+      var greeted = false;
+
+      function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+      function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+      function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+
+      function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
+
+      function renderChips(){
+        var chips = (window.__daleChips || []);
+        var box = panel.querySelector('#daleChips'); box.innerHTML='';
+        chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); });
+      }
+
+      async function send(q){
+        q = (q!==undefined ? q : text.value).trim();
+        if(!q) return;
+        text.value=''; bubble(q,'me'); history.push({role:'user',content:q});
+        var t = typing();
+        try{
+          var token = localStorage.getItem('access_token');
+          var res = await fetch(ENDPOINT, {
+            method:'POST',
+            headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}),
+            body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) })
+          });
+          t.remove();
+          if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
+          var data = await res.json();
+          var reply = data.reply || data.detail || 'No response.';
+          bubble(reply,'ai'); history.push({role:'assistant',content:reply});
+        }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
+      }
+
+      function open(){
+        panel.classList.add('open');
+        if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); }
+        setTimeout(function(){ text.focus(); }, 50);
+      }
+      function close(){ panel.classList.remove('open'); }
+
+      fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
+      panel.querySelector('.x').addEventListener('click', close);
+      panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
+      text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+      text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
+    })();
+    </script>
+
 </body>
 </html>

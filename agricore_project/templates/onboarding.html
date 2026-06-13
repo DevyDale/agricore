@@ -1,618 +1,431 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Agricore Solutions - Smart Farming Platform</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <style>
-        * {
-            font-family: 'Inter', sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
-            overflow-x: hidden;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1f5135" />
+  <title>Agricore — Smart farming for African agriculture</title>
 
-        /* Hero Section */
-        .hero-section {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            position: relative;
-            overflow: hidden;
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: -30%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 50%;
-            animation: float 8s ease-in-out infinite;
-        }
+  <style>
+    :root{
+      --g500:#10b981; --g600:#059669; --g700:#047857; --g900:#064e3b;
+      --ink:#16271c; --s700:#334155; --s600:#475569; --s500:#64748b; --s400:#94a3b8;
+      --cream:#faf6ee; --line:#ece4d6;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--cream);
+      -webkit-font-smoothing:antialiased;overflow-x:hidden;transition:opacity .6s ease}
+    body.leaving{opacity:0}
+    svg{display:block}
+    .ic{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    a{text-decoration:none;color:inherit}
+    .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1.2rem,4vw,2.5rem)}
+    h1,h2,h3{font-family:'Fraunces',serif;letter-spacing:-.02em}
 
-        .hero-section::after {
-            content: '';
-            position: absolute;
-            bottom: -20%;
-            left: -5%;
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite reverse;
-        }
+    /* ===== shared button ===== */
+    .btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
+      height:56px;padding:0 1.9rem;border:0;border-radius:999px;cursor:pointer;
+      font:800 1.02rem 'Inter',sans-serif;color:#fff;background:linear-gradient(135deg,#10b981,#047857);
+      box-shadow:0 16px 34px -12px rgba(5,120,80,.6);transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}
+    .btn:hover{transform:translateY(-3px);box-shadow:0 22px 44px -12px rgba(5,120,80,.7)}
+    .btn:active{transform:translateY(-1px)}
+    .btn svg{width:19px;height:19px;transition:transform .25s}
+    .btn:hover svg.arr{transform:translateX(4px)}
+    .btn::after{content:"";position:absolute;top:50%;left:50%;width:0;height:0;border-radius:50%;
+      background:rgba(255,255,255,.2);transform:translate(-50%,-50%);transition:width .6s,height .6s}
+    .btn:hover::after{width:480px;height:480px}
+    .btn.ghost{background:#fff;color:var(--g700);box-shadow:0 10px 26px -14px rgba(0,0,0,.4)}
+    .btn.ghost:hover{background:#f5fbf7}
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-30px) rotate(5deg); }
-        }
+    /* ===== hero ===== */
+    .hero{position:relative;min-height:94vh;min-height:94dvh;display:flex;flex-direction:column;overflow:hidden;background:#22432c}
+    .hero-scene{position:absolute;inset:0;overflow:hidden}
+    #farmland{position:absolute;inset:-2%}
+    #farmland svg{width:100%;height:100%}
+    .sun{position:absolute;top:-16%;right:-8%;width:52vmax;height:52vmax;pointer-events:none;
+      background:radial-gradient(circle, rgba(255,231,168,.6), rgba(255,205,120,.2) 42%, transparent 66%)}
+    .grade{position:absolute;inset:0;pointer-events:none;mix-blend-mode:soft-light;
+      background:linear-gradient(175deg, rgba(255,226,160,.45) 0%, rgba(120,150,90,0) 26%, rgba(14,38,22,.55) 100%)}
+    .sweep{position:absolute;top:-30%;left:-50%;width:55%;height:160%;pointer-events:none;transform:rotate(13deg);
+      filter:blur(10px);mix-blend-mode:screen;background:linear-gradient(90deg,transparent,rgba(255,246,222,.12),transparent);animation:sweep 11s linear infinite}
+    @keyframes sweep{from{transform:translateX(-10%) rotate(13deg)}to{transform:translateX(360%) rotate(13deg)}}
+    .vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 110% at 45% 30%, transparent 44%, rgba(8,22,13,.66))}
+    .pin{position:absolute;width:13px;height:13px;pointer-events:none;transform:translate(-50%,-50%)}
+    .pin i{position:absolute;inset:0;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.35),0 6px 14px rgba(0,0,0,.4)}
+    .pin::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px solid rgba(255,255,255,.5);animation:ping 2.6s ease-out infinite}
+    @keyframes ping{0%{transform:scale(.5);opacity:.8}100%{transform:scale(1.8);opacity:0}}
 
-        /* Glass container */
-        .glass-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 1.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-        }
+    .nav{position:relative;z-index:5}
+    .nav .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:1.4rem;padding-bottom:1.4rem}
+    .brandmark{display:flex;align-items:center;gap:.6rem;color:#fff}
+    .brandmark .mk{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;
+      background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);backdrop-filter:blur(6px)}
+    .brandmark .mk svg{width:22px;height:22px}
+    .brandmark .nm{font-family:'Fraunces',serif;font-weight:700;font-size:1.5rem}
+    .nav .signin{display:inline-flex;align-items:center;gap:.4rem;color:#fff;font-weight:600;font-size:.95rem;white-space:nowrap;flex:none;line-height:1;
+      padding:.6rem 1.15rem;border-radius:999px;border:1px solid rgba(255,255,255,.34);background:rgba(255,255,255,.12);backdrop-filter:blur(6px);transition:background .2s}
+    .nav .signin:hover{background:rgba(255,255,255,.22)}
 
-        /* Feature cards */
-        .feature-card {
-            background: white;
-            border: 1px solid #f1f5f9;
-            border-radius: 1.25rem;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
+    .hero-body{position:relative;z-index:5;flex:1;display:flex;align-items:center}
+    .hero-body .wrap{width:100%}
+    .hero-inner{max-width:30rem;color:#fff;animation:rise .8s ease .1s both}
+    .kick{display:inline-flex;align-items:center;gap:.5rem;font-size:.76rem;font-weight:700;letter-spacing:.14em;
+      text-transform:uppercase;color:rgba(255,255,255,.85);background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.2);padding:.42rem .85rem;border-radius:999px;backdrop-filter:blur(6px);margin-bottom:1.5rem}
+    .kick .dot{width:7px;height:7px;border-radius:50%;background:#86efac;box-shadow:0 0 10px #86efac}
+    .hero h1{font-weight:900;font-size:clamp(2.7rem,6vw,5rem);line-height:1.02;text-shadow:0 4px 40px rgba(0,0,0,.4)}
+    .hero h1 .em{font-style:italic;font-weight:500;color:#ffe6a8}
+    .hero .sub{margin-top:1.3rem;font-size:clamp(1.05rem,1.5vw,1.25rem);line-height:1.6;color:rgba(255,255,255,.92);
+      max-width:46ch;text-shadow:0 2px 18px rgba(0,0,0,.35)}
+    .hero-cta{margin-top:2rem;display:flex;flex-wrap:nowrap;gap:.8rem;align-items:center}
+    .hero-cta .btn{white-space:nowrap;padding:0 1.5rem}
+    .trust{margin-top:1.6rem;display:flex;align-items:center;gap:.5rem;color:rgba(255,255,255,.85);font-size:.88rem;font-weight:500}
+    .trust svg{width:16px;height:16px;color:#86efac}
+    .scrollcue{position:absolute;left:50%;bottom:1.4rem;transform:translateX(-50%);z-index:5;color:rgba(255,255,255,.7);animation:cue 2s ease-in-out infinite}
+    .scrollcue svg{width:26px;height:26px}
+    @keyframes cue{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,7px)}}
+    @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 
-        .feature-card:hover {
-            transform: translateY(-8px);
-            border-color: #10b981;
-            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15);
-        }
+    /* ===== sections ===== */
+    section{position:relative}
+    .sec{padding:clamp(3.5rem,8vw,6.5rem) 0}
+    .sec-head{text-align:center;max-width:680px;margin:0 auto clamp(2.2rem,5vw,3.4rem)}
+    .eyebrow{display:inline-block;font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:.74rem;
+      color:var(--g600);margin-bottom:.9rem}
+    .sec-head h2{font-weight:900;font-size:clamp(2rem,4.2vw,3rem);line-height:1.08;color:var(--ink)}
+    .sec-head p{margin-top:1rem;font-size:1.06rem;line-height:1.65;color:var(--s600)}
 
-        /* Step cards */
-        .step-card {
-            background: white;
-            border: 1px solid #f1f5f9;
-            border-radius: 1.25rem;
-            position: relative;
-            transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
+    /* intro cards */
+    .intro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+    .intro-card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:2rem 1.7rem;
+      box-shadow:0 12px 30px -22px rgba(20,40,25,.5);transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,border-color .3s}
+    .intro-card:hover{transform:translateY(-6px);border-color:#cfe6d6;box-shadow:0 24px 44px -26px rgba(16,120,75,.5)}
+    .intro-card .emo{width:62px;height:62px;border-radius:18px;display:grid;place-items:center;margin-bottom:1.2rem}
+    .intro-card .emo svg{width:30px;height:30px;stroke-width:1.9}
+    .intro-card h3{font-weight:700;font-size:1.3rem;margin-bottom:.55rem}
+    .intro-card p{color:var(--s600);font-size:.96rem;line-height:1.6}
 
-        .step-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #10b981, #059669);
-            border-radius: 1.25rem 1.25rem 0 0;
-        }
+    /* features */
+    .features{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
+    .feat{background:var(--cream);border:1px solid var(--line);border-radius:20px;padding:1.6rem;
+      transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,border-color .3s}
+    .feat:hover{transform:translateY(-6px);border-color:#cfe6d6;box-shadow:0 22px 40px -26px rgba(16,120,75,.5);background:#fff}
+    .chip{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;margin-bottom:1rem}
+    .chip svg{width:24px;height:24px;stroke-width:1.9}
+    .feat h3{font-weight:700;font-size:1.08rem;margin-bottom:.4rem}
+    .feat p{color:var(--s600);font-size:.92rem;line-height:1.55}
 
-        .step-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.12);
-        }
+    .chip-green,.emo-green{background:#e7f4ec;color:#0f7a4b}
+    .chip-gold,.emo-gold{background:#f7eed6;color:#a9791d}
+    .chip-clay,.emo-clay{background:#f6e6df;color:#b15a36}
+    .chip-sage{background:#eef2e2;color:#5c7a2e}
+    .chip-sky{background:#e4eef6;color:#2f6f9e}
+    .chip-plum{background:#efe7f4;color:#7c4fa0}
+    .chip-rose{background:#fbe7ee;color:#b13a63}
+    .chip-teal{background:#d9f2ee;color:#0f766e}
+    .chip-amber{background:#fdecd2;color:#b45309}
 
-        .step-number {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 800;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
+    /* steps */
+    .steps{background:linear-gradient(180deg,#f3efe4,#eef5ee)}
+    .step-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem}
+    .step{position:relative;background:#fff;border:1px solid var(--line);border-radius:20px;padding:1.8rem 1.5rem;
+      box-shadow:0 12px 30px -24px rgba(20,40,25,.5)}
+    .step .no{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;margin:0 auto 1.1rem;
+      font-family:'Fraunces',serif;font-weight:800;font-size:1.45rem;color:#fff;
+      background:linear-gradient(135deg,#10b981,#047857);box-shadow:0 8px 18px -6px rgba(5,120,80,.55)}
+    .step h3{text-align:center;font-weight:700;font-size:1.1rem;margin-bottom:.45rem}
+    .step .lead{text-align:center;color:var(--s600);font-size:.9rem;line-height:1.5;margin-bottom:1.1rem}
+    .step ul{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+    .step li{display:flex;align-items:flex-start;gap:.55rem;font-size:.9rem;color:var(--s700)}
+    .step li svg{width:16px;height:16px;color:var(--g600);flex:none;margin-top:.15rem}
 
-        /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            font-weight: 700;
-            padding: 1rem 2.5rem;
-            border-radius: 9999px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+    /* cta band */
+    .cta-band{position:relative;overflow:hidden;color:#fff;text-align:center;
+      background:linear-gradient(135deg,#0c6b46,#065f3c 60%,#064e3b)}
+    .cta-band::before,.cta-band::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.06);filter:blur(8px)}
+    .cta-band::before{top:-30%;left:6%;width:320px;height:320px}
+    .cta-band::after{bottom:-40%;right:4%;width:420px;height:420px;background:rgba(255,255,255,.05)}
+    .cta-band .wrap{position:relative;z-index:2}
+    .cta-band h2{font-weight:900;font-size:clamp(2rem,4.4vw,3rem);line-height:1.08}
+    .cta-band p{margin:1rem auto 0;max-width:50ch;font-size:1.1rem;line-height:1.6;color:rgba(255,255,255,.92)}
+    .cta-band .btnrow{margin-top:2rem}
+    .cta-band .fineprint{margin-top:1.3rem;display:inline-flex;align-items:center;gap:.45rem;color:rgba(255,255,255,.82);font-size:.86rem}
+    .cta-band .fineprint svg{width:15px;height:15px;color:#86efac}
 
-        .btn-primary:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
-        }
+    /* footer */
+    .footer{background:#0e2018;color:#cbd5cd;padding:3.2rem 0 2.4rem;text-align:center}
+    .footer .mk{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;margin:0 auto 1rem;
+      background:rgba(16,185,129,.16);color:#6ee7b7;border:1px solid rgba(110,231,183,.25)}
+    .footer .mk svg{width:28px;height:28px}
+    .footer h3{font-family:'Fraunces',serif;font-weight:700;color:#fff;font-size:1.5rem;margin-bottom:.35rem}
+    .footer .ftag{color:#8fa79a;font-size:.95rem;margin-bottom:1.4rem}
+    .socials{display:flex;justify-content:center;gap:.7rem;margin-bottom:1.6rem}
+    .socials a{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#9fb6a9;
+      background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);transition:all .2s}
+    .socials a:hover{color:#6ee7b7;background:rgba(16,185,129,.14);border-color:rgba(110,231,183,.3);transform:translateY(-2px)}
+    .socials svg{width:19px;height:19px}
+    .footer .copy{color:#6f877b;font-size:.84rem;border-top:1px solid rgba(255,255,255,.07);padding-top:1.4rem;margin-top:.4rem}
 
-        /* Icon backgrounds */
-        .icon-bg-emerald {
-            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-            color: #059669;
-        }
+    /* scroll reveal */
+    .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+    .reveal.in{opacity:1;transform:none}
 
-        .icon-bg-blue {
-            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-            color: #1d4ed8;
-        }
-
-        .icon-bg-purple {
-            background: linear-gradient(135deg, #e9d5ff, #d8b4fe);
-            color: #7c3aed;
-        }
-
-        .icon-bg-orange {
-            background: linear-gradient(135deg, #fed7aa, #fdba74);
-            color: #c2410c;
-        }
-
-        .icon-bg-teal {
-            background: linear-gradient(135deg, #ccfbf1, #99f6e4);
-            color: #0f766e;
-        }
-
-        .icon-bg-pink {
-            background: linear-gradient(135deg, #fce7f3, #fbcfe8);
-            color: #be185d;
-        }
-
-        .icon-bg-yellow {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            color: #b45309;
-        }
-
-        .icon-bg-red {
-            background: linear-gradient(135deg, #fee2e2, #fecaca);
-            color: #b91c1c;
-        }
-
-        .icon-bg-indigo {
-            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-            color: #4338ca;
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in-up {
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-
-        body.fade-out {
-            animation: fadeOut 0.6s ease-out forwards;
-        }
-
-        /* Arrow connector */
-        .arrow-connector {
-            color: #10b981;
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        @media (max-width: 1024px) {
-            .arrow-connector {
-                transform: rotate(90deg);
-            }
-        }
-    </style>
+    @media (max-width:980px){
+      .intro-grid,.feat-grid{grid-template-columns:repeat(2,1fr)}
+      .step-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:620px){
+      .intro-grid,.feat-grid,.step-grid{grid-template-columns:1fr}
+      .nav .brandmark .nm{font-size:1.3rem}
+      .hero{min-height:90dvh}
+      .hero-cta{flex-direction:column;align-items:stretch}
+      .hero-cta .btn{width:100%}
+    }
+    @media (prefers-reduced-motion:reduce){
+      *{animation:none!important}
+      .reveal{opacity:1;transform:none;transition:none}
+      html{scroll-behavior:auto}
+    }
+  </style>
 </head>
-<body class="min-h-screen">
-    <!-- Hero Section -->
-    <section class="hero-section py-20 md:py-32 relative z-10">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-12 relative z-10">
-                <div class="mb-6 animate-fade-in-up">
-                    <i class="fas fa-leaf text-6xl text-white opacity-90"></i>
-                </div>
-                <h1 class="text-5xl md:text-7xl font-black text-white mb-6 animate-fade-in-up" style="text-shadow: 0 2px 20px rgba(0,0,0,0.2);">
-                    Welcome to Agricore
-                </h1>
-                <p class="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-8 animate-fade-in-up">
-                    An all-in-one digital platform designed to revolutionize agriculture. 
-                    From farm management to marketplace trading, professional networking to AI-powered insights.
-                </p>
-                <button onclick="handleAuthClick()" class="btn-primary animate-fade-in-up text-lg">
-                    <i class="fas fa-rocket"></i>
-                    Get Started Now
-                </button>
-            </div>
+<body>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero-scene">
+      <div id="farmland"></div>
+      <div class="sun"></div>
+      <div class="grade"></div>
+      <div class="sweep"></div>
+      <div class="pin" style="left:20%;top:44%"><i></i></div>
+      <div class="pin" style="left:70%;top:60%"><i></i></div>
+      <div class="pin" style="left:48%;top:30%"><i></i></div>
+      <div class="vignette"></div>
+    </div>
+
+    <nav class="nav">
+      <div class="wrap">
+        <div class="brandmark">
+          <div class="mk"><svg class="ic" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+          <span class="nm">Agricore</span>
         </div>
-    </section>
+        <a class="signin" href="/auth/" onclick="goAuth(event)">Sign in
+          <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </nav>
 
-    <!-- What is Agricore Section -->
-    <section class="py-20 relative -mt-12">
-        <div class="container mx-auto px-6">
-            <div class="glass-container p-8 md:p-12 max-w-6xl mx-auto">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-black text-gray-800 mb-4">
-                        What is Agricore Solutions?
-                    </h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                        Everything you need to manage, grow, and scale your agricultural business in one powerful platform.
-                    </p>
-                </div>
-
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="feature-card p-6">
-                        <div class="text-5xl mb-4">🌾</div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">Farm Management</h3>
-                        <p class="text-gray-600 text-sm">
-                            Organize and manage unlimited farms, track produce, monitor inventory, and optimize your operations.
-                        </p>
-                    </div>
-
-                    <div class="feature-card p-6">
-                        <div class="text-5xl mb-4">🛒</div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">Digital Marketplace</h3>
-                        <p class="text-gray-600 text-sm">
-                            Buy and sell agricultural products with transparent pricing, secure payments, and verified buyers.
-                        </p>
-                    </div>
-
-                    <div class="feature-card p-6">
-                        <div class="text-5xl mb-4">🤝</div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">Professional Network</h3>
-                        <p class="text-gray-600 text-sm">
-                            Connect with skilled professionals for logistics, processing, quality control, and expert advice.
-                        </p>
-                    </div>
-                </div>
-            </div>
+    <div class="hero-body">
+      <div class="wrap">
+        <div class="hero-inner">
+          <span class="kick"><span class="dot"></span> African Agricultural Commerce</span>
+          <h1>Grow more.<br><span class="em">Sell</span> smarter.</h1>
+          <p class="sub">
+            One digital platform to manage your farms, trade produce, connect with professionals,
+            and unlock AI-powered insights — built for the way Africa farms.
+          </p>
+          <div class="hero-cta">
+            <button class="btn" onclick="goAuth(event)">Get started now
+              <svg class="ic arr" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+            <a class="btn ghost" href="#features">See what's inside</a>
+          </div>
+          <div class="trust">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+            No credit card required · Free to start
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
 
-    <!-- Features Section -->
-    <section id="features" class="py-20">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-black text-gray-800 mb-4">
-                    Powerful Features
-                </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Explore the comprehensive tools designed to make your agricultural journey easier and more profitable.
-                </p>
-            </div>
+    <a class="scrollcue" href="#intro" aria-label="Scroll down">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+    </a>
+  </section>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-                <!-- Feature 1 -->
-                <div class="feature-card p-6">
-                    <div class="w-14 h-14 icon-bg-emerald rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-tractor text-2xl"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">Multi-Farm Management</h3>
-                    <p class="text-gray-600 text-sm">
-                        Create unlimited farms and manage their produce individually with complete control over inventory and sales.
-                    </p>
-                </div>
-
-                <!-- Feature 2 -->
-                <div class="feature-card p-6">
-                    <div class="w-14 h-14 icon-bg-blue rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-tags text-2xl"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">Dynamic Offers & Bids</h3>
-                    <p class="text-gray-600 text-sm">
-                        List produce with asking prices, receive buyer offers, negotiate transparently, and close deals in real time.
-                    </p>
-                </div>
-
-                <!-- Feature 3 -->
-                <div class="feature-card p-6">
-                    <div class="w-14 h-14 icon-bg-purple rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-store text-2xl"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">Create Your Digital Store</h3>
-                    <p class="text-gray-600 text-sm">
-                        Build your online storefront, link it to farms, and transfer produce to your product catalog seamlessly.
-                    </p>
-                </div>
-
-                <!-- Feature 4 -->
-                <div class="feature-card p-6">
-                    <div class="w-14 h-14 icon-bg-indigo rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-sliders-h text-2xl"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">Store Management</h3>
-                    <p class="text-gray-600 text-sm">
-                        Control products, track sales performance, manage orders, handle payments, and respond to customer reviews.
-                    </p>
-                </div>
-
-                <!-- Feature 5 -->
-                <div class="feature-card p-6">
-                    <div class="w-14 h-14 icon-bg-orange rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-shopping-cart text-2xl"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">Buy Agricultural Products</h3>
-                    <p class="text-gray-600 text-sm">
-                        Browse thousands of products—seeds, fertilizers, equipment, livestock—from verified sellers.
-                    </p>
-                </div>
-
-                <!-- Feature 6 -->
-                <div class="feature-card p-6">
-                    <div class="w-14 h-14 icon-bg-teal rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-users text-2xl"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">Connect with Professionals</h3>
-                    <p class="text-gray-600 text-sm">
-                        Network with agricultural experts across veterinary, transport, labor, and consulting services.
-                    </p>
-                </div>
-
-                <!-- Feature 7 -->
-                <div class="feature-card p-6">
-                    <div class="w-14 h-14 icon-bg-pink rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-briefcase text-2xl"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">Find Work Opportunities</h3>
-                    <p class="text-gray-600 text-sm">
-                        Create your professional profile, showcase skills, apply for jobs, and grow your agricultural career.
-                    </p>
-                </div>
-
-                <!-- Feature 8 -->
-                <div class="feature-card p-6">
-                    <div class="w-14 h-14 icon-bg-yellow rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-comments text-2xl"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">Real-Time Chat</h3>
-                    <p class="text-gray-600 text-sm">
-                        Communicate instantly with buyers, sellers, professionals, and team members through integrated messaging.
-                    </p>
-                </div>
-
-                <!-- Feature 9 -->
-                <div class="feature-card p-6">
-                    <div class="w-14 h-14 icon-bg-red rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-chart-line text-2xl"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">Analytics & Insights</h3>
-                    <p class="text-gray-600 text-sm">
-                        Monitor sales revenue, order volume, conversion rates, and track trends to make data-driven decisions.
-                    </p>
-                </div>
-            </div>
+  <!-- ===== WHAT IS AGRICORE ===== -->
+  <section id="intro" class="sec">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">What is Agricore</span>
+        <h2>Everything your farm business needs, in one place</h2>
+        <p>Manage, grow, and scale your agricultural operation with a single connected platform — no spreadsheets, no scattered tools.</p>
+      </div>
+      <div class="intro-grid">
+        <div class="intro-card reveal">
+          <div class="emo emo-green"><svg class="ic" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></div>
+          <h3>Farm Management</h3>
+          <p>Organise unlimited farms, track produce, monitor inventory, and keep every operation in view.</p>
         </div>
-    </section>
-
-    <!-- How It Works Section -->
-    <section class="py-20 bg-gradient-to-br from-emerald-50 to-teal-50">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-black text-gray-800 mb-4">
-                    How It Works
-                </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Getting started with Agricore is simple. Follow these four steps to unlock the full potential of smart farming.
-                </p>
-            </div>
-
-            <div class="max-w-7xl mx-auto">
-                <div class="grid lg:grid-cols-4 gap-6">
-                    <!-- Step 1 -->
-                    <div class="step-card p-6">
-                        <div class="flex flex-col items-center text-center">
-                            <div class="step-number mb-4">1</div>
-                            <h3 class="text-lg font-bold text-gray-800 mb-2">Create Account</h3>
-                            <p class="text-gray-600 text-sm mb-4">
-                                Sign up with email verification and choose your role
-                            </p>
-                            <ul class="text-gray-600 text-sm space-y-2 text-left w-full">
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
-                                    <span>Email verification</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
-                                    <span>Choose your role</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
-                                    <span>Set up profile</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Step 2 -->
-                    <div class="step-card p-6">
-                        <div class="flex flex-col items-center text-center">
-                            <div class="step-number mb-4">2</div>
-                            <h3 class="text-lg font-bold text-gray-800 mb-2">Register Farms</h3>
-                            <p class="text-gray-600 text-sm mb-4">
-                                Add your farms and list available produce
-                            </p>
-                            <ul class="text-gray-600 text-sm space-y-2 text-left w-full">
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
-                                    <span>Add farm details</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
-                                    <span>List your produce</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
-                                    <span>Upload images</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Step 3 -->
-                    <div class="step-card p-6">
-                        <div class="flex flex-col items-center text-center">
-                            <div class="step-number mb-4">3</div>
-                            <h3 class="text-lg font-bold text-gray-800 mb-2">Create Store</h3>
-                            <p class="text-gray-600 text-sm mb-4">
-                                Build your digital storefront and link farms
-                            </p>
-                            <ul class="text-gray-600 text-sm space-y-2 text-left w-full">
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
-                                    <span>Set store branding</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
-                                    <span>Configure pricing</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
-                                    <span>Link verified farms</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Step 4 -->
-                    <div class="step-card p-6">
-                        <div class="flex flex-col items-center text-center">
-                            <div class="step-number mb-4">4</div>
-                            <h3 class="text-lg font-bold text-gray-800 mb-2">Manage & Grow</h3>
-                            <p class="text-gray-600 text-sm mb-4">
-                                Process orders with AI-powered insights
-                            </p>
-                            <ul class="text-gray-600 text-sm space-y-2 text-left w-full">
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
-                                    <span>AI recommendations</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
-                                    <span>Real-time inventory</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check text-emerald-600 mt-1"></i>
-                                    <span>Sales analytics</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="intro-card reveal">
+          <div class="emo emo-gold"><svg class="ic" viewBox="0 0 24 24"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M2 7h20"/><path d="M9 22v-5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v5"/></svg></div>
+          <h3>Digital Marketplace</h3>
+          <p>Buy and sell with transparent pricing, secure escrow payments, and verified buyers and sellers.</p>
         </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="py-20 bg-gradient-to-br from-emerald-600 to-teal-600 text-white relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-10 left-10 w-64 h-64 bg-white rounded-full blur-3xl"></div>
-            <div class="absolute bottom-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        <div class="intro-card reveal">
+          <div class="emo emo-clay"><svg class="ic" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <h3>Professional Network</h3>
+          <p>Connect with skilled professionals for logistics, processing, quality control, and expert advice.</p>
         </div>
-        <div class="container mx-auto px-6 text-center relative z-10">
-            <h2 class="text-4xl md:text-5xl font-black mb-6">
-                Ready to Transform Your Farming?
-            </h2>
-            <p class="text-xl mb-10 max-w-2xl mx-auto opacity-95">
-                Join thousands of farmers, sellers, and agricultural professionals already using Agricore to grow their business.
-            </p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <button onclick="handleAuthClick()" class="btn-primary bg-white text-emerald-600 hover:bg-emerald-50 text-xl py-4 px-8">
-                    <i class="fas fa-rocket"></i>
-                    Get Started Free
-                </button>
-            </div>
-            <p class="text-emerald-100 text-sm mt-6">
-                <i class="fas fa-shield-alt mr-2"></i>
-                No credit card required • Free forever for basic features
-            </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES ===== -->
+  <section id="features" class="sec features">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Powerful features</span>
+        <h2>Tools that make farming easier and more profitable</h2>
+        <p>A comprehensive toolkit designed for every step of your agricultural journey.</p>
+      </div>
+      <div class="feat-grid">
+        <div class="feat reveal"><div class="chip chip-green"><svg class="ic" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></div><h3>Multi-Farm Management</h3><p>Create unlimited farms and manage produce individually, with full control over inventory and sales.</p></div>
+        <div class="feat reveal"><div class="chip chip-gold"><svg class="ic" viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.43 2.43 0 0 0 3.42 0l6.58-6.58a2.43 2.43 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg></div><h3>Dynamic Offers &amp; Bids</h3><p>List produce, receive buyer offers, negotiate transparently, and close deals in real time.</p></div>
+        <div class="feat reveal"><div class="chip chip-clay"><svg class="ic" viewBox="0 0 24 24"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M2 7h20"/></svg></div><h3>Your Digital Store</h3><p>Build an online storefront, link it to your farms, and transfer produce to your catalog seamlessly.</p></div>
+        <div class="feat reveal"><div class="chip chip-sage"><svg class="ic" viewBox="0 0 24 24"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg></div><h3>Store Management</h3><p>Control products, track performance, manage orders and payments, and respond to reviews.</p></div>
+        <div class="feat reveal"><div class="chip chip-amber"><svg class="ic" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div><h3>Buy Agricultural Products</h3><p>Browse seeds, fertilisers, equipment, and livestock from verified sellers across the network.</p></div>
+        <div class="feat reveal"><div class="chip chip-teal"><svg class="ic" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><h3>Connect with Professionals</h3><p>Network with experts across veterinary, transport, labour, and consulting services.</p></div>
+        <div class="feat reveal"><div class="chip chip-plum"><svg class="ic" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><h3>Find Work Opportunities</h3><p>Build a professional profile, showcase skills, apply for jobs, and grow your career.</p></div>
+        <div class="feat reveal"><div class="chip chip-sky"><svg class="ic" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></div><h3>Real-Time Chat</h3><p>Message buyers, sellers, professionals, and team members through integrated live chat.</p></div>
+        <div class="feat reveal"><div class="chip chip-rose"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg></div><h3>Analytics &amp; Insights</h3><p>Track revenue, orders, and conversion, and spot trends to make data-driven decisions.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="sec steps">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">How it works</span>
+        <h2>Up and running in four simple steps</h2>
+        <p>Follow these steps to unlock the full potential of smart farming with Agricore.</p>
+      </div>
+      <div class="step-grid">
+        <div class="step reveal">
+          <div class="no">1</div>
+          <h3>Create Account</h3>
+          <p class="lead">Sign up, verify your email, and choose your role.</p>
+          <ul>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Email verification</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Choose your role</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Set up profile</li>
+          </ul>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="container mx-auto px-6">
-            <div class="text-center">
-                <div class="mb-4">
-                    <i class="fas fa-leaf text-4xl text-emerald-500"></i>
-                </div>
-                <h3 class="text-2xl font-bold mb-2">Agricore Solutions</h3>
-                <p class="text-gray-400 mb-6">Smart farming for the modern world</p>
-                <div class="flex justify-center gap-6 mb-6">
-                    <a href="#" class="text-gray-400 hover:text-emerald-500 transition">
-                        <i class="fab fa-facebook text-2xl"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-emerald-500 transition">
-                        <i class="fab fa-twitter text-2xl"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-emerald-500 transition">
-                        <i class="fab fa-instagram text-2xl"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-emerald-500 transition">
-                        <i class="fab fa-linkedin text-2xl"></i>
-                    </a>
-                </div>
-                <p class="text-gray-500 text-sm">
-                    © 2024 Agricore Solutions. All rights reserved.
-                </p>
-            </div>
+        <div class="step reveal">
+          <div class="no">2</div>
+          <h3>Register Farms</h3>
+          <p class="lead">Add your farms and list available produce.</p>
+          <ul>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Add farm details</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> List your produce</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Upload images</li>
+          </ul>
         </div>
-    </footer>
+        <div class="step reveal">
+          <div class="no">3</div>
+          <h3>Create Store</h3>
+          <p class="lead">Build your storefront and link your farms.</p>
+          <ul>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Set store branding</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Configure pricing</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Link verified farms</li>
+          </ul>
+        </div>
+        <div class="step reveal">
+          <div class="no">4</div>
+          <h3>Manage &amp; Grow</h3>
+          <p class="lead">Process orders with AI-powered insights.</p>
+          <ul>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> AI recommendations</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Real-time inventory</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Sales analytics</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <script>
-        function handleAuthClick() {
-            document.body.classList.add('fade-out');
-            setTimeout(() => {
-                window.location.href = '/auth/';
-            }, 600);
-        }
+  <!-- ===== CTA BAND ===== -->
+  <section class="sec cta-band">
+    <div class="wrap reveal">
+      <h2>Ready to transform your farming?</h2>
+      <p>Join thousands of farmers, sellers, and agricultural professionals already growing their business with Agricore.</p>
+      <div class="btnrow">
+        <button class="btn ghost" onclick="goAuth(event)">Get started free
+          <svg class="ic arr" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div class="fineprint">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+        No credit card required · Free forever for basic features
+      </div>
+    </div>
+  </section>
 
-        // Prevent navigating back to splashscreen
-        if (window.history && window.history.replaceState) {
-            window.history.replaceState(null, '', window.location.href);
-            window.addEventListener('popstate', function(event) {
-                if (document.referrer.includes('/splashscreen')) {
-                    window.location.replace('/onboarding/');
-                }
-            });
-        }
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="mk"><svg class="ic" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+      <h3>Agricore Solutions</h3>
+      <p class="ftag">Smart farming for the modern world</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook"><svg class="ic" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+        <a href="#" aria-label="Twitter"><svg class="ic" viewBox="0 0 24 24"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg class="ic" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg class="ic" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+      </div>
+      <p class="copy">© 2026 Agricore Solutions. All rights reserved.</p>
+    </div>
+  </footer>
 
-        // Add scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+  <script>
+    function buildFarmland(){
+      const W=1200,H=820,cols=7,rows=6;
+      const jx=(W/cols)*0.32, jy=(H/rows)*0.32;
+      const P=[];
+      for(let r=0;r<=rows;r++){ P[r]=[]; for(let c=0;c<=cols;c++){
+        const edge=(r===0||r===rows||c===0||c===cols);
+        P[r][c]={ x:(c/cols)*W + (edge?0:(Math.random()*2-1)*jx), y:(r/rows)*H + (edge?0:(Math.random()*2-1)*jy) };
+      }}
+      const pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],
+                 ['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']];
+      const ang=[0,16,90,74,16,0,90,30,16];
+      let defs='';
+      pal.forEach((c,i)=>{ defs+='<pattern id="cp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
+      const bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8];
+      let cells='';
+      for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+        const a=P[r][c],b=P[r][c+1],d=P[r+1][c+1],e=P[r+1][c];
+        const fi=bag[Math.floor(Math.random()*bag.length)];
+        cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#cp'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>';
+      }
+      return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
+    }
+    document.getElementById('farmland').innerHTML = buildFarmland();
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-fade-in-up');
-                }
-            });
-        }, observerOptions);
+    /* scroll reveal */
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold:0.12, rootMargin:'0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-        document.querySelectorAll('.feature-card, .step-card').forEach((el) => {
-            observer.observe(el);
-        });
-    </script>
+    /* navigate to auth with fade */
+    function goAuth(ev){
+      if(ev) ev.preventDefault();
+      document.body.classList.add('leaving');
+      setTimeout(()=>{ window.location.href = '/auth/'; }, 520);
+    }
+
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, '', window.location.href);
+    }
+  </script>
 </body>
 </html>

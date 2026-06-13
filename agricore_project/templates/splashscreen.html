@@ -1,424 +1,170 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Agricore Solutions - Welcome</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1f5135" />
+  <title>Agricore — Welcome</title>
 
-    <style>
-        * {
-            font-family: 'Inter', sans-serif;
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-        body {
-            min-height: 100vh;
-            overflow: hidden;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
-            position: relative;
-        }
+  <style>
+    :root{ --g500:#10b981; --g700:#047857; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{height:100%}
+    body{font-family:'Inter',system-ui,sans-serif;background:#1b3a26;-webkit-font-smoothing:antialiased;
+      transition:opacity .7s ease, transform .7s ease;overflow:hidden}
+    body.leaving{opacity:0;transform:scale(.99)}
+    svg{display:block}
+    .ic{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-        /* Animated background elements */
-        body::before,
-        body::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.1;
-            animation: float 8s ease-in-out infinite;
-        }
+    /* farmland scene (shared identity) */
+    .scene{position:fixed;inset:0;overflow:hidden;background:#22432c;z-index:0}
+    #farmland{position:absolute;inset:-2%}
+    #farmland svg{width:100%;height:100%}
+    .sun{position:absolute;top:-16%;right:-8%;width:52vmax;height:52vmax;pointer-events:none;
+      background:radial-gradient(circle, rgba(255,231,168,.6), rgba(255,205,120,.2) 42%, transparent 66%)}
+    .grade{position:absolute;inset:0;pointer-events:none;mix-blend-mode:soft-light;
+      background:linear-gradient(175deg, rgba(255,226,160,.45) 0%, rgba(120,150,90,0) 28%, rgba(14,38,22,.5) 100%)}
+    .sweep{position:absolute;top:-30%;left:-50%;width:55%;height:160%;pointer-events:none;transform:rotate(13deg);
+      filter:blur(10px);mix-blend-mode:screen;background:linear-gradient(90deg,transparent,rgba(255,246,222,.12),transparent);animation:sweep 11s linear infinite}
+    @keyframes sweep{from{transform:translateX(-10%) rotate(13deg)}to{transform:translateX(360%) rotate(13deg)}}
+    .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+    .vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 100% at 50% 45%, transparent 40%, rgba(8,22,13,.72))}
+    .mote{position:absolute;border-radius:50%;background:rgba(255,244,214,.85);filter:blur(.6px);pointer-events:none;animation:floatm linear infinite;opacity:0}
+    @keyframes floatm{0%{transform:translateY(20px) translateX(0);opacity:0}15%{opacity:.9}85%{opacity:.7}100%{transform:translateY(-120px) translateX(24px);opacity:0}}
+    .pin{position:absolute;width:13px;height:13px;pointer-events:none;transform:translate(-50%,-50%)}
+    .pin i{position:absolute;inset:0;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.35),0 6px 14px rgba(0,0,0,.4)}
+    .pin::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px solid rgba(255,255,255,.5);animation:ping 2.6s ease-out infinite}
+    @keyframes ping{0%{transform:scale(.5);opacity:.8}100%{transform:scale(1.8);opacity:0}}
 
-        body::before {
-            top: -10%;
-            right: -5%;
-            width: 600px;
-            height: 600px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            animation-delay: 0s;
-        }
+    /* centered brand lockup, no card */
+    .stage{position:relative;z-index:5;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;text-align:center;
+      padding:clamp(1.5rem,5vw,3rem);
+      padding-bottom:max(clamp(1.5rem,5vw,3rem),env(safe-area-inset-bottom))}
+    .stage::before{content:"";position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(50% 44% at 50% 47%, rgba(6,20,12,.5), transparent 72%)}
 
-        body::after {
-            bottom: -15%;
-            left: -10%;
-            width: 800px;
-            height: 800px;
-            background: linear-gradient(135deg, #0ea5e9, #0284c7);
-            animation-delay: 2s;
-        }
+    .lockup{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
+    .emblem{width:92px;height:92px;border-radius:27px;display:grid;place-items:center;color:#fff;
+      background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.32);backdrop-filter:blur(10px);
+      box-shadow:0 22px 50px -16px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.4);
+      animation:pop .8s cubic-bezier(.2,.9,.3,1.3) both, bob 5s ease-in-out 1s infinite}
+    .emblem svg{width:46px;height:46px;stroke-width:1.7}
+    @keyframes pop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+    @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-30px) scale(1.05); }
-        }
+    .word{margin-top:1.5rem;font-family:'Fraunces',serif;font-weight:900;color:#fff;letter-spacing:-.02em;line-height:1;
+      font-size:clamp(3.2rem,11vw,5.6rem);text-shadow:0 6px 44px rgba(0,0,0,.5);animation:rise .9s ease .15s both}
+    .kick{margin-top:1rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+      font-size:clamp(.68rem,1.5vw,.84rem);color:rgba(255,255,255,.8);animation:rise .9s ease .28s both}
+    .tag{margin-top:1.5rem;max-width:34ch;font-size:clamp(1.02rem,1.7vw,1.2rem);line-height:1.6;
+      color:rgba(255,255,255,.92);text-shadow:0 2px 18px rgba(0,0,0,.45);animation:rise .9s ease .4s both}
 
-        /* Main container */
-        .splash-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 2rem;
-            position: relative;
-            z-index: 1;
-        }
+    .cta{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+      margin-top:2.4rem;height:60px;padding:0 2.4rem;border:0;border-radius:999px;cursor:pointer;
+      color:#fff;font:800 1.08rem 'Inter',sans-serif;background:linear-gradient(135deg,#10b981,#047857);
+      box-shadow:0 18px 40px -12px rgba(5,120,80,.65);animation:rise .9s ease .52s both;
+      transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}
+    .cta:hover{transform:translateY(-3px);box-shadow:0 24px 50px -12px rgba(5,120,80,.75)}
+    .cta:active{transform:translateY(-1px)}
+    .cta svg{width:20px;height:20px;transition:transform .25s}
+    .cta:hover svg{transform:translateX(4px)}
+    .cta::after{content:"";position:absolute;top:50%;left:50%;width:0;height:0;border-radius:50%;
+      background:rgba(255,255,255,.22);transform:translate(-50%,-50%);transition:width .6s,height .6s}
+    .cta:hover::after{width:460px;height:460px}
 
-        /* Content container with glassmorphism */
-        .splash-content {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 2rem;
-            padding: 3rem 2.5rem;
-            max-width: 680px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            animation: slideUp 0.8s ease-out;
-            position: relative;
-            overflow: hidden;
-        }
+    .hint{position:absolute;left:0;right:0;bottom:clamp(1.2rem,4vh,2.2rem);z-index:5;text-align:center;
+      color:rgba(255,255,255,.6);font-size:.82rem;font-weight:500;animation:rise 1s ease .8s both}
 
-        .splash-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #10b981, #059669);
-            border-radius: 2rem 2rem 0 0;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Lottie animation container */
-        .lottie-box {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 2rem;
-            position: relative;
-            animation: fadeIn 1s ease-out 0.3s both;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        dotlottie-wc {
-            display: block;
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 4px 20px rgba(16, 185, 129, 0.2));
-        }
-
-        /* Logo/Brand section */
-        .brand-section {
-            margin-bottom: 2rem;
-        }
-
-        .brand-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 1rem;
-            background: linear-gradient(135deg, #10b981, #059669);
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-            animation: fadeIn 1s ease-out 0.5s both;
-        }
-
-        .brand-icon svg {
-            width: 36px;
-            height: 36px;
-            fill: white;
-        }
-
-        .brand-title {
-            font-size: 3rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #10b981, #059669);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-            animation: fadeIn 1s ease-out 0.6s both;
-        }
-
-        .brand-subtitle {
-            font-size: 1.125rem;
-            color: #64748b;
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-            animation: fadeIn 1s ease-out 0.7s both;
-        }
-
-        /* Tagline */
-        .tagline {
-            font-size: 1.0625rem;
-            line-height: 1.7;
-            color: #475569;
-            margin-bottom: 2rem;
-            max-width: 560px;
-            margin-left: auto;
-            margin-right: auto;
-            animation: fadeIn 1s ease-out 0.8s both;
-        }
-
-        /* CTA Button */
-        .get-started-btn {
-            width: 100%;
-            max-width: 360px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 9999px;
-            font-size: 1.125rem;
-            font-weight: 700;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: block;
-            margin: 0 auto;
-            animation: fadeIn 1s ease-out 0.9s both;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .get-started-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .get-started-btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .get-started-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
-        }
-
-        .get-started-btn span {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        /* Feature badges */
-        .feature-badges {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-            animation: fadeIn 1s ease-out 1s both;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            padding: 0.5rem 1rem;
-            background: #f0fdf4;
-            border: 1px solid #dcfce7;
-            border-radius: 9999px;
-            font-size: 0.8125rem;
-            font-weight: 600;
-            color: #166534;
-        }
-
-        .badge i {
-            font-size: 0.875rem;
-        }
-
-        /* Fade out animation */
-        .fade-out {
-            opacity: 0;
-            transform: scale(0.95);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .splash-wrapper {
-                padding: 1.5rem;
-            }
-
-            .splash-content {
-                padding: 2.5rem 1.5rem;
-            }
-
-            .brand-title {
-                font-size: 2.25rem;
-            }
-
-            .brand-subtitle {
-                font-size: 1rem;
-            }
-
-            .tagline {
-                font-size: 0.9375rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .lottie-box {
-                width: 160px;
-                height: 160px;
-            }
-
-            .get-started-btn {
-                font-size: 1rem;
-                padding: 0.875rem 1.5rem;
-            }
-
-            .feature-badges {
-                gap: 0.5rem;
-            }
-
-            .badge {
-                font-size: 0.75rem;
-                padding: 0.375rem 0.75rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .splash-wrapper {
-                padding: 1rem;
-            }
-
-            .splash-content {
-                padding: 2rem 1.25rem;
-                border-radius: 1.5rem;
-            }
-
-            .brand-title {
-                font-size: 2rem;
-            }
-
-            .lottie-box {
-                width: 140px;
-                height: 140px;
-                margin-bottom: 1.5rem;
-            }
-
-            .brand-icon {
-                width: 56px;
-                height: 56px;
-            }
-
-            .brand-icon svg {
-                width: 32px;
-                height: 32px;
-            }
-        }
-    </style>
+    @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+    @media (max-width:560px){
+      .emblem{width:78px;height:78px;border-radius:22px}
+      .emblem svg{width:40px;height:40px}
+    }
+  </style>
 </head>
 <body>
-    <div class="splash-wrapper">
-        <div class="splash-content">
-            <!-- Lottie Animation -->
-            <div class="lottie-box">
-                <dotlottie-wc
-                    src="https://lottie.host/2c27ca81-5cda-4281-92e8-d4f0407b5cab/doZJqbW664.lottie"
-                    autoplay
-                    loop>
-                </dotlottie-wc>
-            </div>
+  <div class="scene">
+    <div id="farmland"></div>
+    <div class="sun"></div>
+    <div class="grade"></div>
+    <div class="sweep"></div>
+    <div class="grain"></div>
+    <div class="pin" style="left:22%;top:40%"><i></i></div>
+    <div class="pin" style="left:66%;top:62%"><i></i></div>
+    <div class="pin" style="left:46%;top:26%"><i></i></div>
+    <div class="vignette"></div>
+  </div>
 
-            <!-- Brand Section -->
-            <div class="brand-section">
-                <div class="brand-icon">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18.5c-3.82-.93-6.5-4.65-6.5-8.5V8.41l6.5-3.41 6.5 3.41V12c0 3.85-2.68 7.57-6.5 8.5z"/>
-                        <path d="M9.5 11.5l2 2 4-4"/>
-                    </svg>
-                </div>
-                <h1 class="brand-title">Agricore</h1>
-                <p class="brand-subtitle">Smart Farming Solutions</p>
-            </div>
-
-            <!-- Tagline -->
-            <p class="tagline">
-                Your complete agricultural marketplace platform. Connect farms with buyers, manage produce, 
-                hire professionals, and get AI-powered insights—all in one place.
-            </p>
-
-            <!-- CTA Button -->
-            <button class="get-started-btn" onclick="redirectToOnboarding()">
-                <span>
-                    Get Started
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
-                </span>
-            </button>
-
-            <!-- Feature Badges -->
-            <div class="feature-badges">
-                <span class="badge">
-                    <i class="fas fa-check-circle"></i>
-                    Free to Start
-                </span>
-                <span class="badge">
-                    <i class="fas fa-shield-alt"></i>
-                    Secure Platform
-                </span>
-                <span class="badge">
-                    <i class="fas fa-users"></i>
-                    Join 10,000+ Farmers
-                </span>
-            </div>
-        </div>
+  <div class="stage">
+    <div class="lockup">
+      <div class="emblem">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>
+      </div>
+      <h1 class="word">Agricore</h1>
+      <p class="kick">Smart farming for African agriculture</p>
+      <p class="tag">Manage farms, trade produce, and grow your harvest — all in one place.</p>
+      <button class="cta" id="startBtn" onclick="goNext()">
+        Get Started
+        <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </button>
     </div>
+    <p class="hint">Press Enter or tap Get Started to continue</p>
+  </div>
 
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script>
+    function buildFarmland(){
+      const W=1200,H=820,cols=7,rows=6;
+      const jx=(W/cols)*0.32, jy=(H/rows)*0.32;
+      const P=[];
+      for(let r=0;r<=rows;r++){ P[r]=[]; for(let c=0;c<=cols;c++){
+        const edge=(r===0||r===rows||c===0||c===cols);
+        P[r][c]={ x:(c/cols)*W + (edge?0:(Math.random()*2-1)*jx), y:(r/rows)*H + (edge?0:(Math.random()*2-1)*jy) };
+      }}
+      const pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],
+                 ['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']];
+      const ang=[0,16,90,74,16,0,90,30,16];
+      let defs='';
+      pal.forEach((c,i)=>{ defs+='<pattern id="cp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
+      const bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8];
+      let cells='';
+      for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+        const a=P[r][c],b=P[r][c+1],d=P[r+1][c+1],e=P[r+1][c];
+        const fi=bag[Math.floor(Math.random()*bag.length)];
+        cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#cp'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>';
+      }
+      return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
+    }
+    function spawnMotes(){
+      const sc=document.querySelector('.scene'); if(!sc) return;
+      for(let i=0;i<9;i++){
+        const m=document.createElement('div'); m.className='mote';
+        const s=2+Math.random()*4;
+        m.style.width=s+'px'; m.style.height=s+'px';
+        m.style.left=(Math.random()*100)+'%'; m.style.top=(60+Math.random()*40)+'%';
+        m.style.animationDuration=(7+Math.random()*8)+'s';
+        m.style.animationDelay=(-Math.random()*10)+'s';
+        sc.appendChild(m);
+      }
+    }
+    document.getElementById('farmland').innerHTML = buildFarmland();
+    spawnMotes();
 
-    <script>
-        function redirectToOnboarding() {
-            const splash = document.querySelector('.splash-wrapper');
-            setTimeout(() => {
-                splash.classList.add('fade-out');
-            }, 50);
-            setTimeout(() => {
-                window.location.href = '/onboarding/';
-            }, 850);
-        }
+    function goNext(){
+      document.body.classList.add('leaving');
+      setTimeout(()=>{ window.location.href = '/onboarding/'; }, 650);
+    }
+    document.addEventListener('keydown', e=>{ if(e.key==='Enter') goNext(); });
 
-        // Prevent back navigation to splash
-        if (window.history && window.history.replaceState) {
-            window.history.replaceState(null, '', window.location.href);
-        }
-    </script>
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, '', window.location.href);
+    }
+  </script>
 </body>
 </html>

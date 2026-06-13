@@ -1,837 +1,462 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <title>Agricore Solutions — Welcome Back</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1f5135" />
+  <title>Agricore — Sign in</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet"/>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.9/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.5.13/vue.global.prod.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-    <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: 'Inter', sans-serif;
-        }
+  <style>
+    :root{
+      --g500:#10b981; --g600:#059669; --g700:#047857; --g900:#064e3b;
+      --ink:#14241a; --s600:#475569; --s500:#64748b; --s400:#94a3b8; --s200:#e2e8f0;
+      --ring:rgba(16,185,129,.18); --r:15px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{height:100%}
+    body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:#1b3a26;
+      -webkit-font-smoothing:antialiased;transition:opacity .6s ease, transform .6s ease;overflow-x:hidden}
+    body.leaving{opacity:0;transform:scale(.99)}
+    [v-cloak]{display:none}
+    svg{display:block}
+    .ic{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow-x: hidden;
-        }
+    /* ===== farmland scene ===== */
+    .scene{position:fixed;inset:0;overflow:hidden;background:#22432c;z-index:0}
+    #farmland{position:absolute;inset:-2%}
+    #farmland svg{width:100%;height:100%}
+    .sun{position:absolute;top:-16%;right:-8%;width:52vmax;height:52vmax;pointer-events:none;
+      background:radial-gradient(circle, rgba(255,231,168,.6), rgba(255,205,120,.2) 42%, transparent 66%)}
+    .grade{position:absolute;inset:0;pointer-events:none;mix-blend-mode:soft-light;
+      background:linear-gradient(175deg, rgba(255,226,160,.45) 0%, rgba(120,150,90,0) 28%, rgba(14,38,22,.5) 100%)}
+    .sweep{position:absolute;top:-30%;left:-50%;width:55%;height:160%;pointer-events:none;
+      transform:rotate(13deg);filter:blur(10px);mix-blend-mode:screen;
+      background:linear-gradient(90deg,transparent, rgba(255,246,222,.12), transparent);
+      animation:sweep 11s linear infinite}
+    @keyframes sweep{from{transform:translateX(-10%) rotate(13deg)}to{transform:translateX(360%) rotate(13deg)}}
+    .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+    .vignette{position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(125% 105% at 48% 36%, transparent 52%, rgba(8,22,13,.58))}
+    .mote{position:absolute;border-radius:50%;background:rgba(255,244,214,.85);filter:blur(.6px);
+      pointer-events:none;animation:floatm linear infinite;opacity:.0}
+    @keyframes floatm{0%{transform:translateY(20px) translateX(0);opacity:0}
+      15%{opacity:.9}85%{opacity:.7}100%{transform:translateY(-120px) translateX(24px);opacity:0}}
+    .pin{position:absolute;width:14px;height:14px;pointer-events:none;transform:translate(-50%,-50%)}
+    .pin i{position:absolute;inset:0;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.35),0 6px 14px rgba(0,0,0,.4)}
+    .pin::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px solid rgba(255,255,255,.5);animation:ping 2.6s ease-out infinite}
+    @keyframes ping{0%{transform:scale(.5);opacity:.8}100%{transform:scale(1.8);opacity:0}}
 
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow-y: auto;
-            position: relative;
-            padding: 40px 20px;
-        }
+    /* ===== shell ===== */
+    .shell{position:relative;z-index:5;min-height:100vh;min-height:100dvh;
+      display:grid;grid-template-columns:1.05fr clamp(380px,40%,540px);grid-template-rows:auto 1fr;
+      gap:1rem clamp(1.5rem,4vw,4rem);
+      padding:clamp(1.25rem,3.2vw,2.75rem);
+      padding-top:max(clamp(1.25rem,3.2vw,2.75rem),env(safe-area-inset-top));
+      padding-bottom:max(clamp(1.25rem,3.2vw,2.75rem),env(safe-area-inset-bottom))}
 
-        /* Animated background elements */
-        .background-orbs {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
+    .topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+    .brandmark{display:flex;align-items:center;gap:.6rem;color:#fff}
+    .brandmark .mk{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+      background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(6px)}
+    .brandmark .mk svg{width:21px;height:21px}
+    .brandmark .nm{font-family:'Fraunces',serif;font-weight:700;font-size:1.5rem;letter-spacing:-.01em}
+    .lang select{appearance:none;-webkit-appearance:none;padding:.5rem 2rem .5rem .85rem;border-radius:11px;
+      border:1px solid rgba(255,255,255,.32);color:#fff;font:600 .85rem 'Inter',sans-serif;cursor:pointer;
+      background:rgba(255,255,255,.14) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23ffffff' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right .7rem center;
+      backdrop-filter:blur(8px)}
+    .lang select option{color:#14241a}
+    .lang select:focus-visible{outline:2px solid #fff;outline-offset:2px}
 
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.06;
-            animation: float 8s ease-in-out infinite;
-        }
+    /* hero */
+    .hero{align-self:center;color:#fff;max-width:34ch;animation:rise .8s ease .1s both}
+    .hero .kick{display:inline-flex;align-items:center;gap:.5rem;font-size:.78rem;font-weight:700;
+      letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.82);
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:.4rem .8rem;border-radius:999px;backdrop-filter:blur(6px);margin-bottom:1.4rem}
+    .hero .kick .dot{width:7px;height:7px;border-radius:50%;background:#86efac;box-shadow:0 0 10px #86efac}
+    .hero h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(2.4rem,5.2vw,4.4rem);
+      line-height:1.02;letter-spacing:-.02em;text-shadow:0 4px 40px rgba(0,0,0,.35)}
+    .hero .sub{margin-top:1.2rem;font-size:clamp(1rem,1.4vw,1.18rem);line-height:1.6;
+      color:rgba(255,255,255,.9);max-width:40ch;text-shadow:0 2px 20px rgba(0,0,0,.3)}
+    .ticker{margin-top:1.8rem;display:inline-flex;align-items:center;gap:.7rem;
+      background:rgba(8,28,16,.34);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(8px);
+      padding:.7rem 1rem;border-radius:14px;font-weight:600;font-size:.92rem;color:#fff;min-height:46px}
+    .ticker .tk-ic{width:30px;height:30px;flex:none;border-radius:9px;display:grid;place-items:center;background:rgba(134,239,172,.18);color:#bbf7d0}
+    .ticker .tk-ic svg{width:17px;height:17px}
+    .ticker .tk-tx{transition:opacity .4s ease, transform .4s ease}
+    .ticker.swapping .tk-tx{opacity:0;transform:translateY(-6px)}
 
-        .orb-1 {
-            top: -10%;
-            right: -5%;
-            width: 600px;
-            height: 600px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            animation-delay: 0s;
-        }
+    /* form card */
+    .formwrap{align-self:start;justify-self:stretch;padding-top:clamp(.25rem,2.5vh,1.6rem);animation:rise .8s ease .18s both}
+    .card{width:100%;max-width:460px;margin-left:auto;position:relative;
+      background:rgba(255,253,249,.93);backdrop-filter:blur(18px) saturate(135%);
+      border:1px solid rgba(255,255,255,.7);border-radius:26px;
+      box-shadow:0 36px 80px -28px rgba(6,28,15,.62), inset 0 1px 0 rgba(255,255,255,.7);
+      padding:clamp(1.3rem,2.6vw,2rem)}
+    .card-head h2{font-family:'Fraunces',serif;font-size:clamp(1.7rem,2.6vw,2.1rem);font-weight:700;letter-spacing:-.01em}
+    .card-head p{margin-top:.35rem;color:var(--s500);font-weight:500;font-size:.97rem}
 
-        .orb-2 {
-            bottom: -15%;
-            left: -10%;
-            width: 800px;
-            height: 800px;
-            background: linear-gradient(135deg, #0ea5e9, #0284c7);
-            animation-delay: 2s;
-        }
+    .seg{position:relative;display:grid;grid-template-columns:1fr 1fr;background:#eef2ee;border-radius:13px;padding:5px;margin:1.05rem 0 1.15rem}
+    .seg button{position:relative;z-index:1;border:0;background:transparent;cursor:pointer;padding:.7rem;border-radius:9px;font:700 .92rem 'Inter',sans-serif;color:var(--s500);transition:color .25s}
+    .seg button.on{color:var(--g700)}
+    .seg .thumb{position:absolute;z-index:0;top:5px;left:5px;width:calc(50% - 5px);height:calc(100% - 10px);background:#fff;border-radius:9px;box-shadow:0 2px 8px rgba(2,44,34,.12);transition:transform .32s cubic-bezier(.4,0,.2,1)}
+    .seg[data-mode="signup"] .thumb{transform:translateX(100%)}
 
-        .orb-3 {
-            top: 30%;
-            left: 20%;
-            width: 300px;
-            height: 300px;
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            animation-delay: 4s;
-        }
+    label.fl{display:block;font-size:.82rem;font-weight:600;color:var(--s600);margin:0 0 .4rem 2px}
+    .field{position:relative;margin-bottom:.85rem}
+    .field>.fico{position:absolute;left:1rem;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--g600);pointer-events:none}
+    .field input{width:100%;height:52px;border:1.5px solid var(--s200);border-radius:var(--r);padding:0 3rem 0 2.9rem;font:500 1rem 'Inter',sans-serif;color:var(--ink);background:rgba(255,255,255,.85);transition:border-color .2s, box-shadow .2s}
+    .field input::placeholder{color:var(--s400)}
+    .field input:focus{outline:none;border-color:var(--g500);box-shadow:0 0 0 4px var(--ring);background:#fff}
+    .field .toggle-pw{position:absolute;right:.4rem;top:50%;transform:translateY(-50%);background:none;border:0;cursor:pointer;color:var(--s400);width:40px;height:40px;border-radius:10px;display:grid;place-items:center}
+    .field .toggle-pw:hover{color:var(--s600)}
+    .field .toggle-pw svg{width:20px;height:20px}
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-30px) scale(1.05); }
-        }
+    .submit{position:relative;overflow:hidden;width:100%;height:54px;margin-top:.4rem;border:0;border-radius:var(--r);cursor:pointer;
+      background:linear-gradient(135deg,var(--g500),var(--g700));color:#fff;font:700 1.02rem 'Inter',sans-serif;
+      box-shadow:0 14px 28px -10px rgba(5,150,105,.6);transition:transform .2s, box-shadow .2s}
+    .submit:hover{transform:translateY(-2px);box-shadow:0 18px 36px -10px rgba(5,150,105,.7)}
+    .submit:active{transform:translateY(0)}
+    .submit:focus-visible{outline:2px solid var(--g900);outline-offset:3px}
+    .submit .lbl{position:relative;z-index:1}
+    .submit .spin{position:absolute;inset:0;margin:auto;width:22px;height:22px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;display:none;animation:spin .8s linear infinite}
+    .submit.busy .lbl{opacity:0}.submit.busy .spin{display:block}
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-        /* Center wrapper */
-        .center-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            max-width: 100%;
-            position: relative;
-            z-index: 1;
-        }
+    .legal{margin-top:1.3rem;text-align:center;font-size:.82rem;color:var(--s400);line-height:1.5}
+    .legal a{color:var(--g700);font-weight:600;text-decoration:none;cursor:pointer}
 
-        /* App branding */
-        .app-branding {
-            text-align: center;
-            margin-bottom: 2rem;
-            animation: fadeInDown 0.8s ease-out;
-        }
+    .form-shell{position:relative;transition:height .34s cubic-bezier(.4,0,.2,1);min-height:0}
+    .authform{position:absolute;top:0;left:0;width:100%;opacity:0;transform:translateY(10px);
+      transition:opacity .26s ease, transform .26s ease}
+    .authform.active{opacity:1;transform:none}
+    .authform:not(.active){pointer-events:none}
 
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    /* Flutter-style snackbar */
+    #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(140%);
+      min-width:280px;max-width:min(92vw,460px);padding:14px 16px;border-radius:9px;background:#2c2f36;color:#fff;
+      font-weight:500;font-size:.92rem;box-shadow:0 10px 30px rgba(0,0,0,.42);
+      display:flex;align-items:center;gap:.7rem;opacity:0;visibility:hidden;
+      transition:transform .42s cubic-bezier(.2,.85,.25,1), opacity .25s ease;z-index:9999}
+    #toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+    #toast svg{width:22px;height:22px;flex:none}
 
-        .app-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 1rem;
-            background: linear-gradient(135deg, #10b981, #059669);
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-        }
+    /* Google sign-in */
+    .gdiv{display:flex;align-items:center;gap:.8rem;margin:.95rem 0 .8rem;color:var(--s400);font-size:.82rem;font-weight:600;text-transform:lowercase}
+    .gdiv::before,.gdiv::after{content:"";height:1px;background:var(--s200);flex:1}
+    .gwrap{display:flex;justify-content:center;min-height:44px}
+    #gbtn{display:flex;justify-content:center}
+    .gfallback{display:inline-flex;align-items:center;justify-content:center;gap:.65rem;width:100%;height:48px;
+      border:1.5px solid var(--s200);border-radius:999px;background:#fff;color:#3c4043;font:600 .95rem 'Inter',sans-serif;cursor:pointer;transition:background .2s,border-color .2s}
+    .gfallback:hover{background:#f8fafc;border-color:#cbd5e1}
+    .gfallback svg{width:18px;height:18px}
+    .card.gready .gfallback{display:none}
 
-        .app-icon i {
-            font-size: 2rem;
-            color: white;
-        }
+    /* loading overlay (Google flow) */
+    .card-loading{position:absolute;inset:0;border-radius:inherit;background:rgba(255,253,249,.74);backdrop-filter:blur(2px);
+      display:flex;align-items:center;justify-content:center;z-index:6}
+    .cspin{width:34px;height:34px;border:3px solid rgba(5,150,105,.22);border-top-color:var(--g600);border-radius:50%;animation:spin .8s linear infinite}
 
-        .app-title {
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 900;
-            background: linear-gradient(135deg, #10b981, #059669);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-        }
+    @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
-        .app-subtitle {
-            font-size: clamp(0.875rem, 2vw, 1rem);
-            font-weight: 500;
-            color: #64748b;
-            max-width: 600px;
-            line-height: 1.6;
-        }
-
-        /* Main container */
-        .container {
-            position: relative;
-            width: 960px;
-            max-width: 95vw;
-            height: 600px;
-            max-height: 80vh;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px) saturate(180%);
-            border-radius: clamp(1.5rem, 3vw, 2rem);
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            animation: slideUp 0.8s ease-out 0.2s both;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Form containers */
-        .form-container {
-            position: absolute;
-            top: 0;
-            height: 100%;
-            width: 50%;
-            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: clamp(1.5rem, 4vw, 3rem);
-            overflow-y: auto;
-        }
-
-        .sign-in-container { 
-            left: 0; 
-            z-index: 2; 
-        }
-        
-        .sign-up-container { 
-            left: 0; 
-            opacity: 0; 
-            z-index: 1; 
-        }
-
-        .container.right-panel-active .sign-in-container { 
-            transform: translateX(100%); 
-            opacity: 0; 
-        }
-        
-        .container.right-panel-active .sign-up-container { 
-            transform: translateX(100%); 
-            opacity: 1; 
-            z-index: 5; 
-        }
-
-        /* Forms */
-        form {
-            width: 100%;
-            max-width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        h2 {
-            font-size: clamp(1.5rem, 3vw, 2rem);
-            font-weight: 800;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-
-        .subtitle {
-            font-size: clamp(0.875rem, 2vw, 1rem);
-            color: #64748b;
-            margin-bottom: clamp(1.5rem, 3vw, 2rem);
-            text-align: center;
-            font-weight: 500;
-        }
-
-        /* Input fields */
-        .input-icon-wrapper {
-            position: relative;
-            width: 100%;
-            margin: clamp(0.5rem, 1.5vw, 0.75rem) 0;
-        }
-
-        .input-icon-wrapper i {
-            position: absolute;
-            left: clamp(1rem, 2vw, 1.25rem);
-            top: 50%;
-            transform: translateY(-50%);
-            color: #10b981;
-            font-size: clamp(1rem, 2vw, 1.125rem);
-        }
-
-        .input-icon-wrapper input {
-            width: 100%;
-            background: white;
-            border: 2px solid #e2e8f0;
-            padding: clamp(0.875rem, 2vw, 1rem) clamp(1rem, 2vw, 1.25rem) clamp(0.875rem, 2vw, 1rem) clamp(3rem, 6vw, 3.5rem);
-            border-radius: clamp(0.75rem, 2vw, 1rem);
-            font-size: clamp(0.9375rem, 2vw, 1rem);
-            color: #1e293b;
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
-
-        .input-icon-wrapper input::placeholder {
-            color: #94a3b8;
-        }
-
-        .input-icon-wrapper input:focus {
-            outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-        }
-
-        /* Buttons */
-        button {
-            margin-top: clamp(1rem, 2vw, 1.5rem);
-            width: 100%;
-            padding: clamp(0.875rem, 2vw, 1rem);
-            border: none;
-            border-radius: clamp(0.75rem, 2vw, 1rem);
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            font-size: clamp(1rem, 2vw, 1.125rem);
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        button:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
-        }
-
-        button.ghost {
-            background: transparent;
-            border: 2px solid white;
-            color: white;
-            box-shadow: none;
-            margin-top: clamp(1rem, 2vw, 1.5rem);
-            font-size: clamp(0.9375rem, 2vw, 1rem);
-            padding: clamp(0.75rem, 1.5vw, 0.875rem);
-        }
-
-        button.ghost:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Overlay */
-        .overlay-container {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 50%;
-            height: 100%;
-            overflow: hidden;
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 100;
-        }
-
-        .container.right-panel-active .overlay-container { 
-            transform: translateX(-100%); 
-        }
-
-        .overlay {
-            background: linear-gradient(135deg, #10b981, #059669);
-            position: relative;
-            left: -100%;
-            height: 100%;
-            width: 200%;
-            transform: translateX(0);
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .container.right-panel-active .overlay { 
-            transform: translateX(50%); 
-        }
-
-        .overlay-panel {
-            position: absolute;
-            top: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 0 clamp(1.5rem, 4vw, 3rem);
-            height: 100%;
-            width: 50%;
-            text-align: center;
-            color: white;
-        }
-
-        .overlay-left { 
-            transform: translateX(-20%); 
-        }
-        
-        .container.right-panel-active .overlay-left { 
-            transform: translateX(0); 
-        }
-        
-        .overlay-right { 
-            right: 0; 
-            transform: translateX(0); 
-        }
-        
-        .container.right-panel-active .overlay-right { 
-            transform: translateX(20%); 
-        }
-
-        .overlay-panel .overlay-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1.5rem;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .overlay-panel .overlay-icon i {
-            font-size: 2.5rem;
-            color: white;
-        }
-
-        .overlay-panel h1 {
-            font-size: clamp(1.5rem, 3vw, 2rem);
-            margin-bottom: 1rem;
-            font-weight: 800;
-        }
-
-        .overlay-panel p {
-            font-size: clamp(0.875rem, 2vw, 1rem);
-            line-height: 1.6;
-            margin-bottom: clamp(1.5rem, 3vw, 2rem);
-            opacity: 0.95;
-            font-weight: 500;
-        }
-
-        /* Loading spinner */
-        .spinner {
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top: 3px solid white;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        @keyframes spin { 
-            to { transform: translate(-50%, -50%) rotate(360deg); } 
-        }
-
-        button.loading .button-content { 
-            opacity: 0; 
-        }
-        
-        button.loading .spinner { 
-            display: block; 
-        }
-
-        /* Snackbar */
-        #snackbar {
-            visibility: hidden;
-            min-width: 280px;
-            max-width: 90vw;
-            padding: clamp(1rem, 2vw, 1.25rem);
-            background: white;
-            color: #1e293b;
-            text-align: center;
-            border-radius: 1rem;
-            position: fixed;
-            z-index: 9999;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-size: clamp(0.9375rem, 2vw, 1rem);
-            font-weight: 600;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            border-left: 4px solid #ef4444;
-            transition: all 0.4s ease;
-            opacity: 0;
-        }
-
-        #snackbar.show {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        #snackbar.success {
-            border-left-color: #10b981;
-            background: #f0fdf4;
-            color: #166534;
-        }
-
-        /* Fade out */
-        .fade-out {
-            opacity: 0;
-            transform: scale(0.95);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-            .container {
-                width: 95vw;
-                height: auto;
-                min-height: 550px;
-                max-height: 85vh;
-            }
-            
-            .app-branding {
-                margin-bottom: 1.5rem;
-            }
-        }
-
-        @media (max-width: 700px) {
-            body {
-                padding: 20px 10px;
-            }
-            
-            .container {
-                min-height: 500px;
-            }
-            
-            .form-container {
-                padding: 1.25rem;
-            }
-            
-            .app-icon {
-                width: 56px;
-                height: 56px;
-            }
-            
-            .app-icon i {
-                font-size: 1.75rem;
-            }
-        }
-
-        @media (max-width: 550px) {
-            .container {
-                min-height: 480px;
-            }
-            
-            .input-icon-wrapper {
-                margin: 0.5rem 0;
-            }
-        }
-
-        @media (max-width: 400px) {
-            body {
-                padding: 15px 5px;
-            }
-            
-            .container {
-                min-height: 460px;
-                border-radius: 1.25rem;
-            }
-            
-            .app-icon {
-                width: 48px;
-                height: 48px;
-            }
-            
-            .app-icon i {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (max-height: 500px) and (orientation: landscape) {
-            body {
-                padding: 10px;
-            }
-            
-            .app-branding {
-                margin-bottom: 0.75rem;
-            }
-            
-            .app-icon {
-                width: 48px;
-                height: 48px;
-                margin-bottom: 0.5rem;
-            }
-            
-            .container {
-                height: 85vh;
-                min-height: 350px;
-            }
-            
-            .input-icon-wrapper {
-                margin: 0.375rem 0;
-            }
-            
-            button {
-                margin-top: 0.75rem;
-                padding: 0.75rem;
-            }
-        }
-
-        @media (min-height: 900px) {
-            .container {
-                max-height: 650px;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .container {
-                width: 1000px;
-                height: 650px;
-            }
-        }
-    </style>
+    /* ===== responsive ===== */
+    @media (max-width:980px){
+      .shell{grid-template-columns:1fr;grid-template-rows:auto auto 1fr;gap:1.25rem;align-content:start}
+      .hero{max-width:none;text-align:center;justify-self:center;margin-top:.5rem}
+      .hero .kick{margin-bottom:1rem}
+      .hero .sub{margin-left:auto;margin-right:auto}
+      .ticker{margin-top:1.2rem}
+      .formwrap{justify-self:center;width:100%}
+      .card{margin:0 auto}
+      .vignette{background:radial-gradient(140% 120% at 50% 30%, transparent 38%, rgba(8,22,13,.66))}
+    }
+    @media (max-width:560px){
+      .hero h1{font-size:clamp(2rem,9vw,2.6rem)}
+      .hero .sub{display:none}
+      .ticker{display:none}
+      .brandmark .nm{font-size:1.3rem}
+      .shell{padding:.9rem;gap:.75rem}
+      .formwrap{width:100%}
+      .card{max-width:none;width:100%;margin:0;border-radius:18px;padding:1.2rem;background:rgba(255,253,249,.96)}
+      .card-head h2{font-size:1.55rem}
+    }
+    @media (max-height:600px) and (max-width:980px){
+      .hero .sub,.ticker,.hero .kick{display:none}
+      .hero h1{font-size:1.7rem}
+    }
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+    [dir="rtl"] .field>.fico{left:auto;right:1rem}
+    [dir="rtl"] .field input{padding:0 2.9rem 0 3rem}
+    [dir="rtl"] .field .toggle-pw{right:auto;left:.4rem}
+    [dir="rtl"] label.fl{margin:0 2px .4rem 0}
+    [dir="rtl"] .card{margin-left:0;margin-right:auto}
+  </style>
 </head>
 <body>
-    <!-- Background orbs -->
-    <div class="background-orbs">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-    </div>
+  <div class="scene">
+    <div id="farmland"></div>
+    <div class="sun"></div>
+    <div class="grade"></div>
+    <div class="sweep"></div>
+    <div class="grain"></div>
+    <div class="pin" style="left:24%;top:42%"><i></i></div>
+    <div class="pin" style="left:62%;top:64%"><i></i></div>
+    <div class="pin" style="left:43%;top:28%"><i></i></div>
+    <div class="vignette"></div>
+  </div>
 
-    <div class="center-wrapper">
-        <!-- App branding -->
-        <div class="app-branding">
-            <div class="app-icon">
-                <i class="fas fa-leaf"></i>
-            </div>
-            <h1 class="app-title">Agricore</h1>
-            <p class="app-subtitle">Smart farming solutions for the modern world</p>
-            <select id="settings-language" class="mt-4 px-3 py-2 rounded border border-gray-200 text-sm font-semibold text-gray-700" style="min-width:120px;">
-                <option value="en">English</option>
-                <option value="fr">Français</option>
-                <option value="es">Español</option>
-                <option value="pt">Português</option>
-                <option value="sw">Kiswahili</option>
-                <option value="ar">العربية</option>
-            </select>
+  <div id="app" v-cloak>
+    <div class="shell">
+      <div class="topbar">
+        <div class="brandmark">
+          <div class="mk"><svg class="ic" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+          <span class="nm">Agricore</span>
         </div>
-
-        <div id="app">
-            <div class="container" id="container">
-                <!-- Sign Up Panel -->
-                <div class="form-container sign-up-container">
-                    <form @submit.prevent="register">
-                        <h2>Create Account</h2>
-                        <span class="subtitle">Join the agricultural revolution</span>
-                        <div class="input-icon-wrapper">
-                            <i class="fas fa-user"></i>
-                            <input type="text" placeholder="Username" v-model="signup.username" required />
-                        </div>
-                        <div class="input-icon-wrapper">
-                            <i class="fas fa-envelope"></i>
-                            <input type="email" placeholder="Email" v-model="signup.email" required />
-                        </div>
-                        <div class="input-icon-wrapper">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" placeholder="Password" v-model="signup.password" required />
-                        </div>
-                        <button type="submit" :class="{ 'loading': isSigningUp }">
-                            <span class="button-content">Sign Up</span>
-                            <div class="spinner"></div>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Sign In Panel -->
-                <div class="form-container sign-in-container">
-                    <form @submit.prevent="handleLogin">
-                        <h2>Welcome Back</h2>
-                        <span class="subtitle">Log in to your farm dashboard</span>
-                        <div class="input-icon-wrapper">
-                            <i class="fas fa-user"></i>
-                            <input type="text" placeholder="Username" v-model="login.username" required />
-                        </div>
-                        <div class="input-icon-wrapper">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" placeholder="Password" v-model="login.password" required />
-                        </div>
-                        <button type="submit" :class="{ 'loading': isLoggingIn }">
-                            <span class="button-content">Sign In</span>
-                            <div class="spinner"></div>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Overlay -->
-                <div class="overlay-container">
-                    <div class="overlay">
-                        <div class="overlay-panel overlay-left">
-                            <div class="overlay-icon">
-                                <i class="fas fa-seedling"></i>
-                            </div>
-                            <h1>Hello, Friend!</h1>
-                            <p>Enter your details and start your journey with us</p>
-                            <button class="ghost" id="signIn">Sign In</button>
-                        </div>
-                        <div class="overlay-panel overlay-right">
-                            <div class="overlay-icon">
-                                <i class="fas fa-tractor"></i>
-                            </div>
-                            <h1>Welcome Back!</h1>
-                            <p>To keep connected with us please login with your personal info</p>
-                            <button class="ghost" id="signUp">Sign Up</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="lang">
+          <select v-model="lang" @change="onLang" aria-label="Language">
+            <option value="en">English</option><option value="fr">Français</option>
+            <option value="es">Español</option><option value="pt">Português</option>
+            <option value="sw">Kiswahili</option><option value="ar">العربية</option>
+          </select>
         </div>
+      </div>
+
+      <div class="hero">
+        <span class="kick"><span class="dot"></span>Africa's farm operating system</span>
+        <h1 v-text="t('hero_title')"></h1>
+        <p class="sub" v-text="t('hero_sub')"></p>
+        <div class="ticker" :class="{swapping:tkSwap}">
+          <span class="tk-ic"><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="tk-tx" v-text="t('feat'+(tk+1))"></span>
+        </div>
+      </div>
+
+      <div class="formwrap">
+        <div class="card" :class="{gready:gReady}">
+          <div class="card-head">
+            <h2 v-text="mode==='login' ? t('welcome') : t('create_head')"></h2>
+            <p v-text="mode==='login' ? t('login_sub') : t('signup_sub')"></p>
+          </div>
+
+          <div class="seg" :data-mode="mode">
+            <span class="thumb"></span>
+            <button type="button" :class="{on:mode==='login'}" @click="mode='login'" v-text="t('tab_signin')"></button>
+            <button type="button" :class="{on:mode==='signup'}" @click="mode='signup'" v-text="t('tab_create')"></button>
+          </div>
+
+          <div class="gwrap">
+            <div id="gbtn" ref="gbtn"></div>
+            <button type="button" class="gfallback" @click="googleFallback">
+              <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.5-2.1 14.3-5.6l-6.6-5.6C29.7 34.6 27 36 24 36c-5.2 0-9.6-3.3-11.2-8l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.4l6.6 5.6C41.4 36 44 30.6 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
+              Continue with Google
+            </button>
+          </div>
+          <div class="gdiv"><span v-text="orWord()"></span></div>
+
+          <div class="form-shell" :style="{height:shellH}">
+            <form class="authform" :class="{active:mode==='login'}" :inert="mode!=='login'" ref="loginForm" @submit.prevent="handleLogin" autocomplete="on">
+              <label class="fl" for="li-user" v-text="t('l_user')"></label>
+              <div class="field">
+                <svg class="ic fico" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input id="li-user" type="text" v-model="login.username" :placeholder="t('ph_user_login')" autocomplete="username" required />
+              </div>
+              <label class="fl" for="li-pass" v-text="t('l_pass')"></label>
+              <div class="field">
+                <svg class="ic fico" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input id="li-pass" :type="showPw?'text':'password'" v-model="login.password" placeholder="••••••••" autocomplete="current-password" required />
+                <button type="button" class="toggle-pw" @click="showPw=!showPw" aria-label="Show or hide password">
+                  <svg v-if="!showPw" class="ic" viewBox="0 0 24 24"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg v-else class="ic" viewBox="0 0 24 24"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.21 6.57 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg>
+                </button>
+              </div>
+              <button type="submit" class="submit" :class="{busy:isLoggingIn}" :disabled="isLoggingIn">
+                <span class="lbl" v-text="t('btn_signin')"></span><span class="spin"></span>
+              </button>
+            </form>
+
+            <form class="authform" :class="{active:mode==='signup'}" :inert="mode!=='signup'" ref="signupForm" @submit.prevent="register" autocomplete="on">
+              <label class="fl" for="su-user" v-text="t('l_user')"></label>
+              <div class="field">
+                <svg class="ic fico" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input id="su-user" type="text" v-model="signup.username" :placeholder="t('ph_user_signup')" autocomplete="username" required />
+              </div>
+              <label class="fl" for="su-email" v-text="t('l_email')"></label>
+              <div class="field">
+                <svg class="ic fico" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <input id="su-email" type="email" v-model="signup.email" :placeholder="t('ph_email')" autocomplete="email" required />
+              </div>
+              <label class="fl" for="su-pass" v-text="t('l_pass')"></label>
+              <div class="field">
+                <svg class="ic fico" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input id="su-pass" :type="showPw?'text':'password'" v-model="signup.password" :placeholder="t('ph_pass_signup')" autocomplete="new-password" required />
+                <button type="button" class="toggle-pw" @click="showPw=!showPw" aria-label="Show or hide password">
+                  <svg v-if="!showPw" class="ic" viewBox="0 0 24 24"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg v-else class="ic" viewBox="0 0 24 24"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.21 6.57 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg>
+                </button>
+              </div>
+              <button type="submit" class="submit" :class="{busy:isSigningUp}" :disabled="isSigningUp">
+                <span class="lbl" v-text="t('btn_create')"></span><span class="spin"></span>
+              </button>
+              <p class="legal">
+                <span v-text="t('terms_pre')"></span> <a href="#" v-text="t('terms')"></a> &amp; <a href="#" v-text="t('privacy')"></a>.
+              </p>
+            </form>
+          </div>
+
+          <div class="card-loading" v-if="isGoogle"><span class="cspin"></span></div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Snackbar -->
-    <div id="snackbar"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
 
-    <script>
-                // Language selector logic for authentication
-                document.addEventListener('DOMContentLoaded', function() {
-                    const languageSelect = document.getElementById('settings-language');
-                    if (languageSelect) {
-                        // Set initial value from localStorage
-                        const lang = localStorage.getItem('preferred_language') || 'en';
-                        languageSelect.value = lang;
-                        languageSelect.addEventListener('change', function() {
-                            localStorage.setItem('preferred_language', this.value);
-                            location.reload();
-                        });
-                    }
-                });
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Vue app
-            const { createApp } = Vue;
+  <script>
+    const DICT = {
+      en:{hero_title:"Grow more. Waste less. Sell smarter.",hero_sub:"The all-in-one platform for African agriculture — farms, weather, market prices, and trade in one place.",feat1:"Live market prices across 37 commodities",feat2:"Per-farm weather, updated through the day",feat3:"Farms, crops, livestock & trade in one place",welcome:"Welcome back",create_head:"Create your account",login_sub:"Sign in to your farm dashboard.",signup_sub:"Join the agricultural revolution in minutes.",tab_signin:"Sign in",tab_create:"Create account",l_user:"Username",l_email:"Email",l_pass:"Password",ph_user_login:"your-username",ph_user_signup:"pick-a-username",ph_email:"you@example.com",ph_pass_signup:"At least 8 characters",btn_signin:"Sign in",btn_create:"Create account",new_here:"New here?",create_link:"Create an account",terms_pre:"By creating an account you agree to our",terms:"Terms",privacy:"Privacy Policy",t_created:"Account created — welcome aboard!",t_welcome:"Welcome back!",t_need:"Enter your username and password.",t_badlogin:"Invalid username or password.",t_regfail:"Registration failed. Try another username or email."},
+      fr:{hero_title:"Cultivez plus. Gaspillez moins. Vendez mieux.",hero_sub:"La plateforme tout-en-un pour l'agriculture africaine — fermes, météo, prix du marché et commerce.",feat1:"Prix du marché en direct sur 37 produits",feat2:"Météo par ferme, mise à jour dans la journée",feat3:"Fermes, cultures, élevage et commerce réunis",welcome:"Bon retour",create_head:"Créez votre compte",login_sub:"Connectez-vous à votre tableau de bord.",signup_sub:"Rejoignez la révolution agricole en quelques minutes.",tab_signin:"Connexion",tab_create:"Créer un compte",l_user:"Nom d'utilisateur",l_email:"E-mail",l_pass:"Mot de passe",ph_user_login:"votre-identifiant",ph_user_signup:"choisissez-un-identifiant",ph_email:"vous@exemple.com",ph_pass_signup:"Au moins 8 caractères",btn_signin:"Se connecter",btn_create:"Créer un compte",new_here:"Nouveau ici ?",create_link:"Créer un compte",terms_pre:"En créant un compte, vous acceptez nos",terms:"Conditions",privacy:"Politique de confidentialité",t_created:"Compte créé — bienvenue !",t_welcome:"Bon retour !",t_need:"Saisissez votre identifiant et votre mot de passe.",t_badlogin:"Identifiant ou mot de passe invalide.",t_regfail:"Échec de l'inscription. Essayez un autre identifiant ou e-mail."},
+      es:{hero_title:"Cultiva más. Desperdicia menos. Vende mejor.",hero_sub:"La plataforma todo en uno para la agricultura africana — granjas, clima, precios de mercado y comercio.",feat1:"Precios de mercado en vivo de 37 productos",feat2:"Clima por granja, actualizado durante el día",feat3:"Granjas, cultivos, ganado y comercio juntos",welcome:"Bienvenido de nuevo",create_head:"Crea tu cuenta",login_sub:"Inicia sesión en tu panel.",signup_sub:"Únete a la revolución agrícola en minutos.",tab_signin:"Iniciar sesión",tab_create:"Crear cuenta",l_user:"Usuario",l_email:"Correo",l_pass:"Contraseña",ph_user_login:"tu-usuario",ph_user_signup:"elige-un-usuario",ph_email:"tu@ejemplo.com",ph_pass_signup:"Al menos 8 caracteres",btn_signin:"Iniciar sesión",btn_create:"Crear cuenta",new_here:"¿Nuevo aquí?",create_link:"Crear una cuenta",terms_pre:"Al crear una cuenta aceptas nuestros",terms:"Términos",privacy:"Política de privacidad",t_created:"Cuenta creada — ¡bienvenido!",t_welcome:"¡Bienvenido de nuevo!",t_need:"Introduce tu usuario y contraseña.",t_badlogin:"Usuario o contraseña no válidos.",t_regfail:"Error en el registro. Prueba otro usuario o correo."},
+      pt:{hero_title:"Cultive mais. Desperdice menos. Venda melhor.",hero_sub:"A plataforma tudo-em-um para a agricultura africana — fazendas, clima, preços de mercado e comércio.",feat1:"Preços de mercado ao vivo de 37 produtos",feat2:"Clima por fazenda, atualizado durante o dia",feat3:"Fazendas, culturas, pecuária e comércio juntos",welcome:"Bem-vindo de volta",create_head:"Crie a sua conta",login_sub:"Entre no seu painel.",signup_sub:"Junte-se à revolução agrícola em minutos.",tab_signin:"Entrar",tab_create:"Criar conta",l_user:"Usuário",l_email:"E-mail",l_pass:"Senha",ph_user_login:"seu-usuario",ph_user_signup:"escolha-um-usuario",ph_email:"voce@exemplo.com",ph_pass_signup:"Pelo menos 8 caracteres",btn_signin:"Entrar",btn_create:"Criar conta",new_here:"Novo aqui?",create_link:"Criar uma conta",terms_pre:"Ao criar uma conta você aceita nossos",terms:"Termos",privacy:"Política de Privacidade",t_created:"Conta criada — bem-vindo!",t_welcome:"Bem-vindo de volta!",t_need:"Digite seu usuário e senha.",t_badlogin:"Usuário ou senha inválidos.",t_regfail:"Falha no cadastro. Tente outro usuário ou e-mail."},
+      sw:{hero_title:"Lima zaidi. Poteza kidogo. Uza kwa busara.",feat1:"Bei za soko za moja kwa moja kwa bidhaa 37",feat2:"Hali ya hewa kwa shamba, sasishwa mchana",feat3:"Mashamba, mazao, mifugo na biashara pamoja",welcome:"Karibu tena",create_head:"Fungua akaunti yako",login_sub:"Ingia kwenye dashibodi yako.",signup_sub:"Jiunge na mapinduzi ya kilimo kwa dakika chache.",tab_signin:"Ingia",tab_create:"Fungua akaunti",l_user:"Jina la mtumiaji",l_email:"Barua pepe",l_pass:"Nywila",ph_user_login:"jina-lako",ph_user_signup:"chagua-jina",ph_email:"wewe@mfano.com",ph_pass_signup:"Angalau herufi 8",btn_signin:"Ingia",btn_create:"Fungua akaunti",new_here:"Mgeni hapa?",create_link:"Fungua akaunti",terms_pre:"Kwa kufungua akaunti unakubali",terms:"Masharti",privacy:"Sera ya Faragha",t_created:"Akaunti imefunguliwa — karibu!",t_welcome:"Karibu tena!",t_need:"Weka jina la mtumiaji na nywila.",t_badlogin:"Jina au nywila si sahihi.",t_regfail:"Usajili umeshindikana. Jaribu jina au barua pepe nyingine."},
+      ar:{hero_title:"ازرع أكثر. أهدر أقل. بِع بذكاء.",feat1:"أسعار السوق المباشرة لـ 37 سلعة",feat2:"طقس لكل مزرعة، يُحدَّث خلال اليوم",feat3:"المزارع والمحاصيل والماشية والتجارة معًا",welcome:"مرحبًا بعودتك",create_head:"أنشئ حسابك",login_sub:"سجّل الدخول إلى لوحة التحكم.",signup_sub:"انضم إلى الثورة الزراعية في دقائق.",tab_signin:"تسجيل الدخول",tab_create:"إنشاء حساب",l_user:"اسم المستخدم",l_email:"البريد الإلكتروني",l_pass:"كلمة المرور",ph_user_login:"اسم-المستخدم",ph_user_signup:"اختر-اسمًا",ph_email:"you@example.com",ph_pass_signup:"8 أحرف على الأقل",btn_signin:"تسجيل الدخول",btn_create:"إنشاء حساب",new_here:"جديد هنا؟",create_link:"إنشاء حساب",terms_pre:"بإنشاء حساب فإنك توافق على",terms:"الشروط",privacy:"سياسة الخصوصية",t_created:"تم إنشاء الحساب — مرحبًا بك!",t_welcome:"مرحبًا بعودتك!",t_need:"أدخل اسم المستخدم وكلمة المرور.",t_badlogin:"اسم المستخدم أو كلمة المرور غير صحيحة.",t_regfail:"فشل التسجيل. جرّب اسمًا أو بريدًا آخر."}
+    };
+    function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+    function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+    const GOOGLE_CLIENT_ID = '971117362434-eip5e1hqarqhsed65ne29qcsbjjkcth4.apps.googleusercontent.com';
 
-            const app = createApp({
-                data() {
-                    return {
-                        signup: { username: '', email: '', password: '' },
-                        login: { username: '', password: '' },
-                        isSigningUp: false,
-                        isLoggingIn: false
-                    }
-                },
-                methods: {
-                    showToast(msg, success = false) {
-                        const snackbar = document.getElementById('snackbar');
-                        snackbar.textContent = msg;
-                        snackbar.className = success ? 'show success' : 'show';
-                        setTimeout(() => {
-                            snackbar.className = '';
-                        }, 4000);
-                    },
+    /* ---- procedural farmland mosaic ---- */
+    function buildFarmland(){
+      const W=1200,H=820,cols=7,rows=6;
+      const jx=(W/cols)*0.32, jy=(H/rows)*0.32;
+      const P=[];
+      for(let r=0;r<=rows;r++){ P[r]=[]; for(let c=0;c<=cols;c++){
+        const edge=(r===0||r===rows||c===0||c===cols);
+        P[r][c]={ x:(c/cols)*W + (edge?0:(Math.random()*2-1)*jx),
+                  y:(r/rows)*H + (edge?0:(Math.random()*2-1)*jy) };
+      }}
+      const pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],
+                 ['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']];
+      const ang=[0,16,90,74,16,0,90,30,16];
+      let defs='';
+      pal.forEach((c,i)=>{ defs+='<pattern id="cp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
+      const bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8];
+      let cells='';
+      for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+        const a=P[r][c],b=P[r][c+1],d=P[r+1][c+1],e=P[r+1][c];
+        const fi=bag[Math.floor(Math.random()*bag.length)];
+        cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#cp'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>';
+      }
+      return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
+    }
+    function spawnMotes(){
+      const sc=document.querySelector('.scene'); if(!sc) return;
+      for(let i=0;i<9;i++){
+        const m=document.createElement('div'); m.className='mote';
+        const s=2+Math.random()*4;
+        m.style.width=s+'px'; m.style.height=s+'px';
+        m.style.left=(Math.random()*100)+'%'; m.style.top=(60+Math.random()*40)+'%';
+        m.style.animationDuration=(7+Math.random()*8)+'s';
+        m.style.animationDelay=(-Math.random()*10)+'s';
+        sc.appendChild(m);
+      }
+    }
+    document.getElementById('farmland').innerHTML = buildFarmland();
+    spawnMotes();
 
-                    async register() {
-                        this.isSigningUp = true;
-                        try {
-                            // Create user account
-                            await axios.post('http://127.0.0.1:8000/api/users/', {
-                                username: this.signup.username,
-                                email: this.signup.email,
-                                password: this.signup.password
-                            });
-
-                            // Get authentication tokens
-                            const tokenResponse = await axios.post('http://127.0.0.1:8000/api/auth/token/', {
-                                username: this.signup.username,
-                                password: this.signup.password
-                            });
-
-                            localStorage.setItem('access_token', tokenResponse.data.access);
-                            localStorage.setItem('refresh_token', tokenResponse.data.refresh);
-
-                            this.showToast('Account created successfully!', true);
-
-                            const container = document.getElementById('container');
-                            container.classList.add('fade-out');
-                            setTimeout(() => {
-                                window.location.href = 'multi_farm.html';
-                            }, 800);
-
-                        } catch (error) {
-                            console.error('Registration error:', error);
-                            const errorMessage = error.response?.data
-                                ? Object.values(error.response.data).flat().join(', ')
-                                : 'Registration failed. Try another username/email.';
-                            this.showToast(errorMessage);
-                        } finally {
-                            this.isSigningUp = false;
-                        }
-                    },
-
-                    async handleLogin() {
-                        console.log('Login handler called');
-                        console.log('Login credentials:', this.login);
-                        
-                        if (!this.login.username || !this.login.password) {
-                            this.showToast('Please enter username and password');
-                            return;
-                        }
-
-                        this.isLoggingIn = true;
-
-                        try {
-                            console.log('Sending login request...');
-                            const response = await axios.post('http://127.0.0.1:8000/api/auth/token/', {
-                                username: this.login.username,
-                                password: this.login.password
-                            });
-
-                            console.log('Login response:', response);
-
-                            localStorage.setItem('access_token', response.data.access);
-                            localStorage.setItem('refresh_token', response.data.refresh);
-
-                            this.showToast('Welcome back!', true);
-
-                            const container = document.getElementById('container');
-                            container.classList.add('fade-out');
-                            setTimeout(() => {
-                                window.location.href = 'multi_farm.html';
-                            }, 800);
-
-                        } catch (error) {
-                            console.error('Login error:', error);
-                            const errorMessage = error.response?.data?.detail || 'Invalid username or password';
-                            this.showToast(errorMessage);
-                        } finally {
-                            this.isLoggingIn = false;
-                        }
-                    }
-                }
-            });
-            
-            app.mount('#app');
-
-            // Panel switching
-            document.getElementById('signUp').onclick = () => 
-                document.getElementById('container').classList.add('right-panel-active');
-            document.getElementById('signIn').onclick = () => 
-                document.getElementById('container').classList.remove('right-panel-active');
-        });
-    </script>
+    Vue.createApp({
+      data(){ return {
+        mode:'login', showPw:false, lang:'en', tk:0, tkSwap:false, shellH:'', gReady:false, isGoogle:false,
+        signup:{username:'',email:'',password:''}, login:{username:'',password:''},
+        isSigningUp:false, isLoggingIn:false
+      };},
+      watch:{ mode(){ this.setShellH(); } },
+      mounted(){
+        const s=lsGet('preferred_language'); if(s && DICT[s]) this.lang=s;
+        this.applyDir();
+        this.setShellH();
+        this.initGoogle();
+        if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>this.setShellH());
+        window.addEventListener('load', ()=>this.setShellH());
+        window.addEventListener('resize', ()=>this.setShellH());
+        setInterval(()=>{ this.tkSwap=true; setTimeout(()=>{ this.tk=(this.tk+1)%3; this.tkSwap=false; },380); }, 3600);
+      },
+      methods:{
+        setShellH(){ this.$nextTick(()=>{ const el = this.mode==='login' ? this.$refs.loginForm : this.$refs.signupForm; if(el) this.shellH = el.scrollHeight + 'px'; }); },
+        orWord(){ return ({en:'or',fr:'ou',es:'o',pt:'ou',sw:'au',ar:'أو'})[this.lang] || 'or'; },
+        initGoogle(tries=0){
+          if(window.google && window.google.accounts && window.google.accounts.id){
+            try{
+              window.google.accounts.id.initialize({ client_id:GOOGLE_CLIENT_ID, callback:this.onGoogle });
+              const host=this.$refs.gbtn;
+              const w=host ? Math.min(400, Math.max(240, host.clientWidth||320)) : 320;
+              window.google.accounts.id.renderButton(host, { type:'standard', theme:'outline', size:'large', shape:'pill', text:'continue_with', logo_alignment:'center', width:w });
+              this.gReady=true;
+            }catch(e){ /* keep styled fallback */ }
+          }else if(tries<24){
+            setTimeout(()=>this.initGoogle(tries+1), 250);
+          }
+        },
+        googleFallback(){
+          if(window.google && window.google.accounts && window.google.accounts.id){
+            try{ window.google.accounts.id.prompt(); return; }catch(e){}
+          }
+          this.showToast('Google sign-in becomes active on your live site.');
+        },
+        onGoogle(resp){
+          if(!resp || !resp.credential){ this.showToast(this.t('t_badlogin')); return; }
+          this.isGoogle=true;
+          axios.post('/api/auth/google/', { token:resp.credential })
+            .then(res=>{ lsSet('access_token',res.data.access); lsSet('refresh_token',res.data.refresh);
+              this.showToast(res.data.created ? this.t('t_created') : this.t('t_welcome'), true); this.finishAndRedirect(); })
+            .catch(err=>{ this.isGoogle=false;
+              const d=err.response && err.response.data;
+              this.showToast((d && (d.detail||d.error)) || this.t('t_badlogin')); });
+        },
+        t(key){ const d=DICT[this.lang]; return (d && d[key]) || DICT.en[key] || key; },
+        applyDir(){ document.documentElement.setAttribute('dir', this.lang==='ar'?'rtl':'ltr'); },
+        onLang(){ lsSet('preferred_language', this.lang); this.applyDir(); this.setShellH(); },
+        showToast(msg, ok=false){
+          const el=document.getElementById('toast');
+          const icon = ok
+            ? '<svg class="ic" style="color:#6ee7b7" viewBox="0 0 24 24"><path d="M21.8 10A10 10 0 1 1 17 3.34"/><path d="m9 11 3 3L22 4"/></svg>'
+            : '<svg class="ic" style="color:#fca5a5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>';
+          el.innerHTML=icon+'<span></span>'; el.querySelector('span').textContent=msg;
+          el.className = ok?'show ok':'show';
+          clearTimeout(this._tt); this._tt=setTimeout(()=>{ el.className=''; },4000);
+        },
+        finishAndRedirect(){ document.body.classList.add('leaving'); setTimeout(()=>{ window.location.href='multi_farm.html'; },650); },
+        async register(){
+          if(this.isSigningUp) return; this.isSigningUp=true;
+          try{
+            await axios.post('/api/users/', { username:this.signup.username, email:this.signup.email, password:this.signup.password });
+            const tok=await axios.post('/api/auth/token/', { username:this.signup.username, password:this.signup.password });
+            lsSet('access_token', tok.data.access); lsSet('refresh_token', tok.data.refresh);
+            this.showToast(this.t('t_created'), true); this.finishAndRedirect();
+          }catch(err){
+            const data=err.response && err.response.data;
+            this.showToast(data ? Object.values(data).flat().join(' ') : this.t('t_regfail'));
+          }finally{ this.isSigningUp=false; }
+        },
+        async handleLogin(){
+          if(!this.login.username || !this.login.password){ this.showToast(this.t('t_need')); return; }
+          if(this.isLoggingIn) return; this.isLoggingIn=true;
+          try{
+            const res=await axios.post('/api/auth/token/', { username:this.login.username, password:this.login.password });
+            lsSet('access_token', res.data.access); lsSet('refresh_token', res.data.refresh);
+            this.showToast(this.t('t_welcome'), true); this.finishAndRedirect();
+          }catch(err){
+            this.showToast((err.response && err.response.data && err.response.data.detail) || this.t('t_badlogin'));
+          }finally{ this.isLoggingIn=false; }
+        }
+      }
+    }).mount('#app');
+  </script>
 </body>
 </html>
