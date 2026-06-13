@@ -1,0 +1,522 @@
+{% extends 'dashboard/base.html' %}
+{# ============================================================
+   AGRICORE — ADD LIVESTOCK UNIT
+   Reskinned to the live farmland identity. ALL behaviour kept
+   verbatim: adaptive type templates, purpose tag-input, sub-units
+   repeater, POST /api/livestock-units/, token auth + redirects.
+   Only the markup classes + styling changed (Tailwind -> themed).
+   ============================================================ #}
+{% block dashboard_content %}
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  .lv{
+    --g500:#10b981; --g600:#059669; --g700:#047857; --g900:#064e3b;
+    --ink:#16271c; --s700:#334155; --s600:#475569; --s500:#64748b; --s400:#94a3b8; --s200:#e2e8f0;
+    --cream:#faf6ee; --line:#ece4d6; --ring:rgba(16,185,129,.18); --r:14px;
+    font-family:'Inter',system-ui,sans-serif; color:var(--ink);
+  }
+  .lv h1,.lv h2,.lv h3{ font-family:'Fraunces',serif; letter-spacing:-.02em; }
+  .lv .ic{ stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .lv svg{ display:block; }
+  .lv-wrap{ max-width:880px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2rem) 3rem; }
+
+  /* ===== farmland banner (same scene as dashboard/auth) ===== */
+  .lv-hero{ position:relative; overflow:hidden; background:#22432c; border-radius:0 0 26px 26px;
+    min-height:clamp(168px,24vh,210px); display:flex; align-items:flex-end; }
+  .lv-scene{ position:absolute; inset:0; overflow:hidden; }
+  .lv-scene .farmland{ position:absolute; inset:-2%; }
+  .lv-scene .farmland svg{ width:100%; height:100%; }
+  .lv-scene .sun{ position:absolute; top:-34%; right:-8%; width:44vmax; height:44vmax; pointer-events:none;
+    background:radial-gradient(circle, rgba(255,231,168,.55), rgba(255,205,120,.18) 42%, transparent 66%); }
+  .lv-scene .grade{ position:absolute; inset:0; pointer-events:none; mix-blend-mode:soft-light;
+    background:linear-gradient(175deg, rgba(255,226,160,.45) 0%, rgba(120,150,90,0) 26%, rgba(14,38,22,.55) 100%); }
+  .lv-scene .sweep{ position:absolute; top:-30%; left:-50%; width:55%; height:160%; pointer-events:none;
+    transform:rotate(13deg); filter:blur(10px); mix-blend-mode:screen;
+    background:linear-gradient(90deg,transparent,rgba(255,246,222,.12),transparent); animation:lv-sweep 11s linear infinite; }
+  @keyframes lv-sweep{ from{transform:translateX(-10%) rotate(13deg)} to{transform:translateX(360%) rotate(13deg)} }
+  .lv-scene .vignette{ position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(130% 120% at 45% 25%, transparent 42%, rgba(8,22,13,.64)); }
+  .lv-scene .pin{ position:absolute; width:12px; height:12px; pointer-events:none; transform:translate(-50%,-50%); }
+  .lv-scene .pin i{ position:absolute; inset:0; border-radius:50%; background:#fff;
+    box-shadow:0 0 0 3px rgba(255,255,255,.35),0 6px 14px rgba(0,0,0,.4); }
+  .lv-scene .pin::after{ content:""; position:absolute; inset:-8px; border-radius:50%;
+    border:2px solid rgba(255,255,255,.5); animation:lv-ping 2.6s ease-out infinite; }
+  @keyframes lv-ping{ 0%{transform:scale(.5);opacity:.8} 100%{transform:scale(1.8);opacity:0} }
+
+  .lv-hero-in{ position:relative; z-index:3; width:100%; max-width:880px; margin:0 auto;
+    padding:clamp(1.2rem,4vw,1.8rem) clamp(1.1rem,4vw,2rem); color:#fff; }
+  .lv-emblem{ width:52px; height:52px; border-radius:15px; display:grid; place-items:center; color:#fff;
+    background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.32); backdrop-filter:blur(8px);
+    box-shadow:0 16px 36px -16px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.4);
+    animation:lv-pop .8s cubic-bezier(.2,.9,.3,1.3) both; }
+  .lv-emblem svg{ width:27px; height:27px; stroke-width:1.7; }
+  .lv-kick{ display:inline-flex; align-items:center; gap:.5rem; margin:.85rem 0 .65rem;
+    font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.85);
+    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); padding:.38rem .8rem; border-radius:999px;
+    backdrop-filter:blur(6px); animation:lv-rise .8s ease .1s both; }
+  .lv-kick .dot{ width:7px; height:7px; border-radius:50%; background:#86efac; box-shadow:0 0 10px #86efac; }
+  .lv-hero h1{ font-weight:900; font-size:clamp(1.7rem,4vw,2.5rem); line-height:1.04;
+    text-shadow:0 4px 34px rgba(0,0,0,.4); animation:lv-rise .8s ease .18s both; }
+  .lv-hero h1 .em{ font-style:italic; font-weight:500; color:#ffe6a8; }
+
+  /* ===== form card ===== */
+  .lv-card{ position:relative; z-index:4; margin-top:-1.8rem; background:#fff; border:1px solid var(--line);
+    border-radius:24px; box-shadow:0 30px 70px -34px rgba(6,28,15,.5); padding:clamp(1.5rem,3.5vw,2.6rem);
+    animation:lv-rise .7s ease .12s both; }
+  .lv-card .intro{ color:var(--s500); margin:.25rem 0 1.7rem; font-weight:500; }
+
+  .lv-field{ margin-bottom:1.2rem; }
+  .lv-label{ display:block; font-size:.84rem; font-weight:600; color:var(--s700); margin:0 0 .5rem 2px; }
+  .lv-label .opt{ color:var(--s400); font-weight:400; }
+  .lv-hint{ font-size:.78rem; color:var(--s400); margin-top:.4rem; }
+
+  .lv-input,.lv-select,.lv-textarea{ width:100%; border:1.5px solid var(--s200); border-radius:var(--r);
+    padding:0 1rem; height:50px; font:500 1rem 'Inter',sans-serif; color:var(--ink); background:#fff;
+    transition:border-color .2s, box-shadow .2s; }
+  .lv-textarea{ height:auto; padding:.7rem 1rem; line-height:1.5; resize:vertical; }
+  .lv-input::placeholder,.lv-textarea::placeholder{ color:var(--s400); }
+  .lv-input:focus,.lv-select:focus,.lv-textarea:focus{ outline:none; border-color:var(--g500);
+    box-shadow:0 0 0 4px var(--ring); }
+  .lv-select{ appearance:none; -webkit-appearance:none; cursor:pointer; padding-right:2.6rem;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%23047857' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 1rem center; }
+
+  .lv-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; }
+  .lv-grid .lv-field{ margin-bottom:0; }
+  @media (max-width:600px){ .lv-grid{ grid-template-columns:1fr; } }
+
+  /* purpose tags */
+  .lv-tags{ display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:.6rem; }
+  .lv-tag{ display:inline-flex; align-items:center; gap:.5rem; background:#e7f4ec; color:#0f7a4b;
+    padding:.4rem .85rem; border-radius:999px; font-weight:600; font-size:.9rem; }
+  .lv-tag button{ background:none; border:0; color:#0f7a4b; cursor:pointer; font-size:1.1rem; line-height:1;
+    padding:0; display:grid; place-items:center; transition:color .15s; }
+  .lv-tag button:hover{ color:#dc2626; }
+
+  /* sub-units */
+  .lv-sub-row{ display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; margin-bottom:.7rem; }
+  .lv-sub-row .lv-input{ flex:1 1 8rem; min-width:7rem; height:46px; }
+  .lv-remove{ flex:none; width:40px; height:40px; border-radius:11px; border:1.5px solid var(--s200);
+    background:#fff; color:#b91c1c; font-size:1.2rem; line-height:1; cursor:pointer; display:grid; place-items:center;
+    transition:all .18s; }
+  .lv-remove:hover{ background:#fef2f2; border-color:#fecaca; }
+  .lv-addsub{ display:inline-flex; align-items:center; gap:.4rem; margin-top:.3rem; padding:.55rem 1rem;
+    border:0; border-radius:11px; cursor:pointer; font:700 .9rem 'Inter',sans-serif;
+    background:#e7f4ec; color:#0f7a4b; transition:background .18s, transform .18s; }
+  .lv-addsub:hover{ background:#d6efe0; transform:translateY(-1px); }
+  .lv-addsub svg{ width:16px; height:16px; }
+
+  /* submit */
+  .lv-submit{ position:relative; overflow:hidden; width:100%; height:56px; margin-top:1.8rem; border:0;
+    border-radius:var(--r); cursor:pointer; font:800 1.05rem 'Inter',sans-serif; color:#fff;
+    background:linear-gradient(135deg,var(--g500),var(--g700));
+    box-shadow:0 16px 34px -12px rgba(5,120,80,.6); transition:transform .2s, box-shadow .2s;
+    display:inline-flex; align-items:center; justify-content:center; gap:.55rem; }
+  .lv-submit:hover{ transform:translateY(-2px); box-shadow:0 22px 44px -12px rgba(5,120,80,.72); }
+  .lv-submit:active{ transform:translateY(0); }
+  .lv-submit svg{ width:19px; height:19px; }
+
+  /* inline alert */
+  .lv-alert{ margin-top:1.4rem; border-radius:13px; padding:.85rem 1.05rem; font-size:.92rem; font-weight:600;
+    display:flex; align-items:center; gap:.6rem; }
+  .lv-alert svg{ width:20px; height:20px; flex:none; }
+  .lv-alert.ok{ background:#e7f6ec; color:#0f7a4b; border:1px solid #c5ead2; }
+  .lv-alert.err{ background:#fdecec; color:#b42318; border:1px solid #f6cccc; }
+
+  .lv-section-gap{ margin-top:1.2rem; }
+  @keyframes lv-rise{ from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
+  @keyframes lv-pop{ from{opacity:0;transform:scale(.7)} to{opacity:1;transform:scale(1)} }
+  @media (prefers-reduced-motion:reduce){ .lv *{ animation:none!important } }
+</style>
+
+<div class="lv">
+
+  {# ---------- farmland banner ---------- #}
+  <section class="lv-hero">
+    <div class="lv-scene">
+      <div class="farmland" id="lvFarmland"></div>
+      <div class="sun"></div>
+      <div class="grade"></div>
+      <div class="sweep"></div>
+      <div class="pin" style="left:24%;top:44%"><i></i></div>
+      <div class="pin" style="left:66%;top:60%"><i></i></div>
+      <div class="vignette"></div>
+    </div>
+    <div class="lv-hero-in">
+      <div class="lv-emblem">
+        {# cow mark, .ic stroke style #}
+        <svg class="ic" viewBox="0 0 24 24"><rect x="5" y="6.5" width="14" height="11.5" rx="5.5"/><path d="M5.2 8.4C3.4 6.6 3.4 4.4 5.6 4.4"/><path d="M18.8 8.4c1.8-1.8 1.8-4 -0.4-4"/><ellipse cx="12" cy="14" rx="4.2" ry="3"/><circle cx="10.3" cy="14.2" r=".55"/><circle cx="13.7" cy="14.2" r=".55"/><circle cx="9" cy="10.3" r=".6"/><circle cx="15" cy="10.3" r=".6"/></svg>
+      </div>
+      <span class="lv-kick"><span class="dot"></span> Livestock registry</span>
+      <h1>Add a <span class="em">livestock unit</span></h1>
+    </div>
+  </section>
+
+  {# ---------- form card ---------- #}
+  <div class="lv-wrap">
+    <div class="lv-card">
+      <p class="intro">Fill in the details below to register livestock on your farm.</p>
+
+      <form id="add-livestock-unit-form" method="POST" action="#">
+        {% csrf_token %}
+
+        <div class="lv-field">
+          <label class="lv-label">What are you adding?</label>
+          <select id="unit-type-select" name="unit_type" class="lv-select" required>
+            <option value="">Select…</option>
+            <option value="individual">Individual animal</option>
+            <option value="herd">Herd</option>
+            <option value="batch">Batch / stock</option>
+            <option value="colony">Bee colony / hive</option>
+            <option value="population">Population / culture</option>
+          </select>
+        </div>
+
+        <div class="lv-field">
+          <label class="lv-label">Purpose <span class="opt">(enter or select multiple)</span></label>
+          <div id="purpose-tags" class="lv-tags"></div>
+          <input type="text" id="purpose-input" class="lv-input" placeholder="Type and press Enter (e.g. Meat, Milk, Custom…)" autocomplete="off">
+          <p class="lv-hint">Suggestions: Meat, Milk, Eggs, Breeding, Honey, Wax, Fish, Manure, Other</p>
+        </div>
+
+        <div class="lv-field">
+          <label class="lv-label">Livestock name <span class="opt">(required)</span></label>
+          <input type="text" name="unit_name" class="lv-input" placeholder="e.g. Main Herd, Daisy" required>
+        </div>
+
+        <div class="lv-field">
+          <label class="lv-label">Sub-units <span class="opt">(optional, e.g. Chicks, Growers, Layers)</span></label>
+          <div id="sub-units-list"></div>
+          <button type="button" id="add-sub-unit-btn" class="lv-addsub">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Add sub-unit
+          </button>
+        </div>
+
+        <div id="adaptive-fields"></div>
+
+        <button type="submit" class="lv-submit">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Save livestock unit
+        </button>
+      </form>
+
+      <div id="add-livestock-msg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ---- farmland mosaic for the banner (same generator as the rest) ---- */
+  (function(){
+    function buildFarmland(){
+      var W=1200,H=820,cols=7,rows=6;
+      var jx=(W/cols)*0.32, jy=(H/rows)*0.32, P=[];
+      for(var r=0;r<=rows;r++){ P[r]=[]; for(var c=0;c<=cols;c++){
+        var edge=(r===0||r===rows||c===0||c===cols);
+        P[r][c]={ x:(c/cols)*W + (edge?0:(Math.random()*2-1)*jx),
+                  y:(r/rows)*H + (edge?0:(Math.random()*2-1)*jy) };
+      }}
+      var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],
+               ['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']];
+      var ang=[0,16,90,74,16,0,90,30,16], defs='';
+      pal.forEach(function(c,i){ defs+='<pattern id="lcp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
+      var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8], cells='';
+      for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){
+        var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e=P[r2+1][c2];
+        var fi=bag[Math.floor(Math.random()*bag.length)];
+        cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#lcp'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>';
+      }
+      return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
+    }
+    var host=document.getElementById('lvFarmland');
+    if(host) host.innerHTML=buildFarmland();
+  })();
+
+  /* ====================================================================
+     FORM LOGIC — unchanged from the original. Only the class names used
+     inside the generated markup were themed; field names, the data model,
+     the API call, auth handling and redirects are identical.
+     ==================================================================== */
+  document.addEventListener('DOMContentLoaded', function() {
+    const unitTypeSelect = document.getElementById('unit-type-select');
+    const adaptiveFields = document.getElementById('adaptive-fields');
+    const form = document.getElementById('add-livestock-unit-form');
+    const msgDiv = document.getElementById('add-livestock-msg');
+    const subUnitsList = document.getElementById('sub-units-list');
+    const addSubUnitBtn = document.getElementById('add-sub-unit-btn');
+    const purposeInput = document.getElementById('purpose-input');
+    const purposeTagsDiv = document.getElementById('purpose-tags');
+    let submitting = false;
+    let subUnits = [];
+    let purposes = [];
+    const suggestions = ["Meat", "Milk", "Eggs", "Breeding", "Honey", "Wax", "Fish", "Manure", "Other"];
+
+    function renderPurposeTags() {
+        purposeTagsDiv.innerHTML = '';
+        purposes.forEach((purpose, idx) => {
+            const tag = document.createElement('span');
+            tag.className = 'lv-tag';
+            tag.innerHTML = `${purpose} <button type="button" data-idx="${idx}" title="Remove">&times;</button>`;
+            purposeTagsDiv.appendChild(tag);
+        });
+    }
+    purposeTagsDiv.addEventListener('click', function(e) {
+        const btn = e.target.closest('button');
+        if (btn && btn.dataset.idx) {
+            purposes.splice(Number(btn.dataset.idx), 1);
+            renderPurposeTags();
+        }
+    });
+    purposeInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            let val = purposeInput.value.trim();
+            if (val && !purposes.includes(val)) {
+                purposes.push(val);
+                renderPurposeTags();
+            }
+            purposeInput.value = '';
+        }
+    });
+    // Suggestion autocomplete (basic, for UX)
+    purposeInput.addEventListener('input', function() {
+        const val = purposeInput.value.toLowerCase();
+        if (!val) return;
+        const match = suggestions.find(s => s.toLowerCase().startsWith(val));
+        if (match && !purposes.includes(match)) {
+            purposeInput.value = match;
+            purposeInput.setSelectionRange(val.length, match.length);
+        }
+    });
+
+    // Field templates for each type (themed inputs, same fields/names)
+    const fieldTemplates = {
+        individual: `
+            <div class="lv-section-gap"></div>
+            <div class="lv-grid">
+                <div class="lv-field"><label class="lv-label">Name / tag</label>
+                    <input type="text" name="name" class="lv-input" placeholder="e.g. Daisy, Tag #123"></div>
+                <div class="lv-field"><label class="lv-label">Species</label>
+                    <input type="text" name="species" class="lv-input" placeholder="e.g. Cow, Goat"></div>
+                <div class="lv-field"><label class="lv-label">Breed</label>
+                    <input type="text" name="breed" class="lv-input" placeholder="e.g. Friesian, Boer"></div>
+                <div class="lv-field"><label class="lv-label">Date of birth</label>
+                    <input type="date" name="date_of_birth" class="lv-input"></div>
+                <div class="lv-field"><label class="lv-label">Sex</label>
+                    <select name="sex" class="lv-select">
+                        <option value="">Select sex…</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="unknown">Unknown</option>
+                    </select></div>
+                <div class="lv-field"><label class="lv-label">Current weight (kg)</label>
+                    <input type="number" step="0.01" name="weight" class="lv-input" placeholder="e.g. 350.5"></div>
+                <div class="lv-field"><label class="lv-label">Health status</label>
+                    <input type="text" name="health_status" class="lv-input" placeholder="e.g. Healthy, Injured"></div>
+                <div class="lv-field"><label class="lv-label">Location / pen</label>
+                    <input type="text" name="location" class="lv-input" placeholder="e.g. Pen 4, Barn A"></div>
+            </div>
+            <div class="lv-field" style="margin-top:1rem"><label class="lv-label">Notes</label>
+                <textarea name="notes" class="lv-textarea" placeholder="Any additional notes…" rows="2"></textarea></div>
+        `,
+        herd: `
+            <div class="lv-section-gap"></div>
+            <div class="lv-grid">
+                <div class="lv-field"><label class="lv-label">Herd name</label>
+                    <input type="text" name="herd_name" class="lv-input" placeholder="e.g. Main Herd"></div>
+                <div class="lv-field"><label class="lv-label">Species</label>
+                    <input type="text" name="species" class="lv-input" placeholder="e.g. Cattle, Goat"></div>
+                <div class="lv-field"><label class="lv-label">Breed</label>
+                    <input type="text" name="breed" class="lv-input" placeholder="e.g. Friesian, Boer"></div>
+                <div class="lv-field"><label class="lv-label">Quantity</label>
+                    <input type="number" name="quantity" class="lv-input" placeholder="e.g. 50"></div>
+                <div class="lv-field"><label class="lv-label">Average age</label>
+                    <input type="text" name="average_age" class="lv-input" placeholder="e.g. 2 years"></div>
+                <div class="lv-field"><label class="lv-label">Average weight (kg)</label>
+                    <input type="number" step="0.01" name="average_weight" class="lv-input" placeholder="e.g. 350.5"></div>
+                <div class="lv-field"><label class="lv-label">Health status</label>
+                    <input type="text" name="health_status" class="lv-input" placeholder="e.g. Healthy, Injured"></div>
+            </div>
+            <div class="lv-field" style="margin-top:1rem"><label class="lv-label">Notes</label>
+                <textarea name="notes" class="lv-textarea" placeholder="Any additional notes…" rows="2"></textarea></div>
+        `,
+        batch: `
+            <div class="lv-section-gap"></div>
+            <div class="lv-grid">
+                <div class="lv-field"><label class="lv-label">Batch name</label>
+                    <input type="text" name="batch_name" class="lv-input" placeholder="e.g. Batch A"></div>
+                <div class="lv-field"><label class="lv-label">Species</label>
+                    <input type="text" name="species" class="lv-input" placeholder="e.g. Tilapia, Catfish"></div>
+                <div class="lv-field"><label class="lv-label">Quantity stocked</label>
+                    <input type="number" name="quantity" class="lv-input" placeholder="e.g. 1000"></div>
+                <div class="lv-field"><label class="lv-label">Date stocked</label>
+                    <input type="date" name="date_stocked" class="lv-input"></div>
+                <div class="lv-field"><label class="lv-label">Housing</label>
+                    <input type="text" name="housing" class="lv-input" placeholder="e.g. Pond 1, Tank 2"></div>
+                <div class="lv-field"><label class="lv-label">Feed type</label>
+                    <input type="text" name="feed_type" class="lv-input" placeholder="e.g. Floating pellets"></div>
+            </div>
+            <div class="lv-field" style="margin-top:1rem"><label class="lv-label">Notes</label>
+                <textarea name="notes" class="lv-textarea" placeholder="Any additional notes…" rows="2"></textarea></div>
+        `,
+        colony: `
+            <div class="lv-section-gap"></div>
+            <div class="lv-grid">
+                <div class="lv-field"><label class="lv-label">Hive name / ID</label>
+                    <input type="text" name="hive_name" class="lv-input" placeholder="e.g. Hive 1"></div>
+                <div class="lv-field"><label class="lv-label">Bee species</label>
+                    <input type="text" name="species" class="lv-input" placeholder="e.g. Apis mellifera"></div>
+                <div class="lv-field"><label class="lv-label">Hive type</label>
+                    <input type="text" name="hive_type" class="lv-input" placeholder="e.g. Langstroth"></div>
+                <div class="lv-field"><label class="lv-label">Installation date</label>
+                    <input type="date" name="installation_date" class="lv-input"></div>
+                <div class="lv-field"><label class="lv-label">Queen status</label>
+                    <input type="text" name="queen_status" class="lv-input" placeholder="e.g. Present, Absent"></div>
+            </div>
+            <div class="lv-field" style="margin-top:1rem"><label class="lv-label">Notes</label>
+                <textarea name="notes" class="lv-textarea" placeholder="Any additional notes…" rows="2"></textarea></div>
+        `,
+        population: `
+            <div class="lv-section-gap"></div>
+            <div class="lv-grid">
+                <div class="lv-field"><label class="lv-label">Population name</label>
+                    <input type="text" name="population_name" class="lv-input" placeholder="e.g. Culture 1"></div>
+                <div class="lv-field"><label class="lv-label">Species</label>
+                    <input type="text" name="species" class="lv-input" placeholder="e.g. Yeast, Bacteria"></div>
+                <div class="lv-field"><label class="lv-label">Estimated quantity / biomass</label>
+                    <input type="number" name="quantity" class="lv-input" placeholder="e.g. 500"></div>
+                <div class="lv-field"><label class="lv-label">Container / location</label>
+                    <input type="text" name="location" class="lv-input" placeholder="e.g. Tank 2"></div>
+                <div class="lv-field"><label class="lv-label">Start date</label>
+                    <input type="date" name="start_date" class="lv-input"></div>
+            </div>
+            <div class="lv-field" style="margin-top:1rem"><label class="lv-label">Notes</label>
+                <textarea name="notes" class="lv-textarea" placeholder="Any additional notes…" rows="2"></textarea></div>
+        `
+    };
+
+    function renderFields(type) {
+        adaptiveFields.innerHTML = type && fieldTemplates[type] ? fieldTemplates[type] : '';
+    }
+
+    unitTypeSelect.addEventListener('change', function() {
+        renderFields(this.value);
+    });
+
+    // Initial render (if editing, could pre-select)
+    renderFields(unitTypeSelect.value);
+
+    // Sub-Units logic
+    function renderSubUnits() {
+        subUnitsList.innerHTML = '';
+        subUnits.forEach((sub, idx) => {
+            const div = document.createElement('div');
+            div.className = 'lv-sub-row';
+            div.innerHTML = `
+                <input type="text" class="lv-input" placeholder="Name (e.g. Chicks)" value="${sub.name || ''}" data-idx="${idx}" data-field="name">
+                <input type="number" class="lv-input" placeholder="Count" value="${sub.count || ''}" data-idx="${idx}" data-field="count">
+                <input type="text" class="lv-input" placeholder="Age range" value="${sub.age_range || ''}" data-idx="${idx}" data-field="age_range">
+                <input type="text" class="lv-input" placeholder="Stage" value="${sub.stage || ''}" data-idx="${idx}" data-field="stage">
+                <button type="button" class="lv-remove remove-sub-unit" data-idx="${idx}" title="Remove">&times;</button>
+            `;
+            subUnitsList.appendChild(div);
+        });
+    }
+    addSubUnitBtn.addEventListener('click', function() {
+        subUnits.push({ name: '', count: '', age_range: '', stage: '' });
+        renderSubUnits();
+    });
+    subUnitsList.addEventListener('input', function(e) {
+        const idx = e.target.dataset.idx;
+        const field = e.target.dataset.field;
+        if (typeof idx !== 'undefined' && field) {
+            subUnits[idx][field] = e.target.value;
+        }
+    });
+    subUnitsList.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-sub-unit')) {
+            const idx = e.target.dataset.idx;
+            subUnits.splice(idx, 1);
+            renderSubUnits();
+        }
+    });
+
+    // Form submit
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (submitting) return;
+        submitting = true;
+        msgDiv.textContent = '';
+        msgDiv.className = '';
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            showMsg('You must be logged in to add a livestock unit.', false);
+            setTimeout(() => { window.location.href = 'authentication.html'; }, 1200);
+            submitting = false;
+            return;
+        }
+        const formData = new FormData(form);
+        formData.delete('csrfmiddlewaretoken');
+        const data = {};
+        formData.forEach((v, k) => {
+            if (k === 'name') {
+                data['unit_name'] = v;
+            } else {
+                data[k] = v;
+            }
+        });
+        // Handle tag input for purpose
+        data['purpose'] = purposes;
+        if (subUnits.length > 0) {
+            data['sub_units'] = subUnits;
+        }
+        try {
+            const response = await fetch('/api/livestock-units/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(data)
+            });
+            if (response.status === 401 || response.status === 403) {
+                localStorage.clear();
+                showMsg('Session expired. Please log in again.', false);
+                setTimeout(() => { window.location.href = 'authentication.html'; }, 1200);
+                return;
+            }
+            const result = await response.json();
+            if (response.ok) {
+                showMsg('Livestock unit added successfully!', true);
+                setTimeout(() => { window.location.href = 'livestock.html'; }, 1200);
+            } else {
+                let errorMsg = 'Error: ';
+                if (result && typeof result === 'object') {
+                    errorMsg += Object.values(result).flat().join(' ');
+                } else {
+                    errorMsg += 'Could not add livestock unit.';
+                }
+                showMsg(errorMsg, false);
+            }
+        } catch (err) {
+            showMsg('Network error. Please try again.', false);
+        }
+        submitting = false;
+    });
+
+    // themed inline alert helper (replaces the old Tailwind class swaps)
+    function showMsg(text, ok) {
+        const icon = ok
+          ? '<svg class="ic" viewBox="0 0 24 24"><path d="M21.8 10A10 10 0 1 1 17 3.34"/><path d="m9 11 3 3L22 4"/></svg>'
+          : '<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>';
+        msgDiv.className = 'lv-alert ' + (ok ? 'ok' : 'err');
+        msgDiv.innerHTML = icon + '<span></span>';
+        msgDiv.querySelector('span').textContent = text;
+    }
+
+    // Initial render for sub-units
+    renderSubUnits();
+  });
+</script>
+{% endblock %}
