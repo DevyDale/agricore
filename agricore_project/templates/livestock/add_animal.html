@@ -1,5 +1,5 @@
 {% extends 'dashboard/base.html' %}
-{# AGRICORE - Livestock management. Switched {% block content %} -> dashboard_content so the shell + theme apply. All context vars & url names unchanged. #}
+{# AGRICORE - Add Animal. Switched {% block content %} -> dashboard_content. Field names, options, units loop and POST behaviour unchanged. #}
 {% block dashboard_content %}
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
@@ -156,97 +156,38 @@
 <div class="lk">
   <section class="lk-hero">
     <div class="lk-scene">
-      <div class="farmland" id="lkFarmListA"></div>
+      <div class="farmland" id="lkFarmAddAn"></div>
       <div class="sun"></div><div class="grade"></div><div class="sweep"></div>
       <div class="pin" style="left:24%;top:44%"><i></i></div><div class="pin" style="left:66%;top:60%"><i></i></div>
       <div class="vignette"></div>
     </div>
     <div class="lk-hero-in">
-      <div class="lk-emblem"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="6.5" width="14" height="11.5" rx="5.5"/><path d="M5.2 8.4C3.4 6.6 3.4 4.4 5.6 4.4"/><path d="M18.8 8.4c1.8-1.8 1.8-4 -0.4-4"/><ellipse cx="12" cy="14" rx="4.2" ry="3"/><circle cx="10.3" cy="14.2" r=".55"/><circle cx="13.7" cy="14.2" r=".55"/><circle cx="9" cy="10.3" r=".6"/><circle cx="15" cy="10.3" r=".6"/></svg></div>
-      <span class="lk-kick"><span class="dot"></span> Livestock</span>
-      <h1>Livestock <span class="em">management</span></h1>
+      <div class="lk-emblem"><svg class="ic" viewBox="0 0 24 24"><ellipse cx="12" cy="15.5" rx="4" ry="3.2"/><circle cx="6.6" cy="11" r="1.6"/><circle cx="9.7" cy="7.8" r="1.6"/><circle cx="14.3" cy="7.8" r="1.6"/><circle cx="17.4" cy="11" r="1.6"/></svg></div>
+      <span class="lk-kick"><span class="dot"></span> New animal</span>
+      <h1>Add an <span class="em">animal</span></h1>
     </div>
   </section>
-  <div class="lk-wrap">
-    <div class="lk-stats">
-      <div class="lk-stat"><div class="chip chip-green"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="6.5" width="14" height="11.5" rx="5.5"/><path d="M5.2 8.4C3.4 6.6 3.4 4.4 5.6 4.4"/><path d="M18.8 8.4c1.8-1.8 1.8-4 -0.4-4"/><ellipse cx="12" cy="14" rx="4.2" ry="3"/><circle cx="10.3" cy="14.2" r=".55"/><circle cx="13.7" cy="14.2" r=".55"/><circle cx="9" cy="10.3" r=".6"/><circle cx="15" cy="10.3" r=".6"/></svg></div><div><div class="num">{{ units|length }}</div><div class="lab">Livestock units</div></div></div>
-      <div class="lk-stat"><div class="chip chip-gold"><svg class="ic" viewBox="0 0 24 24"><ellipse cx="12" cy="15.5" rx="4" ry="3.2"/><circle cx="6.6" cy="11" r="1.6"/><circle cx="9.7" cy="7.8" r="1.6"/><circle cx="14.3" cy="7.8" r="1.6"/><circle cx="17.4" cy="11" r="1.6"/></svg></div><div><div class="num">{{ animals|length }}</div><div class="lab">Animals</div></div></div>
-      <div class="lk-stat"><div class="chip chip-clay"><svg class="ic" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4a3 3 0 0 1 6 0"/><path d="M12 10v6"/><path d="M9 13h6"/></svg></div><div><div class="num">{{ animals|length }}</div><div class="lab">Health records</div></div></div>
-    </div>
-
-    <div class="lk-actions">
-      <a class="lk-btn" href="{% url 'livestock:livestock_create' %}"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Add livestock unit</a>
-      <a class="lk-btn ghost" href="{% url 'livestock:animal_create' %}"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Add animal</a>
-    </div>
-
-    <p class="lk-eyebrow">Your livestock units</p>
-    <div class="lk-units">
-      {% for unit in units %}
-      <div class="lk-unit">
-        <div class="lk-unit-top">
-          <div><span class="lk-unit-name">{{ unit.unit_name }}</span><span class="lk-unit-type">({{ unit.animal_type }})</span></div>
-          <div class="lk-linkrow">
-            <a class="lk-link" href="{% url 'livestock:livestock_update' unit.id %}">Edit</a>
-            <a class="lk-link danger" href="{% url 'livestock:livestock_delete' unit.id %}">Delete</a>
-          </div>
+  <div class="lk-wrap lk-wrap--narrow">
+    <div class="lk-card lk-overlap">
+      <p class="lk-intro">Register an animal and link it to one of your livestock units.</p>
+      <form method="post">
+        {% csrf_token %}
+        <div class="lk-field"><label class="lk-label">Tag ID <span class="opt">(required)</span></label>
+          <input type="text" name="tag_id" class="lk-input" required></div>
+        <div class="lk-grid">
+          <div class="lk-field"><label class="lk-label">Name</label><input type="text" name="name" class="lk-input"></div>
+          <div class="lk-field"><label class="lk-label">Sex</label>
+            <select name="sex" class="lk-select"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
+          <div class="lk-field"><label class="lk-label">Age group</label><input type="text" name="age_group" class="lk-input"></div>
+          <div class="lk-field"><label class="lk-label">Breed</label><input type="text" name="breed" class="lk-input"></div>
+          <div class="lk-field"><label class="lk-label">Status</label>
+            <select name="status" class="lk-select"><option value="">Select</option><option value="Healthy">Healthy</option><option value="Sick">Sick</option><option value="Sold">Sold</option><option value="Deceased">Deceased</option></select></div>
+          <div class="lk-field"><label class="lk-label">Livestock unit</label>
+            <select name="livestock_unit" class="lk-select"><option value="">Select unit</option>{% for unit in units %}<option value="{{ unit.id }}">{{ unit.unit_name }}</option>{% endfor %}</select></div>
         </div>
-        <div class="lk-unit-meta">Breed: <b>{{ unit.breed }}</b></div>
-        <div class="lk-unit-meta">Quantity: <b>{{ unit.quantity }}</b></div>
-        <div class="lk-unit-meta">Notes: <b>{{ unit.additional_notes }}</b></div>
-      </div>
-      {% empty %}
-      <div class="lk-empty"><svg class="ic" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>No livestock units found.</div>
-      {% endfor %}
+        <button type="submit" class="lk-btn full" style="margin-top:1.6rem"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Add animal</button>
+      </form>
     </div>
-
-    <h2 class="lk-h2">Units table</h2>
-    <div class="lk-tablewrap">
-      <table class="lk-table">
-        <thead><tr><th>Unit name</th><th>Animal type</th><th>Breed</th><th>Quantity</th><th>Notes</th></tr></thead>
-        <tbody>
-          {% for unit in units %}
-          <tr><td class="strong">{{ unit.unit_name }}</td><td>{{ unit.animal_type }}</td><td>{{ unit.breed }}</td><td>{{ unit.quantity }}</td><td>{{ unit.additional_notes }}</td></tr>
-          {% empty %}
-          <tr><td colspan="5"><div class="lk-empty" style="border:0;box-shadow:none;padding:1.6rem"><svg class="ic" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>No livestock units found.</div></td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-
-    <h2 class="lk-h2">Animals</h2>
-    {% if animals %}
-    <div class="lk-tablewrap">
-      <table class="lk-table">
-        <thead><tr><th>Tag ID</th><th>Name</th><th>Sex</th><th>Age group</th><th>Breed</th><th>Status</th><th>Health</th><th>Livestock unit</th><th>Actions</th></tr></thead>
-        <tbody>
-          {% for animal in animals %}
-          <tr>
-            <td class="strong">{{ animal.tag_id }}</td>
-            <td>{{ animal.name }}</td>
-            <td>{{ animal.sex }}</td>
-            <td>{{ animal.age_group }}</td>
-            <td>{{ animal.breed }}</td>
-            <td>{{ animal.status }}</td>
-            <td>
-              {% if animal.status == 'Healthy' %}<span class="lk-badge ok">Healthy</span>
-              {% elif animal.status == 'Sick' %}<span class="lk-badge bad">Sick</span>
-              {% elif animal.status == 'Sold' %}<span class="lk-badge warn">Sold</span>
-              {% elif animal.status == 'Deceased' %}<span class="lk-badge muted">Deceased</span>
-              {% else %}<span class="lk-badge neutral">Unknown</span>{% endif %}
-            </td>
-            <td>{{ animal.livestock_unit.unit_name }}</td>
-            <td>
-              <a class="lk-link" href="{% url 'livestock:livestock_update' animal.id %}">Edit</a>
-              <a class="lk-link danger" href="{% url 'livestock:livestock_delete' animal.id %}">Delete</a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    {% else %}
-    <div class="lk-empty"><svg class="ic" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>No animals found.</div>
-    {% endif %}
   </div>
 </div>
 
@@ -262,16 +203,16 @@
       var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],
                ['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']];
       var ang=[0,16,90,74,16,0,90,30,16], defs='';
-      pal.forEach(function(c,i){ defs+='<pattern id="lkA'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
+      pal.forEach(function(c,i){ defs+='<pattern id="lkB'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
       var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8], cells='';
       for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){
         var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e=P[r2+1][c2];
         var fi=bag[Math.floor(Math.random()*bag.length)];
-        cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#lkA'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>';
+        cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#lkB'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>';
       }
       return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
     }
-    var host=document.getElementById('lkFarmListA'); if(host) host.innerHTML=build();
+    var host=document.getElementById('lkFarmAddAn'); if(host) host.innerHTML=build();
   })();
 </script>
 {% endblock %}

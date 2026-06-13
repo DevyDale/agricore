@@ -1,53 +1,226 @@
 {% extends 'dashboard/base.html' %}
-{% block content %}
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold text-emerald-700 mb-6">Add Animal</h1>
-    <form method="post" class="bg-white rounded-xl shadow p-8 max-w-lg mx-auto">
+{# AGRICORE - Animal add/edit form. Switched {% block content %} -> dashboard_content. value defaults + selected logic + {% url 'livestock_list' %} kept verbatim. #}
+{% block dashboard_content %}
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  .lk{
+    --g500:#10b981;--g600:#059669;--g700:#047857;--g900:#064e3b;
+    --ink:#16271c;--s700:#334155;--s600:#475569;--s500:#64748b;--s400:#94a3b8;--s200:#e2e8f0;
+    --cream:#faf6ee;--line:#ece4d6;--ring:rgba(16,185,129,.18);--r:14px;
+    font-family:'Inter',system-ui,sans-serif;color:var(--ink);
+  }
+  .lk h1,.lk h2,.lk h3{font-family:'Fraunces',serif;letter-spacing:-.02em}
+  .lk .ic{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .lk svg{display:block}
+  .lk a{text-decoration:none;color:inherit}
+  .lk-wrap{max-width:1100px;margin:0 auto;padding:0 clamp(1.1rem,4vw,2rem) 3rem}
+  .lk-wrap--narrow{max-width:640px}
+
+  /* banner */
+  .lk-hero{position:relative;overflow:hidden;background:#22432c;border-radius:0 0 26px 26px;
+    min-height:clamp(160px,22vh,200px);display:flex;align-items:flex-end}
+  .lk-scene{position:absolute;inset:0;overflow:hidden}
+  .lk-scene .farmland{position:absolute;inset:-2%}
+  .lk-scene .farmland svg{width:100%;height:100%}
+  .lk-scene .sun{position:absolute;top:-34%;right:-8%;width:44vmax;height:44vmax;pointer-events:none;
+    background:radial-gradient(circle,rgba(255,231,168,.55),rgba(255,205,120,.18) 42%,transparent 66%)}
+  .lk-scene .grade{position:absolute;inset:0;pointer-events:none;mix-blend-mode:soft-light;
+    background:linear-gradient(175deg,rgba(255,226,160,.45) 0%,rgba(120,150,90,0) 26%,rgba(14,38,22,.55) 100%)}
+  .lk-scene .sweep{position:absolute;top:-30%;left:-50%;width:55%;height:160%;pointer-events:none;
+    transform:rotate(13deg);filter:blur(10px);mix-blend-mode:screen;
+    background:linear-gradient(90deg,transparent,rgba(255,246,222,.12),transparent);animation:lk-sweep 11s linear infinite}
+  @keyframes lk-sweep{from{transform:translateX(-10%) rotate(13deg)}to{transform:translateX(360%) rotate(13deg)}}
+  .lk-scene .vignette{position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(130% 120% at 45% 25%,transparent 42%,rgba(8,22,13,.64))}
+  .lk-scene .pin{position:absolute;width:12px;height:12px;pointer-events:none;transform:translate(-50%,-50%)}
+  .lk-scene .pin i{position:absolute;inset:0;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.35),0 6px 14px rgba(0,0,0,.4)}
+  .lk-scene .pin::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(255,255,255,.5);animation:lk-ping 2.6s ease-out infinite}
+  @keyframes lk-ping{0%{transform:scale(.5);opacity:.8}100%{transform:scale(1.8);opacity:0}}
+  .lk-hero-in{position:relative;z-index:3;width:100%;max-width:1100px;margin:0 auto;padding:clamp(1.1rem,4vw,1.7rem) clamp(1.1rem,4vw,2rem);color:#fff}
+  .lk-emblem{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;color:#fff;
+    background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.32);backdrop-filter:blur(8px);
+    box-shadow:0 16px 36px -16px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.4);animation:lk-pop .8s cubic-bezier(.2,.9,.3,1.3) both}
+  .lk-emblem svg{width:26px;height:26px;stroke-width:1.7}
+  .lk-kick{display:inline-flex;align-items:center;gap:.5rem;margin:.8rem 0 .6rem;font-size:.72rem;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.85);background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.2);padding:.36rem .8rem;border-radius:999px;backdrop-filter:blur(6px);animation:lk-rise .8s ease .1s both}
+  .lk-kick .dot{width:7px;height:7px;border-radius:50%;background:#86efac;box-shadow:0 0 10px #86efac}
+  .lk-hero h1{font-weight:900;font-size:clamp(1.6rem,3.6vw,2.4rem);line-height:1.04;text-shadow:0 4px 34px rgba(0,0,0,.4);animation:lk-rise .8s ease .18s both}
+  .lk-hero h1 .em{font-style:italic;font-weight:500;color:#ffe6a8}
+
+  /* panel/card */
+  .lk-card{position:relative;z-index:4;background:#fff;border:1px solid var(--line);border-radius:22px;
+    box-shadow:0 20px 50px -34px rgba(6,28,15,.45);padding:clamp(1.4rem,3vw,2rem);animation:lk-rise .7s ease .12s both}
+  .lk-overlap{margin-top:-1.6rem}
+  .lk-intro{color:var(--s500);font-weight:500;margin:.2rem 0 1.5rem}
+
+  /* stats */
+  .lk-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:-1.8rem;position:relative;z-index:4}
+  @media(max-width:720px){.lk-stats{grid-template-columns:1fr}}
+  .lk-stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:1.3rem 1.4rem;display:flex;align-items:center;gap:1rem;
+    box-shadow:0 14px 34px -26px rgba(20,40,25,.5);animation:lk-rise .6s ease both}
+  .lk-stat .chip{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;flex:none}
+  .lk-stat .chip svg{width:26px;height:26px;stroke-width:1.9}
+  .lk-stat .num{font-family:'Fraunces',serif;font-weight:800;font-size:1.7rem;line-height:1}
+  .lk-stat .lab{color:var(--s500);font-size:.9rem;font-weight:500;margin-top:.1rem}
+
+  .chip-green{background:#e7f4ec;color:#0f7a4b}.chip-gold{background:#f7eed6;color:#a9791d}
+  .chip-clay{background:#f6e6df;color:#b15a36}.chip-sky{background:#e4eef6;color:#2f6f9e}
+  .chip-plum{background:#efe7f4;color:#7c4fa0}.chip-amber{background:#fdecd2;color:#b45309}
+
+  .lk-h2{font-weight:800;font-size:1.4rem;color:var(--ink);margin:2.4rem 0 1rem}
+  .lk-eyebrow{display:inline-block;font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:.72rem;color:var(--g600);margin:2.2rem 0 .9rem}
+  .lk-actions{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
+
+  /* buttons */
+  .lk-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;height:48px;padding:0 1.4rem;
+    border:0;border-radius:12px;cursor:pointer;font:800 .98rem 'Inter',sans-serif;color:#fff;
+    background:linear-gradient(135deg,var(--g500),var(--g700));box-shadow:0 12px 26px -12px rgba(5,120,80,.6);
+    transition:transform .2s,box-shadow .2s}
+  .lk-btn:hover{transform:translateY(-2px);color:#fff;box-shadow:0 18px 34px -12px rgba(5,120,80,.72)}
+  .lk-btn svg{width:18px;height:18px}
+  .lk-btn.ghost{background:#fff;color:var(--g700);border:1.5px solid var(--line);box-shadow:none}
+  .lk-btn.ghost:hover{background:#f5fbf7;border-color:#cfe6d6}
+  .lk-btn.danger{background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 12px 26px -12px rgba(185,28,28,.55)}
+  .lk-btn.full{width:100%}
+  .lk-cancel{display:inline-flex;align-items:center;height:48px;padding:0 1rem;color:var(--s500);font-weight:600}
+  .lk-cancel:hover{color:var(--s700)}
+
+  /* unit cards */
+  .lk-units{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+  @media(max-width:720px){.lk-units{grid-template-columns:1fr}}
+  .lk-unit{background:#fff;border:1px solid var(--line);border-radius:18px;padding:1.3rem 1.4rem;
+    box-shadow:0 14px 34px -28px rgba(20,40,25,.5);transition:transform .25s,box-shadow .25s,border-color .25s}
+  .lk-unit:hover{transform:translateY(-4px);border-color:#cfe6d6;box-shadow:0 22px 42px -28px rgba(16,120,75,.45)}
+  .lk-unit-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem;margin-bottom:.7rem}
+  .lk-unit-name{font-family:'Fraunces',serif;font-weight:700;font-size:1.2rem;color:var(--ink)}
+  .lk-unit-type{color:var(--s500);font-size:.9rem;margin-left:.3rem}
+  .lk-unit-meta{color:var(--s600);font-size:.92rem;margin-bottom:.35rem}
+  .lk-unit-meta b{color:var(--ink);font-weight:600}
+  .lk-linkrow{display:flex;gap:.7rem;flex:none}
+  .lk-link{font-weight:700;font-size:.86rem;color:var(--g700)}
+  .lk-link:hover{text-decoration:underline}
+  .lk-link.danger{color:#dc2626}
+
+  /* table */
+  .lk-tablewrap{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 16px 40px -32px rgba(20,40,25,.5)}
+  .lk-table{width:100%;border-collapse:collapse;min-width:560px}
+  .lk-table th{text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--s500);background:var(--cream);padding:.9rem 1rem;border-bottom:1px solid var(--line)}
+  .lk-table td{padding:.85rem 1rem;border-bottom:1px solid #f1ece1;font-size:.93rem;color:var(--s700)}
+  .lk-table tbody tr:last-child td{border-bottom:0}
+  .lk-table tbody tr{transition:background .15s}
+  .lk-table tbody tr:hover{background:#f3faf5}
+  .lk-table td.strong{font-weight:600;color:var(--ink)}
+
+  .lk-badge{display:inline-block;padding:.28rem .7rem;border-radius:999px;font-size:.8rem;font-weight:700}
+  .lk-badge.ok{background:#e7f6ec;color:#0f7a4b}
+  .lk-badge.bad{background:#fdecec;color:#b42318}
+  .lk-badge.warn{background:#fdecd2;color:#b45309}
+  .lk-badge.muted{background:#eceef0;color:#475569}
+  .lk-badge.neutral{background:#f1f5f9;color:#64748b}
+
+  .lk-empty{background:#fff;border:1px dashed #d8e6dd;border-radius:18px;padding:2.4rem 1.5rem;text-align:center;color:var(--s500);font-weight:500}
+  .lk-empty .ic{width:40px;height:40px;margin:0 auto .8rem;color:#9cc6ad;stroke-width:1.7}
+
+  /* form */
+  .lk-field{margin-bottom:1.15rem}
+  .lk-label{display:block;font-size:.84rem;font-weight:600;color:var(--s700);margin:0 0 .5rem 2px}
+  .lk-label .opt{color:var(--s400);font-weight:400}
+  .lk-input,.lk-select,.lk-textarea{width:100%;border:1.5px solid var(--s200);border-radius:var(--r);padding:0 1rem;height:50px;
+    font:500 1rem 'Inter',sans-serif;color:var(--ink);background:#fff;transition:border-color .2s,box-shadow .2s}
+  .lk-textarea{height:auto;padding:.7rem 1rem;line-height:1.5;resize:vertical}
+  .lk-input::placeholder,.lk-textarea::placeholder{color:var(--s400)}
+  .lk-input:focus,.lk-select:focus,.lk-textarea:focus{outline:none;border-color:var(--g500);box-shadow:0 0 0 4px var(--ring)}
+  .lk-select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:2.6rem;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%23047857' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center}
+  .lk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+  .lk-grid .lk-field{margin-bottom:0}
+  @media(max-width:600px){.lk-grid{grid-template-columns:1fr}}
+  .lk-formfoot{display:flex;align-items:center;gap:.4rem;margin-top:1.6rem}
+
+  /* delete confirm */
+  .lk-confirm{background:#faf6ee;border:1px solid var(--line);border-radius:14px;padding:.4rem 1.3rem;margin:1.1rem 0 1.4rem}
+  .lk-confirm .row{display:flex;justify-content:space-between;gap:1rem;padding:.6rem 0;font-size:.95rem}
+  .lk-confirm .row + .row{border-top:1px solid #f1ece1}
+  .lk-confirm .k{color:var(--s500)}
+  .lk-confirm .v{font-weight:600;color:var(--ink);text-align:right}
+  .lk-warn{display:flex;align-items:flex-start;gap:.7rem;color:var(--s700);line-height:1.5}
+  .lk-warn svg{width:22px;height:22px;color:#dc2626;flex:none;margin-top:.05rem}
+
+  @keyframes lk-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  @keyframes lk-pop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+  @media(prefers-reduced-motion:reduce){.lk *{animation:none!important}}
+</style>
+
+<div class="lk">
+  <section class="lk-hero">
+    <div class="lk-scene">
+      <div class="farmland" id="lkFarmFormAn"></div>
+      <div class="sun"></div><div class="grade"></div><div class="sweep"></div>
+      <div class="pin" style="left:24%;top:44%"><i></i></div><div class="pin" style="left:66%;top:60%"><i></i></div>
+      <div class="vignette"></div>
+    </div>
+    <div class="lk-hero-in">
+      <div class="lk-emblem"><svg class="ic" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+      <span class="lk-kick"><span class="dot"></span> {% if animal %}Edit{% else %}New{% endif %} animal</span>
+      <h1>{% if animal %}Edit{% else %}Add{% endif %} <span class="em">animal</span></h1>
+    </div>
+  </section>
+  <div class="lk-wrap lk-wrap--narrow">
+    <div class="lk-card lk-overlap">
+      <form method="post">
         {% csrf_token %}
-        <div class="mb-4">
-            <label class="block font-semibold mb-1">Tag ID</label>
-            <input type="text" name="tag_id" class="w-full border rounded px-3 py-2" required>
+        <div class="lk-field"><label class="lk-label">Tag ID <span class="opt">(required)</span></label>
+          <input type="text" name="tag_id" class="lk-input" value="{{ animal.tag_id|default:'' }}" required></div>
+        <div class="lk-grid">
+          <div class="lk-field"><label class="lk-label">Name</label><input type="text" name="name" class="lk-input" value="{{ animal.name|default:'' }}"></div>
+          <div class="lk-field"><label class="lk-label">Sex</label>
+            <select name="sex" class="lk-select">
+              <option value="" {% if not animal or not animal.sex %}selected{% endif %}>Select</option>
+              <option value="Male" {% if animal and animal.sex == 'Male' %}selected{% endif %}>Male</option>
+              <option value="Female" {% if animal and animal.sex == 'Female' %}selected{% endif %}>Female</option>
+            </select></div>
+          <div class="lk-field"><label class="lk-label">Age group</label><input type="text" name="age_group" class="lk-input" value="{{ animal.age_group|default:'' }}"></div>
+          <div class="lk-field"><label class="lk-label">Breed</label><input type="text" name="breed" class="lk-input" value="{{ animal.breed|default:'' }}"></div>
+          <div class="lk-field"><label class="lk-label">Status</label><input type="text" name="status" class="lk-input" value="{{ animal.status|default:'' }}"></div>
+          <div class="lk-field"><label class="lk-label">Livestock unit</label>
+            <select name="livestock_unit" class="lk-select">
+              <option value="">Select unit</option>
+              {% for unit in units %}<option value="{{ unit.id }}" {% if animal and animal.livestock_unit and animal.livestock_unit.id == unit.id %}selected{% endif %}>{{ unit.unit_name }}</option>{% endfor %}
+            </select></div>
         </div>
-        <div class="mb-4">
-            <label class="block font-semibold mb-1">Name</label>
-            <input type="text" name="name" class="w-full border rounded px-3 py-2">
+        <div class="lk-formfoot">
+          <button type="submit" class="lk-btn"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Save</button>
+          <a class="lk-cancel" href="{% url 'livestock_list' %}">Cancel</a>
         </div>
-        <div class="mb-4">
-            <label class="block font-semibold mb-1">Sex</label>
-            <select name="sex" class="w-full border rounded px-3 py-2">
-                <option value="">Select</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-            </select>
-        </div>
-        <div class="mb-4">
-            <label class="block font-semibold mb-1">Age Group</label>
-            <input type="text" name="age_group" class="w-full border rounded px-3 py-2">
-        </div>
-        <div class="mb-4">
-            <label class="block font-semibold mb-1">Breed</label>
-            <input type="text" name="breed" class="w-full border rounded px-3 py-2">
-        </div>
-        <div class="mb-4">
-            <label class="block font-semibold mb-1">Status</label>
-            <select name="status" class="w-full border rounded px-3 py-2">
-                <option value="">Select</option>
-                <option value="Healthy">Healthy</option>
-                <option value="Sick">Sick</option>
-                <option value="Sold">Sold</option>
-                <option value="Deceased">Deceased</option>
-            </select>
-        </div>
-        <div class="mb-6">
-            <label class="block font-semibold mb-1">Livestock Unit</label>
-            <select name="livestock_unit" class="w-full border rounded px-3 py-2">
-                <option value="">Select Unit</option>
-                {% for unit in units %}
-                <option value="{{ unit.id }}">{{ unit.unit_name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button type="submit" class="bg-emerald-600 text-white px-6 py-2 rounded font-bold btn-glow">Add Animal</button>
-    </form>
+      </form>
+    </div>
+  </div>
 </div>
+
+<script>
+  (function(){
+    function build(){
+      var W=1200,H=820,cols=7,rows=6;
+      var jx=(W/cols)*0.32, jy=(H/rows)*0.32, P=[];
+      for(var r=0;r<=rows;r++){ P[r]=[]; for(var c=0;c<=cols;c++){
+        var edge=(r===0||r===rows||c===0||c===cols);
+        P[r][c]={ x:(c/cols)*W + (edge?0:(Math.random()*2-1)*jx), y:(r/rows)*H + (edge?0:(Math.random()*2-1)*jy) };
+      }}
+      var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],
+               ['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']];
+      var ang=[0,16,90,74,16,0,90,30,16], defs='';
+      pal.forEach(function(c,i){ defs+='<pattern id="lkD'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>'; });
+      var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8], cells='';
+      for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){
+        var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e=P[r2+1][c2];
+        var fi=bag[Math.floor(Math.random()*bag.length)];
+        cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e.x.toFixed(1)+','+e.y.toFixed(1)+'" fill="url(#lkD'+fi+')" stroke="rgba(22,15,7,.17)" stroke-width="1.3"/>';
+      }
+      return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
+    }
+    var host=document.getElementById('lkFarmFormAn'); if(host) host.innerHTML=build();
+  })();
+</script>
 {% endblock %}
