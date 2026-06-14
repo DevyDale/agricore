@@ -510,184 +510,87 @@
 
             <!-- Ratings & Reviews Section -->
             <section id="ratings" class="section-content">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
                     <div>
-                        <h3 class="text-3xl font-bold text-emerald-800">Ratings & Reviews</h3>
-                        <p class="text-gray-600">Understand sentiment, highlight strengths, and address issues fast.</p>
+                        <h3 class="fr text-3xl font-bold text-emerald-900">Ratings &amp; Reviews</h3>
+                        <p class="text-gray-500">See what customers really think about your store and products.</p>
                     </div>
-                    <div class="flex gap-2 flex-wrap">
-                        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-800 rounded-lg text-sm font-semibold hover:bg-gray-50 transition">
-                            <i class="fas fa-filter"></i> Filter
-                        </button>
-                        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-800 rounded-lg text-sm font-semibold hover:bg-gray-50 transition">
-                            <i class="fas fa-star"></i> Only 4★+
-                        </button>
-                        <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
-                            <i class="fas fa-download"></i> Export
-                        </button>
+                    <div class="flex gap-2 self-start">
+                        <button id="reviews-refresh" type="button" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition shadow-sm"><i class="fas fa-rotate-right"></i> Refresh</button>
+                        <button id="reviews-export" type="button" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition shadow-sm"><i class="fas fa-download"></i> Export CSV</button>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-gradient-to-br from-emerald-600 to-teal-600 text-white rounded-2xl p-6 shadow-xl lg:col-span-2">
+                    <div class="rounded-2xl p-6 shadow-sm lg:col-span-2 text-white" style="background:linear-gradient(135deg,var(--primary),var(--secondary))">
                         <div class="flex flex-col md:flex-row md:items-center gap-6">
                             <div class="text-center md:text-left">
-                                <div class="text-5xl font-extrabold" id="avg-rating">0.0</div>
-                                <div class="flex items-center justify-center md:justify-start gap-1 mt-1 text-yellow-300">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </div>
+                                <div class="fr text-5xl font-extrabold" id="avg-rating">0.0</div>
+                                <div class="flex items-center justify-center md:justify-start gap-1 mt-1" id="avg-stars"></div>
                                 <p class="text-sm mt-1 opacity-90" id="total-reviews">0 reviews</p>
                             </div>
-                            <div class="flex-1 space-y-2" id="rating-bars">
-                                <!-- Rating bars injected -->
-                            </div>
+                            <div class="flex-1 space-y-2 w-full" id="rating-bars"></div>
                         </div>
                         <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                            <div class="bg-white/10 rounded-xl p-3 backdrop-blur">
-                                <p class="text-xs uppercase tracking-wide opacity-80">Response Rate</p>
-                                <p class="text-lg font-bold">—</p>
-                            </div>
-                            <div class="bg-white/10 rounded-xl p-3 backdrop-blur">
-                                <p class="text-xs uppercase tracking-wide opacity-80">Avg Response Time</p>
-                                <p class="text-lg font-bold">—</p>
-                            </div>
-                            <div class="bg-white/10 rounded-xl p-3 backdrop-blur">
-                                <p class="text-xs uppercase tracking-wide opacity-80">5★ Share</p>
-                                <p class="text-lg font-bold">—</p>
-                            </div>
-                            <div class="bg-white/10 rounded-xl p-3 backdrop-blur">
-                                <p class="text-xs uppercase tracking-wide opacity-80">Latest Review</p>
-                                <p class="text-lg font-bold">—</p>
-                            </div>
+                            <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.12)"><p class="text-xs uppercase tracking-wide opacity-80">5★ Share</p><p class="text-lg font-bold" id="stat-5star-share">—</p></div>
+                            <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.12)"><p class="text-xs uppercase tracking-wide opacity-80">Latest Review</p><p class="text-lg font-bold" id="stat-latest-review">—</p></div>
+                            <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.12)"><p class="text-xs uppercase tracking-wide opacity-80">Store Reviews</p><p class="text-lg font-bold" id="stat-store-count">—</p></div>
+                            <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.12)"><p class="text-xs uppercase tracking-wide opacity-80">Product Reviews</p><p class="text-lg font-bold" id="stat-product-count">—</p></div>
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-emerald-100">
+                    <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-2 text-emerald-800">
-                                <i class="fas fa-user-friends"></i>
-                                <h4 class="text-lg font-bold">Customer Insights</h4>
-                            </div>
-                            <span class="text-xs text-emerald-700">Store-wide</span>
+                            <div class="flex items-center gap-2 text-emerald-800"><i class="fas fa-user-friends"></i><h4 class="text-lg font-bold">Customer Insights</h4></div>
+                            <span class="text-xs text-gray-400">From orders</span>
                         </div>
-                        <div class="space-y-3 text-sm text-gray-800">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">New Customers</span>
-                                <span class="font-semibold" id="insight-new-customers">0</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Returning Customers</span>
-                                <span class="font-semibold" id="insight-returning-customers">0</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Repeat Purchase Rate</span>
-                                <span class="font-semibold text-emerald-700" id="insight-repeat-rate">0%</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Avg Spend per Customer</span>
-                                <span class="font-semibold" id="insight-avg-spend">₦0</span>
-                            </div>
-                            <div class="pt-3 border-t border-emerald-100 mt-2">
-                                <p class="text-xs font-semibold text-gray-600 mb-1">Top Customer Locations</p>
-                                <div id="insight-top-locations" class="text-xs text-gray-700">No data available</div>
-                            </div>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between"><span class="text-gray-500">New customers</span><span class="font-semibold" id="insight-new-customers">0</span></div>
+                            <div class="flex justify-between"><span class="text-gray-500">Returning customers</span><span class="font-semibold" id="insight-returning-customers">0</span></div>
+                            <div class="flex justify-between"><span class="text-gray-500">Repeat purchase rate</span><span class="font-semibold text-emerald-700" id="insight-repeat-rate">0</span></div>
+                            <div class="flex justify-between"><span class="text-gray-500">Avg spend per customer</span><span class="font-semibold" id="insight-avg-spend">0</span></div>
+                            <p class="text-xs text-gray-400 pt-3 border-t border-gray-100 mt-2">Based on orders placed with your store.</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 flex flex-col gap-4">
+                    <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 flex flex-col gap-4">
                         <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="text-xl font-bold text-gray-900">Store Reviews</h4>
-                                <p class="text-sm text-gray-500">Voice of your customers</p>
-                            </div>
+                            <div><h4 class="text-xl font-bold text-gray-900">Store Reviews</h4><p class="text-sm text-gray-500">Voice of your customers</p></div>
                             <span class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full">Store</span>
                         </div>
-                        <div class="flex flex-wrap gap-2 text-xs mb-2">
-                            <span class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">Recent</span>
-                            <span class="px-2 py-1 rounded-full bg-gray-50 text-gray-700 border border-gray-200">Most Helpful</span>
-                            <span class="px-2 py-1 rounded-full bg-gray-50 text-gray-700 border border-gray-200">With Photos</span>
-                        </div>
-                        <div id="store-reviews-list" class="space-y-4">
-                            <!-- Store reviews dynamically loaded here -->
-                            <div class="hidden review-card-template">
-                                <div class="p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-semibold">A</div>
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between">
-                                                <div>
-                                                    <p class="font-semibold text-gray-900">Reviewer Name</p>
-                                                    <p class="text-xs text-gray-500">2 days ago</p>
-                                                </div>
-                                                <div class="flex items-center gap-1 text-amber-400 text-sm">
-                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-                                                </div>
-                                            </div>
-                                            <p class="text-sm text-gray-700 mt-2">Review content goes here.</p>
-                                            <div class="flex flex-wrap gap-2 mt-2 text-xs text-gray-500">
-                                                <span class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">Service</span>
-                                                <span class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">Delivery</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <div class="flex flex-wrap gap-1.5">
+                            <button type="button" class="sr-chip px-2.5 py-1 rounded-full text-xs font-semibold border transition bg-emerald-600 text-white border-emerald-600" data-r="all">All</button>
+                            <button type="button" class="sr-chip px-2.5 py-1 rounded-full text-xs font-semibold border transition bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-r="5">5 <i class="fas fa-star text-xs"></i></button>
+                            <button type="button" class="sr-chip px-2.5 py-1 rounded-full text-xs font-semibold border transition bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-r="4">4 <i class="fas fa-star text-xs"></i></button>
+                            <button type="button" class="sr-chip px-2.5 py-1 rounded-full text-xs font-semibold border transition bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-r="3">3 <i class="fas fa-star text-xs"></i></button>
+                            <button type="button" class="sr-chip px-2.5 py-1 rounded-full text-xs font-semibold border transition bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-r="2">2 <i class="fas fa-star text-xs"></i></button>
+                            <button type="button" class="sr-chip px-2.5 py-1 rounded-full text-xs font-semibold border transition bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-r="1">1 <i class="fas fa-star text-xs"></i></button>
                             </div>
+                            <select id="sr-sort" class="text-xs border border-gray-200 rounded-lg px-2 py-1 text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"><option value="recent">Most recent</option><option value="high">Highest rated</option><option value="low">Lowest rated</option></select>
                         </div>
-                        <div class="text-center text-sm text-gray-500" id="store-reviews-empty">
-                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-2">
-                                <i class="fas fa-comments text-gray-400"></i>
-                            </div>
-                            <p>No store reviews yet.</p>
-                        </div>
+                        <div id="store-reviews-list" class="space-y-3" style="max-height:34rem;overflow:auto"></div>
                     </div>
 
-                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 flex flex-col gap-4">
+                    <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 flex flex-col gap-4">
                         <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="text-xl font-bold text-gray-900">Product Reviews</h4>
-                                <p class="text-sm text-gray-500">Across all products</p>
-                            </div>
+                            <div><h4 class="text-xl font-bold text-gray-900">Product Reviews</h4><p class="text-sm text-gray-500">Across all your products</p></div>
                             <span class="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full">Products</span>
                         </div>
-                        <div class="flex flex-wrap gap-2 text-xs mb-2">
-                            <span class="px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Recent</span>
-                            <span class="px-2 py-1 rounded-full bg-gray-50 text-gray-700 border border-gray-200">With Photos</span>
-                            <span class="px-2 py-1 rounded-full bg-gray-50 text-gray-700 border border-gray-200">Low to High</span>
-                        </div>
-                        <div id="product-reviews-list" class="space-y-4">
-                            <!-- Product reviews dynamically loaded here -->
-                            <div class="hidden review-card-template">
-                                <div class="p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center font-semibold">B</div>
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between">
-                                                <div>
-                                                    <p class="font-semibold text-gray-900">Reviewer Name</p>
-                                                    <p class="text-xs text-gray-500">Product • 3 days ago</p>
-                                                </div>
-                                                <div class="flex items-center gap-1 text-amber-400 text-sm">
-                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
-                                                </div>
-                                            </div>
-                                            <p class="text-sm text-gray-700 mt-2">Review content goes here.</p>
-                                            <div class="flex flex-wrap gap-2 mt-2 text-xs text-gray-500">
-                                                <span class="px-2 py-1 rounded-full bg-blue-50 text-blue-700">Quality</span>
-                                                <span class="px-2 py-1 rounded-full bg-blue-50 text-blue-700">Packaging</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <div class="flex flex-wrap gap-1.5">
+                            <button type="button" class="pr-chip px-2.5 py-1 rounded-full text-xs font-semibold border transition bg-emerald-600 text-white border-emerald-600" data-r="all">All</button>
+                            <button type="button" class="pr-chip px-2.5 py-1 rounded-full text-xs font-semibold border transition bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-r="5">5 <i class="fas fa-star text-xs"></i></button>
+                            <button type="button" class="pr-chip px-2.5 py-1 rounded-full text-xs font-semibold border transition bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-r="4">4 <i class="fas fa-star text-xs"></i></button>
+                            <button type="button" class="pr-chip px-2.5 py-1 rounded-full text-xs font-semibold border transition bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-r="3">3 <i class="fas fa-star text-xs"></i></button>
+                            <button type="button" class="pr-chip px-2.5 py-1 rounded-full text-xs font-semibold border transition bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-r="2">2 <i class="fas fa-star text-xs"></i></button>
+                            <button type="button" class="pr-chip px-2.5 py-1 rounded-full text-xs font-semibold border transition bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-r="1">1 <i class="fas fa-star text-xs"></i></button>
                             </div>
+                            <select id="pr-sort" class="text-xs border border-gray-200 rounded-lg px-2 py-1 text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"><option value="recent">Most recent</option><option value="high">Highest rated</option><option value="low">Lowest rated</option></select>
                         </div>
-                        <div class="text-center text-sm text-gray-500" id="product-reviews-empty">
-                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-2">
-                                <i class="fas fa-clipboard-list text-gray-400"></i>
-                            </div>
-                            <p>No product reviews yet.</p>
-                        </div>
+                        <div id="product-reviews-list" class="space-y-3" style="max-height:34rem;overflow:auto"></div>
                     </div>
                 </div>
             </section>
@@ -1286,21 +1189,6 @@
         </div>
     </div>
 
-    <!-- Ratings & Reviews Modal -->
-    <div id="ratings-reviews-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-4xl w-full mx-6">
-            <h2 class="text-4xl font-bold text-emerald-700 mb-8">Ratings & Reviews</h2>
-            <div id="ratings-reviews-content" class="space-y-6 max-h-[60vh] overflow-y-auto">
-                <!-- Reviews dynamically populated here -->
-            </div>
-            <div class="flex justify-end mt-8">
-                <button id="close-ratings-reviews-modal" class="px-6 py-3 rounded-xl border border-gray-300 hover:bg-gray-100">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // --- User Settings: Fetch, Apply, Sync (i18n/currency/theme) ---
         document.addEventListener('DOMContentLoaded', function() {
@@ -1528,13 +1416,6 @@
             loadPaymentCards();
         });
 
-        // Ratings & Reviews Mock (reviews may still be mocked for now)
-        const storeReviews = [
-            {user: "Alice", rating: 5, comment: "Great products and fast delivery!"},
-            {user: "Bob", rating: 4, comment: "Good quality but shipping took a bit longer."},
-            {user: "Charlie", rating: 5, comment: "Excellent customer service and fresh produce."},
-            {user: "Diana", rating: 4.5, comment: "Very satisfied with the variety and quality."}
-        ];
 
         // The 'attached-farms' area is populated dynamically using API data in `loadAttachedFarmsUI`.
 
@@ -2958,178 +2839,145 @@
             console.log('[INIT] Store initialization complete!');
         }
 
-        async function loadRatingsAndReviews() {
-            console.log('[Ratings] Loading reviews...');
-            const storeReviewsContainer = document.getElementById('store-reviews-list');
-            const productReviewsContainer = document.getElementById('product-reviews-list');
-            const avgRatingEl = document.getElementById('avg-rating');
-            const totalReviewsEl = document.getElementById('total-reviews');
-            const ratingBarsContainer = document.getElementById('rating-bars');
+        // ===== Ratings & Reviews (real, filterable, fast, escaped) =====
+        const reviewsState = { store: [], product: [], orders: [], loaded: false };
+        let srFilter = 'all', srSort = 'recent', prFilter = 'all', prSort = 'recent';
+        let reviewControlsWired = false;
 
-            const loadingHtml = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-emerald-600"></i><p class="mt-2 text-gray-500">Loading reviews...</p></div>';
+        function escapeHtml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])); }
+        function rvStars(n, light){ n = Math.round(Number(n) || 0); const on = light ? 'text-yellow-300' : 'text-yellow-400'; const off = light ? 'text-white opacity-40' : 'text-gray-300'; let h = ''; for (let i = 1; i <= 5; i++) h += '<i class="fas fa-star ' + (i <= n ? on : off) + ' text-xs"></i>'; return h; }
+        function rvTimeAgo(d){ const t = new Date(d); if (isNaN(t)) return ''; const s = (Date.now() - t) / 1000; if (s < 60) return 'just now'; if (s < 3600) return Math.floor(s/60) + 'm ago'; if (s < 86400) return Math.floor(s/3600) + 'h ago'; if (s < 2592000) return Math.floor(s/86400) + 'd ago'; return t.toLocaleDateString(); }
+        function rvStoreId(){ if (typeof currentStoreId !== 'undefined' && currentStoreId != null) return currentStoreId; return new URLSearchParams(location.search).get('id'); }
+        async function rvFetch(p){ try { const r = await fetch(API_BASE + '/' + p, { headers: { 'Authorization': 'Bearer ' + (token || '') } }); if (!r.ok) return []; const d = await r.json(); return Array.isArray(d) ? d : (d.results || []); } catch (e) { return []; } }
+        function rvSkeleton(){ let h = ''; for (let i = 0; i < 3; i++) h += '<div class="p-4 border border-gray-100 rounded-xl"><div class="flex gap-3"><div class="agc-skel" style="width:36px;height:36px;border-radius:9999px"></div><div style="flex:1"><div class="agc-skel" style="width:40%;height:12px;margin-bottom:6px"></div><div class="agc-skel" style="width:80px;height:10px;margin-bottom:8px"></div><div class="agc-skel" style="width:90%;height:11px"></div></div></div></div>'; return h; }
+        function rvEmpty(icon, msg){ return '<div class="text-center py-10 text-gray-400"><i class="fas ' + icon + ' text-3xl mb-2"></i><p class="text-sm">' + msg + '</p></div>'; }
 
-            if (storeReviewsContainer) storeReviewsContainer.innerHTML = loadingHtml;
-            if (productReviewsContainer) productReviewsContainer.innerHTML = loadingHtml;
+        async function loadRatingsAndReviews(force){
+            wireReviewControls();
+            if (reviewsState.loaded && !force) { renderReviewsAll(); return; }
+            const sid = rvStoreId();
+            ['store-reviews-list','product-reviews-list'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = rvSkeleton(); });
+            if (!sid) { reviewsState.store = []; reviewsState.product = []; reviewsState.orders = []; reviewsState.loaded = true; renderReviewsAll(); return; }
 
-            try {
-                const urlParams = new URLSearchParams(location.search);
-                const storeId = urlParams.get('id');
+            const store = await rvFetch('store-reviews/?store=' + sid);
 
-                if (!storeId) {
-                    if (storeReviewsContainer) storeReviewsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">No store selected</div>';
-                    if (productReviewsContainer) productReviewsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">No products found</div>';
-                    return;
-                }
+            let products = (typeof allProducts !== 'undefined' && allProducts && allProducts.length) ? allProducts : await rvFetch('products/?store=' + sid);
+            const withReviews = products.filter(p => p.reviews_count == null || Number(p.reviews_count) > 0);
+            const targets = (withReviews.length ? withReviews : products).slice(0, 40);
+            const prArrays = await Promise.all(targets.map(p =>
+                rvFetch('product-reviews/?product=' + p.id).then(rs => rs.map(r => Object.assign({}, r, { _product: p.title, _productId: p.id })))
+            ));
+            const product = [].concat.apply([], prArrays);
 
-                const res = await fetch(`${API_BASE}/store-reviews/?store=${storeId}`, {
-                    headers: { 'Authorization': 'Bearer ' + (token || '') }
-                });
+            let orders = [];
+            try { await ensureMarketData(); orders = (MKT.orders || []).filter(o => { const s = o.store; const osid = s && (s.id != null ? s.id : s); return Number(osid) === Number(sid); }); } catch (e) {}
 
-                if (!res.ok) {
-                    if (storeReviewsContainer) storeReviewsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">Unable to load store reviews</div>';
-                } else {
-                    const data = await res.json();
-                    const reviews = Array.isArray(data) ? data : (data.results || []);
+            reviewsState.store = store; reviewsState.product = product; reviewsState.orders = orders; reviewsState.loaded = true;
+            renderReviewsAll();
+        }
 
-                    if (reviews.length > 0) {
-                        const totalRating = reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
-                        const avgRating = (totalRating / reviews.length).toFixed(1);
-                        if (avgRatingEl) avgRatingEl.textContent = avgRating;
-                        if (totalReviewsEl) totalReviewsEl.textContent = `${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
+        function renderReviewsAll(){ renderReviewHero(); renderReviewInsights(); renderStoreReviews(); renderProductReviews(); }
 
-                        const ratingCounts = [0, 0, 0, 0, 0];
-                        reviews.forEach(r => {
-                            const rating = Math.floor(r.rating || 0);
-                            if (rating >= 1 && rating <= 5) {
-                                ratingCounts[rating - 1]++;
-                            }
-                        });
+        function renderReviewHero(){
+            const sr = reviewsState.store || [];
+            const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+            const setH = (id, v) => { const e = document.getElementById(id); if (e) e.innerHTML = v; };
+            const n = sr.length;
+            const avg = n ? sr.reduce((s, r) => s + (Number(r.rating) || 0), 0) / n : 0;
+            set('avg-rating', avg.toFixed(1));
+            setH('avg-stars', rvStars(avg, true));
+            set('total-reviews', n + ' store review' + (n !== 1 ? 's' : ''));
+            const counts = [0, 0, 0, 0, 0];
+            sr.forEach(r => { const k = Math.round(Number(r.rating) || 0); if (k >= 1 && k <= 5) counts[k - 1]++; });
+            const bars = document.getElementById('rating-bars');
+            if (bars) bars.innerHTML = [5, 4, 3, 2, 1].map(star => {
+                const c = counts[star - 1]; const pct = n ? Math.round(c / n * 100) : 0;
+                return '<div class="flex items-center gap-2"><span class="text-xs opacity-90" style="width:34px">' + star + ' \u2605</span>'
+                    + '<div class="flex-1 rounded-full h-2" style="background:rgba(255,255,255,0.25)"><div class="h-2 rounded-full" style="width:' + pct + '%;background:#fde047"></div></div>'
+                    + '<span class="text-xs opacity-90 text-right" style="width:24px">' + c + '</span></div>';
+            }).join('');
+            const five = sr.filter(r => Math.round(Number(r.rating) || 0) === 5).length;
+            set('stat-5star-share', n ? Math.round(five / n * 100) + '%' : '\u2014');
+            const latest = [].concat(reviewsState.store, reviewsState.product).map(r => new Date(r.created_at || 0)).filter(d => !isNaN(d)).sort((a, b) => b - a)[0];
+            set('stat-latest-review', latest ? rvTimeAgo(latest) : '\u2014');
+            set('stat-store-count', n);
+            set('stat-product-count', (reviewsState.product || []).length);
+        }
 
-                        if (ratingBarsContainer) {
-                            ratingBarsContainer.innerHTML = ratingCounts.map((count, index) => {
-                                const stars = 5 - index;
-                                const percentage = reviews.length > 0 ? (count / reviews.length * 100) : 0;
-                                return `
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm text-gray-600 w-8">${stars} <i class="fas fa-star text-yellow-400 text-xs"></i></span>
-                                        <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                            <div class="bg-yellow-400 h-2 rounded-full" style="width: ${percentage}%"></div>
-                                        </div>
-                                        <span class="text-sm text-gray-600 w-8">${count}</span>
-                                    </div>
-                                `;
-                            }).reverse().join('');
-                        }
+        function renderReviewInsights(){
+            const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+            const orders = reviewsState.orders || [];
+            const byBuyer = {};
+            orders.forEach(o => { const b = o.buyer; const id = Number(b && (b.id != null ? b.id : b)); if (!id) return; const amt = Number(o.total_amount || 0) || 0; (byBuyer[id] = byBuyer[id] || { c: 0, s: 0 }); byBuyer[id].c++; byBuyer[id].s += amt; });
+            const ids = Object.keys(byBuyer); const unique = ids.length;
+            const returning = ids.filter(k => byBuyer[k].c >= 2).length;
+            const totalSpend = ids.reduce((s, k) => s + byBuyer[k].s, 0);
+            set('insight-new-customers', (unique - returning).toLocaleString());
+            set('insight-returning-customers', returning.toLocaleString());
+            set('insight-repeat-rate', unique ? Math.round(returning / unique * 100) + '%' : '0%');
+            set('insight-avg-spend', ngn(unique ? totalSpend / unique : 0));
+        }
 
-                        if (storeReviewsContainer) {
-                            storeReviewsContainer.innerHTML = reviews.map(review => `
-                                <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition">
-                                    <div class="flex items-start justify-between mb-2">
-                                        <div class="flex items-center gap-2">
-                                            <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-                                                <i class="fas fa-user text-emerald-600"></i>
-                                            </div>
-                                            <div>
-                                                <p class="font-semibold text-gray-800">${review.user_name || 'Anonymous'}</p>
-                                                <div class="flex items-center gap-1">
-                                                    ${Array(5).fill(0).map((_, i) => 
-                                                        `<i class="fas fa-star ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'} text-sm"></i>`
-                                                    ).join('')}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <span class="text-xs text-gray-500">${new Date(review.created_at || Date.now()).toLocaleDateString()}</span>
-                                    </div>
-                                    <p class="text-gray-700 text-sm">${review.comment || 'No comment provided'}</p>
-                                </div>
-                            `).join('');
-                        }
-                    } else {
-                        if (avgRatingEl) avgRatingEl.textContent = '0.0';
-                        if (totalReviewsEl) totalReviewsEl.textContent = '0 reviews';
-                        if (ratingBarsContainer) ratingBarsContainer.innerHTML = '';
-                        if (storeReviewsContainer) {
-                            storeReviewsContainer.innerHTML = `
-                                <div class="text-center py-12 text-gray-500">
-                                    <i class="fas fa-star text-6xl text-gray-300 mb-4"></i>
-                                    <p class="text-lg">No store reviews yet</p>
-                                    <p class="text-sm">Be the first to review this store!</p>
-                                </div>
-                            `;
-                        }
-                    }
-                }
+        function rvApply(list, filter, sort){
+            let out = (list || []).slice();
+            if (filter !== 'all') out = out.filter(r => Math.round(Number(r.rating) || 0) === Number(filter));
+            if (sort === 'high') out.sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0));
+            else if (sort === 'low') out.sort((a, b) => (Number(a.rating) || 0) - (Number(b.rating) || 0));
+            else out.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+            return out;
+        }
+        function rvCard(r, isProduct){
+            const name = escapeHtml(r.user_name || 'Anonymous');
+            const initial = (name.trim()[0] || 'A').toUpperCase();
+            const tag = isProduct ? '<span class="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 truncate" style="max-width:140px">' + escapeHtml(r._product || 'Product') + '</span>' : '';
+            const av = isProduct ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700';
+            return '<div class="p-4 border border-gray-100 rounded-xl">'
+                + '<div class="flex items-start gap-3">'
+                + '<div class="w-9 h-9 rounded-full ' + av + ' flex items-center justify-center font-semibold flex-shrink-0">' + initial + '</div>'
+                + '<div class="flex-1 min-w-0">'
+                + '<div class="flex items-center justify-between gap-2"><div class="flex items-center gap-2 min-w-0"><p class="font-semibold text-gray-800 truncate">' + name + '</p>' + tag + '</div>'
+                + '<span class="text-xs text-gray-400 flex-shrink-0">' + escapeHtml(rvTimeAgo(r.created_at)) + '</span></div>'
+                + '<div class="flex items-center gap-1 my-1">' + rvStars(r.rating) + '</div>'
+                + '<p class="text-sm text-gray-700">' + escapeHtml(r.comment || 'No comment provided') + '</p>'
+                + '</div></div></div>';
+        }
+        function renderStoreReviews(){
+            const c = document.getElementById('store-reviews-list'); if (!c) return;
+            const list = rvApply(reviewsState.store, srFilter, srSort);
+            c.innerHTML = list.length ? list.map(r => rvCard(r, false)).join('') : rvEmpty('fa-comments', 'No store reviews' + (srFilter !== 'all' ? ' at ' + srFilter + '\u2605' : '') + ' yet');
+        }
+        function renderProductReviews(){
+            const c = document.getElementById('product-reviews-list'); if (!c) return;
+            const list = rvApply(reviewsState.product, prFilter, prSort);
+            c.innerHTML = list.length ? list.map(r => rvCard(r, true)).join('') : rvEmpty('fa-clipboard-list', 'No product reviews' + (prFilter !== 'all' ? ' at ' + prFilter + '\u2605' : '') + ' yet');
+        }
 
-                const prodRes = await fetch(`${API_BASE}/products/?store=${storeId}`, {
-                    headers: { 'Authorization': 'Bearer ' + (token || '') }
-                });
-
-                if (!prodRes.ok) {
-                    if (productReviewsContainer) productReviewsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">Unable to load product reviews</div>';
-                    return;
-                }
-
-                const prodData = await prodRes.json();
-                const products = Array.isArray(prodData) ? prodData : (prodData.results || []);
-
-                if (!products.length) {
-                    if (productReviewsContainer) {
-                        productReviewsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">No products found</div>';
-                    }
-                    return;
-                }
-
-                const limitedProducts = products.slice(0, 8);
-                const productReviews = [];
-
-                for (const product of limitedProducts) {
-                    try {
-                        const pr = await fetch(`${API_BASE}/product-reviews/?product=${product.id}`, {
-                            headers: { 'Authorization': 'Bearer ' + (token || '') }
-                        });
-                        if (!pr.ok) continue;
-                        const prData = await pr.json();
-                        const reviews = Array.isArray(prData) ? prData : (prData.results || []);
-                        if (reviews.length) {
-                            productReviews.push({ product, reviews });
-                        }
-                    } catch (err) {
-                        console.warn('Failed to fetch product reviews for product', product.id, err);
-                    }
-                }
-
-                if (productReviewsContainer) {
-                    if (!productReviews.length) {
-                        productReviewsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">No product reviews yet</div>';
-                    } else {
-                        productReviewsContainer.innerHTML = productReviews.map(({ product, reviews }) => {
-                            const total = reviews.reduce((s, r) => s + (r.rating || 0), 0);
-                            const avg = (total / reviews.length).toFixed(1);
-                            const firstReview = reviews[0];
-                            return `
-                                <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition">
-                                    <div class="flex items-start justify-between mb-2">
-                                        <div>
-                                            <p class="font-semibold text-gray-800">${product.title || 'Product'}</p>
-                                            <div class="flex items-center gap-2 text-sm text-gray-600">
-                                                <span class="font-bold text-emerald-700">${avg}</span>
-                                                <span class="flex items-center gap-1">${Array(5).fill(0).map((_, i) => `<i class="fas fa-star ${i < Math.round(avg) ? 'text-yellow-400' : 'text-gray-300'} text-xs"></i>`).join('')}</span>
-                                                <span class="text-gray-500">(${reviews.length})</span>
-                                            </div>
-                                        </div>
-                                        <span class="text-xs text-gray-500">ID: ${product.id}</span>
-                                    </div>
-                                    <p class="text-gray-700 text-sm line-clamp-3">${(firstReview && firstReview.comment) ? firstReview.comment : 'No review text provided'}</p>
-                                </div>
-                            `;
-                        }).join('');
-                    }
-                }
-            } catch (err) {
-                console.error('Failed to load reviews', err);
-                if (storeReviewsContainer) storeReviewsContainer.innerHTML = '<div class="text-center py-8 text-red-500">Error loading reviews</div>';
-                if (productReviewsContainer) productReviewsContainer.innerHTML = '<div class="text-center py-8 text-red-500">Error loading reviews</div>';
-            }
+        function rvSetActiveChip(sel, active){
+            document.querySelectorAll(sel).forEach(x => { x.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600'); x.classList.add('bg-gray-50', 'text-gray-600', 'border-gray-200'); });
+            active.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+            active.classList.remove('bg-gray-50', 'text-gray-600', 'border-gray-200');
+        }
+        function rvExportCSV(){
+            const rows = [['Type', 'Product', 'Reviewer', 'Rating', 'Comment', 'Date']];
+            (reviewsState.store || []).forEach(r => rows.push(['Store', '', r.user_name || 'Anonymous', r.rating || '', String(r.comment || '').replace(/\s+/g, ' '), String(r.created_at || '').slice(0, 10)]));
+            (reviewsState.product || []).forEach(r => rows.push(['Product', r._product || '', r.user_name || 'Anonymous', r.rating || '', String(r.comment || '').replace(/\s+/g, ' '), String(r.created_at || '').slice(0, 10)]));
+            const csv = rows.map(r => r.map(x => '"' + String(x).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'agricore-reviews.csv';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            toast('Exported ' + (rows.length - 1) + ' reviews', 'success');
+        }
+        function wireReviewControls(){
+            if (reviewControlsWired) return; reviewControlsWired = true;
+            document.querySelectorAll('.sr-chip').forEach(b => b.addEventListener('click', () => { srFilter = b.dataset.r; rvSetActiveChip('.sr-chip', b); renderStoreReviews(); }));
+            document.querySelectorAll('.pr-chip').forEach(b => b.addEventListener('click', () => { prFilter = b.dataset.r; rvSetActiveChip('.pr-chip', b); renderProductReviews(); }));
+            document.getElementById('sr-sort')?.addEventListener('change', e => { srSort = e.target.value; renderStoreReviews(); });
+            document.getElementById('pr-sort')?.addEventListener('change', e => { prSort = e.target.value; renderProductReviews(); });
+            document.getElementById('reviews-refresh')?.addEventListener('click', () => loadRatingsAndReviews(true));
+            document.getElementById('reviews-export')?.addEventListener('click', rvExportCSV);
         }
 
         // Multiple initialization approaches to ensure it runs
