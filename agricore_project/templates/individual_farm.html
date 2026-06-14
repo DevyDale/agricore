@@ -804,10 +804,6 @@
                     <label class="block mb-2 font-semibold text-gray-700">Description (Optional)</label>
                     <textarea id="transfer-description" class="input-field w-full" rows="3"></textarea>
                 </div>
-                <div id="transfer-loading" class="hidden text-sm text-green-700 flex items-center gap-2 p-3 bg-green-50 rounded-lg">
-                    <div class="spinner" style="width: 20px; height: 20px; border-width: 2px;"></div>
-                    <span>Transferring produce...</span>
-                </div>
             </div>
             <div class="flex justify-end gap-3 mt-8">
                 <button id="transfer-cancel-btn" class="px-6 py-3 rounded-xl border-2 border-gray-300 hover:bg-gray-50 font-semibold transition">Cancel</button>
@@ -1351,7 +1347,7 @@
                                 <td><span class="font-semibold text-gray-900">${p.collection_date}</span></td>
                                 <td>
                                     <span class="badge ${p.source === 'crop' ? 'badge-crop' : 'badge-livestock'}">
-                                        ${p.source_display}
+                                        ${p.source === 'crop' ? 'Crops' : (p.source === 'livestock' ? 'Livestock' : (p.source_display || '—'))}
                                     </span>
                                 </td>
                                 <td><span class="font-semibold text-gray-900">${p.product_name}</span></td>
@@ -1963,20 +1959,21 @@
 
         document.getElementById('transfer-save-btn').onclick = async (e) => {
             const btn = e.currentTarget || e.target;
-            btn.disabled = true;
             const errDiv = document.getElementById('transfer-error');
-            const statusDiv = document.getElementById('transfer-status');
-            const loadingEl = document.getElementById('transfer-loading');
+            if (!btn.dataset.origLabel) btn.dataset.origLabel = btn.innerHTML;
+            const setBtnLoading = (on) => {
+                btn.disabled = on;
+                btn.innerHTML = on
+                    ? '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-3px;margin-right:8px;"></span>Transferring...'
+                    : btn.dataset.origLabel;
+            };
             errDiv.classList.add('hidden');
-            statusDiv.classList.add('hidden');
-            statusDiv.innerText = '';
-            if (loadingEl) loadingEl.classList.remove('hidden');
+            setBtnLoading(true);
             const produceId = Number(btn.dataset.produceId);
             if (!produceId) {
                 errDiv.innerText = 'Missing produce reference. Please reopen the transfer modal.';
                 errDiv.classList.remove('hidden');
-                btn.disabled = false;
-                if (loadingEl) loadingEl.classList.add('hidden');
+                setBtnLoading(false);
                 return;
             }
             const farmId = Number(btn.dataset.farmId);
@@ -1993,15 +1990,13 @@
             if (!storeId || !title || !price || !qty || qty <= 0) {
                 errDiv.innerText = 'Please fill store, title, price and transfer quantity';
                 errDiv.classList.remove('hidden');
-                btn.disabled = false;
-                if (loadingEl) loadingEl.classList.add('hidden');
+                setBtnLoading(false);
                 return;
             }
             if (qty > availableQty) {
                 errDiv.innerText = 'Transfer quantity cannot exceed available quantity';
                 errDiv.classList.remove('hidden');
-                btn.disabled = false;
-                if (loadingEl) loadingEl.classList.add('hidden');
+                setBtnLoading(false);
                 return;
             }
             try {
@@ -2023,8 +2018,18 @@
                     body: JSON.stringify(payload)
                 });
                 if (!createRes.ok) {
-                    const txt = await createRes.text();
-                    throw new Error(`Failed to create product: ${createRes.status} ${createRes.statusText} ${txt}`);
+                    let detail = '';
+                    try {
+                        const ct = createRes.headers.get('content-type') || '';
+                        if (ct.includes('application/json')) {
+                            const data = await createRes.json();
+                            detail = data.detail || Object.values(data).flat().join(' ');
+                        }
+                    } catch (_) { /* ignore unparseable body */ }
+                    if (createRes.status >= 500) {
+                        throw new Error('The server had a problem completing this transfer. Please wait a moment and try again.');
+                    }
+                    throw new Error(detail || ('Could not transfer produce (error ' + createRes.status + '). Please check the details and try again.'));
                 }
                 let newProduct = null;
                 try { newProduct = await createRes.json(); } catch (err) { console.warn('Could not parse new product response', err); }
@@ -2086,8 +2091,7 @@
                 errDiv.innerText = err.message || 'Failed to transfer produce';
                 errDiv.classList.remove('hidden');
             } finally {
-                if (loadingEl) loadingEl.classList.add('hidden');
-                btn.disabled = false;
+                setBtnLoading(false);
             }
         };
 
