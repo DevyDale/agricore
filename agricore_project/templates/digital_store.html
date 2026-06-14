@@ -83,6 +83,8 @@
         .from-amber-500{ --tw-gradient-from:#c39a48; --tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,rgba(195,154,72,0)) }
         .to-teal-600{ --tw-gradient-to:#047857 } .to-indigo-600{ --tw-gradient-to:#047857 }
         .to-pink-600{ --tw-gradient-to:#047857 } .to-orange-600{ --tw-gradient-to:#9a7b25 }
+        .agc-skel{ background:#eef0ec; border-radius:8px; animation:agcPulse 1.25s ease-in-out infinite; }
+        @keyframes agcPulse{ 0%,100%{opacity:1} 50%{opacity:.45} }
     </style>
 </head>
 <body class="min-h-screen">
@@ -1441,79 +1443,82 @@
     </div>
 
     <!-- Add Product Modal -->
-    <div id="add-product-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-lg w-full mx-6 max-h-[85vh] overflow-y-auto">
-            <h2 class="text-2xl font-bold text-emerald-700 mb-4">Add New Product</h2>
-            <form id="add-product-form" class="space-y-3">
-                <div>
-                    <label for="product-title" class="block text-sm font-semibold text-gray-700 mb-1">Product Title *</label>
-                    <input type="text" id="product-title" name="title" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Fresh Tomatoes">
-                </div>
-                <div>
-                    <label for="product-description" class="block text-sm font-semibold text-gray-700 mb-1">Description</label>
-                    <textarea id="product-description" name="description" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Describe your product..."></textarea>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
+    <div id="add-product-modal" class="fixed inset-0 hidden flex items-center justify-center z-50 p-4" style="background:rgba(8,20,12,.55)">
+        <div class="bg-white rounded-2xl shadow-2xl w-full flex flex-col" style="max-width:30rem;max-height:88vh">
+            <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100 flex-shrink-0">
+                <span class="w-10 h-10 rounded-xl flex items-center justify-center text-white flex-shrink-0" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark))"><i class="fas fa-box"></i></span>
+                <h2 class="fr text-xl font-bold text-gray-900 flex-1">Add New Product</h2>
+                <button type="button" onclick="document.getElementById('add-product-modal').classList.add('hidden'); resetProductModal();" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition flex-shrink-0"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="add-product-form" class="flex flex-col min-h-0 flex-1">
+                <div class="flex-1 overflow-y-auto px-5 py-4 space-y-3">
                     <div>
-                        <label for="product-category" class="block text-sm font-semibold text-gray-700 mb-1">Category *</label>
-                        <select id="product-category" name="category" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            <option value="">Select category</option>
-                            <option value="Crops">Crops</option>
-                            <option value="Livestock">Livestock</option>
-                            <option value="Produce">Produce</option>
-                            <option value="Equipment">Equipment</option>
-                            <option value="Other">Other</option>
-                        </select>
+                        <label for="product-title" class="block text-sm font-semibold text-gray-700 mb-1">Product Title *</label>
+                        <input type="text" id="product-title" name="title" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Fresh Tomatoes">
                     </div>
                     <div>
-                        <label for="product-price" class="block text-sm font-semibold text-gray-700 mb-1">Price *</label>
-                        <input type="number" id="product-price" name="price" required step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="0.00">
+                        <label for="product-description" class="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+                        <textarea id="product-description" name="description" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Describe your product..."></textarea>
                     </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="product-category" class="block text-sm font-semibold text-gray-700 mb-1">Category *</label>
+                            <select id="product-category" name="category" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <option value="">Select category</option>
+                                <option value="Crops">Crops</option>
+                                <option value="Livestock">Livestock</option>
+                                <option value="Produce">Produce</option>
+                                <option value="Equipment">Equipment</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="product-price" class="block text-sm font-semibold text-gray-700 mb-1">Price *</label>
+                            <input type="number" id="product-price" name="price" required step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="product-quantity" class="block text-sm font-semibold text-gray-700 mb-1">Stock Quantity *</label>
+                            <input type="number" id="product-quantity" name="stock_quantity" required step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="0">
+                        </div>
+                        <div>
+                            <label for="product-unit" class="block text-sm font-semibold text-gray-700 mb-1">Unit *</label>
+                            <select id="product-unit" name="unit" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <option value="">Select unit</option>
+                                <option value="kg">Kilograms (kg)</option>
+                                <option value="g">Grams (g)</option>
+                                <option value="lbs">Pounds (lbs)</option>
+                                <option value="pcs">Pieces (pcs)</option>
+                                <option value="boxes">Boxes</option>
+                                <option value="bags">Bags</option>
+                                <option value="liters">Liters</option>
+                            </select>
+                        </div>
+                    </div>
                     <div>
-                        <label for="product-quantity" class="block text-sm font-semibold text-gray-700 mb-1">Stock Quantity *</label>
-                        <input type="number" id="product-quantity" name="stock_quantity" required step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="0">
+                        <label for="product-expiration" class="block text-sm font-semibold text-gray-700 mb-1">Expiration Date</label>
+                        <input type="date" id="product-expiration" name="expiration_date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
                     <div>
-                        <label for="product-unit" class="block text-sm font-semibold text-gray-700 mb-1">Unit *</label>
-                        <select id="product-unit" name="unit" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            <option value="">Select unit</option>
-                            <option value="kg">Kilograms (kg)</option>
-                            <option value="g">Grams (g)</option>
-                            <option value="lbs">Pounds (lbs)</option>
-                            <option value="pcs">Pieces (pcs)</option>
-                            <option value="boxes">Boxes</option>
-                            <option value="bags">Bags</option>
-                            <option value="liters">Liters</option>
-                        </select>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Product Image</label>
+                        <input type="file" id="product-image" name="image" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                        <input type="url" id="product-image-url" name="image_url" class="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" placeholder="...or paste an image URL">
+                        <div id="image-preview" class="hidden mt-2">
+                            <img id="preview-img" class="w-full h-28 object-cover rounded-lg" alt="Preview">
+                        </div>
                     </div>
+                    <label for="product-dropship" class="flex items-center gap-2 p-2.5 rounded-lg cursor-pointer" style="border:1px solid var(--green-line);background:#f9faf6">
+                        <input type="checkbox" id="product-dropship" name="is_dropshippable" class="h-4 w-4 rounded" style="accent-color:var(--primary)">
+                        <span class="text-sm font-semibold text-gray-700">Allow other stalls to dropship this</span>
+                    </label>
+                    <div id="add-product-error" class="hidden text-red-600 text-sm p-2 bg-red-50 rounded-lg"></div>
                 </div>
-                <div>
-                    <label for="product-expiration" class="block text-sm font-semibold text-gray-700 mb-1">Expiration Date</label>
-                    <input type="date" id="product-expiration" name="expiration_date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Product Image</label>
-                    <div class="flex gap-2">
-                        <input type="file" id="product-image" name="image" accept="image/*" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
-                    </div>
-                    <p class="text-xs text-gray-500">Or provide an image URL:</p>
-                    <input type="url" id="product-image-url" name="image_url" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="https://example.com/image.jpg">
-                    <div id="image-preview" class="hidden mt-2">
-                        <img id="preview-img" class="w-full h-32 object-cover rounded-lg" alt="Preview">
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" id="product-dropship" name="is_dropshippable" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
-                    <label for="product-dropship" class="text-sm font-semibold text-gray-700">Is Dropshippable</label>
-                </div>
-                <div id="add-product-error" class="hidden text-red-600 text-sm p-2 bg-red-50 rounded-lg"></div>
-                <div class="flex justify-end gap-3 pt-3 border-t border-gray-200">
-                    <button type="button" id="cancel-add-product" class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition text-sm">
+                <div class="flex justify-end gap-2 px-5 py-3 border-t border-gray-100 flex-shrink-0">
+                    <button type="button" id="cancel-add-product" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition text-sm font-semibold">
                         Cancel
                     </button>
-                    <button type="submit" id="submit-add-product" class="px-4 py-2 btn-primary text-white rounded-lg shadow-lg flex items-center gap-2 text-sm">
+                    <button type="submit" id="submit-add-product" class="px-4 py-2 btn-primary text-white rounded-lg shadow-sm flex items-center gap-2 text-sm font-semibold">
                         <i class="fas fa-plus"></i> Add Product
                     </button>
                 </div>
@@ -2077,49 +2082,136 @@
             updateBulkBar();
             renderProductRows(getVisibleProducts());
         };
-        window.bulkPublish = async function(pub) {
+        // ---- Shared UI helpers: toast, confirm dialog, local-state updates ----
+        function refreshProductsView() {
+            updateProductStats(allProducts);
+            renderProductRows(getVisibleProducts());
+            updateBulkBar();
+        }
+        function updateLocalProduct(id, patch) {
+            const p = allProducts.find(x => Number(x.id) === Number(id));
+            if (p) Object.assign(p, patch);
+            return p;
+        }
+        function removeLocalProduct(id) {
+            const index = allProducts.findIndex(x => Number(x.id) === Number(id));
+            let product = null;
+            if (index !== -1) { product = allProducts[index]; allProducts.splice(index, 1); }
+            selectedIds.delete(Number(id));
+            return { index, product };
+        }
+        function toast(message, type) {
+            type = type || 'success';
+            let host = document.getElementById('agc-toasts');
+            if (!host) {
+                host = document.createElement('div');
+                host.id = 'agc-toasts';
+                host.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none';
+                document.body.appendChild(host);
+            }
+            const colors = { success:'#0c6b46', error:'#b0322c', info:'#0f7a4b' };
+            const icons = { success:'fa-check-circle', error:'fa-exclamation-circle', info:'fa-info-circle' };
+            const el = document.createElement('div');
+            el.style.cssText = 'pointer-events:auto;background:#fff;color:#16271c;border:1px solid #ece4d6;border-left:4px solid '+(colors[type]||colors.success)+';border-radius:12px;box-shadow:0 12px 30px -12px rgba(6,28,15,.45);padding:10px 14px;font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:8px;max-width:90vw;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s';
+            el.innerHTML = '<i class="fas '+(icons[type]||icons.success)+'" style="color:'+(colors[type]||colors.success)+'"></i><span></span>';
+            el.querySelector('span').textContent = message;
+            host.appendChild(el);
+            requestAnimationFrame(() => { el.style.opacity='1'; el.style.transform='none'; });
+            setTimeout(() => { el.style.opacity='0'; el.style.transform='translateY(8px)'; setTimeout(() => el.remove(), 220); }, 2200);
+        }
+        function confirmDialog(opts) {
+            opts = opts || {};
+            return new Promise(resolve => {
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position:fixed;inset:0;background:rgba(8,20,12,.5);z-index:2100;display:flex;align-items:center;justify-content:center;padding:1rem';
+                const danger = !!opts.danger;
+                const accent = danger ? '#b0322c' : '#0c6b46';
+                overlay.innerHTML = `
+                    <div role="dialog" aria-modal="true" style="background:#fff;border-radius:18px;max-width:380px;width:100%;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);overflow:hidden">
+                        <div style="padding:20px 22px 6px">
+                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+                                <span style="width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:${danger?'#fdeaea':'#eef6f0'};color:${accent};flex-shrink:0"><i class="fas ${danger?'fa-triangle-exclamation':'fa-circle-question'}" style="font-size:1.1rem"></i></span>
+                                <h3 class="fr" style="font-weight:700;font-size:1.15rem;margin:0;color:#16271c">${opts.title || 'Are you sure?'}</h3>
+                            </div>
+                            <p style="font-size:.9rem;color:#5b6b62;margin:0;line-height:1.5">${opts.message || ''}</p>
+                        </div>
+                        <div style="display:flex;gap:8px;justify-content:flex-end;padding:16px 22px 18px">
+                            <button data-act="cancel" style="padding:9px 16px;border-radius:10px;border:1px solid #e2ddd0;background:#fff;color:#444;font-weight:600;font-size:.85rem;cursor:pointer">${opts.cancelText || 'Cancel'}</button>
+                            <button data-act="ok" style="padding:9px 16px;border-radius:10px;border:0;background:${accent};color:#fff;font-weight:600;font-size:.85rem;cursor:pointer">${opts.confirmText || 'Confirm'}</button>
+                        </div>
+                    </div>`;
+                const done = (val) => { overlay.remove(); resolve(val); };
+                overlay.addEventListener('click', (e) => { if (e.target === overlay) done(false); });
+                overlay.querySelector('[data-act="cancel"]').addEventListener('click', () => done(false));
+                overlay.querySelector('[data-act="ok"]').addEventListener('click', () => done(true));
+                document.body.appendChild(overlay);
+            });
+        }
+
+        // ---- Bulk selection actions (optimistic) ----
+        window.bulkPublish = function(pub) {
             const ids = [...selectedIds];
             if (!ids.length) return;
-            for (const id of ids) {
-                try {
-                    await fetch(`${API_BASE}/products/${id}/`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') },
-                        body: JSON.stringify({ is_published: !!pub })
-                    });
-                } catch (e) { /* continue */ }
-            }
+            const before = ids.map(id => { const p = allProducts.find(x => Number(x.id) === Number(id)); return { id, pub: p ? p.is_published : undefined }; });
+            ids.forEach(id => updateLocalProduct(id, { is_published: !!pub }));
             selectedIds.clear();
-            await loadStoreProducts(currentStoreId);
+            refreshProductsView();
+            toast((pub ? 'Published' : 'Unpublished') + ' ' + ids.length, 'success');
+            Promise.all(ids.map(id => fetch(`${API_BASE}/products/${id}/`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') },
+                body: JSON.stringify({ is_published: !!pub })
+            }).then(r => { if (!r.ok) throw new Error(); }).catch(() => 'fail')))
+            .then(results => {
+                if (results.some(x => x === 'fail')) {
+                    before.forEach(b => updateLocalProduct(b.id, { is_published: b.pub }));
+                    refreshProductsView();
+                    toast('Some changes could not be saved.', 'error');
+                }
+            });
         };
         window.bulkDelete = async function() {
             const ids = [...selectedIds];
             if (!ids.length) return;
-            if (!confirm(`Delete ${ids.length} product(s)? This cannot be undone.`)) return;
-            for (const id of ids) {
-                try {
-                    await fetch(`${API_BASE}/products/${id}/`, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': 'Bearer ' + (token || '') }
-                    });
-                } catch (e) { /* continue */ }
-            }
+            const ok = await confirmDialog({
+                title: 'Delete products?',
+                message: `${ids.length} product(s) will be permanently removed from your store.`,
+                confirmText: 'Delete', danger: true
+            });
+            if (!ok) return;
+            ids.forEach(id => removeLocalProduct(id));
             selectedIds.clear();
-            await loadStoreProducts(currentStoreId);
+            refreshProductsView();
+            const results = await Promise.all(ids.map(id => fetch(`${API_BASE}/products/${id}/`, {
+                method: 'DELETE', headers: { 'Authorization': 'Bearer ' + (token || '') }
+            }).then(r => (r.ok || r.status === 204) ? 'ok' : 'fail').catch(() => 'fail')));
+            if (results.some(x => x === 'fail')) {
+                await loadStoreProducts(currentStoreId);
+                toast('Some products could not be deleted.', 'error');
+            } else {
+                toast('Products deleted', 'success');
+            }
         };
 
         // ---- Per-product: delete, duplicate, edit ----
         window.deleteProduct = async function(id) {
-            if (!confirm(window.i18n ? i18n.t('Delete this product? This cannot be undone.') : 'Delete this product? This cannot be undone.')) return;
+            const ok = await confirmDialog({
+                title: 'Delete product?',
+                message: 'This permanently removes the product from your store.',
+                confirmText: 'Delete', danger: true
+            });
+            if (!ok) return;
+            const { index, product } = removeLocalProduct(id);
+            refreshProductsView();
             try {
                 const r = await fetch(`${API_BASE}/products/${id}/`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': 'Bearer ' + (token || '') }
+                    method: 'DELETE', headers: { 'Authorization': 'Bearer ' + (token || '') }
                 });
                 if (!r.ok && r.status !== 204) throw new Error('Failed');
-                await loadStoreProducts(currentStoreId);
+                toast('Product deleted', 'success');
             } catch (e) {
-                alert(window.i18n ? i18n.t('Could not delete product.') : 'Could not delete product.');
+                if (product && index !== -1) { allProducts.splice(index, 0, product); refreshProductsView(); }
+                toast("Couldn't delete product.", 'error');
             }
         };
         window.duplicateProduct = async function(id) {
@@ -2145,11 +2237,15 @@
                     body: JSON.stringify(body)
                 });
                 if (!r.ok) throw new Error('Failed');
-                await loadStoreProducts(currentStoreId);
+                const created = await r.json().catch(() => null);
+                if (created && created.id) { allProducts.unshift(created); refreshProductsView(); }
+                else { await loadStoreProducts(currentStoreId); }
+                toast('Product duplicated', 'success');
             } catch (e) {
-                alert(window.i18n ? i18n.t('Could not duplicate product.') : 'Could not duplicate product.');
+                toast("Couldn't duplicate product.", 'error');
             }
         };
+
         window.editProduct = function(id) {
             const p = allProducts.find(x => Number(x.id) === Number(id));
             if (!p) return;
@@ -2201,43 +2297,47 @@
         });
 
 
-        // ---- Marketplace listing controls (per product) ----
-        window.toggleProductListing = async function(productId, listed) {
-            try {
-                const resp = await fetch(`${API_BASE}/products/${productId}/`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') },
-                    body: JSON.stringify({ is_published: !!listed })
-                });
-                if (!resp.ok) throw new Error('Failed to update');
-                await loadStoreProducts(currentStoreId);
-            } catch (e) {
-                alert(window.i18n ? i18n.t('Could not update marketplace visibility.') : 'Could not update marketplace visibility.');
-                await loadStoreProducts(currentStoreId);
-            }
+        // ---- Marketplace listing controls (per product, optimistic) ----
+        window.toggleProductListing = function(productId, listed) {
+            const p = allProducts.find(x => Number(x.id) === Number(productId));
+            const before = p ? p.is_published : undefined;
+            updateLocalProduct(productId, { is_published: !!listed });
+            refreshProductsView();
+            fetch(`${API_BASE}/products/${productId}/`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') },
+                body: JSON.stringify({ is_published: !!listed })
+            }).then(r => { if (!r.ok) throw new Error(); })
+              .catch(() => {
+                  updateLocalProduct(productId, { is_published: before });
+                  refreshProductsView();
+                  toast("Couldn't update marketplace visibility.", 'error');
+              });
         };
 
-        window.saveProductQty = async function(productId) {
+        window.saveProductQty = function(productId) {
             const inp = document.getElementById('qty-' + productId);
             if (!inp) return;
             const qty = parseFloat(inp.value);
-            if (isNaN(qty) || qty < 0) {
-                alert(window.i18n ? i18n.t('Enter a valid quantity.') : 'Enter a valid quantity.');
-                return;
-            }
-            try {
-                const payload = { stock_quantity: qty };
-                if (qty === 0) payload.is_published = false;  // auto-hide when out of stock
-                const resp = await fetch(`${API_BASE}/products/${productId}/`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') },
-                    body: JSON.stringify(payload)
-                });
-                if (!resp.ok) throw new Error('Failed to update');
-                await loadStoreProducts(currentStoreId);
-            } catch (e) {
-                alert(window.i18n ? i18n.t('Could not update quantity.') : 'Could not update quantity.');
-            }
+            if (isNaN(qty) || qty < 0) { toast('Enter a valid quantity.', 'error'); return; }
+            const p = allProducts.find(x => Number(x.id) === Number(productId));
+            const beforeQty = p ? p.stock_quantity : undefined;
+            const beforePub = p ? p.is_published : undefined;
+            const patch = { stock_quantity: qty };
+            if (qty === 0) patch.is_published = false;  // auto-hide when out of stock
+            updateLocalProduct(productId, patch);
+            refreshProductsView();
+            toast('Quantity saved', 'success');
+            fetch(`${API_BASE}/products/${productId}/`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') },
+                body: JSON.stringify(patch)
+            }).then(r => { if (!r.ok) throw new Error(); })
+              .catch(() => {
+                  updateLocalProduct(productId, { stock_quantity: beforeQty, is_published: beforePub });
+                  refreshProductsView();
+                  toast("Couldn't save quantity.", 'error');
+              });
         };
 
         async function getUserStores() {
@@ -2261,8 +2361,25 @@
             }
         }
 
+        function showProductsLoading() {
+            const c = document.getElementById('store-products');
+            if (!c) return;
+            c.style.minHeight = '';
+            let sk = '';
+            for (let i = 0; i < 3; i++) {
+                sk += '<div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-4 py-3 flex items-center gap-4">'
+                    + '<div class="w-14 h-14 rounded-xl agc-skel flex-shrink-0"></div>'
+                    + '<div class="flex-1 min-w-0"><div class="h-4 w-40 max-w-full agc-skel mb-2"></div><div class="h-3 w-24 agc-skel"></div></div>'
+                    + '<div class="h-9 w-44 agc-skel hidden sm:block"></div>'
+                    + '<div class="h-9 w-24 agc-skel hidden lg:block"></div>'
+                    + '</div>';
+            }
+            c.innerHTML = sk;
+        }
+
         async function loadStoreProducts(storeId) {
             if (!storeId) return renderProducts([]);
+            showProductsLoading();
             try {
                 const res = await fetch(`${API_BASE}/products/?store=${storeId}`, { headers: { 'Authorization': 'Bearer ' + (token || '') } });
                 if (res.status === 401) {
@@ -2433,8 +2550,15 @@
                 } catch (err) { /* ignore */ }
 
                 document.getElementById('add-product-modal').classList.add('hidden');
+                if (savedProduct && savedProduct.id) {
+                    if (isEdit) { updateLocalProduct(savedProduct.id, savedProduct); }
+                    else { allProducts.unshift(savedProduct); }
+                    refreshProductsView();
+                } else {
+                    await loadStoreProducts(storeId);
+                }
                 resetProductModal();
-                await loadStoreProducts(storeId);
+                toast(isEdit ? 'Product updated' : 'Product added', 'success');
 
             } catch (error) {
                 console.error('[Save Product] Error:', error);
