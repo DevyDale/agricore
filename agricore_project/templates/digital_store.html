@@ -303,6 +303,27 @@
                             </button>
                         </div>
                     </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                        <div class="relative flex-1">
+                            <i class="fas fa-search" style="position:absolute;left:12px;top:11px;color:#9ca3af;font-size:.85rem"></i>
+                            <input id="product-search" type="text" placeholder="Search products by name or category..." class="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <select id="product-sort" class="px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="newest">Newest first</option>
+                            <option value="price-asc">Price: low to high</option>
+                            <option value="price-desc">Price: high to low</option>
+                            <option value="stock-asc">Stock: low to high</option>
+                            <option value="name-asc">Name: A to Z</option>
+                        </select>
+                        <button id="product-select-toggle" class="px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition flex items-center gap-2 flex-shrink-0"><i class="fas fa-check-square"></i> Select</button>
+                    </div>
+                    <div id="bulk-bar" class="hidden items-center gap-2 flex-wrap bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3">
+                        <span class="text-sm font-semibold text-emerald-800"><span id="bulk-count">0</span> selected</span>
+                        <button onclick="bulkPublish(true)" class="px-3 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"><i class="fas fa-eye"></i> Publish</button>
+                        <button onclick="bulkPublish(false)" class="px-3 py-1.5 text-xs font-semibold bg-white text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition"><i class="fas fa-eye-slash"></i> Unpublish</button>
+                        <button onclick="bulkDelete()" class="px-3 py-1.5 text-xs font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 transition"><i class="fas fa-trash"></i> Delete</button>
+                        <button onclick="clearSelection()" class="ml-auto px-3 py-1.5 text-xs font-semibold text-gray-600 hover:text-gray-800 transition">Clear</button>
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="bg-white border border-emerald-100 rounded-xl p-4 shadow-sm">
                             <p class="text-xs uppercase tracking-wide text-gray-500">Live Products</p>
@@ -1826,9 +1847,14 @@
         }
 
         // Utility to render product cards
-        // ---- Products: state, stats, filters, row rendering ----
+        // ---- Products: state, stats, filters, search, sort, selection, row rendering ----
         let allProducts = [];
         let productFilter = 'all';
+        let productSearch = '';
+        let productSort = 'newest';
+        let selectMode = false;
+        const selectedIds = new Set();
+        let editingProductId = null;
         const LOW_STOCK_THRESHOLD = 10;
 
         function updateProductStats(products) {
@@ -1845,18 +1871,47 @@
             set('stat-prod-categories', cats);
         }
 
-        function applyProductFilter(products, filter) {
-            const list = Array.isArray(products) ? products : [];
-            if (filter === 'low') return list.filter(p => Number(p.stock_quantity || 0) <= LOW_STOCK_THRESHOLD);
-            if (filter === 'draft') return list.filter(p => p.is_published === false);
+        function applyProductFilter(list, filter) {
+            const arr = Array.isArray(list) ? list : [];
+            if (filter === 'low') return arr.filter(p => Number(p.stock_quantity || 0) <= LOW_STOCK_THRESHOLD);
+            if (filter === 'draft') return arr.filter(p => p.is_published === false);
+            return arr;
+        }
+
+        function sortProducts(list, sort) {
+            const arr = (Array.isArray(list) ? list : []).slice();
+            switch (sort) {
+                case 'price-asc': arr.sort((a, b) => Number(a.price || 0) - Number(b.price || 0)); break;
+                case 'price-desc': arr.sort((a, b) => Number(b.price || 0) - Number(a.price || 0)); break;
+                case 'stock-asc': arr.sort((a, b) => Number(a.stock_quantity || 0) - Number(b.stock_quantity || 0)); break;
+                case 'name-asc': arr.sort((a, b) => String(a.title || '').localeCompare(String(b.title || ''))); break;
+                case 'newest':
+                default: arr.sort((a, b) => Number(b.id || 0) - Number(a.id || 0)); break;
+            }
+            return arr;
+        }
+
+        // Apply search -> filter -> sort to the full catalogue
+        function getVisibleProducts() {
+            let list = Array.isArray(allProducts) ? allProducts.slice() : [];
+            const q = (productSearch || '').trim().toLowerCase();
+            if (q) {
+                list = list.filter(p =>
+                    String(p.title || '').toLowerCase().includes(q) ||
+                    String(p.category || '').toLowerCase().includes(q)
+                );
+            }
+            list = applyProductFilter(list, productFilter);
+            list = sortProducts(list, productSort);
             return list;
         }
 
-        // Public entry point: store full catalogue, refresh stats, render current filter
+        // Public entry point: store full catalogue, refresh stats, render current view
         function renderProducts(products) {
             if (Array.isArray(products)) allProducts = products;
             updateProductStats(allProducts);
-            renderProductRows(applyProductFilter(allProducts, productFilter));
+            renderProductRows(getVisibleProducts());
+            updateBulkBar();
         }
 
         function renderProductRows(products) {
@@ -1877,7 +1932,7 @@
                 return;
             }
             if (!products.length) {
-                container.innerHTML = `<div class="border border-dashed border-gray-200 rounded-2xl bg-gray-50 px-8 py-12 text-center text-gray-500"><i class="fas fa-filter text-2xl mb-2"></i><p class="font-semibold">${window.i18n ? i18n.t('No products match this filter.') : 'No products match this filter.'}</p></div>`;
+                container.innerHTML = `<div class="border border-dashed border-gray-200 rounded-2xl bg-gray-50 px-8 py-12 text-center text-gray-500"><i class="fas fa-filter text-2xl mb-2"></i><p class="font-semibold">${window.i18n ? i18n.t('No products match this view.') : 'No products match this view.'}</p></div>`;
                 return;
             }
 
@@ -1903,7 +1958,11 @@
                 const badge = isDropshipped
                     ? `<span class="px-2 py-0.5 bg-emerald-600 text-white text-xs font-semibold rounded-full">${window.i18n ? i18n.t('Dropshipped') : 'Dropshipped'}</span>`
                     : (isDropshippable ? `<span class="px-2 py-0.5 bg-white text-amber-700 text-xs font-semibold rounded-full border border-amber-200">${window.i18n ? i18n.t('Dropshippable') : 'Dropshippable'}</span>` : '');
+                const checkbox = selectMode
+                    ? `<input type="checkbox" ${selectedIds.has(Number(p.id)) ? 'checked' : ''} onchange="toggleProductSelected(${p.id}, this.checked)" class="w-4 h-4 flex-shrink-0" style="accent-color:var(--primary);cursor:pointer">`
+                    : '';
                 row.innerHTML = `
+                    ${checkbox}
                     <div class="flex items-center gap-3 min-w-0" style="flex:1 1 240px">
                         <div class="relative w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0" style="background:${tint}">${thumb}</div>
                         <div class="min-w-0">
@@ -1939,7 +1998,9 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2 flex-shrink-0 ml-auto">
-                        <button class="px-3 py-2 text-xs font-semibold bg-white text-emerald-700 border border-emerald-100 rounded-lg shadow-sm hover:bg-emerald-50 transition"><i class="fas fa-edit"></i> ${window.i18n ? i18n.t('Edit') : 'Edit'}</button>
+                        <button onclick="editProduct(${p.id})" title="Edit" class="px-3 py-2 text-xs font-semibold bg-white text-emerald-700 border border-emerald-100 rounded-lg shadow-sm hover:bg-emerald-50 transition"><i class="fas fa-edit"></i> ${window.i18n ? i18n.t('Edit') : 'Edit'}</button>
+                        <button onclick="duplicateProduct(${p.id})" title="Duplicate" class="px-2.5 py-2 text-xs bg-white text-gray-600 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition"><i class="fas fa-copy"></i></button>
+                        <button onclick="deleteProduct(${p.id})" title="Delete" class="px-2.5 py-2 text-xs bg-white text-red-600 border border-red-100 rounded-lg shadow-sm hover:bg-red-50 transition"><i class="fas fa-trash"></i></button>
                         <button class="px-3 py-2 text-xs font-semibold btn-primary text-white rounded-lg shadow-sm transition"><i class="fas fa-bullhorn"></i> ${window.i18n ? i18n.t('Promote') : 'Promote'}</button>
                         ${isDropshipped && !p.is_published ? `<button class="px-3 py-2 text-xs font-semibold bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition release-dropship-btn" data-product-id="${p.id}"><i class="fas fa-upload"></i> ${window.i18n ? i18n.t('Release') : 'Release'}</button>` : ''}
                     </div>
@@ -1971,7 +2032,7 @@
             }, 100);
         }
 
-        // Filter buttons (All / Low Stock / Draft)
+        // ---- Filter buttons (All / Low Stock / Draft) ----
         function setProductFilter(filter, btn) {
             productFilter = filter;
             document.querySelectorAll('.product-filter-btn').forEach(b => {
@@ -1982,12 +2043,161 @@
                 btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
                 btn.classList.remove('text-gray-700', 'border-gray-200', 'hover:bg-gray-50');
             }
-            renderProductRows(applyProductFilter(allProducts, productFilter));
+            renderProductRows(getVisibleProducts());
         }
+
+        // ---- Bulk selection ----
+        window.toggleProductSelected = function(id, checked) {
+            if (checked) selectedIds.add(Number(id)); else selectedIds.delete(Number(id));
+            updateBulkBar();
+        };
+        function updateBulkBar() {
+            const bar = document.getElementById('bulk-bar');
+            const c = document.getElementById('bulk-count');
+            if (c) c.textContent = selectedIds.size;
+            if (bar) {
+                if (selectMode && selectedIds.size > 0) { bar.classList.remove('hidden'); bar.classList.add('flex'); }
+                else { bar.classList.add('hidden'); bar.classList.remove('flex'); }
+            }
+        }
+        function toggleSelectMode() {
+            selectMode = !selectMode;
+            if (!selectMode) selectedIds.clear();
+            const tgl = document.getElementById('product-select-toggle');
+            if (tgl) {
+                tgl.classList.toggle('bg-emerald-600', selectMode);
+                tgl.classList.toggle('text-white', selectMode);
+                tgl.classList.toggle('border-emerald-600', selectMode);
+            }
+            updateBulkBar();
+            renderProductRows(getVisibleProducts());
+        }
+        window.clearSelection = function() {
+            selectedIds.clear();
+            updateBulkBar();
+            renderProductRows(getVisibleProducts());
+        };
+        window.bulkPublish = async function(pub) {
+            const ids = [...selectedIds];
+            if (!ids.length) return;
+            for (const id of ids) {
+                try {
+                    await fetch(`${API_BASE}/products/${id}/`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') },
+                        body: JSON.stringify({ is_published: !!pub })
+                    });
+                } catch (e) { /* continue */ }
+            }
+            selectedIds.clear();
+            await loadStoreProducts(currentStoreId);
+        };
+        window.bulkDelete = async function() {
+            const ids = [...selectedIds];
+            if (!ids.length) return;
+            if (!confirm(`Delete ${ids.length} product(s)? This cannot be undone.`)) return;
+            for (const id of ids) {
+                try {
+                    await fetch(`${API_BASE}/products/${id}/`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': 'Bearer ' + (token || '') }
+                    });
+                } catch (e) { /* continue */ }
+            }
+            selectedIds.clear();
+            await loadStoreProducts(currentStoreId);
+        };
+
+        // ---- Per-product: delete, duplicate, edit ----
+        window.deleteProduct = async function(id) {
+            if (!confirm(window.i18n ? i18n.t('Delete this product? This cannot be undone.') : 'Delete this product? This cannot be undone.')) return;
+            try {
+                const r = await fetch(`${API_BASE}/products/${id}/`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + (token || '') }
+                });
+                if (!r.ok && r.status !== 204) throw new Error('Failed');
+                await loadStoreProducts(currentStoreId);
+            } catch (e) {
+                alert(window.i18n ? i18n.t('Could not delete product.') : 'Could not delete product.');
+            }
+        };
+        window.duplicateProduct = async function(id) {
+            const p = allProducts.find(x => Number(x.id) === Number(id));
+            if (!p) return;
+            try {
+                const body = {
+                    store: currentStoreId,
+                    title: (p.title || 'Product') + ' (copy)',
+                    description: p.description || '',
+                    category: p.category || '',
+                    price: p.price || 0,
+                    stock_quantity: p.stock_quantity || 0,
+                    unit: p.unit || '',
+                    is_dropshippable: !!p.is_dropshippable,
+                    is_published: false
+                };
+                if (p.expiration_date) body.expiration_date = p.expiration_date;
+                if (p.image_url) body.image_url = p.image_url;
+                const r = await fetch(`${API_BASE}/products/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') },
+                    body: JSON.stringify(body)
+                });
+                if (!r.ok) throw new Error('Failed');
+                await loadStoreProducts(currentStoreId);
+            } catch (e) {
+                alert(window.i18n ? i18n.t('Could not duplicate product.') : 'Could not duplicate product.');
+            }
+        };
+        window.editProduct = function(id) {
+            const p = allProducts.find(x => Number(x.id) === Number(id));
+            if (!p) return;
+            editingProductId = id;
+            const g = i => document.getElementById(i);
+            if (g('product-title')) g('product-title').value = p.title || '';
+            if (g('product-description')) g('product-description').value = p.description || '';
+            if (g('product-category')) g('product-category').value = p.category || '';
+            if (g('product-price')) g('product-price').value = p.price != null ? p.price : '';
+            if (g('product-quantity')) g('product-quantity').value = p.stock_quantity != null ? p.stock_quantity : '';
+            if (g('product-unit')) g('product-unit').value = p.unit || '';
+            if (g('product-expiration')) g('product-expiration').value = p.expiration_date || '';
+            if (g('product-dropship')) g('product-dropship').checked = !!p.is_dropshippable;
+            if (g('product-image-url')) g('product-image-url').value = p.image_url || '';
+            if (g('product-image')) g('product-image').value = '';
+            const previewWrap = g('image-preview');
+            if (previewWrap) {
+                const src = p.image_display || p.image || p.image_url;
+                if (src) { g('preview-img').src = src; previewWrap.classList.remove('hidden'); }
+                else { previewWrap.classList.add('hidden'); }
+            }
+            const titleEl = document.querySelector('#add-product-modal h2');
+            if (titleEl) titleEl.textContent = window.i18n ? i18n.t('Edit Product') : 'Edit Product';
+            const submitEl = g('submit-add-product');
+            if (submitEl) submitEl.innerHTML = '<i class="fas fa-save"></i> ' + (window.i18n ? i18n.t('Save Changes') : 'Save Changes');
+            g('add-product-error').classList.add('hidden');
+            g('add-product-modal').classList.remove('hidden');
+        };
+        function resetProductModal() {
+            editingProductId = null;
+            const titleEl = document.querySelector('#add-product-modal h2');
+            if (titleEl) titleEl.textContent = window.i18n ? i18n.t('Add New Product') : 'Add New Product';
+            const submitEl = document.getElementById('submit-add-product');
+            if (submitEl) submitEl.innerHTML = '<i class="fas fa-plus"></i> ' + (window.i18n ? i18n.t('Add Product') : 'Add Product');
+            const previewWrap = document.getElementById('image-preview');
+            if (previewWrap) previewWrap.classList.add('hidden');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.product-filter-btn').forEach(b => {
                 b.addEventListener('click', () => setProductFilter(b.getAttribute('data-filter'), b));
             });
+            const searchEl = document.getElementById('product-search');
+            if (searchEl) searchEl.addEventListener('input', (e) => { productSearch = e.target.value; renderProductRows(getVisibleProducts()); });
+            const sortEl = document.getElementById('product-sort');
+            if (sortEl) sortEl.addEventListener('change', (e) => { productSort = e.target.value; renderProductRows(getVisibleProducts()); });
+            const selEl = document.getElementById('product-select-toggle');
+            if (selEl) selEl.addEventListener('click', toggleSelectMode);
         });
 
 
@@ -2016,10 +2226,12 @@
                 return;
             }
             try {
+                const payload = { stock_quantity: qty };
+                if (qty === 0) payload.is_published = false;  // auto-hide when out of stock
                 const resp = await fetch(`${API_BASE}/products/${productId}/`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') },
-                    body: JSON.stringify({ stock_quantity: qty })
+                    body: JSON.stringify(payload)
                 });
                 if (!resp.ok) throw new Error('Failed to update');
                 await loadStoreProducts(currentStoreId);
@@ -2119,9 +2331,10 @@
         let currentStoreId = null;
 
         document.getElementById('add-product')?.addEventListener('click', () => {
-            document.getElementById('add-product-modal').classList.remove('hidden');
             document.getElementById('add-product-form').reset();
+            resetProductModal();
             document.getElementById('add-product-error').classList.add('hidden');
+            document.getElementById('add-product-modal').classList.remove('hidden');
         });
 
         // Image preview handlers
@@ -2151,6 +2364,7 @@
 
         document.getElementById('cancel-add-product')?.addEventListener('click', () => {
             document.getElementById('add-product-modal').classList.add('hidden');
+            resetProductModal();
         });
 
         document.getElementById('add-product-form')?.addEventListener('submit', async (e) => {
@@ -2159,9 +2373,12 @@
             const form = e.target;
             const submitBtn = document.getElementById('submit-add-product');
             const errorDiv = document.getElementById('add-product-error');
+            const isEdit = !!editingProductId;
 
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            submitBtn.innerHTML = isEdit
+                ? '<i class="fas fa-spinner fa-spin"></i> Saving...'
+                : '<i class="fas fa-spinner fa-spin"></i> Adding...';
             errorDiv.classList.add('hidden');
 
             try {
@@ -2186,10 +2403,11 @@
                 formData.append('store', storeId);
                 formData.append('total_value', parseFloat(formData.get('price')) * parseFloat(formData.get('stock_quantity')));
 
-                console.log('[Add Product] Submitting with image...');
+                const url = isEdit ? `${API_BASE}/products/${editingProductId}/` : `${API_BASE}/products/`;
+                const method = isEdit ? 'PATCH' : 'POST';
 
-                const response = await fetch(`${API_BASE}/products/`, {
-                    method: 'POST',
+                const response = await fetch(url, {
+                    method: method,
                     headers: {
                         'Authorization': 'Bearer ' + token
                     },
@@ -2198,11 +2416,10 @@
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Failed to add product');
+                    throw new Error(errorData.detail || (isEdit ? 'Failed to update product' : 'Failed to add product'));
                 }
 
-                const newProduct = await response.json();
-                console.log('[Add Product] Success:', newProduct);
+                const savedProduct = await response.json();
 
                 try {
                     localStorage.setItem('last_product_created', JSON.stringify({ 
@@ -2216,15 +2433,18 @@
                 } catch (err) { /* ignore */ }
 
                 document.getElementById('add-product-modal').classList.add('hidden');
+                resetProductModal();
                 await loadStoreProducts(storeId);
 
             } catch (error) {
-                console.error('[Add Product] Error:', error);
-                errorDiv.textContent = error.message || 'Failed to add product. Please try again.';
+                console.error('[Save Product] Error:', error);
+                errorDiv.textContent = error.message || 'Failed to save product. Please try again.';
                 errorDiv.classList.remove('hidden');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Product';
+                submitBtn.innerHTML = editingProductId
+                    ? '<i class="fas fa-save"></i> Save Changes'
+                    : '<i class="fas fa-plus"></i> Add Product';
             }
         });
 
