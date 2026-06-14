@@ -1,48 +1,157 @@
 {% extends 'dashboard/base.html' %}
 {% block dashboard_content %}
-<div class="max-w-3xl mx-auto bg-white/90 backdrop-blur rounded-3xl shadow-2xl p-10 mt-12 border border-gray-100">
-    <h2 class="text-4xl font-extrabold text-emerald-700 mb-2">Add Livestock Unit</h2>
-    <p class="text-gray-500 mb-8">Fill in the details below to register livestock on your farm.</p>
-    <form id="add-livestock-unit-form" method="POST" action="#" class="space-y-6">
-        {% csrf_token %}
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">What are you adding?</label>
-            <select id="unit-type-select" name="unit_type" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150" required>
-                <option value="">Select...</option>
-                <option value="individual">Individual Animal</option>
-                <option value="herd">Herd</option>
-                <option value="batch">Batch / Stock</option>
-                <option value="colony">Bee Colony / Hive</option>
-                <option value="population">Population / Culture</option>
-            </select>
-        </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Purpose <span class="text-gray-400 font-normal">(enter or select multiple)</span></label>
-                <div id="purpose-tags" class="flex flex-wrap gap-2 mb-2"></div>
-                <input type="text" id="purpose-input" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150" placeholder="Type and press Enter (e.g. Meat, Milk, Custom...)" autocomplete="off">
-                <div class="text-xs text-gray-400 mt-1">Suggestions: Meat, Milk, Eggs, Breeding, Honey, Wax, Fish, Manure, Other</div>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    * { font-family: 'Inter', system-ui, sans-serif; }
+    h1, h2, h3, .font-display { font-family: 'Fraunces', serif; letter-spacing:-.01em; }
+
+    :root {
+        --primary: #10b981;
+        --primary-dark: #047857;
+        --primary-light: #34d399;
+        --secondary: #0c6b46;
+        --accent: #c39a48;
+        --line: #ece4d6;
+        --ink: #16271c;
+    }
+
+    body { background: radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f4efe3 62%); min-height: 100vh; }
+
+    .alu-shell { max-width: 920px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+    @media (max-width: 640px){ .alu-shell { padding: .85rem .9rem 3rem; } }
+
+    .page-header {
+        background: linear-gradient(120deg, #0c3d22 0%, #1f5a32 55%, #2f6b3c 100%);
+        position: relative; overflow: hidden;
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(12,61,34,.22);
+    }
+    #alu-farmland { position:absolute; inset:-2%; z-index:0; }
+    #alu-farmland svg { width:100%; height:100%; }
+    .page-header > .ph-inner { position:relative; z-index:2; }
+    .back-link { display:inline-flex; align-items:center; gap:.4rem; color:rgba(255,255,255,.85); font-size:.85rem; font-weight:600; text-decoration:none; margin-bottom:.6rem; transition:color .2s; }
+    .back-link:hover { color:#fff; }
+
+    .surface { background: #fff; border: 1px solid var(--line); border-radius: 1.5rem; box-shadow: 0 16px 40px rgba(20,39,28,.08); }
+
+    /* Field styling — applies to the static inputs and the JS-injected adaptive ones */
+    .alu-card .input-field,
+    .alu-card input[type="text"],
+    .alu-card input[type="number"],
+    .alu-card input[type="date"],
+    .alu-card select,
+    .alu-card textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 0.75rem;
+        background: #fff;
+        padding: 0.65rem 0.95rem;
+        font-size: 0.9375rem;
+        color: var(--ink);
+        transition: border-color .2s, box-shadow .2s;
+    }
+    .alu-card .input-field:focus,
+    .alu-card input:focus,
+    .alu-card select:focus,
+    .alu-card textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(16,185,129,.12);
+    }
+    .field-label { display:block; font-size:.8rem; font-weight:700; color:#3f4a42; margin-bottom:.35rem; }
+    .field-hint { color:#9aa39a; font-weight:500; }
+
+    .section-card { border:1px solid var(--line); border-radius:1rem; padding:1.1rem 1.2rem; background:#fbf9f3; }
+    .section-title { font-family:'Fraunces',serif; font-size:1.02rem; font-weight:700; color:var(--ink); margin-bottom:.15rem; }
+    .section-sub { font-size:.8rem; color:#7c857c; margin-bottom:.8rem; }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white; font-weight: 600; padding: 0.85rem 1.8rem; border-radius: 999px; border: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 6px 16px rgba(22, 163, 74, 0.28); cursor: pointer;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(22, 163, 74, 0.38); }
+    .btn-primary:active { transform: scale(.99); }
+
+    .chip-add { padding:.4rem .9rem; border-radius:999px; background:#e7f4ec; color:#0f7a4b; border:1px solid #cdead8; font-weight:600; font-size:.85rem; cursor:pointer; transition:background .15s; }
+    .chip-add:hover { background:#d6efdf; }
+
+    .tag-pill { display:inline-flex; align-items:center; gap:.5rem; background:#e7f4ec; color:#0f7a4b; border:1px solid #cdead8; padding:.35rem .8rem; border-radius:999px; font-weight:600; font-size:.85rem; }
+    .tag-pill button { color:#0f7a4b; line-height:1; }
+    .tag-pill button:hover { color:#dc2626; }
+
+    .fade-in { animation: fadeIn 0.55s cubic-bezier(0.4, 0, 0.2, 1) backwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<div class="alu-shell">
+    <!-- Hero -->
+    <section class="page-header py-9 px-8 mb-7">
+        <div id="alu-farmland"></div>
+        <div class="ph-inner">
+            <a href="livestock.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Livestock</a>
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                    <i class="fas fa-cow text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-display text-3xl md:text-4xl font-black text-white mb-1">Add Livestock Unit</h1>
+                    <p class="text-emerald-50 text-base font-medium">Register animals, herds, batches, hives and more.</p>
+                </div>
             </div>
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Livestock Name <span class="text-gray-400 font-normal">(required)</span></label>
-            <input type="text" name="unit_name" placeholder="e.g. Main Herd, Daisy" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150" required>
         </div>
-        <div class="mt-4">
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Sub-Units <span class="text-gray-400 font-normal">(optional, e.g. Chicks, Growers, Layers)</span></label>
-            <div id="sub-units-list"></div>
-            <button type="button" id="add-sub-unit-btn" class="mt-2 px-3 py-1 rounded-lg bg-emerald-100 text-emerald-700 font-semibold hover:bg-emerald-200 transition">+ Add Sub-Unit</button>
-        </div>
-        <div id="adaptive-fields"></div>
-        <button
-            type="submit"
-            class="w-full mt-8 py-3 rounded-xl font-semibold text-white
-                   bg-emerald-600 hover:bg-emerald-700
-                   transition-all duration-200
-                   shadow-lg hover:shadow-xl active:scale-[0.98]">
-            Save Livestock Unit
-        </button>
-    </form>
-    <div id="add-livestock-msg" class="mt-6 text-sm"></div>
+    </section>
+
+    <!-- Form card -->
+    <div class="surface alu-card p-7 md:p-9 fade-in">
+        <form id="add-livestock-unit-form" method="POST" action="#" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label class="field-label">What are you adding?</label>
+                <select id="unit-type-select" name="unit_type" required>
+                    <option value="">Select...</option>
+                    <option value="individual">Individual Animal</option>
+                    <option value="herd">Herd</option>
+                    <option value="batch">Batch / Stock</option>
+                    <option value="colony">Bee Colony / Hive</option>
+                    <option value="population">Population / Culture</option>
+                </select>
+            </div>
+
+            <div class="section-card">
+                <div class="section-title">Purpose</div>
+                <div class="section-sub">Type and press Enter to add one or more. <span class="field-hint">Suggestions: Meat, Milk, Eggs, Breeding, Honey, Wax, Fish, Manure, Other</span></div>
+                <div id="purpose-tags" class="flex flex-wrap gap-2 mb-2"></div>
+                <input type="text" id="purpose-input" placeholder="e.g. Meat, Milk, Custom..." autocomplete="off">
+            </div>
+
+            <div>
+                <label class="field-label">Livestock Name <span class="field-hint">(required)</span></label>
+                <input type="text" name="unit_name" placeholder="e.g. Main Herd, Daisy" required>
+            </div>
+
+            <div class="section-card">
+                <div class="section-title">Sub-Units <span class="field-hint">(optional)</span></div>
+                <div class="section-sub">Break the unit into groups — e.g. Chicks, Growers, Layers.</div>
+                <div id="sub-units-list"></div>
+                <button type="button" id="add-sub-unit-btn" class="chip-add mt-2">+ Add Sub-Unit</button>
+            </div>
+
+            <div id="adaptive-fields" class="space-y-1"></div>
+
+            <button type="submit" class="btn-primary w-full mt-2">
+                <i class="fas fa-check mr-1"></i> Save Livestock Unit
+            </button>
+        </form>
+        <div id="add-livestock-msg" class="mt-5 text-sm"></div>
+    </div>
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const unitTypeSelect = document.getElementById('unit-type-select');
@@ -62,8 +171,8 @@ document.addEventListener('DOMContentLoaded', function() {
         purposeTagsDiv.innerHTML = '';
         purposes.forEach((purpose, idx) => {
             const tag = document.createElement('span');
-            tag.className = 'bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full flex items-center gap-2';
-            tag.innerHTML = `${purpose} <button type="button" class="ml-1 text-emerald-700 hover:text-red-500" data-idx="${idx}" title="Remove">&times;</button>`;
+            tag.className = 'tag-pill';
+            tag.innerHTML = `${purpose} <button type="button" data-idx="${idx}" title="Remove">&times;</button>`;
             purposeTagsDiv.appendChild(tag);
         });
     }
@@ -84,7 +193,6 @@ document.addEventListener('DOMContentLoaded', function() {
             purposeInput.value = '';
         }
     });
-    // Suggestion dropdown (basic, for UX)
     purposeInput.addEventListener('input', function() {
         const val = purposeInput.value.toLowerCase();
         if (!val) return;
@@ -98,172 +206,76 @@ document.addEventListener('DOMContentLoaded', function() {
     // Field templates for each type
     const fieldTemplates = {
         individual: `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Name / Tag</label>
-                    <input type="text" name="name" placeholder="e.g. Daisy, Tag #123" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
+            <div class="section-card">
+                <div class="section-title mb-3">Animal details</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="field-label">Name / Tag</label><input type="text" name="name" placeholder="e.g. Daisy, Tag #123"></div>
+                    <div><label class="field-label">Species</label><input type="text" name="species" placeholder="e.g. Cow, Goat"></div>
+                    <div><label class="field-label">Breed</label><input type="text" name="breed" placeholder="e.g. Friesian, Boer"></div>
+                    <div><label class="field-label">Date of Birth</label><input type="date" name="date_of_birth"></div>
+                    <div><label class="field-label">Sex</label>
+                        <select name="sex"><option value="">Select sex...</option><option value="male">Male</option><option value="female">Female</option><option value="unknown">Unknown</option></select>
+                    </div>
+                    <div><label class="field-label">Current Weight (kg)</label><input type="number" step="0.01" name="weight" placeholder="e.g. 350.5"></div>
+                    <div><label class="field-label">Health Status</label><input type="text" name="health_status" placeholder="e.g. Healthy, Injured"></div>
+                    <div><label class="field-label">Location / Pen</label><input type="text" name="location" placeholder="e.g. Pen 4, Barn A"></div>
                 </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Species</label>
-                    <input type="text" name="species" placeholder="e.g. Cow, Goat" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Breed</label>
-                    <input type="text" name="breed" placeholder="e.g. Friesian, Boer" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-                    <input type="date" name="date_of_birth" placeholder="YYYY-MM-DD" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Sex</label>
-                    <select name="sex" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                        <option value="">Select sex...</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="unknown">Unknown</option>
-                    </select>
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Current Weight (kg)</label>
-                    <input type="number" step="0.01" name="weight" placeholder="e.g. 350.5" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Health Status</label>
-                    <input type="text" name="health_status" placeholder="e.g. Healthy, Injured" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Location / Pen</label>
-                    <input type="text" name="location" placeholder="e.g. Pen 4, Barn A" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-            </div>
-            <div class="space-y-1 mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <textarea name="notes" placeholder="Any additional notes..." class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150" rows="2"></textarea>
+                <div class="mt-4"><label class="field-label">Notes</label><textarea name="notes" placeholder="Any additional notes..." rows="2"></textarea></div>
             </div>
         `,
         herd: `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Herd Name</label>
-                    <input type="text" name="herd_name" placeholder="e.g. Main Herd" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
+            <div class="section-card">
+                <div class="section-title mb-3">Herd details</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="field-label">Herd Name</label><input type="text" name="herd_name" placeholder="e.g. Main Herd"></div>
+                    <div><label class="field-label">Species</label><input type="text" name="species" placeholder="e.g. Cattle, Goat"></div>
+                    <div><label class="field-label">Breed</label><input type="text" name="breed" placeholder="e.g. Friesian, Boer"></div>
+                    <div><label class="field-label">Quantity</label><input type="number" name="quantity" placeholder="e.g. 50"></div>
+                    <div><label class="field-label">Average Age</label><input type="text" name="average_age" placeholder="e.g. 2 years"></div>
+                    <div><label class="field-label">Average Weight (kg)</label><input type="number" step="0.01" name="average_weight" placeholder="e.g. 350.5"></div>
+                    <div><label class="field-label">Health Status</label><input type="text" name="health_status" placeholder="e.g. Healthy, Injured"></div>
                 </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Species</label>
-                    <input type="text" name="species" placeholder="e.g. Cattle, Goat" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Breed</label>
-                    <input type="text" name="breed" placeholder="e.g. Friesian, Boer" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                    <input type="number" name="quantity" placeholder="e.g. 50" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Average Age</label>
-                    <input type="text" name="average_age" placeholder="e.g. 2 years" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Average Weight (kg)</label>
-                    <input type="number" step="0.01" name="average_weight" placeholder="e.g. 350.5" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Health Status</label>
-                    <input type="text" name="health_status" placeholder="e.g. Healthy, Injured" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-            </div>
-            <div class="space-y-1 mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <textarea name="notes" placeholder="Any additional notes..." class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150" rows="2"></textarea>
+                <div class="mt-4"><label class="field-label">Notes</label><textarea name="notes" placeholder="Any additional notes..." rows="2"></textarea></div>
             </div>
         `,
         batch: `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Batch Name</label>
-                    <input type="text" name="batch_name" placeholder="e.g. Batch A" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
+            <div class="section-card">
+                <div class="section-title mb-3">Batch details</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="field-label">Batch Name</label><input type="text" name="batch_name" placeholder="e.g. Batch A"></div>
+                    <div><label class="field-label">Species</label><input type="text" name="species" placeholder="e.g. Tilapia, Catfish"></div>
+                    <div><label class="field-label">Quantity Stocked</label><input type="number" name="quantity" placeholder="e.g. 1000"></div>
+                    <div><label class="field-label">Date Stocked</label><input type="date" name="date_stocked"></div>
+                    <div><label class="field-label">Housing</label><input type="text" name="housing" placeholder="e.g. Pond 1, Tank 2"></div>
+                    <div><label class="field-label">Feed Type</label><input type="text" name="feed_type" placeholder="e.g. Floating pellets"></div>
                 </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Species</label>
-                    <input type="text" name="species" placeholder="e.g. Tilapia, Catfish" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Quantity Stocked</label>
-                    <input type="number" name="quantity" placeholder="e.g. 1000" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Date Stocked</label>
-                    <input type="date" name="date_stocked" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Housing</label>
-                    <input type="text" name="housing" placeholder="e.g. Pond 1, Tank 2" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Feed Type</label>
-                    <input type="text" name="feed_type" placeholder="e.g. Floating pellets" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-            </div>
-            <div class="space-y-1 mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <textarea name="notes" placeholder="Any additional notes..." class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150" rows="2"></textarea>
+                <div class="mt-4"><label class="field-label">Notes</label><textarea name="notes" placeholder="Any additional notes..." rows="2"></textarea></div>
             </div>
         `,
         colony: `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Hive Name / ID</label>
-                    <input type="text" name="hive_name" placeholder="e.g. Hive 1" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
+            <div class="section-card">
+                <div class="section-title mb-3">Hive details</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="field-label">Hive Name / ID</label><input type="text" name="hive_name" placeholder="e.g. Hive 1"></div>
+                    <div><label class="field-label">Bee Species</label><input type="text" name="species" placeholder="e.g. Apis mellifera"></div>
+                    <div><label class="field-label">Hive Type</label><input type="text" name="hive_type" placeholder="e.g. Langstroth"></div>
+                    <div><label class="field-label">Installation Date</label><input type="date" name="installation_date"></div>
+                    <div><label class="field-label">Queen Status</label><input type="text" name="queen_status" placeholder="e.g. Present, Absent"></div>
                 </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Bee Species</label>
-                    <input type="text" name="species" placeholder="e.g. Apis mellifera" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Hive Type</label>
-                    <input type="text" name="hive_type" placeholder="e.g. Langstroth" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Installation Date</label>
-                    <input type="date" name="installation_date" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Queen Status</label>
-                    <input type="text" name="queen_status" placeholder="e.g. Present, Absent" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-            </div>
-            <div class="space-y-1 mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <textarea name="notes" placeholder="Any additional notes..." class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150" rows="2"></textarea>
+                <div class="mt-4"><label class="field-label">Notes</label><textarea name="notes" placeholder="Any additional notes..." rows="2"></textarea></div>
             </div>
         `,
         population: `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Population Name</label>
-                    <input type="text" name="population_name" placeholder="e.g. Culture 1" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
+            <div class="section-card">
+                <div class="section-title mb-3">Population details</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="field-label">Population Name</label><input type="text" name="population_name" placeholder="e.g. Culture 1"></div>
+                    <div><label class="field-label">Species</label><input type="text" name="species" placeholder="e.g. Yeast, Bacteria"></div>
+                    <div><label class="field-label">Estimated Quantity/Biomass</label><input type="number" name="quantity" placeholder="e.g. 500"></div>
+                    <div><label class="field-label">Container / Location</label><input type="text" name="location" placeholder="e.g. Tank 2"></div>
+                    <div><label class="field-label">Start Date</label><input type="date" name="start_date"></div>
                 </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Species</label>
-                    <input type="text" name="species" placeholder="e.g. Yeast, Bacteria" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Estimated Quantity/Biomass</label>
-                    <input type="number" name="quantity" placeholder="e.g. 500" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Container / Location</label>
-                    <input type="text" name="location" placeholder="e.g. Tank 2" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                    <input type="date" name="start_date" class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150">
-                </div>
-            </div>
-            <div class="space-y-1 mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <textarea name="notes" placeholder="Any additional notes..." class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150" rows="2"></textarea>
+                <div class="mt-4"><label class="field-label">Notes</label><textarea name="notes" placeholder="Any additional notes..." rows="2"></textarea></div>
             </div>
         `
     };
@@ -275,8 +287,6 @@ document.addEventListener('DOMContentLoaded', function() {
     unitTypeSelect.addEventListener('change', function() {
         renderFields(this.value);
     });
-
-    // Initial render (if editing, could pre-select)
     renderFields(unitTypeSelect.value);
 
     // Sub-Units logic
@@ -286,11 +296,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const div = document.createElement('div');
             div.className = 'flex flex-wrap gap-2 items-end mb-2';
             div.innerHTML = `
-                <input type="text" class="block input-field w-32 rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150" placeholder="Name (e.g. Chicks)" value="${sub.name || ''}" data-idx="${idx}" data-field="name">
-                <input type="number" class="block input-field w-24 rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150" placeholder="Count" value="${sub.count || ''}" data-idx="${idx}" data-field="count">
-                <input type="text" class="block input-field w-32 rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150" placeholder="Age Range" value="${sub.age_range || ''}" data-idx="${idx}" data-field="age_range">
-                <input type="text" class="block input-field w-32 rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm transition-all duration-150" placeholder="Stage" value="${sub.stage || ''}" data-idx="${idx}" data-field="stage">
-                <button type="button" class="text-red-600 font-bold remove-sub-unit" data-idx="${idx}">&times;</button>
+                <input type="text" class="w-36" placeholder="Name (e.g. Chicks)" value="${sub.name || ''}" data-idx="${idx}" data-field="name">
+                <input type="number" class="w-24" placeholder="Count" value="${sub.count || ''}" data-idx="${idx}" data-field="count">
+                <input type="text" class="w-32" placeholder="Age Range" value="${sub.age_range || ''}" data-idx="${idx}" data-field="age_range">
+                <input type="text" class="w-32" placeholder="Stage" value="${sub.stage || ''}" data-idx="${idx}" data-field="stage">
+                <button type="button" class="text-red-600 font-bold text-xl remove-sub-unit" data-idx="${idx}">&times;</button>
             `;
             subUnitsList.appendChild(div);
         });
@@ -323,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const token = localStorage.getItem('access_token');
         if (!token) {
             msgDiv.textContent = 'You must be logged in to add a livestock unit.';
-            msgDiv.className = 'mt-6 text-red-800 bg-red-100 border border-red-200 rounded-xl px-4 py-3';
+            msgDiv.className = 'mt-5 text-red-800 bg-red-100 border border-red-200 rounded-xl px-4 py-3';
             setTimeout(() => { window.location.href = 'authentication.html'; }, 1200);
             submitting = false;
             return;
@@ -338,8 +348,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 data[k] = v;
             }
         });
-            // Handle tag input for purpose
-            data['purpose'] = purposes;
+        data['purpose'] = purposes;
         if (subUnits.length > 0) {
             data['sub_units'] = subUnits;
         }
@@ -356,14 +365,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.status === 401 || response.status === 403) {
                 localStorage.clear();
                 msgDiv.textContent = 'Session expired. Please log in again.';
-                msgDiv.className = 'mt-6 text-red-800 bg-red-100 border border-red-200 rounded-xl px-4 py-3';
+                msgDiv.className = 'mt-5 text-red-800 bg-red-100 border border-red-200 rounded-xl px-4 py-3';
                 setTimeout(() => { window.location.href = 'authentication.html'; }, 1200);
                 return;
             }
             const result = await response.json();
             if (response.ok) {
                 msgDiv.textContent = 'Livestock unit added successfully!';
-                msgDiv.className = 'mt-6 text-green-800 bg-green-100 border border-green-200 rounded-xl px-4 py-3';
+                msgDiv.className = 'mt-5 text-green-800 bg-green-100 border border-green-200 rounded-xl px-4 py-3';
                 setTimeout(() => { window.location.href = 'livestock.html'; }, 1200);
             } else {
                 let errorMsg = 'Error: ';
@@ -373,16 +382,152 @@ document.addEventListener('DOMContentLoaded', function() {
                     errorMsg += 'Could not add livestock unit.';
                 }
                 msgDiv.textContent = errorMsg;
-                msgDiv.className = 'mt-6 text-red-800 bg-red-100 border border-red-200 rounded-xl px-4 py-3';
+                msgDiv.className = 'mt-5 text-red-800 bg-red-100 border border-red-200 rounded-xl px-4 py-3';
             }
         } catch (err) {
             msgDiv.textContent = 'Network error. Please try again.';
-            msgDiv.className = 'mt-6 text-red-800 bg-red-100 border border-red-200 rounded-xl px-4 py-3';
+            msgDiv.className = 'mt-5 text-red-800 bg-red-100 border border-red-200 rounded-xl px-4 py-3';
         }
         submitting = false;
     });
-    // Initial render for sub-units
     renderSubUnits();
 });
 </script>
+
+<script>
+/* Farmland golden-hour mosaic for the hero */
+(function(){
+    function bf(){
+        var W=1200,H=420,cols=8,rows=3,jx=(W/cols)*.32,jy=(H/rows)*.32,P=[];
+        for(var r=0;r<=rows;r++){P[r]=[];for(var c=0;c<=cols;c++){var e=(r===0||r===rows||c===0||c===cols);P[r][c]={x:(c/cols)*W+(e?0:(Math.random()*2-1)*jx),y:(r/rows)*H+(e?0:(Math.random()*2-1)*jy)};}}
+        var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']],ang=[0,16,90,74,16,0,90,30,16],defs='';
+        pal.forEach(function(c,i){defs+='<pattern id="alup'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>';});
+        var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8],cells='';
+        for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e2=P[r2+1][c2],fi=bag[Math.floor(Math.random()*bag.length)];cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e2.x.toFixed(1)+','+e2.y.toFixed(1)+'" fill="url(#alup'+fi+')" stroke="rgba(22,15,7,.16)" stroke-width="1.1"/>';}
+        return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
+    }
+    var el=document.getElementById('alu-farmland');
+    if(el){ el.innerHTML=bf(); var sc=document.createElement('div'); sc.style.cssText='position:absolute;inset:0;z-index:1;background:linear-gradient(100deg,rgba(8,30,18,.82),rgba(8,30,18,.5))'; el.after(sc); }
+})();
+</script>
+
+<!-- Dale AI context for this page -->
+<script>
+  window.__daleCtx = function(){ return { page:'Add Livestock Unit', type:'livestock', extras:{} }; };
+  window.__daleIntro = "Hi, I'm Dale. Setting up a new livestock unit? Ask me what each field means or how to organise sub-units.";
+  window.__daleChips = ["What's a sub-unit?","Herd vs batch?","What purpose should I pick?","Tips for new livestock"];
+</script>
+
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
+<!-- ===== Dale AI assistant (context-aware, brand) ===== -->
+<script>
+(function(){
+  if (window.__daleInit) return; window.__daleInit = true;
+  var ENDPOINT = '/api/ai/dale/ask/';
+  var history = [];
+
+  var css = ''
+    + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:66px;height:66px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
+    + 'background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);'
+    + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;overflow:hidden}'
+    + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
+    + '#daleFab svg{width:28px;height:28px}'
+    + '#daleFab dotlottie-wc{width:54px;height:54px;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}'
+    + '#daleFab .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857;z-index:2}'
+    + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;'
+    + 'background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);'
+    + 'display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
+    + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
+    + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
+    + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
+    + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+    + '.dale-head .mk svg{width:20px;height:20px}'
+    + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
+    + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
+    + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+    + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
+    + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+    + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
+    + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
+    + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+    + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
+    + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
+    + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
+    + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
+    + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
+    + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
+    + '.dale-chip:hover{background:#d6efdf}'
+    + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
+    + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
+    + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
+    + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
+    + '.dale-input button svg{width:18px;height:18px}'
+    + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
+  var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+  var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+  var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
+  fab.innerHTML = '<span class="dot"></span><dotlottie-wc src="https://lottie.host/ac187fae-55ac-4ce4-93a9-fe037e3e2e57/jSdcU6a1Ig.lottie" autoplay loop></dotlottie-wc>';
+  document.body.appendChild(fab);
+
+  var panel = document.createElement('div'); panel.id='dalePanel';
+  panel.innerHTML =
+    '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
+    + '<div class="dale-msgs" id="daleMsgs"></div>'
+    + '<div class="dale-chips" id="daleChips"></div>'
+    + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
+    + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
+  document.body.appendChild(panel);
+
+  var msgs = panel.querySelector('#daleMsgs');
+  var text = panel.querySelector('#daleText');
+  var greeted = false;
+
+  function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+  function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+  function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+
+  function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
+
+  function renderChips(){
+    var chips = (window.__daleChips || []);
+    var box = panel.querySelector('#daleChips'); box.innerHTML='';
+    chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); });
+  }
+
+  async function send(q){
+    q = (q!==undefined ? q : text.value).trim();
+    if(!q) return;
+    text.value=''; bubble(q,'me'); history.push({role:'user',content:q});
+    var t = typing();
+    try{
+      var token = localStorage.getItem('access_token');
+      var res = await fetch(ENDPOINT, {
+        method:'POST',
+        headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}),
+        body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) })
+      });
+      t.remove();
+      if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
+      var data = await res.json();
+      var reply = data.reply || data.detail || 'No response.';
+      bubble(reply,'ai'); history.push({role:'assistant',content:reply});
+    }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
+  }
+
+  function open(){
+    panel.classList.add('open');
+    if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); }
+    setTimeout(function(){ text.focus(); }, 50);
+  }
+  function close(){ panel.classList.remove('open'); }
+
+  fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
+  panel.querySelector('.x').addEventListener('click', close);
+  panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
+  text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+  text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
+})();
+</script>
+
 {% endblock %}
