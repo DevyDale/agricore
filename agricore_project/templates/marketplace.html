@@ -7,6 +7,7 @@
     <script src="/static/i18n.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
     <style>
         :root{ --g500:#10b981; --g600:#059669; --g700:#047857; --line:#ece4d6; --ink:#16271c; }
         *{ box-sizing:border-box; font-family:'Inter',system-ui,sans-serif }
@@ -68,6 +69,25 @@
         .mc{ background:#fff; border-radius:20px; padding:1.8rem; width:100%; max-width:480px; box-shadow:0 30px 70px -20px rgba(6,28,15,.5) }
         footer{ max-width:1400px; margin:0 auto; padding:2rem 1.5rem; color:#64748b; font-size:.9rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; border-top:1px solid var(--line) }
         @media(max-width:760px){ .stats{ grid-template-columns:repeat(2,1fr) } .frow{ grid-template-columns:1fr } }
+
+        /* ---- marketplace integration additions ---- */
+        .store-badge{ display:inline-flex; align-items:center; gap:.3rem; font-size:.72rem; font-weight:700; color:#0f7a4b; margin-bottom:.35rem }
+        .store-badge .vf{ color:#0ea5e9 }
+        .stockpill{ font-size:.68rem; font-weight:700; padding:.15rem .55rem; border-radius:999px; white-space:nowrap }
+        .stock-in{ background:#dcfce7; color:#047857 } .stock-low{ background:#fef3c7; color:#92400e } .stock-out{ background:#fee2e2; color:#dc2626 }
+        .addbtn{ flex:1; border:0; border-radius:11px; padding:.6rem; font-weight:700; cursor:pointer; background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; display:inline-flex; align-items:center; justify-content:center; gap:.4rem; font-size:.85rem }
+        .addbtn:disabled{ opacity:.5; cursor:not-allowed }
+        .buybtn{ flex:1; border:1.5px solid var(--g500); background:#fff; color:var(--g700); border-radius:11px; padding:.6rem; font-weight:700; cursor:pointer; font-size:.85rem }
+        .buybtn:disabled{ opacity:.5; cursor:not-allowed }
+        .co-store{ border:1px solid var(--line); border-radius:14px; padding:.9rem; margin-bottom:.8rem; background:#fff }
+        .co-store h4{ margin:0 0 .5rem; font-size:.95rem; display:flex; align-items:center; gap:.4rem }
+        .co-line{ display:flex; justify-content:space-between; gap:1rem; font-size:.85rem; color:#475569; padding:.15rem 0 }
+        .esc-pill{ font-size:.7rem; font-weight:700; padding:.2rem .6rem; border-radius:999px; display:inline-block; margin-top:.25rem }
+        .esc-pending{ background:#fef3c7; color:#92400e } .esc-held{ background:#dbeafe; color:#1d4ed8 } .esc-released{ background:#dcfce7; color:#047857 }
+        .esc-refunded{ background:#f3f4f6; color:#6b7280 } .esc-disputed{ background:#fee2e2; color:#dc2626 } .esc-none{ background:#f1f5f9; color:#64748b }
+        .ord-card{ border:1px solid var(--line); border-radius:14px; padding:1rem; margin-bottom:.8rem; background:#fff }
+        .mc-lg{ max-width:560px; max-height:88vh; overflow:auto }
+        .trust-banner{ display:flex; gap:.6rem; align-items:flex-start; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:12px; padding:.7rem .9rem; font-size:.82rem; color:#065f46; margin-bottom:1rem }
     </style>
 </head>
 <body>
@@ -79,6 +99,7 @@
                 <a href="digitalstores.html" class="nbtn"><i class="fas fa-store"></i> My Stores</a>
                 <a href="workforce.html" class="nbtn"><i class="fas fa-users"></i> Network</a>
                 <a href="chats.html" class="nbtn"><i class="fas fa-comments"></i> Chats</a>
+                <button class="nbtn" type="button" onclick="openOrders()"><i class="fas fa-receipt"></i> My Orders</button>
                 <a href="cart.html" class="nbtn"><i class="fas fa-shopping-cart"></i> Cart <span class="cart-ct" data-cart-count>0</span></a>
             </nav>
             <div class="hgt">
@@ -133,7 +154,7 @@
     <div id="cart-drawer" class="drawer">
         <div class="dhead"><i class="fas fa-shopping-cart"></i><h3>Your Cart (<span data-cart-count>0</span>)</h3><button id="cart-close">&times;</button></div>
         <div id="cart-items" class="ditems"></div>
-        <div class="dfoot"><div style="display:flex;justify-content:space-between;margin-bottom:.9rem"><span class="muted">Subtotal</span><strong id="cart-subtotal" style="font-size:1.2rem">$0</strong></div><button class="btn" onclick="location.href='cart.html'"><i class="fas fa-shopping-bag"></i> View cart &amp; checkout</button></div>
+        <div class="dfoot"><div style="display:flex;justify-content:space-between;margin-bottom:.9rem"><span class="muted">Subtotal</span><strong id="cart-subtotal" style="font-size:1.2rem">$0</strong></div><button class="btn" onclick="openCheckout()"><i class="fas fa-shopping-bag"></i> Proceed to checkout</button></div>
     </div>
 
     <!-- Dropship modal -->
@@ -145,6 +166,27 @@
         <div style="display:flex;gap:.6rem"><button id="dropship-cancel" class="field" style="flex:1;cursor:pointer">Cancel</button><button id="dropship-confirm" class="btn" style="flex:1">Confirm</button></div>
     </div></div>
 
+    <!-- Checkout modal -->
+    <div id="checkout-modal" class="modal"><div class="mc mc-lg">
+        <h3 style="margin-top:0"><i class="fas fa-shield-halved" style="color:var(--g600)"></i> Secure checkout</h3>
+        <div class="trust-banner"><i class="fas fa-lock" style="margin-top:.15rem"></i><div>Your payment is held in <strong>escrow</strong> and only released to the seller once you confirm delivery. Card details are entered on Flutterwave&rsquo;s encrypted page &mdash; never on Agricore.</div></div>
+        <div id="checkout-body"></div>
+        <div style="margin:1rem 0 .8rem"><label style="font-size:.8rem;font-weight:600;color:#475569;display:block;margin-bottom:.3rem">Delivery address</label>
+            <textarea id="co-address" class="field" rows="2" placeholder="Where should this be delivered?"></textarea></div>
+        <div style="margin-bottom:1rem"><label style="font-size:.8rem;font-weight:600;color:#475569;display:block;margin-bottom:.3rem">Delivery method</label>
+            <select id="co-transport" class="field"><option value="standard">Standard delivery</option><option value="express">Express delivery</option><option value="pickup">Pickup</option></select></div>
+        <div id="checkout-error" style="color:#dc2626;font-size:.85rem;display:none;margin-bottom:.6rem"></div>
+        <div style="display:flex;gap:.6rem"><button id="checkout-cancel" class="field" style="flex:1;cursor:pointer">Back to cart</button><button id="checkout-place" class="btn" style="flex:2">Place order &amp; pay</button></div>
+    </div></div>
+
+    <!-- My Orders modal -->
+    <div id="orders-modal" class="modal"><div class="mc mc-lg">
+        <h3 style="margin-top:0"><i class="fas fa-receipt" style="color:var(--g600)"></i> My orders</h3>
+        <p class="muted" style="margin-bottom:1rem">Track your purchases and release escrow once your goods arrive.</p>
+        <div id="orders-body"><div class="muted">Loading…</div></div>
+        <div style="display:flex;gap:.6rem;margin-top:1rem"><button id="orders-refresh" class="field" style="flex:1;cursor:pointer"><i class="fas fa-rotate"></i> Refresh</button><button id="orders-close" class="btn" style="flex:1">Done</button></div>
+    </div></div>
+
     <script>
         (function(){ function bf(){var W=1200,H=520,cols=8,rows=4,jx=(W/cols)*.32,jy=(H/rows)*.32,P=[];for(var r=0;r<=rows;r++){P[r]=[];for(var c=0;c<=cols;c++){var e=(r===0||r===rows||c===0||c===cols);P[r][c]={x:(c/cols)*W+(e?0:(Math.random()*2-1)*jx),y:(r/rows)*H+(e?0:(Math.random()*2-1)*jy)};}}var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']],ang=[0,16,90,74,16,0,90,30,16],defs='';pal.forEach(function(c,i){defs+='<pattern id="mp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>';});var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8],cells='';for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e2=P[r2+1][c2],fi=bag[Math.floor(Math.random()*bag.length)];cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e2.x.toFixed(1)+','+e2.y.toFixed(1)+'" fill="url(#mp'+fi+')" stroke="rgba(22,15,7,.16)" stroke-width="1.2"/>';}return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';}var el=document.getElementById('mk-farmland'); if(el) el.innerHTML=bf(); })();
 
@@ -152,6 +194,13 @@
         const token = localStorage.getItem('access_token');
         if(!token || token==='null') window.location.href='authentication.html';
         const money = n => (window.i18n&&i18n.formatCurrency)?i18n.formatCurrency(Number(n||0)):('$'+Number(n||0).toLocaleString());
+        // Currency sent to the backend for orders + escrow (Flutterwave settlement). Set to your store's real settlement currency.
+        const CHECKOUT_CURRENCY = 'UGX';
+        const CUR_SYM = { NGN:'₦', USD:'$', UGX:'USh ', KES:'KSh ', GHS:'GH₵', ZAR:'R', TZS:'TSh ', RWF:'FRw ' };
+        function curMoney(n,c){ const k=String(c||CHECKOUT_CURRENCY).toUpperCase(); const sym=CUR_SYM[k]||(k+' '); return sym+Number(n||0).toLocaleString(undefined,{maximumFractionDigits:2}); }
+        function escHtml(v){ return String(v==null?'':v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+        let myUserId = null;
+        async function loadMe(){ try{ const r=await fetch(`${API}/users/me/`,{headers:{'Authorization':'Bearer '+token}}); if(r.ok){ const u=await r.json(); myUserId=(u&&u.id!=null)?u.id:myUserId; } }catch(e){} return myUserId; }
 
         let products=[], page=1; const per=8;
         const filters={ q:'', category:'all', min:null, max:null, rating:null, sort:'relevance' };
@@ -164,22 +213,33 @@
 
         function card(p){
             const img=p.image_display||p.image||p.image_url, rating=p.average_rating||0, rc=p.reviews_count||0;
+            const stock=p.stock_quantity||0;
+            const sclass = stock<=0?'stock-out':(stock<=5?'stock-low':'stock-in');
+            const slabel = stock<=0?'Out of stock':(stock<=5?('Low · '+stock+' left'):'In stock');
+            const sn = p.store_name||'Agricore Seller';
             return `<div class="pcard">
                 <div class="pimg">${img?`<img src="${img}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="ini" style="display:none">${initials(p.title)}</div>`:`<div class="ini">${initials(p.title)}</div>`}
                     <span class="ptag">${p.category? (p.category.split(' ')[0]):'Deal'}</span>
                     <div class="pquick">
-                        <button class="qb cart" title="Add to cart" onclick='addToCart(${p.id},${JSON.stringify(p.title)},${p.price||0},${JSON.stringify(p.unit||'')},${JSON.stringify(img||'')},${p.stock_quantity||0})'><i class="fas fa-cart-plus"></i></button>
                         <button class="qb wish" title="Wishlist" onclick="toast('Saved to wishlist')"><i class="fas fa-heart"></i></button>
-                        <button class="qb drop" title="Dropship" onclick="openDropship(${p.id})"><i class="fas fa-truck"></i></button>
+                        <button class="qb drop" title="Dropship to my store" onclick="openDropship(${p.id})"><i class="fas fa-truck"></i></button>
                     </div></div>
                 <div class="pbody">
+                    <div class="store-badge"><i class="fas fa-store"></i> ${escHtml(sn)} ${p.store_verified?'<i class="fas fa-circle-check vf" title="Verified store"></i>':''}</div>
                     <h3>${p.title||''}</h3>
-                    <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem">${stars(rating)}<span class="muted">${rating.toFixed(1)} • ${rc}</span></div>
+                    <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem">${stars(rating)}<span class="muted">${rating.toFixed(1)} • ${rc} review${rc===1?'':'s'}</span></div>
                     <p class="pdesc">${p.description||'Quality farm product'}</p>
-                    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:.5rem">
-                        <div><div class="prc">${money(p.price)}</div><div class="muted">${p.unit||''} • Stock ${p.stock_quantity||0}</div></div>
-                        <button class="viewb" onclick="location.href='product_detail.html?id=${p.id}'"><i class="fas fa-eye"></i></button>
-                    </div></div></div>`;
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin:.55rem 0 .15rem">
+                        <div class="prc">${money(p.price)}</div>
+                        <span class="stockpill ${sclass}">${slabel}</span>
+                    </div>
+                    <div style="font-size:.72rem;color:#94a3b8;margin-bottom:.65rem">per ${p.unit||'unit'}</div>
+                    <div style="display:flex;gap:.5rem">
+                        <button class="addbtn" ${stock<=0?'disabled':''} onclick="addToCart(${p.id})"><i class="fas fa-cart-plus"></i> Add</button>
+                        <button class="buybtn" ${stock<=0?'disabled':''} onclick="buyNow(${p.id})">Buy now</button>
+                    </div>
+                    <button class="viewb" style="width:100%;margin-top:.5rem;background:none;color:#64748b;border:1px solid var(--line)" onclick="location.href='product_detail.html?id=${p.id}'"><i class="fas fa-eye"></i> View details</button>
+                </div></div>`;
         }
 
         function render(){
@@ -225,7 +285,9 @@
             const items=Object.values(c); $('cart-items').innerHTML=items.length?items.map(i=>`<div style="display:flex;gap:.7rem;background:#fff;border:1px solid var(--line);border-radius:12px;padding:.6rem"><img src="${i.image}" style="width:54px;height:54px;border-radius:9px;object-fit:cover"><div style="flex:1;min-width:0"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${i.title}</div><div class="muted">${money(i.price)} × ${i.qty}</div></div><button onclick="rmCart('${i.id}')" style="border:0;background:none;color:#f43f5e;cursor:pointer"><i class="fas fa-trash"></i></button></div>`).join(''):'<div style="text-align:center;color:#94a3b8;padding:3rem"><i class="fas fa-shopping-cart" style="font-size:2.5rem;display:block;margin-bottom:.8rem;color:#cbd5c5"></i>Your cart is empty</div>';
             $('cart-subtotal').textContent=money(items.reduce((s,i)=>s+(parseFloat(i.price)||0)*i.qty,0));
         }
-        window.addToCart=(id,name,price,unit,image,stock)=>{ const c=getCart(),k=String(id); if(c[k]){ if(c[k].qty>=stock){ toast('Stock limit reached'); return; } c[k].qty++; } else c[k]={id,title:name,price:parseFloat(price),unit,image,stock,qty:1}; saveCart(c); toast(name+' added to cart'); $('cart-drawer').classList.add('open'); };
+        function prodById(id){ return products.find(p=>String(p.id)===String(id)); }
+        window.addToCart=(id)=>{ const p=prodById(id); if(!p){ toast('Product unavailable'); return; } const c=getCart(),k=String(id); const stock=p.stock_quantity||0; const img=p.image_display||p.image||p.image_url||''; if(stock<=0){ toast('Out of stock'); return; } if(c[k]){ if(c[k].qty>=stock){ toast('Stock limit reached'); return; } c[k].qty++; } else c[k]={ id:p.id, title:p.title||'Item', price:parseFloat(p.price)||0, unit:p.unit||'', image:img, stock:stock, store:(p.store!=null?p.store:null), store_name:p.store_name||'Agricore Seller', qty:1 }; saveCart(c); toast((p.title||'Item')+' added to cart'); $('cart-drawer').classList.add('open'); };
+        window.buyNow=(id)=>{ addToCart(id); setTimeout(openCheckout, 250); };
         window.rmCart=id=>{ const c=getCart(); delete c[String(id)]; saveCart(c); };
         $('cart-close').addEventListener('click', ()=> $('cart-drawer').classList.remove('open'));
 
@@ -246,12 +308,128 @@
         });
         $('dropship-modal').addEventListener('click', e=>{ if(e.target===$('dropship-modal')) $('dropship-modal').classList.remove('show'); });
 
+        /* ============ Checkout -> Orders -> Escrow purchase flow ============ */
+        // Each cart item carries its store id, and an Order belongs to ONE store,
+        // so we create one order (+ items + escrow) per store at checkout.
+        function cartByStore(){
+            const c=getCart(), groups={};
+            Object.values(c).forEach(function(i){ const sid=String(i.store!=null?i.store:'unknown'); if(!groups[sid]) groups[sid]={ store:(i.store!=null?i.store:null), store_name:i.store_name||'Store', items:[] }; groups[sid].items.push(i); });
+            return groups;
+        }
+        function groupTotal(g){ return g.items.reduce(function(s,i){ return s+(parseFloat(i.price)||0)*(i.qty||1); },0); }
+
+        async function apiPost(path, body){
+            const r=await fetch(API+path,{ method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body:JSON.stringify(body||{}) });
+            let d={}; try{ d=await r.json(); }catch(e){}
+            if(!r.ok){ let m=d.detail||(d&&typeof d==='object'&&Object.values(d)[0])||('Request failed ('+r.status+')'); if(Array.isArray(m)) m=m[0]; throw new Error(m); }
+            return d;
+        }
+
+        window.openCheckout=function(){
+            const c=getCart(); if(!Object.keys(c).length){ toast('Your cart is empty'); return; }
+            renderCheckout(); $('cart-drawer').classList.remove('open'); $('checkout-error').style.display='none'; $('checkout-modal').classList.add('show');
+        };
+        function renderCheckout(){
+            const groups=cartByStore(); let html=''; let grand=0;
+            Object.values(groups).forEach(function(g){ const t=groupTotal(g); grand+=t;
+                html+='<div class="co-store"><h4><i class="fas fa-store" style="color:var(--g600)"></i> '+escHtml(g.store_name)+'</h4>'
+                    + g.items.map(function(i){ return '<div class="co-line"><span>'+escHtml(i.title)+' \u00d7 '+i.qty+'</span><span>'+money((parseFloat(i.price)||0)*i.qty)+'</span></div>'; }).join('')
+                    + '<div class="co-line" style="font-weight:700;color:#16271c;border-top:1px solid var(--line);margin-top:.4rem;padding-top:.4rem"><span>Subtotal</span><span>'+money(t)+'</span></div></div>';
+            });
+            html+='<div style="display:flex;justify-content:space-between;font-size:1.15rem;font-weight:800;margin-top:.4rem"><span>Total</span><span style="color:var(--g600)">'+money(grand)+'</span></div>';
+            const n=Object.keys(groups).length;
+            if(n>1) html+='<p class="muted" style="margin-top:.5rem;font-size:.8rem"><i class="fas fa-circle-info"></i> Your items come from '+n+' stores, so '+n+' escrow-protected orders will be created.</p>';
+            $('checkout-body').innerHTML=html;
+        }
+        $('checkout-cancel').addEventListener('click', function(){ $('checkout-modal').classList.remove('show'); $('cart-drawer').classList.add('open'); });
+        $('checkout-modal').addEventListener('click', function(e){ if(e.target===$('checkout-modal')) $('checkout-modal').classList.remove('show'); });
+        $('checkout-place').addEventListener('click', async function(){
+            const err=$('checkout-error'); err.style.display='none';
+            if(!myUserId){ await loadMe(); }
+            if(!myUserId){ err.textContent='Could not verify your account. Please log in again.'; err.style.display='block'; return; }
+            const groups=cartByStore();
+            if(Object.values(groups).some(function(g){ return g.store==null; })){ err.textContent='Some items are missing store info. Please remove and re-add them to your cart.'; err.style.display='block'; return; }
+            const address=$('co-address').value.trim(), transport=$('co-transport').value;
+            const btn=$('checkout-place'), orig=btn.innerHTML; btn.disabled=true; btn.innerHTML='Placing order\u2026';
+            const created=[];
+            try{
+                for(const g of Object.values(groups)){
+                    const total=groupTotal(g);
+                    const order=await apiPost('/orders/', { buyer:myUserId, store:g.store, total_amount:total.toFixed(2), currency:CHECKOUT_CURRENCY, status:'pending', shipping_address:address, transport_mode:transport });
+                    for(const it of g.items){
+                        const sub=(parseFloat(it.price)||0)*(it.qty||1);
+                        await apiPost('/order-items/', { order:order.id, product:it.id, quantity:it.qty, price_per_unit:(parseFloat(it.price)||0).toFixed(2), subtotal:sub.toFixed(2) });
+                    }
+                    const escrow=await apiPost('/escrows/', { order:order.id, amount:total.toFixed(2), currency:CHECKOUT_CURRENCY });
+                    created.push({ order:order, escrow:escrow });
+                }
+                localStorage.removeItem('agricore_cart'); updateCart();
+                $('checkout-modal').classList.remove('show');
+                openOrders();
+                if(created.length===1){ payEscrow(created[0].escrow.id); }
+                else { toast('Orders placed \u2014 pay each one to fund escrow.'); }
+            }catch(e){ err.textContent=e.message||'Could not place order.'; err.style.display='block'; }
+            finally{ btn.disabled=false; btn.innerHTML=orig; }
+        });
+
+        /* ---- Escrow actions (buyer) ---- */
+        window.payEscrow=async function(escrowId){
+            try{ const d=await apiPost('/escrows/'+escrowId+'/pay/', {});
+                if(d.checkout_link){ window.open(d.checkout_link,'_blank'); toast('Complete payment in the new tab, then tap Refresh.'); setTimeout(loadMyOrders,1500); }
+                else { toast('Could not start payment.'); }
+            }catch(e){ toast(e.message||'Payment could not start.'); }
+        };
+        window.releaseEscrow=async function(escrowId){
+            if(!confirm('Confirm you received this order? This releases the held funds to the seller and cannot be undone.')) return;
+            try{ await apiPost('/escrows/'+escrowId+'/release/', {}); toast('Funds released to the seller.'); loadMyOrders(); }
+            catch(e){ toast(e.message||'Could not release funds.'); }
+        };
+
+        /* ---- My Orders ---- */
+        window.openOrders=function(){ $('orders-modal').classList.add('show'); loadMyOrders(); };
+        $('orders-close').addEventListener('click', function(){ $('orders-modal').classList.remove('show'); });
+        $('orders-refresh').addEventListener('click', function(){ loadMyOrders(); });
+        $('orders-modal').addEventListener('click', function(e){ if(e.target===$('orders-modal')) $('orders-modal').classList.remove('show'); });
+        async function loadMyOrders(){
+            const box=$('orders-body'); box.innerHTML='<div class="muted">Loading\u2026</div>';
+            try{
+                if(!myUserId) await loadMe();
+                const res=await Promise.all([
+                    fetch(API+'/orders/',{headers:{'Authorization':'Bearer '+token}}),
+                    fetch(API+'/escrows/',{headers:{'Authorization':'Bearer '+token}})
+                ]);
+                const orders=await res[0].json().then(function(d){ return Array.isArray(d)?d:(d.results||[]); });
+                const escrows=await res[1].json().then(function(d){ return Array.isArray(d)?d:(d.results||[]); });
+                const mine=orders.filter(function(o){ return String(o.buyer)===String(myUserId); });
+                const escByOrder={}; escrows.forEach(function(e){ const oid=(e.order&&e.order.id!=null)?e.order.id:e.order; escByOrder[oid]=e; });
+                if(!mine.length){ box.innerHTML='<div style="text-align:center;color:#94a3b8;padding:2.5rem"><i class="fas fa-box-open" style="font-size:2.4rem;display:block;margin-bottom:.7rem;color:#cbd5c5"></i>No orders yet \u2014 your purchases will appear here.</div>'; return; }
+                mine.sort(function(a,b){ return (b.id||0)-(a.id||0); });
+                box.innerHTML=mine.map(function(o){ return renderOrderCard(o, escByOrder[o.id]); }).join('');
+            }catch(e){ box.innerHTML='<div style="color:#dc2626">Could not load your orders.</div>'; }
+        }
+        function renderOrderCard(o, esc){
+            const st=(o.status||'pending'), cur=o.currency||CHECKOUT_CURRENCY;
+            let pill='<span class="esc-pill esc-none">No escrow</span>', action='';
+            if(esc){
+                const es=String(esc.status||'').toLowerCase();
+                pill='<span class="esc-pill esc-'+(es||'none')+'">Escrow: '+(es||'\u2014')+'</span>';
+                if(es==='pending') action='<button class="addbtn" onclick="payEscrow('+esc.id+')"><i class="fas fa-credit-card"></i> Pay now</button>';
+                else if(es==='held') action='<button class="addbtn" onclick="releaseEscrow('+esc.id+')"><i class="fas fa-box-open"></i> Confirm delivery &amp; release</button>';
+                else if(es==='released') action='<span class="muted"><i class="fas fa-circle-check" style="color:#047857"></i> Completed</span>';
+            }
+            const stLabel=(st.charAt(0).toUpperCase()+st.slice(1)).replace(/_/g,' ');
+            return '<div class="ord-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem">'
+                + '<div><strong>Order #'+o.id+'</strong><div class="muted" style="font-size:.8rem">'+escHtml(stLabel)+'</div></div>'
+                + '<div style="text-align:right"><div style="font-weight:800;color:var(--g600)">'+curMoney(o.total_amount,cur)+'</div>'+pill+'</div></div>'
+                + (action?('<div style="margin-top:.6rem">'+action+'</div>'):'') + '</div>';
+        }
+
         /* Dale context for this page */
         window.__daleCtx = function(){ const v=(window.__mkView||products).slice(0,15).map(p=>({title:p.title,price:p.price,category:p.category,rating:p.average_rating,stock:p.stock_quantity})); return { page:'Marketplace', type:'marketplace', extras:{ filters:filters, visible_count:(window.__mkView||products).length, products:v } }; };
         window.__daleIntro = "Hi, I'm Dale. Ask me to find the best deal, compare products, or recommend what to buy for your farm.";
         window.__daleChips = ["Find me the cheapest fertilizer","What's top-rated here?","Compare these products","What should I buy for cattle?"];
 
-        updateCart(); load();
+        loadMe(); updateCart(); load();
 
         /* i18n title (safe if i18n absent) */
         if(window.i18n){ try{ ['marketplace-title','marketplace-desc'].forEach((id,i)=>{ const k=['Agricore Marketplace','Your One-Stop Shop for Everything Farming'][i]; const el=$(id); if(el) el.textContent=i18n.t(k); }); }catch(e){} }
@@ -264,12 +442,13 @@
       var history = [];
 
       var css = ''
-        + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:62px;height:62px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
+        + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:66px;height:66px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
         + 'background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);'
-        + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}'
+        + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;overflow:hidden}'
         + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
         + '#daleFab svg{width:28px;height:28px}'
-        + '#daleFab .dot{position:absolute;top:10px;right:11px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857}'
+        + '#daleFab dotlottie-wc{width:54px;height:54px;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}'
+        + '#daleFab .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857;z-index:2}'
         + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;'
         + 'background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);'
         + 'display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
@@ -303,7 +482,7 @@
 
       var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
       var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
-      fab.innerHTML = '<span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>';
+      fab.innerHTML = '<span class="dot"></span><dotlottie-wc src="https://lottie.host/ac187fae-55ac-4ce4-93a9-fe037e3e2e57/jSdcU6a1Ig.lottie" autoplay loop></dotlottie-wc>';
       document.body.appendChild(fab);
 
       var panel = document.createElement('div'); panel.id='dalePanel';
