@@ -1006,205 +1006,194 @@
             <!-- Create Advertisement Section -->
             <section id="create-advertisement" class="section-content">
                 <div class="mb-6">
-                    <h2 class="text-3xl font-bold text-emerald-800 mb-2">Create Marketplace Advertisement</h2>
-                    <p class="text-gray-600">Design your ad and choose how long you want it displayed</p>
+                    <h2 class="fr text-3xl font-bold text-emerald-900">Create an Advertisement</h2>
+                    <p class="text-gray-500">Design a scroll-stopping ad and launch it into the Agricore marketplace in minutes.</p>
                 </div>
 
-                <div class="space-y-6">
-                    <!-- Live Preview Section -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <i class="fas fa-eye text-emerald-600"></i>
-                            Live Preview
-                        </h3>
-                        <div class="border border-gray-300 rounded-lg overflow-hidden">
-                            <div id="ad-preview" class="relative min-h-[400px] flex flex-col items-center justify-center p-8 text-center transition-all duration-300" style="background-color: #10b981; color: #ffffff;">
-                                <div id="ad-preview-image-container" class="hidden mb-4">
-                                    <img id="ad-preview-image" src="" alt="Ad Preview" class="max-w-full h-48 object-cover rounded-lg shadow-lg">
-                                </div>
-                                <h3 id="ad-preview-title" class="text-3xl font-bold mb-3">Your Ad Title Here</h3>
-                                <p id="ad-preview-description" class="text-lg mb-6 opacity-90">Your ad description will appear here...</p>
-                                <button id="ad-preview-cta" class="px-8 py-3 bg-white rounded-lg font-bold shadow-lg hover:shadow-xl transition" style="color: #10b981;">Shop Now</button>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <!-- LEFT: preview + duration + publish + my ads -->
+                    <div class="lg:col-span-2 space-y-5">
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold text-gray-800 flex items-center gap-2"><i class="fas fa-eye text-emerald-600"></i> Live preview</h3>
+                                <span class="text-xs text-gray-400 bg-gray-50 px-2.5 py-1 rounded-full">Marketplace card</span>
                             </div>
+                            <div class="rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                                <div id="ad-preview" class="relative flex flex-col items-center justify-center text-center p-8" style="background-color:#10b981;color:#ffffff;min-height:340px">
+                                    <div id="ad-preview-image-container" class="hidden mb-4 w-full">
+                                        <img id="ad-preview-image" src="" alt="" class="w-full h-40 object-cover rounded-xl shadow-lg">
+                                    </div>
+                                    <h3 id="ad-preview-title" class="font-bold mb-3" style="font-size:30px">Your Ad Title Here</h3>
+                                    <p id="ad-preview-description" class="mb-6 opacity-90" style="font-size:18px">Your ad description will appear here...</p>
+                                    <button id="ad-preview-cta" type="button" class="px-7 py-3 bg-white rounded-xl font-bold shadow-lg" style="color:#10b981">Shop Now</button>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-3"><i class="fas fa-circle-info mr-1"></i> Exactly how buyers will see your ad.</p>
                         </div>
-                        <div class="mt-4 text-sm text-gray-600">
-                            <p><i class="fas fa-info-circle mr-2"></i>This is how your ad will appear in the marketplace</p>
+
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                            <h3 class="font-bold text-gray-800 mb-1">How long should it run?</h3>
+                            <p class="text-xs text-gray-400 mb-4">Longer campaigns reach more buyers.</p>
+                            <div class="grid grid-cols-2 gap-3" id="ad-duration-grid">
+                                <label class="ad-duration-tile flex flex-col gap-1 p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition" data-tile>
+                                    <input type="radio" name="ad-duration" value="1" data-price="500" class="sr-only">
+                                    <span class="font-bold text-gray-900">1 Day</span>
+                                    <span class="text-xs text-gray-500">24 hours of reach</span>
+                                    <span class="fr text-lg font-bold text-emerald-700 mt-1">₦500</span>
+                                </label>
+                                <label class="ad-duration-tile flex flex-col gap-1 p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition" data-tile>
+                                    <input type="radio" name="ad-duration" value="7" data-price="3000" class="sr-only">
+                                    <span class="font-bold text-gray-900">1 Week</span>
+                                    <span class="text-xs text-gray-500">7 days of reach</span>
+                                    <span class="fr text-lg font-bold text-emerald-700 mt-1">₦3,000</span>
+                                </label>
+                                <label class="ad-duration-tile flex flex-col gap-1 p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition" data-tile>
+                                    <input type="radio" name="ad-duration" value="14" data-price="5500" class="sr-only">
+                                    <span class="font-bold text-gray-900">2 Weeks</span>
+                                    <span class="text-xs text-gray-500">14 days of reach</span>
+                                    <span class="fr text-lg font-bold text-emerald-700 mt-1">₦5,500</span>
+                                </label>
+                                <label class="ad-duration-tile flex flex-col gap-1 p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition" data-tile>
+                                    <input type="radio" name="ad-duration" value="30" data-price="10000" class="sr-only">
+                                    <span class="font-bold text-gray-900">1 Month</span>
+                                    <span class="text-xs text-gray-500">30 days of reach</span>
+                                    <span class="fr text-lg font-bold text-emerald-700 mt-1">₦10,000</span>
+                                </label>
+                            </div>
+                            <div class="mt-4 p-4 rounded-xl flex items-center justify-between" style="background:var(--cream);border:1px solid var(--line)">
+                                <span class="font-semibold text-gray-700">Total</span>
+                                <span id="ad-total-cost" class="fr text-2xl font-bold text-emerald-700">₦0</span>
+                            </div>
+                            <button type="submit" form="create-ad-form-page" id="ad-publish-btn" class="btn-primary w-full mt-4 py-3 rounded-xl font-semibold flex items-center justify-center gap-2">
+                                <i class="fas fa-rocket"></i> Launch advertisement
+                            </button>
+                            <button type="button" id="ad-clear-btn" class="w-full mt-2 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 transition">Reset design</button>
+                        </div>
+
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold text-gray-800">Your live ads</h3>
+                                <button type="button" onclick="loadMyAds()" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800"><i class="fas fa-rotate-right"></i> Refresh</button>
+                            </div>
+                            <div id="my-ads-list" class="space-y-3">
+                                <div class="text-center py-6 text-gray-400"><i class="fas fa-bullhorn text-3xl mb-2"></i><p class="text-sm">No ads yet — your first one will show here.</p></div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Ad Design Section -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <i class="fas fa-palette text-emerald-600"></i>
-                            Design Your Ad
-                        </h3>
+                    <!-- RIGHT: controls -->
+                    <div class="lg:col-span-3">
                         <form id="create-ad-form-page" class="space-y-5">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Ad Title *</label>
-                                <input type="text" id="ad-title" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Seed Week Mega Sale" required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Ad Description *</label>
-                                <textarea id="ad-description" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Catchy description for your ad" required></textarea>
+                            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                                <h3 class="font-bold text-gray-800 mb-1 flex items-center gap-2"><i class="fas fa-wand-magic-sparkles text-emerald-600"></i> Quick-start templates</h3>
+                                <p class="text-xs text-gray-400 mb-4">One tap styles your whole ad — tweak anything after.</p>
+                                <div id="ad-templates" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
                             </div>
 
-                            <!-- Typography Controls -->
-                            <div class="border-t pt-5 mt-5">
-                                <h4 class="text-lg font-bold text-gray-800 mb-3">Typography</h4>
-                                <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+                                <h3 class="font-bold text-gray-800">Content</h3>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Headline *</label>
+                                    <input type="text" id="ad-title" maxlength="80" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Seed Week Mega Sale" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Description *</label>
+                                    <textarea id="ad-description" rows="2" maxlength="160" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="One punchy line about your offer" required></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Button text</label>
+                                    <input type="text" id="ad-cta-text" maxlength="24" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500" value="Shop Now">
+                                    <div id="ad-cta-chips" class="flex flex-wrap gap-2 mt-2"></div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Link URL (optional)</label>
+                                    <input type="url" id="ad-link" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="https://your-store.com/offer">
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+                                <h3 class="font-bold text-gray-800">Colors</h3>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Background</label>
+                                    <div id="ad-bg-swatches" class="flex flex-wrap gap-2 mb-2"></div>
+                                    <div class="flex gap-2 items-center">
+                                        <input type="color" id="ad-bg-color" value="#10b981" class="w-12 h-10 border border-gray-200 rounded-lg cursor-pointer">
+                                        <input type="text" id="ad-bg-color-hex" value="#10b981" class="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="#10b981">
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <label class="block text-sm font-semibold text-gray-700">Text</label>
+                                        <button type="button" id="ad-text-auto" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800"><i class="fas fa-adjust"></i> Auto contrast</button>
+                                    </div>
+                                    <div id="ad-text-swatches" class="flex flex-wrap gap-2 mb-2"></div>
+                                    <div class="flex gap-2 items-center">
+                                        <input type="color" id="ad-text-color" value="#ffffff" class="w-12 h-10 border border-gray-200 rounded-lg cursor-pointer">
+                                        <input type="text" id="ad-text-color-hex" value="#ffffff" class="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="#ffffff">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+                                <h3 class="font-bold text-gray-800">Image <span class="text-xs font-normal text-gray-400">(optional)</span></h3>
+                                <div>
+                                    <input type="file" id="ad-image" accept="image/*" class="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
+                                    <p class="text-xs text-gray-400 mt-1">Recommended 1200×628px • JPG or PNG</p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Font Family</label>
-                                        <select id="ad-font-family" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                            <option value="Inter, sans-serif">Inter</option>
-                                            <option value="Arial, sans-serif">Arial</option>
-                                            <option value="Georgia, serif">Georgia</option>
-                                            <option value="'Playfair Display', serif">Playfair Display</option>
-                                            <option value="Roboto, sans-serif">Roboto</option>
-                                            <option value="'Times New Roman', serif">Times New Roman</option>
-                                            <option value="'Courier New', monospace">Courier New</option>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Fit</label>
+                                        <select id="ad-image-fit" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                            <option value="cover">Cover</option>
+                                            <option value="contain">Contain</option>
+                                            <option value="fill">Fill</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Title Font Size (px)</label>
-                                        <input type="number" id="ad-title-size" min="12" max="72" value="30" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Position</label>
+                                        <select id="ad-image-position" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                            <option value="center">Center</option>
+                                            <option value="top">Top</option>
+                                            <option value="bottom">Bottom</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Brightness — <span id="brightness-value">100</span>%</label>
+                                    <input type="range" id="ad-image-brightness" min="50" max="150" value="100" class="w-full" style="accent-color:#10b981">
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+                                <h3 class="font-bold text-gray-800">Typography</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <div class="sm:col-span-1">
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Font</label>
+                                        <select id="ad-font-family" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                            <option value="Inter, sans-serif">Inter</option>
+                                            <option value="'Playfair Display', serif">Playfair</option>
+                                            <option value="Georgia, serif">Georgia</option>
+                                            <option value="Roboto, sans-serif">Roboto</option>
+                                            <option value="Arial, sans-serif">Arial</option>
+                                            <option value="'Courier New', monospace">Courier</option>
+                                        </select>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Description Font Size (px)</label>
-                                        <input type="number" id="ad-description-size" min="12" max="48" value="18" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Title size</label>
+                                        <input type="number" id="ad-title-size" min="14" max="64" value="30" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Body size</label>
+                                        <input type="number" id="ad-description-size" min="12" max="40" value="18" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Image Upload & Controls -->
-                            <div class="border-t pt-5 mt-5">
-                                <h4 class="text-lg font-bold text-gray-800 mb-3">Image Settings</h4>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Ad Image</label>
-                                        <input type="file" id="ad-image" accept="image/*" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                        <p class="text-xs text-gray-500 mt-1">Recommended: 1200x628px (JPG, PNG)</p>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-sm font-semibold text-gray-700 mb-2">Image Fit</label>
-                                            <select id="ad-image-fit" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                                <option value="cover">Cover</option>
-                                                <option value="contain">Contain</option>
-                                                <option value="fill">Fill</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-semibold text-gray-700 mb-2">Image Position</label>
-                                            <select id="ad-image-position" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                                <option value="center">Center</option>
-                                                <option value="top">Top</option>
-                                                <option value="bottom">Bottom</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Image Brightness (%)</label>
-                                        <input type="range" id="ad-image-brightness" min="50" max="150" value="100" class="w-full">
-                                        <p class="text-xs text-gray-500 mt-1">Current: <span id="brightness-value">100</span>%</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Colors -->
-                            <div class="border-t pt-5 mt-5">
-                                <h4 class="text-lg font-bold text-gray-800 mb-3">Colors</h4>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Background Color</label>
-                                        <div class="flex gap-2 items-center">
-                                            <input type="color" id="ad-bg-color" value="#10b981" class="w-16 h-10 border border-gray-300 rounded cursor-pointer">
-                                            <input type="text" id="ad-bg-color-hex" value="#10b981" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="#10b981">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Text Color</label>
-                                        <div class="flex gap-2 items-center">
-                                            <input type="color" id="ad-text-color" value="#ffffff" class="w-16 h-10 border border-gray-300 rounded cursor-pointer">
-                                            <input type="text" id="ad-text-color-hex" value="#ffffff" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="#ffffff">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Audio -->
-                            <div class="border-t pt-5 mt-5">
-                                <h4 class="text-lg font-bold text-gray-800 mb-3">Audio (Optional)</h4>
-                                <div class="space-y-3">
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Background Sound</label>
-                                        <input type="file" id="ad-audio" accept="audio/*" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                        <p class="text-xs text-gray-500 mt-1">MP3, WAV (max 5MB) - plays when ad is displayed</p>
-                                    </div>
-                                    <div id="audio-preview-container" class="hidden">
-                                        <audio id="audio-preview" controls class="w-full"></audio>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Call to Action Button Text</label>
-                                <input type="text" id="ad-cta-text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Shop Now, Learn More" value="Shop Now">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Link URL (Optional)</label>
-                                <input type="url" id="ad-link" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="https://yourstore.com/product">
-                            </div>
-
-                            <!-- Display Duration & Pricing -->
-                            <div class="border-t pt-5 mt-5">
-                                <h4 class="text-lg font-bold text-gray-800 mb-3">Display Duration & Pricing</h4>
-                                <div class="space-y-3">
-                                    <label class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
-                                        <div class="flex items-center gap-3">
-                                            <input type="radio" name="ad-duration" value="1" data-price="500" class="w-5 h-5 text-emerald-600" required>
-                                            <div>
-                                                <p class="font-semibold text-gray-900">1 Day</p>
-                                                <p class="text-xs text-gray-500">24 hours of visibility</p>
-                                            </div>
-                                        </div>
-                                        <span class="text-lg font-bold text-emerald-600">₦500</span>
-                                    </label>
-                                    <label class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
-                                        <div class="flex items-center gap-3">
-                                            <input type="radio" name="ad-duration" value="7" data-price="3000" class="w-5 h-5 text-emerald-600">
-                                            <div>
-                                                <p class="font-semibold text-gray-900">1 Week</p>
-                                                <p class="text-xs text-gray-500">7 days of visibility</p>
-                                            </div>
-                                        </div>
-                                        <span class="text-lg font-bold text-emerald-600">₦3,000</span>
-                                    </label>
-                                    <label class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
-                                        <div class="flex items-center gap-3">
-                                            <input type="radio" name="ad-duration" value="30" data-price="10000" class="w-5 h-5 text-emerald-600">
-                                            <div>
-                                                <p class="font-semibold text-gray-900">1 Month</p>
-                                                <p class="text-xs text-gray-500">30 days of visibility</p>
-                                            </div>
-                                        </div>
-                                        <span class="text-lg font-bold text-emerald-600">₦10,000</span>
-                                    </label>
-                                </div>
-                                <div class="mt-4 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-                                    <div class="flex justify-between items-center">
-                                        <span class="font-semibold text-gray-800">Total Cost:</span>
-                                        <span id="ad-total-cost" class="text-2xl font-bold text-emerald-600">₦0</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex gap-3 pt-4">
-                                <button type="submit" class="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition flex items-center justify-center gap-2">
-                                    <i class="fas fa-rocket"></i> Launch Advertisement
-                                </button>
-                                <button type="reset" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition">
-                                    Clear
-                                </button>
+                            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
+                                <h3 class="font-bold text-gray-800">Audio <span class="text-xs font-normal text-gray-400">(optional)</span></h3>
+                                <input type="file" id="ad-audio" accept="audio/*" class="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
+                                <p class="text-xs text-gray-400">MP3 or WAV • plays while the ad is on screen</p>
+                                <div id="audio-preview-container" class="hidden"><audio id="audio-preview" controls class="w-full"></audio></div>
                             </div>
                         </form>
                     </div>
@@ -1464,6 +1453,9 @@
                 }
                 if (sectionId === 'orders') {
                     loadOrders();
+                }
+                if (sectionId === 'create-advertisement') {
+                    loadMyAds();
                 }
                 // Close mobile menu if open
                 if (window.innerWidth < 768) {
@@ -3311,215 +3303,251 @@
         // Load cards when wallet section is shown
         document.querySelector('[data-section="wallet"]')?.addEventListener('click', loadPaymentCards);
 
-        // ---- Advertisement Preview Updates ----
-        function getAds() {
-            try {
-                const raw = localStorage.getItem('agricore_ads');
-                const parsed = raw ? JSON.parse(raw) : [];
-                return Array.isArray(parsed) ? parsed : [];
-            } catch (e) { return []; }
+        // ===== Advertisement studio: templates, live preview, validation, My Ads =====
+        const AD_TEMPLATES = [
+            { name: 'Fresh Green',  bg: '#10b981', text: '#ffffff', font: 'Inter, sans-serif',            ts: 32, ds: 18, cta: 'Shop Fresh' },
+            { name: 'Harvest Gold', bg: '#c39a48', text: '#16271c', font: "'Playfair Display', serif",     ts: 34, ds: 18, cta: 'Buy Now' },
+            { name: 'Midnight',     bg: '#0f172a', text: '#ffffff', font: 'Inter, sans-serif',            ts: 32, ds: 17, cta: 'Discover' },
+            { name: 'Sunrise',      bg: '#f97316', text: '#ffffff', font: 'Roboto, sans-serif',           ts: 33, ds: 18, cta: 'Order Today' },
+            { name: 'Cream',        bg: '#fbf7ee', text: '#16271c', font: 'Georgia, serif',               ts: 32, ds: 18, cta: 'Learn More' },
+            { name: 'Berry',        bg: '#9d174d', text: '#ffffff', font: 'Inter, sans-serif',            ts: 32, ds: 18, cta: 'Grab Deal' },
+        ];
+        const AD_BG_SWATCHES = ['#10b981','#047857','#0c6b46','#c39a48','#f97316','#ef4444','#9d174d','#6d28d9','#0f172a','#fbf7ee'];
+        const AD_TEXT_SWATCHES = ['#ffffff','#16271c','#fbf7ee','#0f172a'];
+        const AD_CTA_CHIPS = ['Shop Now','Buy Fresh','Order Today','Learn More','Get Offer'];
+
+        const adEl = id => document.getElementById(id);
+        const adPreview = adEl('ad-preview');
+        const adPreviewTitle = adEl('ad-preview-title');
+        const adPreviewDescription = adEl('ad-preview-description');
+        const adPreviewCta = adEl('ad-preview-cta');
+        const adPreviewImage = adEl('ad-preview-image');
+        const adPreviewImageContainer = adEl('ad-preview-image-container');
+        const adTotalCost = adEl('ad-total-cost');
+
+        function adHexOk(v){ return /^#[0-9A-Fa-f]{6}$/.test(v); }
+        function adLuminance(hex){
+            const h = hex.replace('#',''); const r = parseInt(h.substr(0,2),16)/255, g = parseInt(h.substr(2,2),16)/255, b = parseInt(h.substr(4,2),16)/255;
+            const lin = c => c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4);
+            return 0.2126*lin(r) + 0.7152*lin(g) + 0.0722*lin(b);
+        }
+        function adBestText(bg){ return adLuminance(bg) > 0.45 ? '#16271c' : '#ffffff'; }
+
+        function syncAdPreview(){
+            if (!adPreview) return;
+            const bg = adEl('ad-bg-color').value;
+            const text = adEl('ad-text-color').value;
+            adPreview.style.backgroundColor = bg;
+            adPreview.style.color = text;
+            adPreviewCta.style.color = bg;
+            adPreviewTitle.textContent = adEl('ad-title').value || 'Your Ad Title Here';
+            adPreviewDescription.textContent = adEl('ad-description').value || 'Your ad description will appear here...';
+            adPreviewCta.textContent = adEl('ad-cta-text').value || 'Shop Now';
+            const font = adEl('ad-font-family').value;
+            adPreviewTitle.style.fontFamily = font;
+            adPreviewDescription.style.fontFamily = font;
+            adPreviewTitle.style.fontSize = (adEl('ad-title-size').value || 30) + 'px';
+            adPreviewDescription.style.fontSize = (adEl('ad-description-size').value || 18) + 'px';
+            adPreviewImage.style.objectFit = adEl('ad-image-fit').value;
+            adPreviewImage.style.objectPosition = adEl('ad-image-position').value;
+            adPreviewImage.style.filter = 'brightness(' + adEl('ad-image-brightness').value + '%)';
+            const bv = adEl('brightness-value'); if (bv) bv.textContent = adEl('ad-image-brightness').value;
         }
 
-        function setAds(list) {
-            try { localStorage.setItem('agricore_ads', JSON.stringify(list)); } catch (e) { /* noop */ }
+        function setAdColor(which, hex){
+            if (!adHexOk(hex)) return;
+            adEl('ad-' + which + '-color').value = hex;
+            adEl('ad-' + which + '-color-hex').value = hex;
+            syncAdPreview();
         }
 
-        const bcAds = ('BroadcastChannel' in window) ? new BroadcastChannel('ads') : null;
-
-        // Live preview updates for ad creation
-        const adPreview = document.getElementById('ad-preview');
-        const adPreviewTitle = document.getElementById('ad-preview-title');
-        const adPreviewDescription = document.getElementById('ad-preview-description');
-        const adPreviewCta = document.getElementById('ad-preview-cta');
-        const adPreviewImage = document.getElementById('ad-preview-image');
-        const adPreviewImageContainer = document.getElementById('ad-preview-image-container');
-        const adTotalCost = document.getElementById('ad-total-cost');
-
-        document.getElementById('ad-title')?.addEventListener('input', (e) => {
-            adPreviewTitle.textContent = e.target.value || 'Your Ad Title Here';
-        });
-
-        document.getElementById('ad-description')?.addEventListener('input', (e) => {
-            adPreviewDescription.textContent = e.target.value || 'Your ad description will appear here...';
-        });
-
-        document.getElementById('ad-cta-text')?.addEventListener('input', (e) => {
-            adPreviewCta.textContent = e.target.value || 'Shop Now';
-        });
-
-        const bgColorPicker = document.getElementById('ad-bg-color');
-        const bgColorHex = document.getElementById('ad-bg-color-hex');
-        bgColorPicker?.addEventListener('input', (e) => {
-            bgColorHex.value = e.target.value;
-            adPreview.style.backgroundColor = e.target.value;
-            adPreviewCta.style.color = e.target.value;
-        });
-        bgColorHex?.addEventListener('input', (e) => {
-            if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
-                bgColorPicker.value = e.target.value;
-                adPreview.style.backgroundColor = e.target.value;
-                adPreviewCta.style.color = e.target.value;
+        function applyAdTemplate(t){
+            setAdColor('bg', t.bg);
+            setAdColor('text', t.text);
+            adEl('ad-font-family').value = t.font;
+            adEl('ad-title-size').value = t.ts;
+            adEl('ad-description-size').value = t.ds;
+            if (!adEl('ad-cta-text').value || AD_CTA_CHIPS.indexOf(adEl('ad-cta-text').value) !== -1 || AD_TEMPLATES.some(x => x.cta === adEl('ad-cta-text').value)) {
+                adEl('ad-cta-text').value = t.cta;
             }
-        });
+            syncAdPreview();
+            toast('Applied "' + t.name + '" template', 'info');
+        }
 
-        const textColorPicker = document.getElementById('ad-text-color');
-        const textColorHex = document.getElementById('ad-text-color-hex');
-        textColorPicker?.addEventListener('input', (e) => {
-            textColorHex.value = e.target.value;
-            adPreview.style.color = e.target.value;
-        });
-        textColorHex?.addEventListener('input', (e) => {
-            if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
-                textColorPicker.value = e.target.value;
-                adPreview.style.color = e.target.value;
+        function buildAdStudio(){
+            const tpl = adEl('ad-templates');
+            if (tpl && !tpl.dataset.built) {
+                tpl.innerHTML = AD_TEMPLATES.map((t, i) =>
+                    '<button type="button" data-tpl="' + i + '" class="text-left rounded-xl overflow-hidden border border-gray-100 hover:border-emerald-300 hover:shadow-md transition">'
+                    + '<div class="h-16 flex items-center justify-center" style="background:' + t.bg + '"><span style="color:' + t.text + ';font-family:' + t.font.replace(/"/g, "&quot;") + '" class="text-sm font-bold">Aa</span></div>'
+                    + '<div class="px-2 py-1.5 bg-white"><span class="text-xs font-semibold text-gray-700">' + t.name + '</span></div></button>'
+                ).join('');
+                tpl.querySelectorAll('[data-tpl]').forEach(b => b.addEventListener('click', () => applyAdTemplate(AD_TEMPLATES[Number(b.dataset.tpl)])));
+                tpl.dataset.built = '1';
             }
-        });
+            const bgw = adEl('ad-bg-swatches');
+            if (bgw && !bgw.dataset.built) {
+                bgw.innerHTML = AD_BG_SWATCHES.map(c => '<button type="button" data-c="' + c + '" class="w-7 h-7 rounded-lg border border-gray-200" style="background:' + c + '"></button>').join('');
+                bgw.querySelectorAll('[data-c]').forEach(b => b.addEventListener('click', () => setAdColor('bg', b.dataset.c)));
+                bgw.dataset.built = '1';
+            }
+            const txw = adEl('ad-text-swatches');
+            if (txw && !txw.dataset.built) {
+                txw.innerHTML = AD_TEXT_SWATCHES.map(c => '<button type="button" data-c="' + c + '" class="w-7 h-7 rounded-lg border border-gray-200" style="background:' + c + '"></button>').join('');
+                txw.querySelectorAll('[data-c]').forEach(b => b.addEventListener('click', () => setAdColor('text', b.dataset.c)));
+                txw.dataset.built = '1';
+            }
+            const chips = adEl('ad-cta-chips');
+            if (chips && !chips.dataset.built) {
+                chips.innerHTML = AD_CTA_CHIPS.map(c => '<button type="button" data-cta="' + c + '" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 transition">' + c + '</button>').join('');
+                chips.querySelectorAll('[data-cta]').forEach(b => b.addEventListener('click', () => { adEl('ad-cta-text').value = b.dataset.cta; syncAdPreview(); }));
+                chips.dataset.built = '1';
+            }
+        }
 
-        document.getElementById('ad-font-family')?.addEventListener('change', (e) => {
-            adPreviewTitle.style.fontFamily = e.target.value;
-            adPreviewDescription.style.fontFamily = e.target.value;
+        // wire inputs
+        ['ad-title','ad-description','ad-cta-text','ad-font-family','ad-title-size','ad-description-size','ad-image-fit','ad-image-position','ad-image-brightness'].forEach(id => {
+            const el = adEl(id); if (el) { el.addEventListener('input', syncAdPreview); el.addEventListener('change', syncAdPreview); }
         });
+        adEl('ad-bg-color')?.addEventListener('input', e => setAdColor('bg', e.target.value));
+        adEl('ad-bg-color-hex')?.addEventListener('input', e => setAdColor('bg', e.target.value));
+        adEl('ad-text-color')?.addEventListener('input', e => setAdColor('text', e.target.value));
+        adEl('ad-text-color-hex')?.addEventListener('input', e => setAdColor('text', e.target.value));
+        adEl('ad-text-auto')?.addEventListener('click', () => setAdColor('text', adBestText(adEl('ad-bg-color').value)));
 
-        document.getElementById('ad-title-size')?.addEventListener('input', (e) => {
-            adPreviewTitle.style.fontSize = e.target.value + 'px';
-        });
-
-        document.getElementById('ad-description-size')?.addEventListener('input', (e) => {
-            adPreviewDescription.style.fontSize = e.target.value + 'px';
-        });
-
-        document.getElementById('ad-image')?.addEventListener('change', (e) => {
+        adEl('ad-image')?.addEventListener('change', e => {
             const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    adPreviewImage.src = event.target.result;
-                    adPreviewImageContainer.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                adPreviewImageContainer.classList.add('hidden');
-            }
+            if (file) { const r = new FileReader(); r.onload = ev => { adPreviewImage.src = ev.target.result; adPreviewImageContainer.classList.remove('hidden'); syncAdPreview(); }; r.readAsDataURL(file); }
+            else { adPreviewImageContainer.classList.add('hidden'); }
+        });
+        adEl('ad-audio')?.addEventListener('change', e => {
+            const file = e.target.files[0]; const c = adEl('audio-preview-container'); const a = adEl('audio-preview');
+            if (file) { const r = new FileReader(); r.onload = ev => { a.src = ev.target.result; c.classList.remove('hidden'); }; r.readAsDataURL(file); }
+            else { c.classList.add('hidden'); }
         });
 
-        document.getElementById('ad-image-fit')?.addEventListener('change', (e) => {
-            adPreviewImage.style.objectFit = e.target.value;
-        });
-
-        document.getElementById('ad-image-position')?.addEventListener('change', (e) => {
-            adPreviewImage.style.objectPosition = e.target.value;
-        });
-
-        const brightnessSlider = document.getElementById('ad-image-brightness');
-        const brightnessValue = document.getElementById('brightness-value');
-        brightnessSlider?.addEventListener('input', (e) => {
-            brightnessValue.textContent = e.target.value;
-            adPreviewImage.style.filter = `brightness(${e.target.value}%)`;
-        });
-
-        document.getElementById('ad-audio')?.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            const audioPreviewContainer = document.getElementById('audio-preview-container');
-            const audioPreview = document.getElementById('audio-preview');
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    audioPreview.src = event.target.result;
-                    audioPreviewContainer.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                audioPreviewContainer.classList.add('hidden');
-            }
-        });
-
+        function syncDurationTiles(){
+            document.querySelectorAll('.ad-duration-tile').forEach(tile => {
+                const r = tile.querySelector('input[type="radio"]');
+                const on = r && r.checked;
+                tile.classList.toggle('border-emerald-500', on);
+                tile.classList.toggle('bg-emerald-50', on);
+                tile.classList.toggle('border-gray-200', !on);
+            });
+        }
         document.querySelectorAll('input[name="ad-duration"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                const price = e.target.getAttribute('data-price');
-                adTotalCost.textContent = '₦' + parseInt(price).toLocaleString();
+            radio.addEventListener('change', e => {
+                adTotalCost.textContent = '\u20a6' + parseInt(e.target.getAttribute('data-price')).toLocaleString();
+                syncDurationTiles();
             });
         });
 
-        // Advertisement form submission with backend integration
-        document.getElementById('create-ad-form-page')?.addEventListener('submit', async (e) => {
+        function resetAdPreview(){
+            adEl('create-ad-form-page').reset();
+            setAdColor('bg', '#10b981'); setAdColor('text', '#ffffff');
+            adPreviewImageContainer.classList.add('hidden');
+            adEl('audio-preview-container').classList.add('hidden');
+            adTotalCost.textContent = '\u20a60';
+            syncDurationTiles();
+            syncAdPreview();
+        }
+        adEl('ad-clear-btn')?.addEventListener('click', resetAdPreview);
+
+        function adStoreId(){
+            if (typeof currentStoreId !== 'undefined' && currentStoreId != null) return currentStoreId;
+            return new URLSearchParams(window.location.search).get('id');
+        }
+
+        // Publish
+        adEl('create-ad-form-page')?.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing...';
+            const btn = adEl('ad-publish-btn');
+            const title = adEl('ad-title').value.trim();
+            const desc = adEl('ad-description').value.trim();
+            const duration = document.querySelector('input[name="ad-duration"]:checked');
+            if (!title) { toast('Add a headline first.', 'error'); return; }
+            if (!desc) { toast('Add a short description.', 'error'); return; }
+            if (!duration) { toast('Pick how long it should run.', 'error'); return; }
+            const storeId = adStoreId();
+            if (!storeId) { toast('Could not detect your store.', 'error'); return; }
 
+            const original = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing...';
             try {
-                const storeId = new URLSearchParams(window.location.search).get('id');
-                if (!storeId) {
-                    throw new Error('Store ID not found');
-                }
+                const fd = new FormData();
+                fd.append('store', storeId);
+                fd.append('title', title);
+                fd.append('description', desc);
+                fd.append('background_color', adEl('ad-bg-color').value);
+                fd.append('text_color', adEl('ad-text-color').value);
+                fd.append('cta_text', adEl('ad-cta-text').value.trim() || 'Shop Now');
+                fd.append('link_url', adEl('ad-link').value.trim());
+                fd.append('font_family', adEl('ad-font-family').value);
+                fd.append('title_font_size', adEl('ad-title-size').value);
+                fd.append('description_font_size', adEl('ad-description-size').value);
+                fd.append('image_fit', adEl('ad-image-fit').value);
+                fd.append('image_position', adEl('ad-image-position').value);
+                fd.append('image_brightness', adEl('ad-image-brightness').value);
+                fd.append('duration_days', duration.value);
+                fd.append('price_paid', duration.getAttribute('data-price'));
+                fd.append('is_active', 'true');
+                const img = adEl('ad-image').files[0]; if (img) fd.append('image', img);
+                const aud = adEl('ad-audio').files[0]; if (aud) fd.append('audio', aud);
 
-                const formData = new FormData();
-                formData.append('store', storeId);
-                formData.append('title', document.getElementById('ad-title').value.trim());
-                formData.append('description', document.getElementById('ad-description').value.trim());
-                formData.append('background_color', document.getElementById('ad-bg-color').value);
-                formData.append('text_color', document.getElementById('ad-text-color').value);
-                formData.append('cta_text', document.getElementById('ad-cta-text').value.trim());
-                formData.append('link_url', document.getElementById('ad-link').value.trim());
-                formData.append('font_family', document.getElementById('ad-font-family').value);
-                formData.append('title_font_size', document.getElementById('ad-title-size').value);
-                formData.append('description_font_size', document.getElementById('ad-description-size').value);
-                formData.append('image_fit', document.getElementById('ad-image-fit').value);
-                formData.append('image_position', document.getElementById('ad-image-position').value);
-                formData.append('image_brightness', document.getElementById('ad-image-brightness').value);
-
-                const imageFile = document.getElementById('ad-image').files[0];
-                if (imageFile) {
-                    formData.append('image', imageFile);
-                }
-
-                const audioFile = document.getElementById('ad-audio').files[0];
-                if (audioFile) {
-                    formData.append('audio', audioFile);
-                }
-
-                const durationInput = document.querySelector('input[name="ad-duration"]:checked');
-                if (!durationInput) {
-                    throw new Error('Please select a duration');
-                }
-                const durationDays = parseInt(durationInput.value);
-                const pricePaid = parseInt(durationInput.getAttribute('data-price'));
-                formData.append('duration_days', durationDays);
-                formData.append('price_paid', pricePaid);
-                formData.append('is_active', 'true');
-
-                const response = await fetch(`${API_BASE}/advertisements/`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Failed to create advertisement');
-                }
-
-                const ad = await response.json();
-                alert('Advertisement published successfully! It will appear in the marketplace.');
-                e.target.reset();
-                adPreviewTitle.textContent = 'Your Ad Title Here';
-                adPreviewDescription.textContent = 'Your ad description will appear here...';
-                adPreviewCta.textContent = 'Shop Now';
-                adPreviewImageContainer.classList.add('hidden');
-                adPreview.style.backgroundColor = '#10b981';
-                adPreview.style.color = '#ffffff';
-                adTotalCost.textContent = '₦0';
-            } catch (error) {
-                console.error('Error creating advertisement:', error);
-                alert('Error: ' + error.message);
+                const r = await fetch(API_BASE + '/advertisements/', { method: 'POST', headers: { 'Authorization': 'Bearer ' + (token || '') }, body: fd });
+                if (!r.ok) { let m = 'Failed to publish ad.'; try { const j = await r.json(); m = j.detail || Object.values(j)[0] || m; } catch (e) {} throw new Error(m); }
+                toast('Advertisement is live in the marketplace!', 'success');
+                resetAdPreview();
+                loadMyAds();
+            } catch (err) {
+                toast(err.message || 'Something went wrong.', 'error');
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
+                btn.disabled = false; btn.innerHTML = original;
             }
         });
+
+        // ----- My Ads (live management) -----
+        function adIsActive(ad){ if (ad.is_active === false) return false; if (!ad.end_date) return true; return new Date(ad.end_date) > new Date(); }
+        async function loadMyAds(){
+            buildAdStudio();
+            const box = adEl('my-ads-list'); if (!box) return;
+            box.innerHTML = '<div class="agc-skel" style="height:64px;border-radius:12px;margin-bottom:8px"></div><div class="agc-skel" style="height:64px;border-radius:12px"></div>';
+            const sid = adStoreId();
+            let ads = [];
+            try {
+                const r = await fetch(API_BASE + '/advertisements/' + (sid ? ('?store=' + sid) : ''), { headers: { 'Authorization': 'Bearer ' + (token || '') } });
+                if (r.ok) { const d = await r.json(); ads = Array.isArray(d) ? d : (d.results || []); }
+            } catch (e) {}
+            if (sid) ads = ads.filter(a => { const s = a.store; const asid = s && (s.id != null ? s.id : s); return String(asid) === String(sid); });
+            if (!ads.length) { box.innerHTML = '<div class="text-center py-6 text-gray-400"><i class="fas fa-bullhorn text-3xl mb-2"></i><p class="text-sm">No ads yet \u2014 your first one will show here.</p></div>'; return; }
+            ads.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+            box.innerHTML = ads.map(a => {
+                const active = adIsActive(a);
+                const pill = active ? '<span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Live</span>' : '<span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Paused</span>';
+                return '<div class="flex items-center gap-3 p-3 border border-gray-100 rounded-xl">'
+                    + '<div class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center text-xs font-bold" style="background:' + (a.background_color || '#10b981') + ';color:' + (a.text_color || '#fff') + '">Aa</div>'
+                    + '<div class="flex-1 min-w-0"><div class="flex items-center gap-2"><p class="font-semibold text-gray-800 truncate">' + (a.title || 'Untitled') + '</p>' + pill + '</div>'
+                    + '<p class="text-xs text-gray-400">' + (a.impressions || 0) + ' views \u2022 ' + (a.clicks || 0) + ' clicks</p></div>'
+                    + '<div class="flex items-center gap-1 flex-shrink-0">'
+                    + '<button onclick="toggleAd(' + a.id + ',' + (active ? 'false' : 'true') + ')" title="' + (active ? 'Pause' : 'Activate') + '" class="w-8 h-8 rounded-lg text-gray-500 hover:bg-gray-100"><i class="fas ' + (active ? 'fa-pause' : 'fa-play') + '"></i></button>'
+                    + '<button onclick="deleteAd(' + a.id + ')" title="Delete" class="w-8 h-8 rounded-lg text-red-500 hover:bg-red-50"><i class="fas fa-trash"></i></button>'
+                    + '</div></div>';
+            }).join('');
+        }
+        window.toggleAd = function(id, makeActive){
+            fetch(API_BASE + '/advertisements/' + id + '/', { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') }, body: JSON.stringify({ is_active: makeActive }) })
+                .then(r => { if (!r.ok) throw new Error(); toast(makeActive ? 'Ad activated' : 'Ad paused', 'success'); loadMyAds(); })
+                .catch(() => toast("Couldn't update the ad.", 'error'));
+        };
+        window.deleteAd = async function(id){
+            const ok = await confirmDialog({ title: 'Delete this ad?', message: 'It will be removed from the marketplace. This cannot be undone.', confirmText: 'Delete', danger: true });
+            if (!ok) return;
+            fetch(API_BASE + '/advertisements/' + id + '/', { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + (token || '') } })
+                .then(r => { if (!r.ok && r.status !== 204) throw new Error(); toast('Ad deleted', 'success'); loadMyAds(); })
+                .catch(() => toast("Couldn't delete the ad.", 'error'));
+        };
+
+        document.addEventListener('DOMContentLoaded', () => { buildAdStudio(); syncAdPreview(); });
     </script>
     <script>
         // --- Apply i18n on static UI ---
