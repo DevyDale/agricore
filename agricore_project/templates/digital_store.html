@@ -1200,19 +1200,21 @@
         initSalesChart();
 
         // ===== Shared marketplace cache: orders + items + shipping fetched ONCE =====
-        const MKT = { orders: [], items: [], itemsByOrder: {}, shipByOrder: {}, loaded: false, promise: null };
+        const MKT = { orders: [], items: [], itemsByOrder: {}, shipByOrder: {}, escrows: [], escrowByOrder: {}, loaded: false, promise: null };
         function mktList(d){ return Array.isArray(d) ? d : (d && d.results ? d.results : []); }
         async function mktFetch(p){ try { const r = await fetch(API_BASE + '/' + p, { headers: { 'Authorization': 'Bearer ' + (token || '') } }); if (!r.ok) return []; return mktList(await r.json()); } catch (e) { return []; } }
         async function ensureMarketData(force){
             if (MKT.loaded && !force) return MKT;
             if (MKT.promise && !force) return MKT.promise;
             MKT.promise = (async () => {
-                const [orders, items, ships] = await Promise.all([ mktFetch('orders/'), mktFetch('order-items/'), mktFetch('shippings/') ]);
+                const [orders, items, ships, escrows] = await Promise.all([ mktFetch('orders/'), mktFetch('order-items/'), mktFetch('shippings/'), mktFetch('escrows/') ]);
                 const itemsByOrder = {};
                 items.forEach(it => { const oid = Number(it.order && (it.order.id != null ? it.order.id : it.order)); (itemsByOrder[oid] = itemsByOrder[oid] || []).push(it); });
                 const shipByOrder = {};
                 ships.forEach(s => { const oid = Number(s.order && (s.order.id != null ? s.order.id : s.order)); shipByOrder[oid] = s; });
-                MKT.orders = orders; MKT.items = items; MKT.itemsByOrder = itemsByOrder; MKT.shipByOrder = shipByOrder; MKT.loaded = true; MKT.promise = null;
+                const escrowByOrder = {};
+                escrows.forEach(e => { const oid = Number(e.order && (e.order.id != null ? e.order.id : e.order)); escrowByOrder[oid] = e; });
+                MKT.orders = orders; MKT.items = items; MKT.itemsByOrder = itemsByOrder; MKT.shipByOrder = shipByOrder; MKT.escrows = escrows; MKT.escrowByOrder = escrowByOrder; MKT.loaded = true; MKT.promise = null;
                 return MKT;
             })();
             return MKT.promise;
@@ -1571,6 +1573,7 @@
                     + '<div class="flex items-start justify-between gap-2 mb-1"><div><p class="font-semibold text-gray-800">Order #' + o.id + '</p>'
                     + '<p class="text-xs text-gray-500">' + ordDate(o).toLocaleDateString() + ' \u2022 ' + ngn(ordTotal(o)) + '</p></div>' + statusBadge(o.status) + '</div>'
                     + (ship && ship.tracking_number ? '<p class="text-xs text-gray-500"><i class="fas fa-truck"></i> ' + (ship.provider || 'Courier') + ' \u2022 ' + ship.tracking_number + '</p>' : '')
+                    + purchaseEscrowControls(o)
                     + '</div>';
             }).join('');
         }
@@ -1615,6 +1618,56 @@
             fetch(API_BASE + '/orders/' + orderId + '/', { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') }, body: JSON.stringify({ status: 'cancelled' }) })
                 .then(r => { if (!r.ok) throw new Error(); })
                 .catch(() => { o.status = before; renderOrders(); toast("Couldn't cancel order.", 'error'); });
+        };
+
+        // ----- Buyer escrow loop: pay into escrow + release on delivery -----
+        // Orders carry no currency field, so a new escrow is opened in this currency.
+        // Change it if your store settles in something other than the backend default.
+        const ESCROW_CREATE_CURRENCY = 'UGX';
+        function escrowOf(orderId){ return (MKT.escrowByOrder && MKT.escrowByOrder[Number(orderId)]) || null; }
+        function purchaseEscrowControls(o){
+            const esc = escrowOf(o.id);
+            if (!esc) {
+                return '<div class="mt-2"><button onclick="payForOrder(' + o.id + ')" class="px-3 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"><i class="fas fa-shield-halved"></i> Pay with escrow</button></div>';
+            }
+            const st = String(esc.status || '').toLowerCase();
+            const cls = (typeof ESC_BADGE !== 'undefined' && ESC_BADGE[st]) ? ESC_BADGE[st] : 'bg-gray-100 text-gray-500';
+            const pill = '<span class="px-2 py-0.5 rounded-full text-xs font-semibold ' + cls + '">Escrow: ' + (st ? st.charAt(0).toUpperCase() + st.slice(1) : 'Unknown') + '</span>';
+            let action = '';
+            if (st === 'pending') action = '<button onclick="payEscrow(' + esc.id + ')" class="px-3 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"><i class="fas fa-credit-card"></i> Pay now</button>';
+            else if (st === 'held') action = '<button onclick="releaseEscrow(' + esc.id + ')" class="px-3 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"><i class="fas fa-circle-check"></i> Confirm delivery</button>';
+            return '<div class="flex items-center gap-2 mt-2 flex-wrap">' + pill + action + '</div>';
+        }
+        async function startEscrowPayment(escrowId){
+            try {
+                const r = await fetch(API_BASE + '/escrows/' + escrowId + '/pay/', { method: 'POST', headers: { 'Authorization': 'Bearer ' + (token || '') } });
+                if (!r.ok) { let m = 'Could not start payment.'; try { const j = await r.json(); m = j.detail || m; } catch (e) {} throw new Error(m); }
+                const data = await r.json();
+                if (data.checkout_link) { window.open(data.checkout_link, '_blank'); toast('Complete payment in the new tab, then tap Refresh.', 'info'); }
+                else throw new Error('No checkout link returned.');
+            } catch (err) { toast(err.message || 'Payment could not start.', 'error'); }
+        }
+        window.payForOrder = async function(orderId){
+            const o = (MKT.orders || []).find(x => Number(x.id) === Number(orderId)); if (!o) return;
+            toast('Setting up secure escrow\u2026', 'info');
+            try {
+                const r = await fetch(API_BASE + '/escrows/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') }, body: JSON.stringify({ order: orderId, amount: Number(o.total_amount || 0) || 0, currency: ESCROW_CREATE_CURRENCY }) });
+                if (!r.ok) { let m = 'Could not start escrow.'; try { const j = await r.json(); m = j.detail || Object.values(j)[0] || m; } catch (e) {} throw new Error(m); }
+                const esc = await r.json();
+                if (MKT.escrowByOrder) MKT.escrowByOrder[Number(orderId)] = esc;
+                await startEscrowPayment(esc.id);
+            } catch (err) { toast(err.message || 'Could not start escrow.', 'error'); }
+        };
+        window.payEscrow = function(escrowId){ startEscrowPayment(escrowId); };
+        window.releaseEscrow = async function(escrowId){
+            const ok = await confirmDialog({ title: 'Confirm delivery?', message: 'This releases the held funds to the seller. Only do this once you\u2019ve received your order.', confirmText: 'Release funds', danger: false });
+            if (!ok) return;
+            try {
+                const r = await fetch(API_BASE + '/escrows/' + escrowId + '/release/', { method: 'POST', headers: { 'Authorization': 'Bearer ' + (token || '') } });
+                if (!r.ok) { let m = 'Could not release funds.'; try { const j = await r.json(); m = j.detail || m; } catch (e) {} throw new Error(m); }
+                toast('Funds release initiated. Thank you!', 'success');
+                MKT.loaded = false; loadOrders();
+            } catch (err) { toast(err.message || 'Could not release funds.', 'error'); }
         };
 
         // ----- STORE / PRODUCT LOAD & DETECTION -----
@@ -2468,7 +2521,9 @@
                 const incoming = (MKT.orders || []).filter(o => { const s = o.store; return Number(s && (s.id != null ? s.id : s)) === sid; });
                 const active = incoming.filter(o => ['cancelled', 'canceled', 'refunded'].indexOf(String(o.status || '').toLowerCase()) === -1);
                 const revenue = active.reduce((s, o) => s + (Number(o.total_amount || 0) || 0), 0);
-                set('stat-revenue', ngn(revenue));
+                const curCount = {}; (MKT.escrows || []).forEach(e => { const c = e.currency || ''; if (c) curCount[c] = (curCount[c] || 0) + 1; });
+                const cur = Object.keys(curCount).sort((a, b) => curCount[b] - curCount[a])[0] || 'NGN';
+                set('stat-revenue', (typeof walletMoney === 'function') ? walletMoney(revenue, cur) : ngn(revenue));
                 set('stat-orders', incoming.length.toLocaleString());
             } catch (e) {}
         }
@@ -2751,7 +2806,7 @@
             const sid = walletStoreId();
             try { const r = await walletApi('payout-accounts/'); if (r.ok) { const list = escListFrom(await r.json()); payoutAccount = list[0] || null; } } catch (e) { payoutAccount = null; }
             let escrows = [];
-            try { const r = await walletApi('escrows/'); if (r.ok) escrows = escListFrom(await r.json()); } catch (e) {}
+            try { await ensureMarketData(); escrows = MKT.escrows || []; } catch (e) {}
             let orderStore = {};
             try { await ensureMarketData(); (MKT.orders || []).forEach(o => { const s = o.store; orderStore[Number(o.id)] = Number(s && (s.id != null ? s.id : s)); }); } catch (e) {}
             escrowData = escrows.filter(e => { const oid = Number(escOrderId(e)); const st = orderStore[oid]; return st == null ? true : Number(st) === Number(sid); });
