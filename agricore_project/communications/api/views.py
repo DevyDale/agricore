@@ -102,3 +102,28 @@ class MessageViewSet(viewsets.ModelViewSet):
         if conversation_id:
             qs = qs.filter(conversation_id=conversation_id)
         return qs
+
+    def perform_create(self, serializer):
+        from rest_framework.exceptions import PermissionDenied
+        conversation = serializer.validated_data.get('conversation')
+        if conversation and not conversation.participants.filter(user=self.request.user).exists():
+            raise PermissionDenied('You are not a participant in this conversation.')
+        message = serializer.save(sender=self.request.user)
+        # Best-effort: push to the conversation's websocket group so connected
+        # participants get the message live. Safe no-op if channels/redis is down.
+        try:
+            from asgiref.sync import async_to_sync
+            from channels.layers import get_channel_layer
+            layer = get_channel_layer()
+            if layer:
+                async_to_sync(layer.group_send)(
+                    f'conversation_{message.conversation_id}',
+                    {'type': 'chat.message', 'message': {
+                        'id': message.id,
+                        'content': message.content,
+                        'sender': message.sender.username,
+                        'created_at': str(message.created_at),
+                    }},
+                )
+        except Exception:
+            pass

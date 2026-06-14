@@ -88,6 +88,19 @@
         .ord-card{ border:1px solid var(--line); border-radius:14px; padding:1rem; margin-bottom:.8rem; background:#fff }
         .mc-lg{ max-width:560px; max-height:88vh; overflow:auto }
         .trust-banner{ display:flex; gap:.6rem; align-items:flex-start; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:12px; padding:.7rem .9rem; font-size:.82rem; color:#065f46; margin-bottom:1rem }
+        /* ---- chat drawer ---- */
+        .qb.chat{ color:#7c3aed }
+        #chat-drawer{ position:fixed; inset-block:0; right:0; width:min(420px,100%); background:#fff; box-shadow:-12px 0 40px rgba(0,0,0,.18); transform:translateX(100%); transition:transform .3s; z-index:1250; display:flex; flex-direction:column }
+        #chat-drawer.open{ transform:none }
+        #chat-drawer .dhead{ justify-content:flex-start }
+        .chat-msgs{ flex:1; overflow-y:auto; padding:1rem; background:#fbf7ee; display:flex; flex-direction:column; gap:.5rem }
+        .cb{ max-width:80%; padding:.55rem .8rem; border-radius:14px; font-size:.9rem; line-height:1.45; word-wrap:break-word; white-space:pre-wrap }
+        .cb.me{ align-self:flex-end; background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; border-bottom-right-radius:4px }
+        .cb.them{ align-self:flex-start; background:#fff; border:1px solid var(--line); color:var(--ink); border-bottom-left-radius:4px }
+        .cb .ts{ display:block; font-size:.66rem; opacity:.7; margin-top:.2rem }
+        .chat-input{ display:flex; gap:.5rem; padding:.8rem; border-top:1px solid var(--line); background:#fff }
+        .chat-input textarea{ flex:1; resize:none; border:1.5px solid #e2ddd0; border-radius:12px; padding:.6rem .8rem; font:inherit; font-size:.9rem; max-height:90px; outline:none }
+        .chat-input button{ flex:none; width:46px; border:0; border-radius:12px; cursor:pointer; background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff }
     </style>
 </head>
 <body>
@@ -157,6 +170,13 @@
         <div class="dfoot"><div style="display:flex;justify-content:space-between;margin-bottom:.9rem"><span class="muted">Subtotal</span><strong id="cart-subtotal" style="font-size:1.2rem">$0</strong></div><button class="btn" onclick="openCheckout()"><i class="fas fa-shopping-bag"></i> Proceed to checkout</button></div>
     </div>
 
+    <!-- Chat drawer (buyer <-> seller) -->
+    <div id="chat-drawer">
+        <div class="dhead"><i class="fas fa-comment-dots"></i><h3 id="chat-title" style="font-size:1.05rem">Chat</h3><button id="chat-close" style="margin-left:auto">&times;</button></div>
+        <div id="chat-msgs" class="chat-msgs"></div>
+        <div class="chat-input"><textarea id="chat-text" rows="1" placeholder="Message the seller…"></textarea><button id="chat-send" aria-label="Send"><i class="fas fa-paper-plane"></i></button></div>
+    </div>
+
     <!-- Dropship modal -->
     <div id="dropship-modal" class="modal"><div class="mc">
         <h3 style="margin-top:0"><i class="fas fa-truck" style="color:#2563eb"></i> Dropship to your store</h3>
@@ -199,8 +219,8 @@
         const CUR_SYM = { NGN:'₦', USD:'$', UGX:'USh ', KES:'KSh ', GHS:'GH₵', ZAR:'R', TZS:'TSh ', RWF:'FRw ' };
         function curMoney(n,c){ const k=String(c||CHECKOUT_CURRENCY).toUpperCase(); const sym=CUR_SYM[k]||(k+' '); return sym+Number(n||0).toLocaleString(undefined,{maximumFractionDigits:2}); }
         function escHtml(v){ return String(v==null?'':v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-        let myUserId = null;
-        async function loadMe(){ try{ const r=await fetch(`${API}/users/me/`,{headers:{'Authorization':'Bearer '+token}}); if(r.ok){ const u=await r.json(); myUserId=(u&&u.id!=null)?u.id:myUserId; } }catch(e){} return myUserId; }
+        let myUserId = null, myUsername = null;
+        async function loadMe(){ try{ const r=await fetch(`${API}/users/me/`,{headers:{'Authorization':'Bearer '+token}}); if(r.ok){ const u=await r.json(); if(u){ if(u.id!=null) myUserId=u.id; if(u.username) myUsername=u.username; } } }catch(e){} return myUserId; }
 
         let products=[], page=1; const per=8;
         const filters={ q:'', category:'all', min:null, max:null, rating:null, sort:'relevance' };
@@ -221,6 +241,7 @@
                 <div class="pimg">${img?`<img src="${img}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="ini" style="display:none">${initials(p.title)}</div>`:`<div class="ini">${initials(p.title)}</div>`}
                     <span class="ptag">${p.category? (p.category.split(' ')[0]):'Deal'}</span>
                     <div class="pquick">
+                        <button class="qb chat" title="Message seller" onclick="openChat(${p.id})"><i class="fas fa-comment-dots"></i></button>
                         <button class="qb wish" title="Wishlist" onclick="toast('Saved to wishlist')"><i class="fas fa-heart"></i></button>
                         <button class="qb drop" title="Dropship to my store" onclick="openDropship(${p.id})"><i class="fas fa-truck"></i></button>
                     </div></div>
@@ -421,8 +442,59 @@
             return '<div class="ord-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem">'
                 + '<div><strong>Order #'+o.id+'</strong><div class="muted" style="font-size:.8rem">'+escHtml(stLabel)+'</div></div>'
                 + '<div style="text-align:right"><div style="font-weight:800;color:var(--g600)">'+curMoney(o.total_amount,cur)+'</div>'+pill+'</div></div>'
-                + (action?('<div style="margin-top:.6rem">'+action+'</div>'):'') + '</div>';
+                + (action?('<div style="margin-top:.6rem">'+action+'</div>'):'')
+                + (o.store!=null?('<div style="margin-top:.5rem"><button class="buybtn" style="width:100%" onclick="openChatStore('+o.store+', \'Seller\')"><i class="fas fa-comment-dots"></i> Message seller</button></div>'):'')
+                + '</div>';
         }
+
+        /* ============ Buyer <-> Seller chat ============ */
+        let chatWS=null, chatConvId=null, chatPoll=null; const chatSeen=new Set();
+        function wsURL(convId){ const proto=location.protocol==='https:'?'wss':'ws'; return proto+'://'+location.host+'/ws/chat/'+convId+'/?token='+encodeURIComponent(token); }
+        function chatMine(sender){ return String(sender)===String(myUserId) || (myUsername && String(sender)===String(myUsername)); }
+        function renderMsg(m){
+            if(m.id!=null){ if(chatSeen.has(m.id)) return; chatSeen.add(m.id); }
+            const box=$('chat-msgs'); const w=document.createElement('div');
+            w.className='cb '+(chatMine(m.sender)?'me':'them');
+            let when=''; try{ when=new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){}
+            w.innerHTML=escHtml(m.content)+'<span class="ts">'+when+'</span>';
+            box.appendChild(w); box.scrollTop=box.scrollHeight;
+        }
+        async function loadChatHistory(convId){
+            try{ const r=await fetch(API+'/messages/?conversation='+convId,{headers:{'Authorization':'Bearer '+token}});
+                const d=await r.json(); const list=Array.isArray(d)?d:(d.results||[]);
+                list.sort(function(a,b){ return (a.id||0)-(b.id||0); });
+                $('chat-msgs').innerHTML=''; chatSeen.clear();
+                if(!list.length){ $('chat-msgs').innerHTML='<div class="muted" style="text-align:center;padding:2rem">Say hello \u2014 ask about price, delivery or availability.</div>'; return; }
+                list.forEach(renderMsg);
+            }catch(e){}
+        }
+        function connectChatWS(convId){
+            try{ chatWS=new WebSocket(wsURL(convId));
+                chatWS.onmessage=function(ev){ try{ renderMsg(JSON.parse(ev.data)); }catch(e){} };
+                chatWS.onclose=function(){ chatWS=null; startChatPoll(convId); };
+                chatWS.onerror=function(){ try{ chatWS.close(); }catch(e){} };
+            }catch(e){ startChatPoll(convId); }
+        }
+        function startChatPoll(convId){ if(chatPoll||convId==null) return; chatPoll=setInterval(function(){ if($('chat-drawer').classList.contains('open')) loadChatHistory(convId); }, 4000); }
+        function stopChat(){ if(chatWS){ try{ chatWS.close(); }catch(e){} chatWS=null; } if(chatPoll){ clearInterval(chatPoll); chatPoll=null; } chatConvId=null; }
+        async function openConversation(title, starter){
+            if(!myUserId) await loadMe();
+            $('chat-title').textContent=title||'Chat'; $('chat-msgs').innerHTML='<div class="muted" style="padding:1rem">Opening conversation\u2026</div>'; $('chat-drawer').classList.add('open');
+            try{ const convo=await starter(); if(!convo||convo.id==null) throw new Error('no convo');
+                stopChat(); chatConvId=convo.id; await loadChatHistory(convo.id); connectChatWS(convo.id);
+            }catch(e){ $('chat-msgs').innerHTML='<div style="color:#dc2626;padding:1rem">Could not open chat. '+(e&&e.message?escHtml(e.message):'')+'</div>'; }
+        }
+        window.openChat=function(productId){ const p=prodById(productId); const name=p?(p.store_name||'Seller'):'Seller'; openConversation(name, function(){ return apiPost('/conversations/start-product-chat/', { product:productId }); }); };
+        window.openChatStore=function(storeId, storeName){ openConversation(storeName||'Seller', function(){ return apiPost('/conversations/start-store-chat/', { store:storeId }); }); };
+        async function sendChat(){
+            const ta=$('chat-text'); const content=ta.value.trim(); if(!content||chatConvId==null) return; ta.value=''; ta.style.height='auto';
+            if(chatWS && chatWS.readyState===1){ chatWS.send(JSON.stringify({content:content})); }
+            else { try{ await apiPost('/messages/', { conversation:chatConvId, content:content }); loadChatHistory(chatConvId); }catch(e){ toast(e.message||'Could not send'); } }
+        }
+        if($('chat-close')) $('chat-close').addEventListener('click', function(){ $('chat-drawer').classList.remove('open'); stopChat(); });
+        if($('chat-send')) $('chat-send').addEventListener('click', sendChat);
+        if($('chat-text')){ $('chat-text').addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendChat(); } });
+            $('chat-text').addEventListener('input', function(){ this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,90)+'px'; }); }
 
         /* Dale context for this page */
         window.__daleCtx = function(){ const v=(window.__mkView||products).slice(0,15).map(p=>({title:p.title,price:p.price,category:p.category,rating:p.average_rating,stock:p.stock_quantity})); return { page:'Marketplace', type:'marketplace', extras:{ filters:filters, visible_count:(window.__mkView||products).length, products:v } }; };
