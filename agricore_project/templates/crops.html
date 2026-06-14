@@ -1,329 +1,155 @@
 {% extends 'dashboard/base.html' %}
 {% block dashboard_content %}
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-    * {
-        font-family: 'DM Sans', sans-serif;
-    }
-    
-    h1, h2, h3, .font-display {
-        font-family: 'Archivo', sans-serif;
-    }
+    * { font-family: 'Inter', system-ui, sans-serif; }
+    h1, h2, h3, .font-display { font-family: 'Fraunces', serif; letter-spacing:-.01em; }
 
     :root {
-        --primary: #16a34a;
-        --primary-dark: #15803d;
-        --primary-light: #22c55e;
-        --secondary: #0d9488;
-        --accent: #f59e0b;
+        --primary: #10b981;
+        --primary-dark: #047857;
+        --primary-light: #34d399;
+        --secondary: #0c6b46;
+        --accent: #c39a48;
+        --line: #ece4d6;
+        --ink: #16271c;
     }
 
-    body {
-        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #d1fae5 100%);
-        min-height: 100vh;
-    }
+    body { background: radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f4efe3 62%); min-height: 100vh; }
+
+    /* Padded shell so nothing touches the edges */
+    .cr-shell { max-width: 1240px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
+    @media (max-width: 640px){ .cr-shell { padding: .85rem .9rem 2rem; } }
 
     .page-header {
-        background: linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%);
-        position: relative;
-        overflow: hidden;
+        background: linear-gradient(120deg, #0c3d22 0%, #1f5a32 55%, #2f6b3c 100%);
+        position: relative; overflow: hidden;
+        border-radius: 26px;
+        box-shadow: 0 20px 50px rgba(12,61,34,.22);
     }
-
-    .page-header::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image: 
-            repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px);
-    }
+    #cr-farmland { position:absolute; inset:-2%; z-index:0; }
+    #cr-farmland svg { width:100%; height:100%; }
+    .page-header > .ph-inner { position:relative; z-index:2; }
 
     .stat-card {
-        background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+        background: linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.88) 100%);
         backdrop-filter: blur(20px);
-        border: 1px solid rgba(22, 163, 74, 0.1);
+        border: 1px solid var(--line);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
+        position: relative; overflow: hidden;
     }
-
     .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
         background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
-        transform: scaleX(0);
-        transform-origin: left;
+        transform: scaleX(0); transform-origin: left;
         transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .stat-card:hover::before { transform: scaleX(1); }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(22, 163, 74, 0.15); border-color: rgba(22, 163, 74, 0.2); }
 
-    .stat-card:hover::before {
-        transform: scaleX(1);
-    }
+    .surface { background: #fff; border: 1px solid var(--line); border-radius: 1.25rem; box-shadow: 0 12px 34px rgba(20,39,28,.07); }
 
-    .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 40px rgba(22, 163, 74, 0.15);
-        border-color: rgba(22, 163, 74, 0.2);
-    }
+    .modern-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 1rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1.5px solid #16a34a; }
+    .modern-table thead { background: #16a34a; }
+    .modern-table thead th { padding: 1rem 1.25rem; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: #fff; text-align:left; white-space:nowrap; }
+    .modern-table tbody tr { transition: all 0.2s ease; border-bottom: 1px solid #f3f4f6; }
+    .modern-table tbody tr:hover { background: linear-gradient(135deg, rgba(240, 253, 244, 0.6), rgba(236, 253, 245, 0.6)); }
+    .modern-table tbody td { padding: 1rem 1.25rem; color: #4b5563; vertical-align: middle; }
 
-    .modern-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        background: white;
-        border-radius: 1rem;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-
-    .modern-table thead {
-        background: linear-gradient(135deg, #f9fafb, #f3f4f6);
-    }
-
-    .modern-table thead th {
-        padding: 1.25rem 1.5rem;
-        font-weight: 700;
-        font-size: 0.8125rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #1f2937;
-        border-bottom: 2px solid #e5e7eb;
-    }
-
-    .modern-table tbody tr {
-        transition: all 0.2s ease;
-        border-bottom: 1px solid #f3f4f6;
-    }
-
-    .modern-table tbody tr:hover {
-        background: linear-gradient(135deg, rgba(240, 253, 244, 0.5), rgba(236, 253, 245, 0.5));
-        transform: scale(1.005);
-    }
-
-    .modern-table tbody td {
-        padding: 1.25rem 1.5rem;
-        color: #6b7280;
-    }
-
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.375rem 0.875rem;
-        border-radius: 9999px;
-        font-size: 0.8125rem;
-        font-weight: 600;
-        letter-spacing: 0.01em;
-    }
-
-    .badge-grain {
-        background: linear-gradient(135deg, #fef3c7, #fde68a);
-        color: #92400e;
-        border: 1px solid #fcd34d;
-    }
-
-    .badge-vegetable {
-        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-        color: #166534;
-        border: 1px solid #86efac;
-    }
-
-    .badge-fruit {
-        background: linear-gradient(135deg, #fee2e2, #fecaca);
-        color: #991b1b;
-        border: 1px solid #fca5a5;
-    }
-
-    .badge-legume {
-        background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
-        color: #6b21a8;
-        border: 1px solid #d8b4fe;
-    }
+    .badge { display: inline-flex; align-items: center; padding: 0.35rem 0.8rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 600; }
+    .badge-grain { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e; border: 1px solid #fcd34d; }
+    .badge-vegetable { background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #166534; border: 1px solid #86efac; }
+    .badge-fruit { background: linear-gradient(135deg, #fee2e2, #fecaca); color: #991b1b; border: 1px solid #fca5a5; }
+    .badge-legume { background: linear-gradient(135deg, #f3e8ff, #e9d5ff); color: #6b21a8; border: 1px solid #d8b4fe; }
+    .badge-neutral { background: #f4efe3; color: #5b6b5f; border: 1px solid var(--line); }
 
     .btn-primary {
         background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        color: white;
-        font-weight: 600;
-        padding: 0.875rem 1.75rem;
-        border-radius: 0.75rem;
-        border: none;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
-        position: relative;
-        overflow: hidden;
+        color: white; font-weight: 600; padding: 0.8rem 1.6rem; border-radius: 999px; border: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 6px 16px rgba(22, 163, 74, 0.28); cursor: pointer;
     }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(22, 163, 74, 0.38); }
+    .btn-primary:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: 0 6px 16px rgba(22, 163, 74, 0.2); }
 
-    .btn-primary::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2));
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
+    .modal-content { border: 1px solid var(--line); }
 
-    .btn-primary:hover::before {
-        opacity: 1;
-    }
+    .input-field { border: 1px solid var(--line); border-radius: 0.7rem; padding: 0.65rem 0.95rem; transition: all 0.2s; font-size: 0.9375rem; background: white; color: var(--ink); }
+    .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12); }
 
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(22, 163, 74, 0.35);
-    }
+    .action-btn { padding: 0.5rem 0.85rem; border-radius: 0.55rem; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; border: 1px solid var(--line); background: white; cursor:pointer; }
+    .action-btn:hover { border-color: var(--primary); background: rgba(16, 185, 129, 0.06); color: var(--primary); transform: translateY(-1px); }
 
-    .input-field {
-        border: 2px solid #e5e7eb;
-        border-radius: 0.625rem;
-        padding: 0.75rem 1rem;
-        transition: all 0.2s;
-        font-size: 0.9375rem;
-        background: white;
-    }
+    .empty-state { background: #fbf7ee; border: 2px dashed var(--line); border-radius: 1rem; padding: 3.5rem 2rem; }
 
-    .input-field:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
-    }
+    .growth-bar { height: 6px; background: #ece4d6; border-radius: 3px; overflow: hidden; width: 90px; }
+    .growth-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary-light), var(--primary)); transition: width 0.5s ease; }
 
-    .action-btn {
-        padding: 0.625rem 1rem;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        transition: all 0.2s;
-        border: 1.5px solid #e5e7eb;
-        background: white;
-    }
+    .search-wrap { position: relative; }
+    .search-wrap .clear-btn { position:absolute; right:.6rem; top:50%; transform:translateY(-50%); color:#9aa39a; cursor:pointer; padding:.25rem; display:none; }
+    .search-wrap .clear-btn:hover { color:var(--primary-dark); }
 
-    .action-btn:hover {
-        border-color: var(--primary);
-        background: rgba(22, 163, 74, 0.05);
-        color: var(--primary);
-        transform: translateY(-1px);
-    }
-
-    .empty-state {
-        background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(249,250,251,0.8));
-        border: 2px dashed #d1d5db;
-        border-radius: 1rem;
-        padding: 4rem 2rem;
-    }
-
-    .growth-indicator {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-    }
-
-    .growth-bar {
-        height: 6px;
-        background: #e5e7eb;
-        border-radius: 3px;
-        overflow: hidden;
-    }
-
-    .growth-bar-fill {
-        height: 100%;
-        background: linear-gradient(90deg, var(--primary-light), var(--primary));
-        transition: width 0.5s ease;
-    }
-
-    .fade-in {
-        animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
-    }
-
-    .fade-in-1 { animation-delay: 0.1s; }
-    .fade-in-2 { animation-delay: 0.2s; }
-    .fade-in-3 { animation-delay: 0.3s; }
-    .fade-in-4 { animation-delay: 0.4s; }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+    .fade-in { animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards; }
+    .fade-in-1 { animation-delay: 0.1s; } .fade-in-2 { animation-delay: 0.2s; }
+    .fade-in-3 { animation-delay: 0.3s; } .fade-in-4 { animation-delay: 0.4s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 
-<div class="min-h-screen">
+<div class="cr-shell">
     <!-- Hero Header -->
-    <section class="page-header py-12 px-6 shadow-xl relative mb-10">
-        <div class="max-w-7xl mx-auto relative z-10">
+    <section class="page-header py-12 px-8 mb-8">
+        <div id="cr-farmland"></div>
+        <div class="ph-inner">
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div>
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
-                            <i class="fas fa-leaf text-white text-2xl"></i>
-                        </div>
-                        <div>
-                            <h1 class="font-display text-4xl md:text-5xl font-black text-white mb-1">
-                                Crop Management
-                            </h1>
-                            <p class="text-emerald-50 text-lg font-medium">Monitor your crop cycles and yields</p>
-                        </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-14 h-14 rounded-2xl bg-white bg-opacity-10 backdrop-blur-sm flex items-center justify-center border border-white border-opacity-20">
+                        <i class="fas fa-leaf text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-display text-4xl md:text-5xl font-black text-white mb-1">Crop Management</h1>
+                        <p class="text-emerald-50 text-lg font-medium">Monitor your crop cycles and yields</p>
                     </div>
                 </div>
                 <button class="btn-primary flex items-center gap-2 whitespace-nowrap" id="open-crop-modal">
-                    <i class="fas fa-plus"></i>
-                    <span>Add New Crop</span>
+                    <i class="fas fa-plus"></i> <span>Add New Crop</span>
                 </button>
             </div>
         </div>
     </section>
 
-    <div class="max-w-7xl mx-auto px-6 pb-10">
+    <div class="cr-body">
         <!-- Summary Stats -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
             <div class="stat-card p-6 rounded-2xl fade-in fade-in-1">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                        <i class="fas fa-seedling text-green-600 text-xl"></i>
-                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center"><i class="fas fa-seedling text-green-600 text-xl"></i></div>
                     <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Total</span>
                 </div>
-                <div class="font-display text-3xl font-black text-gray-900">{{ crops|length }}</div>
+                <div class="font-display text-3xl font-black text-gray-900" id="total-count">0</div>
                 <p class="text-sm text-gray-600 mt-1">Active crops</p>
             </div>
-
             <div class="stat-card p-6 rounded-2xl fade-in fade-in-2">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center">
-                        <i class="fas fa-wheat-awn text-yellow-600 text-xl"></i>
-                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center"><i class="fas fa-wheat-awn text-yellow-600 text-xl"></i></div>
                     <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Grain</span>
                 </div>
                 <div class="font-display text-3xl font-black text-gray-900" id="grain-count">0</div>
                 <p class="text-sm text-gray-600 mt-1">Grain crops</p>
             </div>
-
             <div class="stat-card p-6 rounded-2xl fade-in fade-in-3">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
-                        <i class="fas fa-carrot text-emerald-600 text-xl"></i>
-                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center"><i class="fas fa-carrot text-emerald-600 text-xl"></i></div>
                     <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Vegetables</span>
                 </div>
                 <div class="font-display text-3xl font-black text-gray-900" id="veg-count">0</div>
                 <p class="text-sm text-gray-600 mt-1">Vegetable crops</p>
             </div>
-
             <div class="stat-card p-6 rounded-2xl fade-in fade-in-4">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
-                        <i class="fas fa-apple-whole text-red-600 text-xl"></i>
-                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center"><i class="fas fa-apple-whole text-red-600 text-xl"></i></div>
                     <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Fruits</span>
                 </div>
                 <div class="font-display text-3xl font-black text-gray-900" id="fruit-count">0</div>
@@ -332,16 +158,12 @@
         </div>
 
         <!-- Search and Filter -->
-        <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6 mb-8">
+        <div class="surface p-6 mb-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="relative">
+                <div class="search-wrap">
                     <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input 
-                        type="text" 
-                        id="search-input"
-                        placeholder="Search by crop name or field..." 
-                        class="input-field w-full pl-12"
-                    />
+                    <input type="text" id="search-input" placeholder="Search by crop, variety or field..." class="input-field w-full pl-12 pr-10" autocomplete="off" />
+                    <span id="clear-search" class="clear-btn"><i class="fas fa-circle-xmark"></i></span>
                 </div>
                 <select id="type-filter" class="input-field">
                     <option value="">All Types</option>
@@ -358,115 +180,57 @@
                     <option value="name-desc">Name (Z-A)</option>
                 </select>
             </div>
+            <div class="mt-3 text-sm text-gray-500" id="result-count"></div>
         </div>
 
         <!-- Crops Table -->
-        <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
-            {% if crops %}
-            <table class="modern-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Field</th>
-                        <th>Planted Date</th>
-                        <th>Days Growing</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="crops-tbody">
-                    {% for crop in crops %}
-                    <tr class="crop-row" 
-                        data-name="{{ crop.name|lower }}" 
-                        data-field="{{ crop.field|lower }}"
-                        data-type="{{ crop.type|lower }}"
-                        data-date="{{ crop.planted_date }}">
-                        <td>
-                            <span class="font-mono text-sm text-gray-600">#{{ crop.id }}</span>
-                        </td>
-                        <td>
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-leaf text-green-500"></i>
-                                <span class="font-bold text-gray-900">{{ crop.name }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge badge-{{ crop.type|lower }}">
-                                {{ crop.type|title }}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="font-medium text-gray-700">{{ crop.field }}</span>
-                        </td>
-                        <td>
-                            <div class="flex flex-col">
-                                <span class="font-semibold text-gray-900">{{ crop.planted_date }}</span>
-                                <span class="text-xs text-gray-500 mt-0.5 crop-days-ago" data-date="{{ crop.planted_date|date:'Y-m-d' }}">
-                                    Loading...
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="flex flex-col gap-1">
-                                <span class="text-sm font-semibold text-gray-900 crop-days-growing" data-date="{{ crop.planted_date|date:'Y-m-d' }}">0 days</span>
-                                <div class="growth-bar w-24">
-                                    <div class="growth-bar-fill crop-growth-bar" data-date="{{ crop.planted_date|date:'Y-m-d' }}" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="flex gap-2">
-                                <button class="action-btn" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="action-btn" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="action-btn" title="Harvest">
-                                    <i class="fas fa-scissors text-green-600"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <div class="empty-state text-center">
-                <i class="fas fa-leaf text-8xl mb-6" style="color: #d1d5db;"></i>
-                <p class="text-xl font-semibold text-gray-700 mb-2">No crops found</p>
-                <p class="text-gray-600 mb-6">Start by planting your first crop</p>
-                <button class="btn-primary" id="add-first-crop-btn">
-                    <i class="fas fa-plus mr-2"></i>
-                    Add Your First Crop
-                </button>
+        <div class="surface p-6">
+            <div id="crops-loading"><p class="text-gray-500">Loading crops...</p></div>
+
+            <div id="crops-table-wrap" class="overflow-x-auto hidden">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>Crop</th>
+                            <th>Type</th>
+                            <th>Land Portion</th>
+                            <th>Planted</th>
+                            <th>Growth</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="crops-tbody"></tbody>
+                </table>
             </div>
-            {% endif %}
-            
+
+            <div id="empty-state" class="empty-state text-center hidden">
+                <i class="fas fa-leaf text-7xl mb-6" style="color: #d8cdb5;"></i>
+                <p class="text-xl font-semibold text-gray-700 mb-2">No crops yet</p>
+                <p class="text-gray-600 mb-6">Start by planting your first crop</p>
+                <button class="btn-primary" id="add-first-crop-btn"><i class="fas fa-plus mr-2"></i> Add Your First Crop</button>
+            </div>
+
             <div id="no-results" class="empty-state text-center hidden">
-                <i class="fas fa-search text-6xl mb-4" style="color: #d1d5db;"></i>
-                <p class="text-lg font-semibold text-gray-700 mb-2">No crops found</p>
+                <i class="fas fa-search text-6xl mb-4" style="color: #d8cdb5;"></i>
+                <p class="text-lg font-semibold text-gray-700 mb-2">No crops match your search</p>
                 <p class="text-gray-600">Try adjusting your search or filters</p>
             </div>
         </div>
     </div>
 
     <!-- Start Crop Cycle Modal -->
-    <div id="crop-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden">
-        <div class="modal-content bg-white rounded-3xl shadow-2xl w-full max-w-xl p-8 relative border border-green-100 my-8 md:my-16 lg:my-24" style="margin-top:3vh; margin-bottom:3vh;">
+    <div id="crop-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm hidden p-4">
+        <div class="modal-content bg-white rounded-3xl shadow-2xl w-full max-w-xl p-8 relative" style="max-height:92vh; overflow-y:auto;">
             <button id="close-crop-modal" class="absolute top-5 right-5 text-gray-400 hover:text-green-700 text-3xl font-bold transition-colors">&times;</button>
             <div class="flex items-center gap-4 mb-4">
-                <div class="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center border border-green-100">
-                    <i class="fas fa-seedling text-green-600 text-xl"></i>
-                </div>
+                <div class="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center border border-green-100"><i class="fas fa-seedling text-green-600 text-xl"></i></div>
                 <div>
                     <h2 class="font-display text-2xl font-extrabold text-green-800 mb-1">Start Crop Cycle</h2>
                     <p class="text-gray-500 text-sm font-medium">Register a new crop cycle for your farm.</p>
                 </div>
             </div>
             <form id="start-crop-form" method="post" action="#" autocomplete="off" class="space-y-4">
-                <!-- No CSRF needed for API call, handled via fetch -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 mb-1">Crop Name</label>
@@ -491,30 +255,6 @@
                         <select name="field" id="field-dropdown" class="input-field w-full" required>
                             <option value="">Loading...</option>
                         </select>
-                    <script>
-                    // Populate Land Portion dropdown from /api/fields/
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const dropdown = document.getElementById('field-dropdown');
-                        if (!dropdown) return;
-                        const token = localStorage.getItem('access_token');
-                        fetch('/api/fields/', {
-                            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-                        })
-                        .then(res => res.json())
-                        .then(fields => {
-                            dropdown.innerHTML = '';
-                            if (Array.isArray(fields) && fields.length > 0) {
-                                dropdown.innerHTML = '<option value="">Select land portion</option>' +
-                                    fields.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
-                            } else {
-                                dropdown.innerHTML = '<option value="">No land portions found</option>';
-                            }
-                        })
-                        .catch(() => {
-                            dropdown.innerHTML = '<option value="">Failed to load</option>';
-                        });
-                    });
-                    </script>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 mb-1">Planted Date</label>
@@ -572,197 +312,406 @@
 </div>
 
 <script>
-    // Calculate crop statistics and growth
+    /* ---------- Helpers ---------- */
+    function esc(v){ return (v === null || v === undefined) ? '' : String(v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+    function fmtDate(d){ if(!d) return '\u2014'; const dt = new Date(d); return isNaN(dt) ? '\u2014' : dt.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}); }
+
+    /* ---------- Build a table row from an API crop object ---------- */
+    function cropRowHtml(c){
+        const name = c.crop_type || c.crop_name || c.name || 'Unnamed';
+        const variety = c.variety || '';
+        const type = String(c.type || c.category || c.crop_category || '').toLowerCase();
+        const fieldName = c.field_name || c.crop_unit_name || c.field || c.crop_unit || '';
+        const planted = c.planting_date || c.planted_date || c.created_at || '';
+        const status = c.status || 'growing';
+        const id = c.id != null ? c.id : '';
+
+        const typeCell = type
+            ? '<span class="badge badge-' + esc(type) + '">' + esc(type.charAt(0).toUpperCase()+type.slice(1)) + '</span>'
+            : '<span class="text-gray-400">\u2014</span>';
+
+        return '' +
+        '<tr class="crop-row" data-id="' + esc(id) + '"' +
+            ' data-name="' + esc((name + ' ' + variety).toLowerCase()) + '"' +
+            ' data-field="' + esc(String(fieldName).toLowerCase()) + '"' +
+            ' data-type="' + esc(type) + '"' +
+            ' data-date="' + esc(planted) + '">' +
+            '<td><div class="font-semibold text-gray-900">' + esc(name) + '</div>' +
+                (variety ? '<div class="text-xs text-gray-500">' + esc(variety) + '</div>' : '') + '</td>' +
+            '<td>' + typeCell + '</td>' +
+            '<td><span class="font-medium text-gray-700">' + (esc(fieldName) || '\u2014') + '</span></td>' +
+            '<td><div>' + fmtDate(planted) + '</div>' +
+                '<div class="text-xs text-gray-400 crop-days-ago" data-date="' + esc(planted) + '"></div></td>' +
+            '<td><div class="growth-bar"><div class="growth-bar-fill crop-growth-bar" data-date="' + esc(planted) + '" style="width:0%"></div></div>' +
+                '<div class="text-xs text-gray-400 mt-1 crop-days-growing" data-date="' + esc(planted) + '"></div></td>' +
+            '<td><span class="badge badge-neutral">' + esc(status.charAt(0).toUpperCase()+status.slice(1)) + '</span></td>' +
+            '<td><div class="flex gap-2">' +
+                '<button class="action-btn" title="View"><i class="fas fa-eye"></i></button>' +
+                '<button class="action-btn" title="Edit"><i class="fas fa-edit"></i></button>' +
+            '</div></td>' +
+        '</tr>';
+    }
+
+    /* ---------- Stats + growth ---------- */
     function calculateCropStats() {
         const rows = document.querySelectorAll('.crop-row');
-        let grainCount = 0;
-        let vegCount = 0;
-        let fruitCount = 0;
-
+        let grain = 0, veg = 0, fruit = 0;
         rows.forEach(row => {
-            const type = row.dataset.type;
-            
-            if (type === 'grain') grainCount++;
-            if (type === 'vegetable') vegCount++;
-            if (type === 'fruit') fruitCount++;
+            const t = row.dataset.type;
+            if (t === 'grain') grain++;
+            if (t === 'vegetable') veg++;
+            if (t === 'fruit') fruit++;
         });
-
-        document.getElementById('grain-count').textContent = grainCount;
-        document.getElementById('veg-count').textContent = vegCount;
-        document.getElementById('fruit-count').textContent = fruitCount;
-        
-        // Calculate days growing for each crop
+        const totalEl = document.getElementById('total-count');
+        if (totalEl) totalEl.textContent = rows.length;
+        document.getElementById('grain-count').textContent = grain;
+        document.getElementById('veg-count').textContent = veg;
+        document.getElementById('fruit-count').textContent = fruit;
         updateGrowthDisplay();
     }
 
     function updateGrowthDisplay() {
-        const daysAgoElements = document.querySelectorAll('.crop-days-ago');
-        const daysGrowingElements = document.querySelectorAll('.crop-days-growing');
-        const growthBars = document.querySelectorAll('.crop-growth-bar');
-        
         const now = new Date();
-        
-        daysAgoElements.forEach(el => {
-            const plantedDate = new Date(el.dataset.date);
-            const daysAgo = Math.floor((now - plantedDate) / (1000 * 60 * 60 * 24));
-            el.textContent = `${daysAgo} days ago`;
-        });
-        
-        daysGrowingElements.forEach(el => {
-            const plantedDate = new Date(el.dataset.date);
-            const daysGrowing = Math.floor((now - plantedDate) / (1000 * 60 * 60 * 24));
-            el.textContent = `${daysGrowing} days`;
-        });
-        
-        growthBars.forEach(bar => {
-            const plantedDate = new Date(bar.dataset.date);
-            const daysGrowing = Math.floor((now - plantedDate) / (1000 * 60 * 60 * 24));
-            // Assume 120 days is full growth cycle
-            const percentage = Math.min(100, (daysGrowing / 120) * 100);
-            bar.style.width = `${percentage}%`;
-        });
+        function days(d){ const p = new Date(d); return isNaN(p) ? null : Math.max(0, Math.floor((now - p) / 86400000)); }
+        document.querySelectorAll('.crop-days-ago').forEach(el => { const n = days(el.dataset.date); el.textContent = n === null ? '' : (n + ' days ago'); });
+        document.querySelectorAll('.crop-days-growing').forEach(el => { const n = days(el.dataset.date); el.textContent = n === null ? '' : (n + ' days'); });
+        document.querySelectorAll('.crop-growth-bar').forEach(bar => { const n = days(bar.dataset.date); bar.style.width = (n === null ? 0 : Math.min(100, (n / 120) * 100)) + '%'; });
     }
 
-    // Search and Filter Functionality
+    /* ---------- Search / filter / sort ---------- */
     const searchInput = document.getElementById('search-input');
+    const clearSearch = document.getElementById('clear-search');
     const typeFilter = document.getElementById('type-filter');
     const sortBy = document.getElementById('sort-by');
     const noResults = document.getElementById('no-results');
-    const tbody = document.getElementById('crops-tbody');
+    const resultCount = document.getElementById('result-count');
+
+    function updateResultCount(visible, total) {
+        if (!resultCount) return;
+        if (total === 0) { resultCount.textContent = ''; return; }
+        resultCount.textContent = (visible === total)
+            ? (total + ' crop' + (total === 1 ? '' : 's'))
+            : ('Showing ' + visible + ' of ' + total + ' crops');
+    }
 
     function filterAndSort() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const typeValue = typeFilter.value.toLowerCase();
+        const tbody = document.getElementById('crops-tbody');
+        if (!tbody) return;
+        const searchTerm = (searchInput.value || '').toLowerCase().trim();
+        const typeValue = (typeFilter.value || '').toLowerCase();
         const sortValue = sortBy.value;
-        
         const rows = Array.from(document.querySelectorAll('.crop-row'));
-        let visibleCount = 0;
+        let visible = 0;
 
-        // Filter
         rows.forEach(row => {
-            const name = row.dataset.name;
-            const field = row.dataset.field;
-            const type = row.dataset.type;
-
+            const name = row.dataset.name || '';
+            const field = row.dataset.field || '';
+            const type = row.dataset.type || '';
             const matchesSearch = !searchTerm || name.includes(searchTerm) || field.includes(searchTerm);
             const matchesType = !typeValue || type === typeValue;
-
-            if (matchesSearch && matchesType) {
-                row.style.display = '';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
-            }
+            if (matchesSearch && matchesType) { row.style.display = ''; visible++; }
+            else { row.style.display = 'none'; }
         });
 
-        // Sort
         if (sortValue) {
-            const visibleRows = rows.filter(row => row.style.display !== 'none');
-            
+            const visibleRows = rows.filter(r => r.style.display !== 'none');
             visibleRows.sort((a, b) => {
-                switch(sortValue) {
-                    case 'date-asc':
-                        return new Date(a.dataset.date) - new Date(b.dataset.date);
-                    case 'date-desc':
-                        return new Date(b.dataset.date) - new Date(a.dataset.date);
-                    case 'name-asc':
-                        return a.dataset.name.localeCompare(b.dataset.name);
-                    case 'name-desc':
-                        return b.dataset.name.localeCompare(a.dataset.name);
-                    default:
-                        return 0;
+                switch (sortValue) {
+                    case 'date-asc':  return new Date(a.dataset.date) - new Date(b.dataset.date);
+                    case 'date-desc': return new Date(b.dataset.date) - new Date(a.dataset.date);
+                    case 'name-asc':  return a.dataset.name.localeCompare(b.dataset.name);
+                    case 'name-desc': return b.dataset.name.localeCompare(a.dataset.name);
+                    default: return 0;
                 }
             });
-
             visibleRows.forEach(row => tbody.appendChild(row));
         }
 
-        // Show/hide no results message
-        if (visibleCount === 0 && rows.length > 0) {
-            noResults.classList.remove('hidden');
-        } else {
-            noResults.classList.add('hidden');
+        if (rows.length > 0 && visible === 0) noResults.classList.remove('hidden');
+        else noResults.classList.add('hidden');
+
+        if (clearSearch) clearSearch.style.display = searchTerm ? 'block' : 'none';
+        updateResultCount(visible, rows.length);
+    }
+
+    let searchTimer;
+    if (searchInput) searchInput.addEventListener('input', function(){ clearTimeout(searchTimer); searchTimer = setTimeout(filterAndSort, 120); });
+    if (clearSearch) clearSearch.addEventListener('click', function(){ searchInput.value = ''; filterAndSort(); searchInput.focus(); });
+    if (typeFilter) typeFilter.addEventListener('change', filterAndSort);
+    if (sortBy) sortBy.addEventListener('change', filterAndSort);
+
+    /* ---------- Load crops from the API (real data, no placeholders) ---------- */
+    async function loadCrops() {
+        const loading = document.getElementById('crops-loading');
+        const wrap = document.getElementById('crops-table-wrap');
+        const tbody = document.getElementById('crops-tbody');
+        const emptyState = document.getElementById('empty-state');
+        const token = localStorage.getItem('access_token');
+        if (!token) { window.location.href = 'authentication.html'; return; }
+        try {
+            const res = await fetch('/api/crop-cycles/', { headers: { 'Authorization': 'Bearer ' + token } });
+            if (res.status === 401 || res.status === 403) { localStorage.clear(); window.location.href = 'authentication.html'; return; }
+            if (!res.ok) throw new Error('Failed to load crops');
+            const data = await res.json();
+            const crops = Array.isArray(data) ? data : (data.results || []);
+            loading.classList.add('hidden');
+            if (crops.length === 0) {
+                emptyState.classList.remove('hidden');
+                wrap.classList.add('hidden');
+                calculateCropStats();
+                updateResultCount(0, 0);
+                return;
+            }
+            emptyState.classList.add('hidden');
+            wrap.classList.remove('hidden');
+            tbody.innerHTML = crops.map(cropRowHtml).join('');
+            calculateCropStats();
+            filterAndSort();
+        } catch (err) {
+            loading.innerHTML = '<p class="text-red-500">Failed to load crops. Please try again.</p>';
         }
     }
 
-    // Modal logic for Start Crop Cycle
-        // Intercept crop cycle form submission and POST to API
-        document.addEventListener('DOMContentLoaded', function() {
-            const cropForm = document.getElementById('start-crop-form');
-            if (cropForm) {
-                cropForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(cropForm);
-                    // Map frontend fields to backend model fields
-                    const payload = {
-                        crop_type: formData.get('crop_name'),
-                        variety: formData.get('variety'),
-                        planting_date: formData.get('planted_date'),
-                        expected_harvest_date: formData.get('expected_harvest_date'),
-                        seed_source: formData.get('seed_source'),
-                        irrigation_type: formData.get('irrigation_type'),
-                        purpose: formData.get('purpose'),
-                        additional_notes: formData.get('additional_notes'),
-                    };
-                    // Land Portion (field) maps to crop_unit (ID)
-                    payload.crop_unit = formData.get('field');
-                    // Only include non-empty values
-                    Object.keys(payload).forEach(key => {
-                        if (payload[key] === '' || payload[key] === null) {
-                            delete payload[key];
-                        }
-                    });
-                    const token = localStorage.getItem('access_token');
-                    fetch('/api/crop-cycles/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                        },
-                        body: JSON.stringify(payload)
-                    })
-                    .then(res => {
-                        if (!res.ok) throw new Error('Failed to save crop cycle');
-                        return res.json();
-                    })
-                    .then(data => {
-                        alert('Crop cycle saved successfully!');
-                        cropForm.reset();
-                        cropModal.classList.add('hidden');
-                        // Optionally refresh crop list or stats here
-                    })
-                    .catch(err => {
-                        alert('Error saving crop cycle: ' + err.message);
-                    });
-                });
-            }
-        });
-    const openCropModalBtn = document.getElementById('open-crop-modal');
-    const addFirstCropBtn = document.getElementById('add-first-crop-btn');
-    const cropModal = document.getElementById('crop-modal');
-    const closeCropModalBtn = document.getElementById('close-crop-modal');
-    const cancelCropModalBtn = document.getElementById('cancel-crop-modal');
-    if (openCropModalBtn && cropModal) {
-        openCropModalBtn.onclick = () => cropModal.classList.remove('hidden');
-    }
-    if (addFirstCropBtn && cropModal) {
-        addFirstCropBtn.onclick = () => cropModal.classList.remove('hidden');
-    }
-    if (closeCropModalBtn && cropModal) {
-        closeCropModalBtn.onclick = () => cropModal.classList.add('hidden');
-    }
-    if (cancelCropModalBtn && cropModal) {
-        cancelCropModalBtn.onclick = () => cropModal.classList.add('hidden');
-    }
-
-    // Initialize on page load
+    /* ---------- Modal + create ---------- */
     document.addEventListener('DOMContentLoaded', function() {
-        calculateCropStats();
-    });
+        const cropModal = document.getElementById('crop-modal');
+        const openCropModalBtn = document.getElementById('open-crop-modal');
+        const addFirstCropBtn = document.getElementById('add-first-crop-btn');
+        const closeCropModalBtn = document.getElementById('close-crop-modal');
+        const cancelCropModalBtn = document.getElementById('cancel-crop-modal');
 
-    if (searchInput) searchInput.addEventListener('input', filterAndSort);
-    if (typeFilter) typeFilter.addEventListener('change', filterAndSort);
-    if (sortBy) sortBy.addEventListener('change', filterAndSort);
+        if (openCropModalBtn) openCropModalBtn.onclick = () => cropModal.classList.remove('hidden');
+        if (addFirstCropBtn) addFirstCropBtn.onclick = () => cropModal.classList.remove('hidden');
+        if (closeCropModalBtn) closeCropModalBtn.onclick = () => cropModal.classList.add('hidden');
+        if (cancelCropModalBtn) cancelCropModalBtn.onclick = () => cropModal.classList.add('hidden');
+
+        // Populate Land Portion dropdown from /api/fields/
+        const dropdown = document.getElementById('field-dropdown');
+        if (dropdown) {
+            const token = localStorage.getItem('access_token');
+            fetch('/api/fields/', { headers: token ? { 'Authorization': 'Bearer ' + token } : {} })
+                .then(res => res.json())
+                .then(fields => {
+                    const list = Array.isArray(fields) ? fields : (fields.results || []);
+                    if (list.length > 0) {
+                        dropdown.innerHTML = '<option value="">Select land portion</option>' + list.map(f => '<option value="' + f.id + '">' + esc(f.name) + '</option>').join('');
+                    } else {
+                        dropdown.innerHTML = '<option value="">No land portions found</option>';
+                    }
+                })
+                .catch(() => { dropdown.innerHTML = '<option value="">Failed to load</option>'; });
+        }
+
+        // Submit crop cycle to the API
+        const cropForm = document.getElementById('start-crop-form');
+        if (cropForm) {
+            cropForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const formData = new FormData(cropForm);
+
+                // Keep the extra selections (the backend model has no columns for them yet)
+                // by folding them into the notes so nothing the user entered is lost.
+                const noteParts = [];
+                const baseNotes = formData.get('additional_notes');
+                if (baseNotes) noteParts.push(baseNotes);
+                [['Type', formData.get('type')], ['Seed source', formData.get('seed_source')],
+                 ['Irrigation', formData.get('irrigation_type')], ['Purpose', formData.get('purpose')]]
+                    .forEach(function(p){ if (p[1]) noteParts.push(p[0] + ': ' + p[1]); });
+
+                const payload = {
+                    crop_type: formData.get('crop_name'),
+                    variety: formData.get('variety'),
+                    planting_date: formData.get('planted_date'),
+                    expected_harvest_date: formData.get('expected_harvest_date'),
+                    additional_notes: noteParts.join(' | '),
+                    field: formData.get('field')
+                };
+                Object.keys(payload).forEach(k => { if (payload[k] === '' || payload[k] === null) delete payload[k]; });
+
+                if (!payload.field) { alert('Please choose a land portion for this crop.'); return; }
+                if (payload.planting_date && payload.expected_harvest_date && payload.expected_harvest_date < payload.planting_date) {
+                    alert('The expected harvest date is before the planting date. Please correct the dates.');
+                    return;
+                }
+
+                const token = localStorage.getItem('access_token');
+                const saveBtn = document.getElementById('save-crop-cycle-btn');
+                const saveLabel = saveBtn ? saveBtn.textContent : '';
+                if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving\u2026'; }
+
+                try {
+                    const res = await fetch('/api/crop-cycles/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!res.ok) {
+                        let msg = 'Could not save the crop cycle.';
+                        try {
+                            const j = await res.json();
+                            const parts = Object.keys(j).map(function(key){
+                                const val = j[key];
+                                return key + ': ' + (Array.isArray(val) ? val.join(', ') : val);
+                            });
+                            if (parts.length) msg = parts.join('\n');
+                        } catch (_) {}
+                        alert(msg);
+                        return;
+                    }
+                    cropForm.reset();
+                    cropModal.classList.add('hidden');
+                    loadCrops();
+                } catch (err) {
+                    alert('Network error while saving the crop cycle. Please check your connection and try again.');
+                } finally {
+                    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = saveLabel; }
+                }
+            });
+        }
+
+        loadCrops();
+    });
+</script>
+
+<script>
+/* Farmland golden-hour mosaic for the hero */
+(function(){
+    function bf(){
+        var W=1200,H=420,cols=8,rows=3,jx=(W/cols)*.32,jy=(H/rows)*.32,P=[];
+        for(var r=0;r<=rows;r++){P[r]=[];for(var c=0;c<=cols;c++){var e=(r===0||r===rows||c===0||c===cols);P[r][c]={x:(c/cols)*W+(e?0:(Math.random()*2-1)*jx),y:(r/rows)*H+(e?0:(Math.random()*2-1)*jy)};}}
+        var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']],ang=[0,16,90,74,16,0,90,30,16],defs='';
+        pal.forEach(function(c,i){defs+='<pattern id="crp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>';});
+        var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8],cells='';
+        for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e2=P[r2+1][c2],fi=bag[Math.floor(Math.random()*bag.length)];cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e2.x.toFixed(1)+','+e2.y.toFixed(1)+'" fill="url(#crp'+fi+')" stroke="rgba(22,15,7,.16)" stroke-width="1.1"/>';}
+        return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
+    }
+    var el=document.getElementById('cr-farmland');
+    if(el){ el.innerHTML=bf(); var sc=document.createElement('div'); sc.style.cssText='position:absolute;inset:0;z-index:1;background:linear-gradient(100deg,rgba(8,30,18,.82),rgba(8,30,18,.5))'; el.after(sc); }
+})();
+</script>
+
+
+<!-- Dale AI context for this page -->
+<script>
+  window.__daleCtx = function(){
+    var rows = Array.prototype.slice.call(document.querySelectorAll('.crop-row'));
+    var by = {}; rows.forEach(function(r){ var t=(r.dataset.type||'other').toLowerCase()||'other'; by[t]=(by[t]||0)+1; });
+    return { page:'Crops', type:'crops', extras:{ total_crops:rows.length, by_type:by } };
+  };
+  window.__daleIntro = "Hi, I'm Dale. Ask me about your crops \u2014 what to plant next, how a cycle is tracking, or tips to lift your yields.";
+  window.__daleChips = ["How many crops do I have?","What should I plant next?","Tips to improve yield","Explain crop cycles"];
+</script>
+
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
+<!-- ===== Dale AI assistant (context-aware, brand) ===== -->
+<script>
+(function(){
+  if (window.__daleInit) return; window.__daleInit = true;
+  var ENDPOINT = '/api/ai/dale/ask/';
+  var history = [];
+
+  var css = ''
+    + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:66px;height:66px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
+    + 'background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);'
+    + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;overflow:hidden}'
+    + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
+    + '#daleFab svg{width:28px;height:28px}'
+    + '#daleFab dotlottie-wc{width:54px;height:54px;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}'
+    + '#daleFab .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857;z-index:2}'
+    + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;'
+    + 'background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);'
+    + 'display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
+    + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
+    + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
+    + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
+    + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+    + '.dale-head .mk svg{width:20px;height:20px}'
+    + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
+    + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
+    + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+    + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
+    + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+    + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
+    + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
+    + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+    + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
+    + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
+    + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
+    + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
+    + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
+    + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
+    + '.dale-chip:hover{background:#d6efdf}'
+    + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
+    + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
+    + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
+    + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
+    + '.dale-input button svg{width:18px;height:18px}'
+    + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
+  var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+  var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+  var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
+  fab.innerHTML = '<span class="dot"></span><dotlottie-wc src="https://lottie.host/ac187fae-55ac-4ce4-93a9-fe037e3e2e57/jSdcU6a1Ig.lottie" autoplay loop></dotlottie-wc>';
+  document.body.appendChild(fab);
+
+  var panel = document.createElement('div'); panel.id='dalePanel';
+  panel.innerHTML =
+    '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
+    + '<div class="dale-msgs" id="daleMsgs"></div>'
+    + '<div class="dale-chips" id="daleChips"></div>'
+    + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
+    + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
+  document.body.appendChild(panel);
+
+  var msgs = panel.querySelector('#daleMsgs');
+  var text = panel.querySelector('#daleText');
+  var greeted = false;
+
+  function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+  function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+  function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+
+  function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
+
+  function renderChips(){
+    var chips = (window.__daleChips || []);
+    var box = panel.querySelector('#daleChips'); box.innerHTML='';
+    chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); });
+  }
+
+  async function send(q){
+    q = (q!==undefined ? q : text.value).trim();
+    if(!q) return;
+    text.value=''; bubble(q,'me'); history.push({role:'user',content:q});
+    var t = typing();
+    try{
+      var token = localStorage.getItem('access_token');
+      var res = await fetch(ENDPOINT, {
+        method:'POST',
+        headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}),
+        body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) })
+      });
+      t.remove();
+      if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
+      var data = await res.json();
+      var reply = data.reply || data.detail || 'No response.';
+      bubble(reply,'ai'); history.push({role:'assistant',content:reply});
+    }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
+  }
+
+  function open(){
+    panel.classList.add('open');
+    if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); }
+    setTimeout(function(){ text.focus(); }, 50);
+  }
+  function close(){ panel.classList.remove('open'); }
+
+  fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
+  panel.querySelector('.x').addEventListener('click', close);
+  panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
+  text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+  text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
+})();
 </script>
 
 {% endblock %}
