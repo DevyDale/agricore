@@ -2199,7 +2199,14 @@
         // Helper - normalize countries_of_operation to an array regardless of representation
         function normCountries(c) {
             if (!c) return [];
-            if (Array.isArray(c)) return c;
+            if (Array.isArray(c)) {
+                // Repair values that were saved character-by-character, e.g.
+                // ["N","i","g","e","r","i","a"] -> "Nigeria", ["U","g",..,",",.. ] -> "Uganda, Kenya"
+                if (c.length && c.every(x => typeof x === 'string' && x.length <= 1)) {
+                    return c.join('').split(',').map(s => s.trim()).filter(Boolean);
+                }
+                return c;
+            }
             if (typeof c === 'string') {
                 const trimmed = c.trim();
                 if (trimmed.startsWith('[')) {
@@ -2259,7 +2266,7 @@
 
             const totalValue = typeof store.total_value !== 'undefined' ? store.total_value : 0;
             const valueEl = document.getElementById('store-value');
-            if (valueEl) valueEl.textContent = '$' + totalValue.toLocaleString();
+            if (valueEl) valueEl.textContent = '₦' + Number(totalValue || 0).toLocaleString();
 
             const descEl = document.getElementById('store-description');
             if (descEl) descEl.textContent = store.description || 'No description provided';
