@@ -1621,8 +1621,7 @@
         };
 
         // ----- Buyer escrow loop: pay into escrow + release on delivery -----
-        // Orders carry no currency field, so a new escrow is opened in this currency.
-        // Change it if your store settles in something other than the backend default.
+        // New escrows use the order's own currency (Order.currency); this is only a fallback.
         const ESCROW_CREATE_CURRENCY = 'UGX';
         function escrowOf(orderId){ return (MKT.escrowByOrder && MKT.escrowByOrder[Number(orderId)]) || null; }
         function purchaseEscrowControls(o){
@@ -1651,7 +1650,7 @@
             const o = (MKT.orders || []).find(x => Number(x.id) === Number(orderId)); if (!o) return;
             toast('Setting up secure escrow\u2026', 'info');
             try {
-                const r = await fetch(API_BASE + '/escrows/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') }, body: JSON.stringify({ order: orderId, amount: Number(o.total_amount || 0) || 0, currency: ESCROW_CREATE_CURRENCY }) });
+                const r = await fetch(API_BASE + '/escrows/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') }, body: JSON.stringify({ order: orderId, amount: Number(o.total_amount || 0) || 0, currency: (o.currency || ESCROW_CREATE_CURRENCY) }) });
                 if (!r.ok) { let m = 'Could not start escrow.'; try { const j = await r.json(); m = j.detail || Object.values(j)[0] || m; } catch (e) {} throw new Error(m); }
                 const esc = await r.json();
                 if (MKT.escrowByOrder) MKT.escrowByOrder[Number(orderId)] = esc;
