@@ -40,6 +40,7 @@ class Order(models.Model):
     buyer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=3, default='UGX')
     status = models.CharField(max_length=50)
     shipping_address = models.TextField(blank=True)
     transport_mode = models.CharField(max_length=50, blank=True)
