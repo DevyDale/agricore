@@ -1,5 +1,3 @@
-</main>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,145 +7,82 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
-            min-height: 100vh;
+        :root{
+            --primary:#10b981; --primary-dark:#047857; --secondary:#0c6b46; --accent:#c39a48;
+            --line:#ece4d6; --green-line:#a4d6ba; --ink:#16271c; --cream:#fbf7ee;
         }
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            height: 100vh;
-            width: 280px;
-            background: white;
-            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.08);
-            z-index: 1000;
-            overflow-y: auto;
-            padding: 24px 0;
-            display: flex;
-            flex-direction: column;
+        *{ font-family:'Inter',system-ui,sans-serif; }
+        h1,h2,h3,.fr{ font-family:'Fraunces',serif; letter-spacing:-.01em; }
+        body{
+            font-family:'Inter',sans-serif;
+            background:radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f4efe3 62%);
+            min-height:100vh; color:var(--ink);
         }
-        .main-content {
-            margin-left: 280px;
-            min-height: 100vh;
+        .sidebar{
+            position:fixed; left:0; top:0; height:100vh; width:280px;
+            background:#fffdf8; border-right:1px solid var(--line);
+            box-shadow:2px 0 24px -16px rgba(20,40,25,.4);
+            z-index:1000; overflow-y:auto; padding:24px 0; display:flex; flex-direction:column;
         }
-        .section-content {
-            display: none;
-            background-color: white;
-            border-radius: 20px;
-            padding: 32px;
-            min-height: calc(100vh - 140px);
-            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.12);
+        .main-content{ margin-left:280px; min-height:100vh; }
+        .section-content{
+            display:none; background:#fff; border:1px solid var(--line);
+            border-radius:20px; padding:32px; min-height:calc(100vh - 140px);
+            box-shadow:0 14px 36px -26px rgba(20,40,25,.5);
         }
-        .section-content.active {
-            display: block;
+        .section-content.active{ display:block; }
+        .sidebar-nav-item{
+            cursor:pointer; padding:14px 22px; transition:all .25s ease;
+            display:flex; align-items:center; gap:12px; font-weight:600; font-size:.95rem;
+            color:#6b7d70; border-left:4px solid transparent; border-radius:0 10px 10px 0; margin:2px 10px 2px 0;
         }
-        .sidebar-nav-item {
-            cursor: pointer;
-            padding: 16px 24px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: #6b7280;
-            border-left: 4px solid transparent;
-            border-radius: 0 8px 8px 0;
-            margin: 2px 0;
+        .sidebar-nav-item:hover:not(.active){ background:#f6f1e6; border-left-color:var(--green-line); color:#374151; }
+        .sidebar-nav-item.active{
+            background:#eaf4ee; color:var(--primary-dark);
+            border-left-color:var(--primary); box-shadow:0 2px 10px -6px rgba(5,120,80,.4);
         }
-        .sidebar-nav-item:hover:not(.active) {
-            background-color: #f9fafb;
-            border-left-color: #d1d5db;
-            color: #374151;
+        .sidebar-header{ padding:0 22px 22px; border-bottom:1px solid var(--line); margin-bottom:16px; }
+        .sidebar-section{ margin-bottom:22px; }
+        .sidebar-section-title{ padding:8px 22px; font-size:.72rem; font-weight:800; text-transform:uppercase; color:#a39a86; letter-spacing:.06em; }
+        .profile-image{ width:100px; height:100px; border-radius:50%; object-fit:cover; border:4px solid #fff; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+        .stats-card{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px; box-shadow:0 8px 22px -18px rgba(20,40,25,.5); transition:all .3s ease; }
+        .stats-card:hover{ transform:translateY(-6px); }
+        .product-card{ transition:all .3s ease; border-radius:16px; overflow:hidden; }
+        .product-card:hover{ transform:translateY(-8px); box-shadow:0 18px 40px -20px rgba(5,120,80,.4); }
+        .btn-primary{ background:linear-gradient(135deg,var(--primary),var(--primary-dark)); transition:all .25s; }
+        .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 10px 22px -8px rgba(5,120,80,.5); }
+        .mobile-menu-btn{ display:none; position:fixed; top:20px; left:20px; z-index:1001; background:#fff; padding:12px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.1); }
+        @media (max-width:768px){
+            .sidebar{ width:240px; transform:translateX(-100%); transition:transform .3s ease; }
+            .sidebar.open{ transform:translateX(0); }
+            .main-content{ margin-left:0; }
+            .mobile-menu-btn{ display:block; }
         }
-        .sidebar-nav-item.active {
-            background: #ffffff;
-            color: #059669;
-            border-left-color: #10b981;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
-        }
-        .sidebar-header {
-            padding: 0 24px 24px;
-            border-bottom: 2px solid #f0fdfa;
-            margin-bottom: 16px;
-        }
-        .sidebar-section {
-            margin-bottom: 24px;
-        }
-        .sidebar-section-title {
-            padding: 8px 24px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #9ca3af;
-            letter-spacing: 0.05em;
-        }
-        .profile-image {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        .stats-card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.1);
-            transition: all 0.3s ease;
-        }
-        .stats-card:hover {
-            transform: translateY(-6px);
-        }
-        .product-card {
-            transition: all 0.3s ease;
-            border-radius: 16px;
-            overflow: hidden;
-        }
-        .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.15);
-        }
-        .btn-primary {
-            background: linear-gradient(to right, #10b981, #059669);
-            transition: all 0.3s;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-        }
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 240px;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .mobile-menu-btn {
-                display: block;
-            }
-        }
-        .mobile-menu-btn {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: white;
-            padding: 12px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+
+        /* ===== golden-hour remap of Tailwind utilities used on this page ===== */
+        .text-emerald-900{ color:#0b3b27 } .text-emerald-800{ color:var(--secondary) }
+        .text-emerald-700{ color:var(--primary-dark) } .text-emerald-600{ color:#0f7a4b } .text-emerald-500{ color:var(--primary) }
+        .text-teal-700{ color:var(--secondary) } .text-teal-600{ color:#0f7a4b }
+        .bg-emerald-600{ background-color:var(--secondary) }
+        .hover\:bg-emerald-700:hover{ background-color:#08533a }
+        .bg-emerald-50{ background-color:#eef6f0 } .bg-emerald-100{ background-color:#d9ecdf }
+        .hover\:bg-emerald-50:hover{ background-color:#eef6f0 } .hover\:bg-emerald-100:hover{ background-color:#d9ecdf }
+        .bg-teal-50{ background-color:#eaf4ef }
+        .border-emerald-100{ border-color:#e2ede6 } .border-emerald-200{ border-color:#cfe6d8 }
+        .border-emerald-500{ border-color:var(--primary) } .border-emerald-600{ border-color:var(--secondary) }
+        .border-teal-600{ border-color:var(--secondary) }
+        .focus\:ring-emerald-500:focus{ --tw-ring-color:var(--primary) }
+        /* gradients -> brand green, rating accent -> gold */
+        .from-emerald-500{ --tw-gradient-from:#10b981; --tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,rgba(16,185,129,0)) }
+        .from-emerald-600{ --tw-gradient-from:#0c6b46; --tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,rgba(12,107,70,0)) }
+        .from-blue-500{ --tw-gradient-from:#10b981; --tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,rgba(16,185,129,0)) }
+        .from-purple-500{ --tw-gradient-from:#10b981; --tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,rgba(16,185,129,0)) }
+        .from-amber-500{ --tw-gradient-from:#c39a48; --tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,rgba(195,154,72,0)) }
+        .to-teal-600{ --tw-gradient-to:#047857 } .to-indigo-600{ --tw-gradient-to:#047857 }
+        .to-pink-600{ --tw-gradient-to:#047857 } .to-orange-600{ --tw-gradient-to:#9a7b25 }
     </style>
 </head>
 <body class="min-h-screen">
@@ -432,7 +367,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <!-- Key Performance Metrics -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <!-- Total Revenue -->
@@ -1500,39 +1435,6 @@
         </main>
     </div>
 
-    <!-- Create Advertisement Modal (Legacy) -->
-    <div id="create-ad-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
-    <div id="create-ad-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-lg w-full mx-6 max-h-[85vh] overflow-y-auto">
-            <h2 class="text-2xl font-bold text-emerald-700 mb-4">Create Marketplace Advertisement</h2>
-            <form id="create-ad-form" class="space-y-3">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                    <input type="text" id="ad-title" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="e.g., Seed Week Mega Sale" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea id="ad-description" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Short promo copy" required></textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                    <input type="url" id="ad-image" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="https://..." required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">CTA Label</label>
-                    <input type="text" id="ad-cta" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Shop Now" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">CTA Link</label>
-                    <input type="url" id="ad-link" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="https://... or internal page" required>
-                </div>
-                <div class="flex justify-end gap-3 pt-3 border-t border-gray-200">
-                    <button type="button" id="cancel-create-ad" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
-                    <button type="submit" id="submit-create-ad" class="px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white">Publish Ad</button>
-                </div>
-            </form>
-        </div>
-    </div>
     <!-- Add Product Modal -->
     <div id="add-product-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
         <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-lg w-full mx-6 max-h-[85vh] overflow-y-auto">
@@ -1542,12 +1444,10 @@
                     <label for="product-title" class="block text-sm font-semibold text-gray-700 mb-1">Product Title *</label>
                     <input type="text" id="product-title" name="title" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Fresh Tomatoes">
                 </div>
-                
                 <div>
                     <label for="product-description" class="block text-sm font-semibold text-gray-700 mb-1">Description</label>
                     <textarea id="product-description" name="description" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Describe your product..."></textarea>
                 </div>
-
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label for="product-category" class="block text-sm font-semibold text-gray-700 mb-1">Category *</label>
@@ -1560,19 +1460,16 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
-                    
                     <div>
                         <label for="product-price" class="block text-sm font-semibold text-gray-700 mb-1">Price *</label>
                         <input type="number" id="product-price" name="price" required step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="0.00">
                     </div>
                 </div>
-
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label for="product-quantity" class="block text-sm font-semibold text-gray-700 mb-1">Stock Quantity *</label>
                         <input type="number" id="product-quantity" name="stock_quantity" required step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="0">
                     </div>
-                    
                     <div>
                         <label for="product-unit" class="block text-sm font-semibold text-gray-700 mb-1">Unit *</label>
                         <select id="product-unit" name="unit" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
@@ -1587,12 +1484,10 @@
                         </select>
                     </div>
                 </div>
-
                 <div>
                     <label for="product-expiration" class="block text-sm font-semibold text-gray-700 mb-1">Expiration Date</label>
                     <input type="date" id="product-expiration" name="expiration_date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
-
                 <div class="space-y-2">
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Product Image</label>
                     <div class="flex gap-2">
@@ -1604,14 +1499,11 @@
                         <img id="preview-img" class="w-full h-32 object-cover rounded-lg" alt="Preview">
                     </div>
                 </div>
-
                 <div class="flex items-center gap-2">
                     <input type="checkbox" id="product-dropship" name="is_dropshippable" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
                     <label for="product-dropship" class="text-sm font-semibold text-gray-700">Is Dropshippable</label>
                 </div>
-
                 <div id="add-product-error" class="hidden text-red-600 text-sm p-2 bg-red-50 rounded-lg"></div>
-
                 <div class="flex justify-end gap-3 pt-3 border-t border-gray-200">
                     <button type="button" id="cancel-add-product" class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition text-sm">
                         Cancel
@@ -1626,7 +1518,7 @@
 
     <!-- Ratings & Reviews Modal -->
     <div id="ratings-reviews-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
-        <div class="glass rounded-3xl shadow-2xl p-10 max-w-4xl w-full mx-6">
+        <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-4xl w-full mx-6">
             <h2 class="text-4xl font-bold text-emerald-700 mb-8">Ratings & Reviews</h2>
             <div id="ratings-reviews-content" class="space-y-6 max-h-[60vh] overflow-y-auto">
                 <!-- Reviews dynamically populated here -->
@@ -1703,7 +1595,6 @@
             });
 
             function applyLanguage(lang) {
-                // Example: update sidebar and nav
                 if (window.i18n) {
                     document.getElementById('sidebar-digital-store').textContent = i18n.t('Digital Store');
                     document.getElementById('sidebar-main-title').textContent = i18n.t('Main');
@@ -1718,25 +1609,21 @@
                     document.getElementById('nav-ratings').textContent = i18n.t('Ratings & Reviews');
                     document.getElementById('nav-wallet').textContent = i18n.t('Manage Wallet');
                 }
-                // Add more UI translations as needed
             }
 
             function applyCurrency(curr) {
-                // Update all currency displays using i18n.formatCurrency
                 document.querySelectorAll('[data-currency-amount]').forEach(el => {
                     const amount = parseFloat(el.getAttribute('data-currency-amount'));
                     if (!isNaN(amount) && window.i18n) {
                         el.textContent = i18n.formatCurrency(amount);
                     }
                 });
-                // Update dynamic product cards
                 document.querySelectorAll('.product-card .text-2xl.font-bold').forEach(el => {
                     const raw = el.getAttribute('data-raw-amount');
                     if (raw && window.i18n) {
                         el.textContent = i18n.formatCurrency(Number(raw));
                     }
                 });
-                // Update ad pricing
                 document.querySelectorAll('.ad-pricing').forEach(el => {
                     const amount = el.getAttribute('data-amount');
                     if (amount && window.i18n) {
@@ -1758,9 +1645,22 @@
         console.log('=== SCRIPT START ===');
         console.log('Location:', window.location.href);
         console.log('URL Params:', new URLSearchParams(window.location.search).get('id'));
-        
+
         // --- End User Settings Integration ---
         // --- Original script logic remains below ---
+
+        // Helper: activate a section by id (used by sidebar buttons)
+        function showSection(id) {
+            document.querySelectorAll('.sidebar-nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.section-content').forEach(section => section.classList.remove('active'));
+            const nav = document.querySelector('.sidebar-nav-item[data-section="' + id + '"]');
+            if (nav) nav.classList.add('active');
+            document.getElementById(id)?.classList.add('active');
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebar')?.classList.remove('open');
+            }
+        }
+
         // Sidebar Navigation
         document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(navItem => {
             navItem.addEventListener('click', () => {
@@ -1781,6 +1681,7 @@
                     document.getElementById('sidebar').classList.remove('open');
                 }
             });
+        });
 
         // --- Bank Details Logic (payout account) ---
         let payoutAccountId = null;
@@ -1831,31 +1732,30 @@
         fetchBankDetails();
         // --- End Bank Details Logic ---
 
-                // Mobile menu toggle
-                document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
-                    document.getElementById('sidebar').classList.toggle('open');
-                });
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
 
-                // Sidebar management buttons
-                document.getElementById('sidebar-ratings')?.addEventListener('click', () => {
-                    document.getElementById('view-ratings-modal')?.classList.remove('hidden');
-                });
+        // Sidebar management buttons
+        document.getElementById('sidebar-ratings')?.addEventListener('click', () => {
+            document.getElementById('view-ratings-modal')?.classList.remove('hidden');
+        });
 
-                document.getElementById('sidebar-wallet')?.addEventListener('click', () => {
-                    showSection('wallet');
-                });
+        document.getElementById('sidebar-wallet')?.addEventListener('click', () => {
+            showSection('wallet');
+            loadPaymentCards();
+        });
 
-                document.getElementById('sidebar-farms')?.addEventListener('click', () => {
-                    window.location.href = 'multi_farm.html';
-                });
+        document.getElementById('sidebar-farms')?.addEventListener('click', () => {
+            window.location.href = 'multi_farm.html';
+        });
 
-                document.getElementById('sidebar-marketplace')?.addEventListener('click', () => {
-                    window.location.href = 'marketplace.html';
-                });
+        document.getElementById('sidebar-marketplace')?.addEventListener('click', () => {
+            window.location.href = 'marketplace.html';
         });
 
         // Ratings & Reviews Mock (reviews may still be mocked for now)
-
         const storeReviews = [
             {user: "Alice", rating: 5, comment: "Great products and fast delivery!"},
             {user: "Bob", rating: 4, comment: "Good quality but shipping took a bit longer."},
@@ -1864,9 +1764,6 @@
         ];
 
         // The 'attached-farms' area is populated dynamically using API data in `loadAttachedFarmsUI`.
-        // We do not populate it with placeholder data so that the UI only reflects real store/farm links.
-
-        // Ratings & Reviews Modal open/close handlers (Removed - now handled in DOMContentLoaded below)
 
         document.getElementById('your-farms-btn')?.addEventListener('click', () => {
             window.location.href = 'multi_farm.html';
@@ -1884,7 +1781,7 @@
 
             const ctx = canvas.getContext('2d');
             const labels = Array.from({ length: 7 }, (_, i) => `Day ${i + 1}`);
-            const values = [0, 0, 0, 0, 0, 0, 0]; // placeholder zero data to keep the line visible
+            const values = [0, 0, 0, 0, 0, 0, 0];
 
             const gradient = ctx.createLinearGradient(0, 0, 0, 300);
             gradient.addColorStop(0, 'rgba(16, 185, 129, 0.18)');
@@ -1944,9 +1841,6 @@
 
         initSalesChart();
 
-        // Keep all your existing load functions, API calls, etc.
-        // ... (paste your original script here)
-        
         // ----- STORE / PRODUCT LOAD & DETECTION -----
         const API_BASE = '/api';
         const token = localStorage.getItem('access_token');
@@ -2080,7 +1974,6 @@
         }
 
         async function getUserStores() {
-            // Fetch all stores for the current user (paginated or not)
             try {
                 const res = await fetch(`${API_BASE}/stores/`, { headers: { 'Authorization': 'Bearer ' + (token || '') } });
                 if (res.status === 401) {
@@ -2129,7 +2022,6 @@
                     const data = JSON.parse(e.newValue || '{}');
                     const store = await getUserStore();
                     if (store && data && Number(data.storeId) === Number(store.id)) {
-                        // refresh products for this store
                         await loadStoreProducts(store.id);
                     }
                 } catch (err) { console.warn('Error parsing last_product_created', err); }
@@ -2137,7 +2029,6 @@
             if (e.key === 'last_store_connected') {
                 try {
                     const payload = JSON.parse(e.newValue || '{}');
-                    // Reload UI if this store belongs to the user (re-init everything)
                     await initStore();
                 } catch (err) { console.warn('Error parsing last_store_connected', err); }
             }
@@ -2170,8 +2061,8 @@
         }
 
         // Add Product Modal handlers
-        let currentStoreId = null; // Store the current store ID globally
-        
+        let currentStoreId = null;
+
         document.getElementById('add-product')?.addEventListener('click', () => {
             document.getElementById('add-product-modal').classList.remove('hidden');
             document.getElementById('add-product-form').reset();
@@ -2188,7 +2079,7 @@
                     document.getElementById('image-preview').classList.remove('hidden');
                 };
                 reader.readAsDataURL(file);
-                document.getElementById('product-image-url').value = ''; // Clear URL if file selected
+                document.getElementById('product-image-url').value = '';
             }
         });
 
@@ -2197,7 +2088,7 @@
             if (url) {
                 document.getElementById('preview-img').src = url;
                 document.getElementById('image-preview').classList.remove('hidden');
-                document.getElementById('product-image').value = ''; // Clear file if URL entered
+                document.getElementById('product-image').value = '';
             } else {
                 document.getElementById('image-preview').classList.add('hidden');
             }
@@ -2209,45 +2100,39 @@
 
         document.getElementById('add-product-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const form = e.target;
             const submitBtn = document.getElementById('submit-add-product');
             const errorDiv = document.getElementById('add-product-error');
-            
-            // Disable submit button
+
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
             errorDiv.classList.add('hidden');
-            
+
             try {
-                // Get the current store ID
                 const urlParams = new URLSearchParams(location.search);
                 const storeId = currentStoreId || urlParams.get('id');
-                
+
                 if (!storeId) {
                     throw new Error('No store selected. Please ensure you have a store.');
                 }
-                
-                // Collect form data
+
                 const formData = new FormData(form);
-                
-                // Check if image file or URL is provided
+
                 const imageFile = document.getElementById('product-image').files[0];
                 const imageUrl = document.getElementById('product-image-url').value;
-                
+
                 if (imageFile) {
                     formData.append('image', imageFile);
                 } else if (imageUrl) {
                     formData.append('image_url', imageUrl);
                 }
-                
-                // Add other fields
+
                 formData.append('store', storeId);
                 formData.append('total_value', parseFloat(formData.get('price')) * parseFloat(formData.get('stock_quantity')));
-                
+
                 console.log('[Add Product] Submitting with image...');
-                
-                // Submit to API with FormData (handles file upload)
+
                 const response = await fetch(`${API_BASE}/products/`, {
                     method: 'POST',
                     headers: {
@@ -2255,16 +2140,15 @@
                     },
                     body: formData
                 });
-                
+
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.detail || 'Failed to add product');
                 }
-                
+
                 const newProduct = await response.json();
                 console.log('[Add Product] Success:', newProduct);
-                
-                // Broadcast to other tabs
+
                 try {
                     localStorage.setItem('last_product_created', JSON.stringify({ 
                         storeId: storeId, 
@@ -2275,17 +2159,15 @@
                         bc.postMessage({ type: 'created', storeId: storeId });
                     }
                 } catch (err) { /* ignore */ }
-                
-                // Close modal and refresh products
+
                 document.getElementById('add-product-modal').classList.add('hidden');
                 await loadStoreProducts(storeId);
-                
+
             } catch (error) {
                 console.error('[Add Product] Error:', error);
                 errorDiv.textContent = error.message || 'Failed to add product. Please try again.';
                 errorDiv.classList.remove('hidden');
             } finally {
-                // Re-enable submit button
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Product';
             }
@@ -2298,7 +2180,6 @@
             if (!stores || !Array.isArray(stores) || stores.length === 0) return;
             for (const s of stores) {
                 if (!s.farm) continue;
-                // store.farm might be an id; fetch farm details
                 try {
                     const res = await fetch(`${API_BASE}/farms/${s.farm}/`, { headers: { 'Authorization': 'Bearer ' + (token || '') } });
                     if (res.ok) {
@@ -2321,25 +2202,20 @@
             if (Array.isArray(c)) return c;
             if (typeof c === 'string') {
                 const trimmed = c.trim();
-                // Check if it's a JSON string first
                 if (trimmed.startsWith('[')) {
                     try {
                         const parsed = JSON.parse(trimmed);
                         return Array.isArray(parsed) ? parsed : [trimmed];
                     } catch (e) {
-                        // If JSON parsing fails, treat as single country
                         return [trimmed];
                     }
                 }
-                // If it contains commas, split by comma
                 if (trimmed.includes(',')) {
                     return trimmed.split(',').map(s => s.trim()).filter(Boolean);
                 }
-                // Defensive: if it's only letters (no comma, no brackets), treat as single country
                 if (/^[a-zA-Z\s'-]+$/.test(trimmed)) {
                     return [trimmed];
                 }
-                // Otherwise, fallback
                 return [trimmed];
             }
             return [];
@@ -2350,30 +2226,28 @@
                 console.error('[populateStoreDetails] No store provided');
                 return;
             }
-            
+
             console.log('[populateStoreDetails] Populating with store:', store);
-            
-            // Populate store details with safe fallbacks
+
             const nameEl = document.getElementById('store-name-detail');
             if (nameEl) nameEl.textContent = store.name || 'N/A';
-            
-                        // Update sidebar store name
-                        const sidebarNameEl = document.getElementById('sidebar-store-name');
-                        if (sidebarNameEl) sidebarNameEl.textContent = store.name || 'Loading...';
-            
+
+            const sidebarNameEl = document.getElementById('sidebar-store-name');
+            if (sidebarNameEl) sidebarNameEl.textContent = store.name || 'Loading...';
+
             const ownerEl = document.getElementById('store-owner');
             if (ownerEl) ownerEl.textContent = store.owner_name || 'N/A';
-            
+
             const emailEl = document.getElementById('store-email');
             if (emailEl) emailEl.textContent = store.owner_email || 'N/A';
-            
+
             const phoneEl = document.getElementById('store-phone');
             if (phoneEl) phoneEl.textContent = store.owner_phone || 'N/A';
-            
+
             const countries = normCountries(store.countries_of_operation);
             const countriesEl = document.getElementById('store-countries');
             if (countriesEl) countriesEl.textContent = countries.join(', ') || 'No countries specified';
-            
+
             const verifiedEl = document.getElementById('store-verified');
             if (verifiedEl) {
                 if (store.is_verified) {
@@ -2382,14 +2256,14 @@
                     verifiedEl.innerHTML = '<span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full font-semibold inline-flex">Pending</span>';
                 }
             }
-            
+
             const totalValue = typeof store.total_value !== 'undefined' ? store.total_value : 0;
             const valueEl = document.getElementById('store-value');
             if (valueEl) valueEl.textContent = '$' + totalValue.toLocaleString();
-            
+
             const descEl = document.getElementById('store-description');
             if (descEl) descEl.textContent = store.description || 'No description provided';
-            
+
             console.log('[populateStoreDetails] Store details populated successfully');
         }
 
@@ -2416,25 +2290,22 @@
         async function initStore() {
             console.log('[INIT] Starting store initialization...');
 
-            // Require auth token for API calls — mirror multi_farm session handling
             if (!token) {
                 alert('Session expired');
                 window.location.href = 'authentication.html';
                 return;
             }
-            // If an id query param is provided, try to use that specific store
             const urlParams = new URLSearchParams(location.search);
             const forcedId = urlParams.get('id');
             console.log('[INIT] Store ID from URL:', forcedId);
-            
+
             let store = null;
             let stores = null;
-            
+
             if (forcedId) {
                 console.log('[INIT] Fetching store by ID:', forcedId);
                 store = await fetchStoreById(forcedId);
                 console.log('[INIT] Fetched store:', store);
-                // If the forced store is not found or not owned by the user, fall back to first store
                 if (!store) {
                     console.log('[INIT] Store not found, fetching user stores...');
                     stores = await getUserStores();
@@ -2455,26 +2326,24 @@
                 window.location.href = 'digitalstores.html';
                 return;
             }
-            
-            // Store the current store ID globally for use in add product form
+
             currentStoreId = store.id;
             console.log('[INIT] Set currentStoreId to:', currentStoreId);
-            
+
             console.log('[INIT] Populating store details...');
             populateStoreDetails(store);
-            
+
             console.log('[INIT] Loading store products...');
             await loadStoreProducts(store.id);
-            
-            // If we didn't fetch farms list yet, fetch user's stores to build attachment UI
+
             if (!stores) {
                 console.log('[INIT] Fetching stores for farm attachment...');
                 stores = await getUserStores();
             }
-            
+
             console.log('[INIT] Loading attached farms UI...');
             await loadAttachedFarmsUI(stores);
-            
+
             console.log('[INIT] Store initialization complete!');
         }
 
@@ -2501,7 +2370,6 @@
                     return;
                 }
 
-                // Fetch store reviews
                 const res = await fetch(`${API_BASE}/store-reviews/?store=${storeId}`, {
                     headers: { 'Authorization': 'Bearer ' + (token || '') }
                 });
@@ -2518,7 +2386,6 @@
                         if (avgRatingEl) avgRatingEl.textContent = avgRating;
                         if (totalReviewsEl) totalReviewsEl.textContent = `${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
 
-                        // Calculate rating distribution
                         const ratingCounts = [0, 0, 0, 0, 0];
                         reviews.forEach(r => {
                             const rating = Math.floor(r.rating || 0);
@@ -2527,7 +2394,6 @@
                             }
                         });
 
-                        // Render rating bars
                         if (ratingBarsContainer) {
                             ratingBarsContainer.innerHTML = ratingCounts.map((count, index) => {
                                 const stars = 5 - index;
@@ -2544,7 +2410,6 @@
                             }).reverse().join('');
                         }
 
-                        // Render store reviews
                         if (storeReviewsContainer) {
                             storeReviewsContainer.innerHTML = reviews.map(review => `
                                 <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition">
@@ -2584,7 +2449,6 @@
                     }
                 }
 
-                // Fetch product reviews
                 const prodRes = await fetch(`${API_BASE}/products/?store=${storeId}`, {
                     headers: { 'Authorization': 'Bearer ' + (token || '') }
                 });
@@ -2604,7 +2468,7 @@
                     return;
                 }
 
-                const limitedProducts = products.slice(0, 8); // limit to reduce requests
+                const limitedProducts = products.slice(0, 8);
                 const productReviews = [];
 
                 for (const product of limitedProducts) {
@@ -2659,8 +2523,7 @@
 
         // Multiple initialization approaches to ensure it runs
         console.log('[INIT] Script loaded, document.readyState:', document.readyState);
-        
-        // Approach 1: If DOM already ready
+
         if (document.readyState === 'loading') {
             console.log('[INIT] Waiting for DOMContentLoaded...');
             document.addEventListener('DOMContentLoaded', function() {
@@ -2671,11 +2534,9 @@
             console.log('[INIT] DOM already ready, initializing immediately');
             initStore();
         }
-        
-        // Approach 2: Also try on window load as backup
+
         window.addEventListener('load', function() {
             console.log('[INIT] Window load event fired');
-            // Only init if we haven't already (check if store name is still "Loading...")
             const storeName = document.getElementById('store-name-detail');
             if (storeName && storeName.textContent.includes('Loading')) {
                 console.log('[INIT] Store not loaded yet, retrying from window.onload');
@@ -2788,7 +2649,7 @@
             try {
                 const cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
                 const expiry = document.getElementById('card-expiry').value.split('/');
-                
+
                 if (expiry.length !== 2) {
                     throw new Error('Invalid expiry date format. Use MM/YY');
                 }
@@ -2832,16 +2693,6 @@
         document.querySelector('[data-section="wallet"]')?.addEventListener('click', loadPaymentCards);
 
         // ---- Advertisement Preview Updates ----
-        const adModal = document.getElementById('create-ad-modal');
-        document.addEventListener('click', (e) => {
-            if (e.target && e.target.id === 'cancel-create-ad') {
-                adModal.classList.add('hidden');
-            }
-            if (e.target === adModal) {
-                adModal.classList.add('hidden');
-            }
-        });
-
         function getAds() {
             try {
                 const raw = localStorage.getItem('agricore_ads');
@@ -2865,22 +2716,18 @@
         const adPreviewImageContainer = document.getElementById('ad-preview-image-container');
         const adTotalCost = document.getElementById('ad-total-cost');
 
-        // Update title
         document.getElementById('ad-title')?.addEventListener('input', (e) => {
             adPreviewTitle.textContent = e.target.value || 'Your Ad Title Here';
         });
 
-        // Update description
         document.getElementById('ad-description')?.addEventListener('input', (e) => {
             adPreviewDescription.textContent = e.target.value || 'Your ad description will appear here...';
         });
 
-        // Update CTA button text
         document.getElementById('ad-cta-text')?.addEventListener('input', (e) => {
             adPreviewCta.textContent = e.target.value || 'Shop Now';
         });
 
-        // Update background color
         const bgColorPicker = document.getElementById('ad-bg-color');
         const bgColorHex = document.getElementById('ad-bg-color-hex');
         bgColorPicker?.addEventListener('input', (e) => {
@@ -2896,7 +2743,6 @@
             }
         });
 
-        // Update text color
         const textColorPicker = document.getElementById('ad-text-color');
         const textColorHex = document.getElementById('ad-text-color-hex');
         textColorPicker?.addEventListener('input', (e) => {
@@ -2910,23 +2756,19 @@
             }
         });
 
-        // Update font family
         document.getElementById('ad-font-family')?.addEventListener('change', (e) => {
             adPreviewTitle.style.fontFamily = e.target.value;
             adPreviewDescription.style.fontFamily = e.target.value;
         });
 
-        // Update title font size
         document.getElementById('ad-title-size')?.addEventListener('input', (e) => {
             adPreviewTitle.style.fontSize = e.target.value + 'px';
         });
 
-        // Update description font size
         document.getElementById('ad-description-size')?.addEventListener('input', (e) => {
             adPreviewDescription.style.fontSize = e.target.value + 'px';
         });
 
-        // Update image preview
         document.getElementById('ad-image')?.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -2941,17 +2783,14 @@
             }
         });
 
-        // Update image fit
         document.getElementById('ad-image-fit')?.addEventListener('change', (e) => {
             adPreviewImage.style.objectFit = e.target.value;
         });
 
-        // Update image position
         document.getElementById('ad-image-position')?.addEventListener('change', (e) => {
             adPreviewImage.style.objectPosition = e.target.value;
         });
 
-        // Update image brightness
         const brightnessSlider = document.getElementById('ad-image-brightness');
         const brightnessValue = document.getElementById('brightness-value');
         brightnessSlider?.addEventListener('input', (e) => {
@@ -2959,7 +2798,6 @@
             adPreviewImage.style.filter = `brightness(${e.target.value}%)`;
         });
 
-        // Update audio preview
         document.getElementById('ad-audio')?.addEventListener('change', (e) => {
             const file = e.target.files[0];
             const audioPreviewContainer = document.getElementById('audio-preview-container');
@@ -2976,7 +2814,6 @@
             }
         });
 
-        // Update pricing based on duration selection
         document.querySelectorAll('input[name="ad-duration"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 const price = e.target.getAttribute('data-price');
@@ -3049,7 +2886,6 @@
                 const ad = await response.json();
                 alert('Advertisement published successfully! It will appear in the marketplace.');
                 e.target.reset();
-                // Reset preview
                 adPreviewTitle.textContent = 'Your Ad Title Here';
                 adPreviewDescription.textContent = 'Your ad description will appear here...';
                 adPreviewCta.textContent = 'Shop Now';
@@ -3066,7 +2902,7 @@
             }
         });
     </script>
-        <script>
+    <script>
         // --- Apply i18n on static UI ---
         function applyI18nStatic() {
             if (!window.i18n) return;
@@ -3085,7 +2921,129 @@
         }
         applyI18nStatic();
         // --- End i18n static ---
-        </script>
-    <script src="/static/js/dale.js" defer></script>
+    </script>
+
+    <!-- ===== Dale assistant: per-page context ===== -->
+    <script>
+        window.__daleCtx = function () {
+            var nameEl = document.getElementById('store-name-detail');
+            var storeName = nameEl ? nameEl.textContent.trim() : '';
+            return { page: 'Digital Store', type: 'digital_store', extras: { store_name: storeName } };
+        };
+        window.__daleIntro = "Hi, I'm Dale. I can help you manage this store \u2014 products, orders, ads, wallet, and reviews. What would you like to do?";
+        window.__daleChips = ['How do I add a product?', 'Explain the conversion funnel', 'How do payouts work?', 'Tips to get more reviews'];
+    </script>
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
+<!-- ===== Dale AI assistant (context-aware, brand) ===== -->
+<script>
+(function(){
+  if (window.__daleInit) return; window.__daleInit = true;
+  var ENDPOINT = '/api/ai/dale/ask/';
+  var history = [];
+
+  var css = ''
+    + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:66px;height:66px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
+    + 'background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);'
+    + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;overflow:hidden}'
+    + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
+    + '#daleFab svg{width:28px;height:28px}'
+    + '#daleFab dotlottie-wc{width:54px;height:54px;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}'
+    + '#daleFab .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857;z-index:2}'
+    + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;'
+    + 'background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);'
+    + 'display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
+    + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
+    + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
+    + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
+    + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+    + '.dale-head .mk svg{width:20px;height:20px}'
+    + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
+    + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
+    + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+    + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
+    + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+    + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
+    + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
+    + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+    + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
+    + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
+    + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
+    + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
+    + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
+    + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
+    + '.dale-chip:hover{background:#d6efdf}'
+    + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
+    + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
+    + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
+    + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
+    + '.dale-input button svg{width:18px;height:18px}'
+    + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
+  var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+  var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+  var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
+  fab.innerHTML = '<span class="dot"></span><dotlottie-wc src="https://lottie.host/ac187fae-55ac-4ce4-93a9-fe037e3e2e57/jSdcU6a1Ig.lottie" autoplay loop></dotlottie-wc>';
+  document.body.appendChild(fab);
+
+  var panel = document.createElement('div'); panel.id='dalePanel';
+  panel.innerHTML =
+    '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
+    + '<div class="dale-msgs" id="daleMsgs"></div>'
+    + '<div class="dale-chips" id="daleChips"></div>'
+    + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
+    + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
+  document.body.appendChild(panel);
+
+  var msgs = panel.querySelector('#daleMsgs');
+  var text = panel.querySelector('#daleText');
+  var greeted = false;
+
+  function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+  function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+  function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+
+  function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
+
+  function renderChips(){
+    var chips = (window.__daleChips || []);
+    var box = panel.querySelector('#daleChips'); box.innerHTML='';
+    chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); });
+  }
+
+  async function send(q){
+    q = (q!==undefined ? q : text.value).trim();
+    if(!q) return;
+    text.value=''; bubble(q,'me'); history.push({role:'user',content:q});
+    var t = typing();
+    try{
+      var token = localStorage.getItem('access_token');
+      var res = await fetch(ENDPOINT, {
+        method:'POST',
+        headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}),
+        body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) })
+      });
+      t.remove();
+      if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
+      var data = await res.json();
+      var reply = data.reply || data.detail || 'No response.';
+      bubble(reply,'ai'); history.push({role:'assistant',content:reply});
+    }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
+  }
+
+  function open(){
+    panel.classList.add('open');
+    if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); }
+    setTimeout(function(){ text.focus(); }, 50);
+  }
+  function close(){ panel.classList.remove('open'); }
+
+  fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
+  panel.querySelector('.x').addEventListener('click', close);
+  panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
+  text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+  text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
+})();
+</script>
+
 </body>
 </html>
