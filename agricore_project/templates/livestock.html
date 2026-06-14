@@ -16,10 +16,15 @@
         --secondary: #0c6b46;
         --accent: #c39a48;
         --line: #ece4d6;
+        --green-line: #a4d6ba;
         --ink: #16271c;
     }
 
     body { background: radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f4efe3 62%); min-height: 100vh; }
+
+    .section-head { display:flex; align-items:center; gap:.7rem; margin:0 0 1rem .15rem; }
+    .section-head .sh-ico { width:2.3rem; height:2.3rem; border-radius:.75rem; display:grid; place-items:center; background:linear-gradient(135deg,#10b981,#047857); color:#fff; font-size:1rem; box-shadow:0 6px 14px rgba(16,185,129,.28); }
+    .section-head h2 { font-family:'Fraunces',serif; font-size:1.5rem; font-weight:800; color:var(--ink); letter-spacing:-.01em; }
 
     .ls-shell { max-width: 1240px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
     @media (max-width: 640px){ .ls-shell { padding: .85rem .9rem 2rem; } }
@@ -38,7 +43,7 @@
     .stat-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.9) 100%);
         backdrop-filter: blur(20px);
-        border: 1px solid var(--line);
+        border: 1px solid var(--green-line);
         transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative; overflow: hidden; cursor: pointer;
     }
@@ -54,11 +59,11 @@
     .stat-num { font-family:'Fraunces',serif; font-size:1.6rem; font-weight:800; color:#16271c; line-height:1; }
     .stat-lbl { font-size:.68rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; margin-top:.35rem; }
 
-    .surface { background: #fff; border: 1px solid var(--line); border-radius: 1.25rem; box-shadow: 0 12px 34px rgba(20,39,28,.07); }
+    .surface { background: #fff; border: 1px solid var(--green-line); border-radius: 1.25rem; box-shadow: 0 12px 34px rgba(20,39,28,.07); }
 
     /* Toolbar + table in one card */
     .ls-tablecard { overflow: hidden; }
-    .ls-toolbar { display:flex; gap:.7rem; align-items:center; flex-wrap:wrap; padding:1rem 1.1rem; border-bottom:1px solid var(--line); background:linear-gradient(180deg,#fffdf8,#ffffff); }
+    .ls-toolbar { display:flex; gap:.7rem; align-items:center; flex-wrap:wrap; padding:1rem 1.1rem; border-bottom:1px solid var(--green-line); background:linear-gradient(180deg,#fffdf8,#ffffff); }
     .ls-toolbar h2 { margin-right:auto; }
     .ls-toolbar .search-wrap { position:relative; flex:1; min-width:200px; }
     .ls-toolbar .search-wrap input.input-field { padding-left:2.9rem; }
@@ -72,7 +77,7 @@
     }
 
     /* Table */
-    .modern-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .modern-table { width: 100%; border-collapse: separate; border-spacing: 0; border:1px solid var(--green-line); border-radius:12px; overflow:hidden; }
     .modern-table thead th { background: linear-gradient(135deg,#0c6b46,#065f3c); padding:.78rem 1rem; font-weight:700; font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:#fff; white-space:nowrap; text-align:left; }
     .modern-table thead th:first-child { border-radius:11px 0 0 11px; padding-left:1.1rem; }
     .modern-table thead th:last-child { border-radius:0 11px 11px 0; text-align:right; padding-right:1.1rem; }
@@ -169,9 +174,12 @@
         </div>
 
         <!-- Livestock Units: toolbar + table in one card -->
+        <div class="section-head">
+            <span class="sh-ico"><i class="fas fa-cow"></i></span>
+            <h2>Livestock Units</h2>
+        </div>
         <div class="surface ls-tablecard mb-8">
             <div class="ls-toolbar">
-                <h2 class="font-display text-xl font-bold text-gray-900">Livestock Units</h2>
                 <div class="search-wrap">
                     <i class="fas fa-search search-ico"></i>
                     <input type="text" id="search-input" placeholder="Search by name or tag ID..." class="input-field w-full" autocomplete="off" />

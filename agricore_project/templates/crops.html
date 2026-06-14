@@ -16,10 +16,16 @@
         --secondary: #0c6b46;
         --accent: #c39a48;
         --line: #ece4d6;
+        --green-line: #a4d6ba;
         --ink: #16271c;
     }
 
     body { background: radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f4efe3 62%); min-height: 100vh; }
+
+    /* Section title above a table card */
+    .section-head { display:flex; align-items:center; gap:.7rem; margin:0 0 1rem .15rem; }
+    .section-head .sh-ico { width:2.3rem; height:2.3rem; border-radius:.75rem; display:grid; place-items:center; background:linear-gradient(135deg,#10b981,#047857); color:#fff; font-size:1rem; box-shadow:0 6px 14px rgba(16,185,129,.28); }
+    .section-head h2 { font-family:'Fraunces',serif; font-size:1.5rem; font-weight:800; color:var(--ink); letter-spacing:-.01em; }
 
     /* Padded shell so nothing touches the edges */
     .cr-shell { max-width: 1240px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
@@ -28,39 +34,59 @@
     .page-header {
         background: linear-gradient(120deg, #0c3d22 0%, #1f5a32 55%, #2f6b3c 100%);
         position: relative; overflow: hidden;
-        border-radius: 26px;
+        border-radius: 24px;
         box-shadow: 0 20px 50px rgba(12,61,34,.22);
     }
     #cr-farmland { position:absolute; inset:-2%; z-index:0; }
     #cr-farmland svg { width:100%; height:100%; }
     .page-header > .ph-inner { position:relative; z-index:2; }
 
+    /* ===== Compact stat tiles ===== */
     .stat-card {
-        background: linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.88) 100%);
+        background: linear-gradient(135deg, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.9) 100%);
         backdrop-filter: blur(20px);
-        border: 1px solid var(--line);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid var(--green-line);
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative; overflow: hidden;
     }
     .stat-card::before {
         content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
         background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
         transform: scaleX(0); transform-origin: left;
-        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .stat-card:hover::before { transform: scaleX(1); }
-    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(22, 163, 74, 0.15); border-color: rgba(22, 163, 74, 0.2); }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 16px 32px rgba(22, 163, 74, 0.13); border-color: rgba(22, 163, 74, 0.2); }
+    .stat-ico { width:2.6rem; height:2.6rem; border-radius:.8rem; display:grid; place-items:center; flex:none; }
+    .stat-num { font-family:'Fraunces',serif; font-size:1.6rem; font-weight:800; color:#16271c; line-height:1; }
+    .stat-lbl { font-size:.68rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; margin-top:.35rem; }
 
-    .surface { background: #fff; border: 1px solid var(--line); border-radius: 1.25rem; box-shadow: 0 12px 34px rgba(20,39,28,.07); }
+    .surface { background: #fff; border: 1px solid var(--green-line); border-radius: 1.25rem; box-shadow: 0 12px 34px rgba(20,39,28,.07); }
 
-    .modern-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 1rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1.5px solid #16a34a; }
-    .modern-table thead { background: #16a34a; }
-    .modern-table thead th { padding: 1rem 1.25rem; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: #fff; text-align:left; white-space:nowrap; }
-    .modern-table tbody tr { transition: all 0.2s ease; border-bottom: 1px solid #f3f4f6; }
-    .modern-table tbody tr:hover { background: linear-gradient(135deg, rgba(240, 253, 244, 0.6), rgba(236, 253, 245, 0.6)); }
-    .modern-table tbody td { padding: 1rem 1.25rem; color: #4b5563; vertical-align: middle; }
+    /* ===== Filters + table in one card ===== */
+    .cr-tablecard { overflow: hidden; }
+    .cr-toolbar { display:flex; gap:.7rem; align-items:center; flex-wrap:wrap; padding:1rem 1.1rem; border-bottom:1px solid var(--green-line); background:linear-gradient(180deg,#fffdf8,#ffffff); }
+    .cr-toolbar .search-wrap { flex:1; min-width:200px; }
+    .cr-select { min-width:152px; cursor:pointer; }
+    .cr-tablebody { padding: .9rem 1rem 1.1rem; }
+    @media (max-width:640px){
+        .cr-toolbar .search-wrap { flex:1 1 100%; }
+        .cr-select { flex:1; min-width:0; }
+    }
 
-    .badge { display: inline-flex; align-items: center; padding: 0.35rem 0.8rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 600; }
+    /* ===== Table ===== */
+    .modern-table { width: 100%; border-collapse: separate; border-spacing: 0; border:1px solid var(--green-line); border-radius:12px; overflow:hidden; }
+    .modern-table thead th { background: linear-gradient(135deg,#0c6b46,#065f3c); padding: .78rem 1rem; font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: #fff; text-align:left; white-space:nowrap; }
+    .modern-table thead th:first-child { border-radius: 11px 0 0 11px; padding-left: 1.1rem; }
+    .modern-table thead th:last-child { border-radius: 0 11px 11px 0; text-align:right; padding-right: 1.1rem; }
+    .modern-table tbody td { padding: .82rem 1rem; color: #4b5563; vertical-align: middle; border-bottom: 1px solid #f1ece1; font-size:.9rem; }
+    .modern-table tbody td:first-child { padding-left: 1.1rem; }
+    .modern-table tbody tr { transition: background .15s ease; }
+    .modern-table tbody tr:first-child td { padding-top: 1rem; }
+    .modern-table tbody tr:hover { background: linear-gradient(135deg, rgba(231,244,236,.7), rgba(236,253,245,.5)); }
+    .modern-table tbody tr:last-child td { border-bottom: none; }
+
+    .badge { display: inline-flex; align-items: center; padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
     .badge-grain { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e; border: 1px solid #fcd34d; }
     .badge-vegetable { background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #166534; border: 1px solid #86efac; }
     .badge-fruit { background: linear-gradient(135deg, #fee2e2, #fecaca); color: #991b1b; border: 1px solid #fca5a5; }
@@ -80,37 +106,39 @@
     .input-field { border: 1px solid var(--line); border-radius: 0.7rem; padding: 0.65rem 0.95rem; transition: all 0.2s; font-size: 0.9375rem; background: white; color: var(--ink); }
     .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12); }
 
-    .action-btn { padding: 0.5rem 0.85rem; border-radius: 0.55rem; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; border: 1px solid var(--line); background: white; cursor:pointer; }
-    .action-btn:hover { border-color: var(--primary); background: rgba(16, 185, 129, 0.06); color: var(--primary); transform: translateY(-1px); }
+    .action-btn { width:34px; height:34px; display:inline-grid; place-items:center; border-radius:.55rem; font-size:.85rem; transition:all .2s; border:1px solid var(--line); background:white; cursor:pointer; color:#5b6b60; }
+    .action-btn:hover { border-color: var(--primary); background: rgba(16, 185, 129, 0.08); color: var(--primary); transform: translateY(-1px); }
 
-    .empty-state { background: #fbf7ee; border: 2px dashed var(--line); border-radius: 1rem; padding: 3.5rem 2rem; }
+    .empty-state { background: #fbf7ee; border: 2px dashed var(--line); border-radius: 1rem; padding: 3rem 2rem; }
 
-    .growth-bar { height: 6px; background: #ece4d6; border-radius: 3px; overflow: hidden; width: 90px; }
+    .growth-bar { height: 6px; background: #ece4d6; border-radius: 3px; overflow: hidden; width: 88px; }
     .growth-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary-light), var(--primary)); transition: width 0.5s ease; }
 
     .search-wrap { position: relative; }
+    .search-wrap input.input-field { padding-left: 2.9rem; padding-right: 2.5rem; }
+    .search-wrap .search-ico { position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:#9aa39a; pointer-events:none; }
     .search-wrap .clear-btn { position:absolute; right:.6rem; top:50%; transform:translateY(-50%); color:#9aa39a; cursor:pointer; padding:.25rem; display:none; }
     .search-wrap .clear-btn:hover { color:var(--primary-dark); }
 
-    .fade-in { animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards; }
-    .fade-in-1 { animation-delay: 0.1s; } .fade-in-2 { animation-delay: 0.2s; }
-    .fade-in-3 { animation-delay: 0.3s; } .fade-in-4 { animation-delay: 0.4s; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.55s cubic-bezier(0.4, 0, 0.2, 1) backwards; }
+    .fade-in-1 { animation-delay: 0.06s; } .fade-in-2 { animation-delay: 0.12s; }
+    .fade-in-3 { animation-delay: 0.18s; } .fade-in-4 { animation-delay: 0.24s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 
 <div class="cr-shell">
     <!-- Hero Header -->
-    <section class="page-header py-12 px-8 mb-8">
+    <section class="page-header py-10 px-8 mb-7">
         <div id="cr-farmland"></div>
         <div class="ph-inner">
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div class="flex items-center gap-3">
-                    <div class="w-14 h-14 rounded-2xl bg-white bg-opacity-10 backdrop-blur-sm flex items-center justify-center border border-white border-opacity-20">
-                        <i class="fas fa-leaf text-white text-2xl"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-white bg-opacity-10 backdrop-blur-sm flex items-center justify-center border border-white border-opacity-20">
+                        <i class="fas fa-leaf text-white text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="font-display text-4xl md:text-5xl font-black text-white mb-1">Crop Management</h1>
-                        <p class="text-emerald-50 text-lg font-medium">Monitor your crop cycles and yields</p>
+                        <h1 class="font-display text-3xl md:text-4xl font-black text-white mb-1">Crop Management</h1>
+                        <p class="text-emerald-50 text-base font-medium">Monitor your crop cycles and yields</p>
                     </div>
                 </div>
                 <button class="btn-primary flex items-center gap-2 whitespace-nowrap" id="open-crop-modal">
@@ -121,58 +149,66 @@
     </section>
 
     <div class="cr-body">
-        <!-- Summary Stats -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-            <div class="stat-card p-6 rounded-2xl fade-in fade-in-1">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center"><i class="fas fa-seedling text-green-600 text-xl"></i></div>
-                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Total</span>
+        <!-- Summary Stats (compact) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div class="stat-card p-4 rounded-xl fade-in fade-in-1">
+                <div class="flex items-center gap-3">
+                    <div class="stat-ico bg-gradient-to-br from-green-100 to-green-200"><i class="fas fa-seedling text-green-600"></i></div>
+                    <div class="min-w-0">
+                        <div class="stat-num" id="total-count">0</div>
+                        <div class="stat-lbl">Active crops</div>
+                    </div>
                 </div>
-                <div class="font-display text-3xl font-black text-gray-900" id="total-count">0</div>
-                <p class="text-sm text-gray-600 mt-1">Active crops</p>
             </div>
-            <div class="stat-card p-6 rounded-2xl fade-in fade-in-2">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center"><i class="fas fa-wheat-awn text-yellow-600 text-xl"></i></div>
-                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Grain</span>
+            <div class="stat-card p-4 rounded-xl fade-in fade-in-2">
+                <div class="flex items-center gap-3">
+                    <div class="stat-ico bg-gradient-to-br from-yellow-100 to-yellow-200"><i class="fas fa-wheat-awn text-yellow-600"></i></div>
+                    <div class="min-w-0">
+                        <div class="stat-num" id="grain-count">0</div>
+                        <div class="stat-lbl">Grain</div>
+                    </div>
                 </div>
-                <div class="font-display text-3xl font-black text-gray-900" id="grain-count">0</div>
-                <p class="text-sm text-gray-600 mt-1">Grain crops</p>
             </div>
-            <div class="stat-card p-6 rounded-2xl fade-in fade-in-3">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center"><i class="fas fa-carrot text-emerald-600 text-xl"></i></div>
-                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Vegetables</span>
+            <div class="stat-card p-4 rounded-xl fade-in fade-in-3">
+                <div class="flex items-center gap-3">
+                    <div class="stat-ico bg-gradient-to-br from-emerald-100 to-emerald-200"><i class="fas fa-carrot text-emerald-600"></i></div>
+                    <div class="min-w-0">
+                        <div class="stat-num" id="veg-count">0</div>
+                        <div class="stat-lbl">Vegetables</div>
+                    </div>
                 </div>
-                <div class="font-display text-3xl font-black text-gray-900" id="veg-count">0</div>
-                <p class="text-sm text-gray-600 mt-1">Vegetable crops</p>
             </div>
-            <div class="stat-card p-6 rounded-2xl fade-in fade-in-4">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center"><i class="fas fa-apple-whole text-red-600 text-xl"></i></div>
-                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Fruits</span>
+            <div class="stat-card p-4 rounded-xl fade-in fade-in-4">
+                <div class="flex items-center gap-3">
+                    <div class="stat-ico bg-gradient-to-br from-red-100 to-red-200"><i class="fas fa-apple-whole text-red-600"></i></div>
+                    <div class="min-w-0">
+                        <div class="stat-num" id="fruit-count">0</div>
+                        <div class="stat-lbl">Fruits</div>
+                    </div>
                 </div>
-                <div class="font-display text-3xl font-black text-gray-900" id="fruit-count">0</div>
-                <p class="text-sm text-gray-600 mt-1">Fruit crops</p>
             </div>
         </div>
 
-        <!-- Search and Filter -->
-        <div class="surface p-6 mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Filters + table, together in one card -->
+        <div class="section-head">
+            <span class="sh-ico"><i class="fas fa-seedling"></i></span>
+            <h2>Crops</h2>
+        </div>
+        <div class="surface cr-tablecard">
+            <div class="cr-toolbar">
                 <div class="search-wrap">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="search-input" placeholder="Search by crop, variety or field..." class="input-field w-full pl-12 pr-10" autocomplete="off" />
+                    <i class="fas fa-search search-ico"></i>
+                    <input type="text" id="search-input" placeholder="Search by crop, variety or land portion..." class="input-field w-full" autocomplete="off" />
                     <span id="clear-search" class="clear-btn"><i class="fas fa-circle-xmark"></i></span>
                 </div>
-                <select id="type-filter" class="input-field">
+                <select id="type-filter" class="input-field cr-select">
                     <option value="">All Types</option>
                     <option value="grain">Grain</option>
                     <option value="vegetable">Vegetable</option>
                     <option value="fruit">Fruit</option>
                     <option value="legume">Legume</option>
                 </select>
-                <select id="sort-by" class="input-field">
+                <select id="sort-by" class="input-field cr-select">
                     <option value="">Sort By</option>
                     <option value="date-asc">Planted Date (Oldest)</option>
                     <option value="date-desc">Planted Date (Newest)</option>
@@ -180,41 +216,41 @@
                     <option value="name-desc">Name (Z-A)</option>
                 </select>
             </div>
-            <div class="mt-3 text-sm text-gray-500" id="result-count"></div>
-        </div>
 
-        <!-- Crops Table -->
-        <div class="surface p-6">
-            <div id="crops-loading"><p class="text-gray-500">Loading crops...</p></div>
+            <div class="cr-tablebody">
+                <div class="mb-3 text-sm text-gray-500" id="result-count"></div>
 
-            <div id="crops-table-wrap" class="overflow-x-auto hidden">
-                <table class="modern-table">
-                    <thead>
-                        <tr>
-                            <th>Crop</th>
-                            <th>Type</th>
-                            <th>Land Portion</th>
-                            <th>Planted</th>
-                            <th>Growth</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="crops-tbody"></tbody>
-                </table>
-            </div>
+                <div id="crops-loading"><p class="text-gray-500">Loading crops...</p></div>
 
-            <div id="empty-state" class="empty-state text-center hidden">
-                <i class="fas fa-leaf text-7xl mb-6" style="color: #d8cdb5;"></i>
-                <p class="text-xl font-semibold text-gray-700 mb-2">No crops yet</p>
-                <p class="text-gray-600 mb-6">Start by planting your first crop</p>
-                <button class="btn-primary" id="add-first-crop-btn"><i class="fas fa-plus mr-2"></i> Add Your First Crop</button>
-            </div>
+                <div id="crops-table-wrap" class="overflow-x-auto hidden">
+                    <table class="modern-table">
+                        <thead>
+                            <tr>
+                                <th>Crop</th>
+                                <th>Type</th>
+                                <th>Land Portion</th>
+                                <th>Planted</th>
+                                <th>Growth</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="crops-tbody"></tbody>
+                    </table>
+                </div>
 
-            <div id="no-results" class="empty-state text-center hidden">
-                <i class="fas fa-search text-6xl mb-4" style="color: #d8cdb5;"></i>
-                <p class="text-lg font-semibold text-gray-700 mb-2">No crops match your search</p>
-                <p class="text-gray-600">Try adjusting your search or filters</p>
+                <div id="empty-state" class="empty-state text-center hidden">
+                    <i class="fas fa-leaf text-6xl mb-5" style="color: #d8cdb5;"></i>
+                    <p class="text-xl font-semibold text-gray-700 mb-2">No crops yet</p>
+                    <p class="text-gray-600 mb-6">Start by planting your first crop</p>
+                    <button class="btn-primary" id="add-first-crop-btn"><i class="fas fa-plus mr-2"></i> Add Your First Crop</button>
+                </div>
+
+                <div id="no-results" class="empty-state text-center hidden">
+                    <i class="fas fa-search text-5xl mb-4" style="color: #d8cdb5;"></i>
+                    <p class="text-lg font-semibold text-gray-700 mb-2">No crops match your search</p>
+                    <p class="text-gray-600">Try adjusting your search or filters</p>
+                </div>
             </div>
         </div>
     </div>
@@ -226,8 +262,8 @@
             <div class="flex items-center gap-4 mb-4">
                 <div class="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center border border-green-100"><i class="fas fa-seedling text-green-600 text-xl"></i></div>
                 <div>
-                    <h2 class="font-display text-2xl font-extrabold text-green-800 mb-1">Start Crop Cycle</h2>
-                    <p class="text-gray-500 text-sm font-medium">Register a new crop cycle for your farm.</p>
+                    <h2 class="font-display text-2xl font-extrabold text-green-800 mb-1" id="crop-modal-title">Start Crop Cycle</h2>
+                    <p class="text-gray-500 text-sm font-medium" id="crop-modal-sub">Register a new crop cycle for your farm.</p>
                 </div>
             </div>
             <form id="start-crop-form" method="post" action="#" autocomplete="off" class="space-y-4">
@@ -309,12 +345,88 @@
             </form>
         </div>
     </div>
+
+    <!-- View Crop Details Modal -->
+    <div id="crop-view-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm hidden p-4">
+        <div class="modal-content bg-white rounded-3xl shadow-2xl w-full max-w-md p-7 relative" style="max-height:92vh; overflow-y:auto;">
+            <button id="close-crop-view" class="absolute top-5 right-5 text-gray-400 hover:text-green-700 text-3xl font-bold transition-colors">&times;</button>
+            <div class="flex items-center gap-4 mb-5">
+                <div class="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center border border-green-100"><i class="fas fa-leaf text-green-600 text-xl"></i></div>
+                <div>
+                    <h2 class="font-display text-2xl font-extrabold text-green-800 mb-1" id="crop-view-name">Crop details</h2>
+                    <p class="text-gray-500 text-sm font-medium" id="crop-view-variety"></p>
+                </div>
+            </div>
+            <div id="crop-view-body" class="space-y-3"></div>
+            <div class="flex justify-end gap-3 mt-6">
+                <button type="button" id="crop-view-close-btn" class="px-5 py-2.5 rounded-xl border-2 border-gray-300 hover:bg-gray-50 font-semibold transition">Close</button>
+                <button type="button" id="crop-view-edit-btn" class="btn-primary px-5 py-2.5 rounded-xl font-semibold"><i class="fas fa-edit mr-1"></i> Edit</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     /* ---------- Helpers ---------- */
     function esc(v){ return (v === null || v === undefined) ? '' : String(v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
     function fmtDate(d){ if(!d) return '\u2014'; const dt = new Date(d); return isNaN(dt) ? '\u2014' : dt.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}); }
+
+    /* ---------- Loaded crops kept here so View/Edit can read full objects ---------- */
+    var cropsCache = {};
+    var editingId = null;
+
+    /* ---------- View / Edit / Create-mode ---------- */
+    function viewRow(label, value){
+        return '<div class="flex justify-between gap-4 py-1.5 border-b border-gray-100">'
+            + '<span class="text-sm font-semibold text-gray-500">' + esc(label) + '</span>'
+            + '<span class="text-sm text-gray-900 text-right">' + (value ? esc(value) : '\u2014') + '</span></div>';
+    }
+
+    function viewCrop(id){
+        var c = cropsCache[id]; if(!c) return;
+        var name = c.crop_type || c.crop_name || c.name || 'Unnamed';
+        var portion = c.field_name || c.crop_unit_name || '';
+        document.getElementById('crop-view-name').textContent = name;
+        document.getElementById('crop-view-variety').textContent = c.variety ? c.variety : 'Crop details';
+        var body = ''
+            + viewRow('Land portion', portion)
+            + viewRow('Planted', fmtDate(c.planting_date || c.planted_date))
+            + viewRow('Expected harvest', fmtDate(c.expected_harvest_date))
+            + viewRow('Status', (c.status ? (c.status.charAt(0).toUpperCase()+c.status.slice(1)) : 'Growing'))
+            + viewRow('Notes', c.additional_notes);
+        document.getElementById('crop-view-body').innerHTML = body;
+        document.getElementById('crop-view-edit-btn').dataset.id = id;
+        document.getElementById('crop-view-modal').classList.remove('hidden');
+    }
+
+    function setCreateMode(){
+        editingId = null;
+        var f = document.getElementById('start-crop-form'); if (f) f.reset();
+        var t = document.getElementById('crop-modal-title'); if (t) t.textContent = 'Start Crop Cycle';
+        var s = document.getElementById('crop-modal-sub'); if (s) s.textContent = 'Register a new crop cycle for your farm.';
+        var b = document.getElementById('save-crop-cycle-btn'); if (b) b.textContent = 'Save Crop Cycle';
+    }
+
+    function editCrop(id){
+        var c = cropsCache[id]; if(!c) return;
+        editingId = id;
+        var f = document.getElementById('start-crop-form'); if (!f) return;
+        f.reset();
+        if (f.crop_name) f.crop_name.value = c.crop_type || c.crop_name || '';
+        if (f.variety) f.variety.value = c.variety || '';
+        if (f.planted_date) f.planted_date.value = (c.planting_date || c.planted_date || '').slice(0,10);
+        if (f.expected_harvest_date) f.expected_harvest_date.value = (c.expected_harvest_date || '').slice(0,10);
+        if (f.additional_notes) f.additional_notes.value = c.additional_notes || '';
+        // Pre-select the land portion by matching its name
+        var fname = String(c.field_name || c.crop_unit_name || '');
+        var dd = document.getElementById('field-dropdown');
+        if (dd && fname) { Array.prototype.forEach.call(dd.options, function(o){ if (o.textContent === fname) dd.value = o.value; }); }
+        var t = document.getElementById('crop-modal-title'); if (t) t.textContent = 'Edit Crop Cycle';
+        var s = document.getElementById('crop-modal-sub'); if (s) s.textContent = 'Update this crop cycle.';
+        var b = document.getElementById('save-crop-cycle-btn'); if (b) b.textContent = 'Update Crop';
+        document.getElementById('crop-view-modal').classList.add('hidden');
+        document.getElementById('crop-modal').classList.remove('hidden');
+    }
 
     /* ---------- Build a table row from an API crop object ---------- */
     function cropRowHtml(c){
@@ -345,9 +457,9 @@
             '<td><div class="growth-bar"><div class="growth-bar-fill crop-growth-bar" data-date="' + esc(planted) + '" style="width:0%"></div></div>' +
                 '<div class="text-xs text-gray-400 mt-1 crop-days-growing" data-date="' + esc(planted) + '"></div></td>' +
             '<td><span class="badge badge-neutral">' + esc(status.charAt(0).toUpperCase()+status.slice(1)) + '</span></td>' +
-            '<td><div class="flex gap-2">' +
-                '<button class="action-btn" title="View"><i class="fas fa-eye"></i></button>' +
-                '<button class="action-btn" title="Edit"><i class="fas fa-edit"></i></button>' +
+            '<td><div class="flex gap-2 justify-end">' +
+                '<button class="action-btn" data-act="view" title="View"><i class="fas fa-eye"></i></button>' +
+                '<button class="action-btn" data-act="edit" title="Edit"><i class="fas fa-edit"></i></button>' +
             '</div></td>' +
         '</tr>';
     }
@@ -464,6 +576,8 @@
             }
             emptyState.classList.add('hidden');
             wrap.classList.remove('hidden');
+            cropsCache = {};
+            crops.forEach(function(c){ if (c.id != null) cropsCache[c.id] = c; });
             tbody.innerHTML = crops.map(cropRowHtml).join('');
             calculateCropStats();
             filterAndSort();
@@ -480,10 +594,34 @@
         const closeCropModalBtn = document.getElementById('close-crop-modal');
         const cancelCropModalBtn = document.getElementById('cancel-crop-modal');
 
-        if (openCropModalBtn) openCropModalBtn.onclick = () => cropModal.classList.remove('hidden');
-        if (addFirstCropBtn) addFirstCropBtn.onclick = () => cropModal.classList.remove('hidden');
-        if (closeCropModalBtn) closeCropModalBtn.onclick = () => cropModal.classList.add('hidden');
-        if (cancelCropModalBtn) cancelCropModalBtn.onclick = () => cropModal.classList.add('hidden');
+        if (openCropModalBtn) openCropModalBtn.onclick = () => { setCreateMode(); cropModal.classList.remove('hidden'); };
+        if (addFirstCropBtn) addFirstCropBtn.onclick = () => { setCreateMode(); cropModal.classList.remove('hidden'); };
+        if (closeCropModalBtn) closeCropModalBtn.onclick = () => { cropModal.classList.add('hidden'); editingId = null; };
+        if (cancelCropModalBtn) cancelCropModalBtn.onclick = () => { cropModal.classList.add('hidden'); editingId = null; };
+
+        // Row actions (View / Edit) via event delegation so they survive table re-renders
+        const tbodyEl = document.getElementById('crops-tbody');
+        if (tbodyEl) {
+            tbodyEl.addEventListener('click', function(e){
+                const btn = e.target.closest('.action-btn');
+                if (!btn) return;
+                const row = btn.closest('.crop-row');
+                if (!row) return;
+                const id = row.dataset.id;
+                if (btn.dataset.act === 'view') viewCrop(id);
+                else if (btn.dataset.act === 'edit') editCrop(id);
+            });
+        }
+
+        // View modal buttons
+        const viewModal = document.getElementById('crop-view-modal');
+        const closeViewX = document.getElementById('close-crop-view');
+        const closeViewBtn = document.getElementById('crop-view-close-btn');
+        const viewEditBtn = document.getElementById('crop-view-edit-btn');
+        if (closeViewX) closeViewX.onclick = () => viewModal.classList.add('hidden');
+        if (closeViewBtn) closeViewBtn.onclick = () => viewModal.classList.add('hidden');
+        if (viewEditBtn) viewEditBtn.onclick = function(){ editCrop(this.dataset.id); };
+        if (viewModal) viewModal.addEventListener('click', function(e){ if (e.target === viewModal) viewModal.classList.add('hidden'); });
 
         // Populate Land Portion dropdown from /api/fields/
         const dropdown = document.getElementById('field-dropdown');
@@ -528,7 +666,7 @@
                 };
                 Object.keys(payload).forEach(k => { if (payload[k] === '' || payload[k] === null) delete payload[k]; });
 
-                if (!payload.field) { alert('Please choose a land portion for this crop.'); return; }
+                if (!editingId && !payload.field) { alert('Please choose a land portion for this crop.'); return; }
                 if (payload.planting_date && payload.expected_harvest_date && payload.expected_harvest_date < payload.planting_date) {
                     alert('The expected harvest date is before the planting date. Please correct the dates.');
                     return;
@@ -537,11 +675,14 @@
                 const token = localStorage.getItem('access_token');
                 const saveBtn = document.getElementById('save-crop-cycle-btn');
                 const saveLabel = saveBtn ? saveBtn.textContent : '';
-                if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving\u2026'; }
+                if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = editingId ? 'Updating\u2026' : 'Saving\u2026'; }
+
+                const url = '/api/crop-cycles/' + (editingId ? (editingId + '/') : '');
+                const method = editingId ? 'PATCH' : 'POST';
 
                 try {
-                    const res = await fetch('/api/crop-cycles/', {
-                        method: 'POST',
+                    const res = await fetch(url, {
+                        method: method,
                         headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) },
                         body: JSON.stringify(payload)
                     });
@@ -560,6 +701,8 @@
                     }
                     cropForm.reset();
                     cropModal.classList.add('hidden');
+                    editingId = null;
+                    setCreateMode();
                     loadCrops();
                 } catch (err) {
                     alert('Network error while saving the crop cycle. Please check your connection and try again.');
