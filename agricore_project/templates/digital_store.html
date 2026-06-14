@@ -369,7 +369,7 @@
                         <option>Last 90 Days</option>
                         <option>This Year</option>
                     </select>
-                    <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
+                    <button id="sales-export" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
                         <i class="fas fa-download"></i> Export
                     </button>
                 </div>
@@ -385,8 +385,8 @@
                             <i class="fas fa-money-bill-wave text-emerald-600"></i>
                         </div>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900 mb-1">₦0</p>
-                    <p class="text-sm text-gray-500">vs previous period</p>
+                    <p class="text-3xl font-bold text-gray-900 mb-1" id="stat-sales-revenue">₦0</p>
+                    <p class="text-sm text-gray-500">In selected period</p>
                 </div>
 
                 <!-- Total Orders -->
@@ -397,8 +397,8 @@
                             <i class="fas fa-shopping-cart text-blue-600"></i>
                         </div>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900 mb-1">0</p>
-                    <p class="text-sm text-gray-500">0 pending • 0 completed</p>
+                    <p class="text-3xl font-bold text-gray-900 mb-1" id="stat-sales-orders">0</p>
+                    <p class="text-sm text-gray-500" id="stat-sales-orders-sub">0 pending • 0 completed</p>
                 </div>
 
                 <!-- Average Order Value -->
@@ -409,20 +409,20 @@
                             <i class="fas fa-chart-line text-purple-600"></i>
                         </div>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900 mb-1">₦0</p>
+                    <p class="text-3xl font-bold text-gray-900 mb-1" id="stat-sales-aov">₦0</p>
                     <p class="text-sm text-gray-500">Per transaction</p>
                 </div>
 
                 <!-- Conversion Rate -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center justify-between mb-3">
-                        <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Conversion Rate</p>
+                        <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Items Sold</p>
                         <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
-                            <i class="fas fa-percentage text-amber-600"></i>
+                            <i class="fas fa-cubes text-amber-600"></i>
                         </div>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900 mb-1">0%</p>
-                    <p class="text-sm text-gray-500">Visits to purchases</p>
+                    <p class="text-3xl font-bold text-gray-900 mb-1" id="stat-sales-items">0</p>
+                    <p class="text-sm text-gray-500">Units across orders</p>
                 </div>
             </div>
 
@@ -434,9 +434,9 @@
                         <p class="text-sm text-gray-500">Performance over time</p>
                     </div>
                     <div class="flex gap-2">
-                        <button class="px-3 py-2 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-semibold hover:bg-emerald-100 transition">Daily</button>
-                        <button class="px-3 py-2 bg-gray-50 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-100 transition">Weekly</button>
-                        <button class="px-3 py-2 bg-gray-50 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-100 transition">Monthly</button>
+                        <button data-bucket="day" class="sales-bucket-btn px-3 py-2 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-semibold transition">Daily</button>
+                        <button data-bucket="week" class="sales-bucket-btn px-3 py-2 bg-gray-50 text-gray-700 rounded-lg text-xs font-semibold transition">Weekly</button>
+                        <button data-bucket="month" class="sales-bucket-btn px-3 py-2 bg-gray-50 text-gray-700 rounded-lg text-xs font-semibold transition">Monthly</button>
                     </div>
                 </div>
                 <div class="h-80 border-t border-gray-100 pt-4">
@@ -454,27 +454,27 @@
                         <p class="text-gray-600">Deep dive into product-level metrics</p>
                     </div>
                     <div class="flex gap-2 text-sm">
-                        <button class="px-3 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Top Sellers</button>
-                        <button class="px-3 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Low Stock</button>
-                        <button class="px-3 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">High Margin</button>
+                        <button data-pp-sort="top" class="pp-filter-btn px-3 py-2 border border-emerald-600 bg-emerald-600 text-white rounded-lg">Top Sellers</button>
+                        <button data-pp-sort="low" class="pp-filter-btn px-3 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Low Stock</button>
+                        <button data-pp-sort="sold" class="pp-filter-btn px-3 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Most Sold</button>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div class="bg-white border border-emerald-100 rounded-xl p-4 shadow-sm">
                         <p class="text-xs uppercase tracking-wide text-gray-500">Top Product</p>
-                        <p class="text-lg font-semibold text-emerald-700">—</p>
-                        <p class="text-xs text-gray-500">Highest revenue</p>
+                        <p class="text-lg font-semibold text-emerald-700" id="pp-top-product">—</p>
+                        <p class="text-xs text-gray-500">Highest revenue (30d)</p>
                     </div>
                     <div class="bg-white border border-blue-100 rounded-xl p-4 shadow-sm">
                         <p class="text-xs uppercase tracking-wide text-blue-600">Units Sold</p>
-                        <p class="text-2xl font-bold text-blue-700">0</p>
+                        <p class="text-2xl font-bold text-blue-700" id="pp-units-sold">0</p>
                         <p class="text-xs text-gray-500">Past 30 days</p>
                     </div>
                     <div class="bg-white border border-orange-100 rounded-xl p-4 shadow-sm">
-                        <p class="text-xs uppercase tracking-wide text-orange-600">Avg Margin</p>
-                        <p class="text-2xl font-bold text-orange-700">0%</p>
-                        <p class="text-xs text-gray-500">Estimated</p>
+                        <p class="text-xs uppercase tracking-wide text-orange-600">Active Listings</p>
+                        <p class="text-2xl font-bold text-orange-700" id="pp-active">0</p>
+                        <p class="text-xs text-gray-500">Published now</p>
                     </div>
                 </div>
 
@@ -1686,6 +1686,12 @@
                 if (sectionId === 'ratings') {
                     loadRatingsAndReviews();
                 }
+                if (sectionId === 'sales-stats') {
+                    loadAndRenderSales();
+                }
+                if (sectionId === 'product-performance') {
+                    loadAndRenderPerformance();
+                }
                 // Close mobile menu if open
                 if (window.innerWidth < 768) {
                     document.getElementById('sidebar').classList.remove('open');
@@ -1777,13 +1783,13 @@
 
         // Revenue Trend Chart (always renders a line, even with zero values)
         let salesChartInstance = null;
-        function initSalesChart() {
+        function initSalesChart(labels, values) {
             const canvas = document.getElementById('salesChart');
             if (!canvas) return;
 
             const ctx = canvas.getContext('2d');
-            const labels = Array.from({ length: 7 }, (_, i) => `Day ${i + 1}`);
-            const values = [0, 0, 0, 0, 0, 0, 0];
+            labels = labels || Array.from({ length: 7 }, (_, i) => `Day ${i + 1}`);
+            values = values || [0, 0, 0, 0, 0, 0, 0];
 
             const gradient = ctx.createLinearGradient(0, 0, 0, 300);
             gradient.addColorStop(0, 'rgba(16, 185, 129, 0.18)');
@@ -1803,7 +1809,7 @@
                         fill: true,
                         tension: 0.35,
                         borderWidth: 3,
-                        pointRadius: 4,
+                        pointRadius: values.length > 31 ? 0 : 4,
                         pointBackgroundColor: '#10b981',
                         pointBorderColor: '#ffffff',
                         pointBorderWidth: 2,
@@ -1819,29 +1825,255 @@
                             mode: 'index',
                             intersect: false,
                             callbacks: {
-                                label: (ctx) => `₦${ctx.parsed.y}`,
+                                label: (ctx) => '₦' + Number(ctx.parsed.y || 0).toLocaleString(),
                             },
                         },
                     },
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#6b7280' },
+                            ticks: { color: '#6b7280', maxRotation: 0, autoSkip: true, maxTicksLimit: 8 },
                         },
                         y: {
                             beginAtZero: true,
                             grid: { color: '#e5e7eb' },
                             ticks: {
                                 color: '#6b7280',
-                                callback: (value) => `₦${value}`,
+                                callback: (value) => '₦' + Number(value || 0).toLocaleString(),
                             },
                         },
                     },
                 },
             });
         }
+        function updateSalesChart(labels, values) {
+            initSalesChart(labels, values);  // re-init ensures correct sizing in the now-visible section
+        }
 
         initSalesChart();
+
+        // ===== Sales Statistics & Product Performance (real data from orders) =====
+        // NOTE: every field-read goes through a tiny mapper below. If your orders API
+        // uses different field names, adjust ONLY these mappers.
+        let storeOrders = [];
+        let ordersLoaded = false;
+        let ordersLoading = null;
+        let salesRange = 7;           // days
+        let salesRangeKind = 'days';  // 'days' | 'year'
+        let salesBucket = 'day';      // 'day' | 'week' | 'month'
+        let ppSort = 'top';           // 'top' | 'low' | 'sold'
+
+        function orderTotal(o){ return Number(o.total_amount != null ? o.total_amount : (o.total != null ? o.total : (o.amount != null ? o.amount : 0))) || 0; }
+        function orderStatus(o){ return String(o.status || '').toLowerCase(); }
+        function orderDate(o){ const d = new Date(o.created_at || o.created || o.date || o.placed_at || Date.now()); return isNaN(d.getTime()) ? new Date() : d; }
+        function orderItems(o){ return o.items || o.order_items || o.orderitems || o.line_items || o.products || []; }
+        function itemProductId(it){ const p = it.product; let pid = (p && (p.id != null ? p.id : p)); if (pid == null) pid = it.product_id != null ? it.product_id : it.productId; return pid != null ? Number(pid) : null; }
+        function itemQty(it){ return Number(it.quantity != null ? it.quantity : (it.qty != null ? it.qty : 0)) || 0; }
+        function itemRevenue(it){ if (it.subtotal != null) return Number(it.subtotal) || 0; const unit = Number(it.price_per_unit != null ? it.price_per_unit : (it.unit_price != null ? it.unit_price : (it.price != null ? it.price : 0))) || 0; return unit * itemQty(it); }
+        const CANCELLED_STATUSES = ['cancelled','canceled','refunded','failed','rejected','void','voided'];
+        const COMPLETED_STATUSES = ['completed','complete','delivered','paid','fulfilled','success','succeeded','received'];
+        function isCancelled(o){ return CANCELLED_STATUSES.indexOf(orderStatus(o)) !== -1; }
+        function isCompleted(o){ return COMPLETED_STATUSES.indexOf(orderStatus(o)) !== -1; }
+
+        async function ensureOrdersLoaded() {
+            if (ordersLoaded) return storeOrders;
+            if (ordersLoading) return ordersLoading;
+            ordersLoading = (async () => {
+                const sid = currentStoreId;
+                const urls = sid != null
+                    ? [`${API_BASE}/orders/?store=${sid}`, `${API_BASE}/orders/`]
+                    : [`${API_BASE}/orders/`];
+                for (const url of urls) {
+                    try {
+                        const r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + (token || '') } });
+                        if (!r.ok) continue;
+                        const data = await r.json();
+                        let list = Array.isArray(data) ? data : (data.results || []);
+                        if (sid != null) {
+                            list = list.filter(o => {
+                                const s = o.store;
+                                const osid = s && (s.id != null ? s.id : s);
+                                return osid == null ? true : Number(osid) === Number(sid);
+                            });
+                        }
+                        storeOrders = list;
+                        ordersLoaded = true;
+                        return storeOrders;
+                    } catch (e) { /* try next */ }
+                }
+                storeOrders = [];
+                ordersLoaded = true;
+                return storeOrders;
+            })();
+            return ordersLoading;
+        }
+
+        function rangeStart() {
+            const now = new Date();
+            if (salesRangeKind === 'year') return new Date(now.getFullYear(), 0, 1);
+            const d = new Date(now);
+            d.setDate(d.getDate() - (salesRange - 1));
+            d.setHours(0, 0, 0, 0);
+            return d;
+        }
+        function ordersInRange(start) {
+            return storeOrders.filter(o => !isCancelled(o) && orderDate(o) >= start);
+        }
+        function ngn(n) { return '\u20a6' + Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 }); }
+
+        function renderSalesStats() {
+            const start = rangeStart();
+            const orders = ordersInRange(start);
+            const revenue = orders.reduce((s, o) => s + orderTotal(o), 0);
+            const count = orders.length;
+            const completed = orders.filter(isCompleted).length;
+            const pending = count - completed;
+            const aov = count ? revenue / count : 0;
+            let units = 0;
+            orders.forEach(o => orderItems(o).forEach(it => { units += itemQty(it); }));
+            const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+            set('stat-sales-revenue', ngn(revenue));
+            set('stat-sales-orders', count.toLocaleString());
+            set('stat-sales-orders-sub', `${pending} pending \u2022 ${completed} completed`);
+            set('stat-sales-aov', ngn(aov));
+            set('stat-sales-items', units.toLocaleString());
+            renderSalesChart(orders, start);
+        }
+
+        function bucketKey(date, bucket) {
+            const d = new Date(date);
+            if (bucket === 'month') return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+            if (bucket === 'week') { const day = (d.getDay() + 6) % 7; const m = new Date(d); m.setDate(d.getDate() - day); m.setHours(0,0,0,0); return m.toISOString().slice(0, 10); }
+            return d.toISOString().slice(0, 10);
+        }
+        function bucketLabel(key, bucket) {
+            if (bucket === 'month') { const parts = key.split('-'); return new Date(Number(parts[0]), Number(parts[1]) - 1, 1).toLocaleString(undefined, { month: 'short' }); }
+            const d = new Date(key); return d.toLocaleString(undefined, { month: 'short', day: 'numeric' });
+        }
+        function renderSalesChart(orders, start) {
+            const now = new Date();
+            const buckets = new Map();
+            if (salesBucket === 'day') { for (let d = new Date(start); d <= now; d.setDate(d.getDate() + 1)) buckets.set(bucketKey(d, 'day'), 0); }
+            else if (salesBucket === 'week') { for (let d = new Date(start); d <= now; d.setDate(d.getDate() + 7)) buckets.set(bucketKey(d, 'week'), 0); }
+            else { for (let d = new Date(start.getFullYear(), start.getMonth(), 1); d <= now; d.setMonth(d.getMonth() + 1)) buckets.set(bucketKey(d, 'month'), 0); }
+            orders.forEach(o => { const k = bucketKey(orderDate(o), salesBucket); buckets.set(k, (buckets.get(k) || 0) + orderTotal(o)); });
+            const keys = [...buckets.keys()].sort();
+            updateSalesChart(keys.map(k => bucketLabel(k, salesBucket)), keys.map(k => buckets.get(k)));
+        }
+
+        function exportSalesCSV() {
+            const start = rangeStart();
+            const orders = ordersInRange(start).slice().sort((a, b) => orderDate(a) - orderDate(b));
+            const rows = [['Order ID', 'Date', 'Status', 'Total']];
+            orders.forEach(o => rows.push([o.id != null ? o.id : '', orderDate(o).toISOString().slice(0, 10), orderStatus(o), orderTotal(o)]));
+            const csv = rows.map(r => r.map(x => '"' + String(x).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'agricore-sales.csv';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            toast('Exported ' + orders.length + ' orders', 'success');
+        }
+
+        function computePerformance() {
+            const start = new Date(); start.setDate(start.getDate() - 30); start.setHours(0, 0, 0, 0);
+            const orders = ordersInRange(start);
+            const agg = {};
+            orders.forEach(o => orderItems(o).forEach(it => {
+                const pid = itemProductId(it);
+                if (pid == null) return;
+                if (!agg[pid]) agg[pid] = { units: 0, revenue: 0 };
+                agg[pid].units += itemQty(it);
+                agg[pid].revenue += itemRevenue(it);
+            }));
+            return (allProducts || []).map(p => {
+                const a = agg[p.id] || { units: 0, revenue: 0 };
+                return { product: p, units: a.units, revenue: a.revenue };
+            });
+        }
+        function ppStatus(p) {
+            if (p.is_published === false) return { label: 'Draft', cls: 'bg-gray-100 text-gray-600' };
+            const s = Number(p.stock_quantity || 0);
+            if (s <= 0) return { label: 'Out of stock', cls: 'bg-red-50 text-red-600' };
+            if (s <= LOW_STOCK_THRESHOLD) return { label: 'Low stock', cls: 'bg-amber-50 text-amber-700' };
+            return { label: 'In stock', cls: 'bg-emerald-50 text-emerald-700' };
+        }
+        function renderPerformance() {
+            const rows = computePerformance();
+            const totalUnits = rows.reduce((s, r) => s + r.units, 0);
+            const top = rows.slice().sort((a, b) => b.revenue - a.revenue)[0];
+            const active = (allProducts || []).filter(p => p.is_published !== false).length;
+            const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+            set('pp-top-product', (top && top.revenue > 0) ? (top.product.title || '\u2014') : '\u2014');
+            set('pp-units-sold', totalUnits.toLocaleString());
+            set('pp-active', active.toLocaleString());
+
+            let sorted = rows.slice();
+            if (ppSort === 'low') sorted.sort((a, b) => Number(a.product.stock_quantity || 0) - Number(b.product.stock_quantity || 0));
+            else if (ppSort === 'sold') sorted.sort((a, b) => b.units - a.units);
+            else sorted.sort((a, b) => b.revenue - a.revenue);
+
+            const tbody = document.getElementById('product-performance-table');
+            if (!tbody) return;
+            if (!(allProducts || []).length) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-500"><i class="fas fa-inbox text-4xl mb-2 opacity-50"></i><p>No products yet</p></td></tr>';
+                return;
+            }
+            tbody.innerHTML = sorted.map(r => {
+                const st = ppStatus(r.product);
+                return '<tr class="border-b border-gray-100 hover:bg-gray-50 transition">'
+                    + '<td class="py-3 px-4 text-sm font-medium text-gray-800">' + (r.product.title || '\u2014') + '</td>'
+                    + '<td class="py-3 px-4 text-sm text-right text-gray-700">' + r.units.toLocaleString() + '</td>'
+                    + '<td class="py-3 px-4 text-sm text-right font-semibold text-emerald-700">' + ngn(r.revenue) + '</td>'
+                    + '<td class="py-3 px-4 text-sm text-right text-gray-700">' + Number(r.product.stock_quantity || 0).toLocaleString() + ' ' + (r.product.unit || '') + '</td>'
+                    + '<td class="py-3 px-4 text-center"><span class="px-2 py-1 rounded-full text-xs font-semibold ' + st.cls + '">' + st.label + '</span></td>'
+                    + '</tr>';
+            }).join('');
+        }
+
+        async function loadAndRenderSales() { await ensureOrdersLoaded(); renderSalesStats(); }
+        async function loadAndRenderPerformance() { await ensureOrdersLoaded(); renderPerformance(); }
+
+        function syncBucketButtons() {
+            document.querySelectorAll('.sales-bucket-btn').forEach(b => {
+                const on = b.getAttribute('data-bucket') === salesBucket;
+                b.classList.toggle('bg-emerald-50', on);
+                b.classList.toggle('text-emerald-700', on);
+                b.classList.toggle('bg-gray-50', !on);
+                b.classList.toggle('text-gray-700', !on);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const dr = document.getElementById('date-range-filter');
+            if (dr) dr.addEventListener('change', () => {
+                const v = dr.value;
+                if (/year/i.test(v)) { salesRangeKind = 'year'; }
+                else { salesRangeKind = 'days'; salesRange = /90/.test(v) ? 90 : (/30/.test(v) ? 30 : 7); }
+                salesBucket = salesRangeKind === 'year' ? 'month' : (salesRange >= 90 ? 'week' : 'day');
+                syncBucketButtons();
+                renderSalesStats();
+            });
+            document.querySelectorAll('.sales-bucket-btn').forEach(b => b.addEventListener('click', () => {
+                salesBucket = b.getAttribute('data-bucket');
+                syncBucketButtons();
+                renderSalesStats();
+            }));
+            const ex = document.getElementById('sales-export');
+            if (ex) ex.addEventListener('click', exportSalesCSV);
+            document.querySelectorAll('.pp-filter-btn').forEach(b => b.addEventListener('click', () => {
+                ppSort = b.getAttribute('data-pp-sort');
+                document.querySelectorAll('.pp-filter-btn').forEach(x => {
+                    x.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
+                    x.classList.add('text-gray-700', 'border-gray-200');
+                });
+                b.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+                b.classList.remove('text-gray-700', 'border-gray-200');
+                renderPerformance();
+            }));
+        });
+
 
         // ----- STORE / PRODUCT LOAD & DETECTION -----
         const API_BASE = '/api';
