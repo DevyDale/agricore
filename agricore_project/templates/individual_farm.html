@@ -487,6 +487,42 @@
 
       /* Square, tidy action buttons in the last column */
       #produce-table-container .action-btn { width: 34px; height: 34px; padding: 0; display: inline-grid; place-items: center; }
+
+      /* ---- Keep dialogs inside the viewport ---------------------------------
+         These modals had no height cap, so on a short window they spilled past
+         the top and bottom with no way to scroll. Cap the height, scroll inside,
+         and trim the padding/spacing so the forms aren't so tall. */
+      #transfer-produce-modal .modal-content,
+      #link-produce-modal .modal-content,
+      #connect-store-modal .modal-content,
+      #linked-stores-modal .modal-content,
+      #log-produce-modal .modal-content,
+      #farm-details-modal .modal-content {
+        max-height: calc(100vh - 2rem);
+        max-height: calc(100dvh - 2rem);
+        overflow-y: auto;
+        padding: 1.5rem !important;
+      }
+      /* slightly narrower transfer/link dialogs and tighter field rhythm */
+      #transfer-produce-modal .modal-content,
+      #link-produce-modal .modal-content { max-width: 32rem; }
+      #transfer-produce-modal .space-y-4 > * + *,
+      #link-produce-modal .space-y-4 > * + * { margin-top: .7rem !important; }
+      #transfer-produce-modal label,
+      #link-produce-modal label,
+      #connect-store-modal label,
+      #log-produce-modal label { margin-bottom: .25rem !important; }
+      #transfer-produce-modal h2,
+      #link-produce-modal h2,
+      #connect-store-modal h2,
+      #log-produce-modal h2 { font-size: 1.35rem !important; margin-bottom: 1rem !important; }
+      #transfer-produce-modal .input-field,
+      #link-produce-modal .input-field,
+      #connect-store-modal .input-field,
+      #log-produce-modal .input-field { padding: .55rem .8rem !important; }
+      /* keep the action row from crowding the last field */
+      #transfer-produce-modal .flex.justify-end,
+      #link-produce-modal .flex.justify-end { margin-top: 1.25rem !important; }
     </style>
 </head>
 <body class="min-h-screen">
