@@ -780,7 +780,7 @@
                 </div>
                 <div class="grid grid-cols-3 gap-4">
                     <div>
-                        <label class="block mb-2 font-semibold text-gray-700">Price (per unit)*</label>
+                        <label class="block mb-2 font-semibold text-gray-700">Price (per unit)<span id="transfer-price-cur"></span> *</label>
                         <input type="number" step="0.01" id="transfer-price" class="input-field w-full" />
                     </div>
                     <div>
@@ -828,7 +828,7 @@
                 </div>
                 <div class="grid grid-cols-3 gap-4">
                     <div>
-                        <label class="block mb-2 font-semibold text-gray-700">Price (per unit)*</label>
+                        <label class="block mb-2 font-semibold text-gray-700">Price (per unit)<span id="link-price-cur"></span> *</label>
                         <input type="number" step="0.01" id="link-price" class="input-field w-full" />
                     </div>
                     <div>
@@ -1046,6 +1046,16 @@
             get currentFarm() { return window.currentFarm; },
             get currentUser() { return currentUser; }
         };
+
+        const CURRENCY_SYMBOLS = { USD:'$', NGN:'₦', KES:'KSh', GHS:'₵', ZAR:'R', EUR:'€' };
+        function getCurrencySymbol(){ const c = localStorage.getItem('preferred_currency') || 'USD'; return CURRENCY_SYMBOLS[c] || ''; }
+        function applyCurrencyLabels(){
+            const sym = getCurrencySymbol();
+            const label = sym ? ' (' + sym + ')' : '';
+            const t = document.getElementById('transfer-price-cur'); if (t) t.textContent = label;
+            const l = document.getElementById('link-price-cur'); if (l) l.textContent = label;
+        }
+        window.addEventListener('storage', (e) => { if (e.key === 'preferred_currency') applyCurrencyLabels(); });
 
         async function loadFarmDetails() {
             if (!farmId) {
@@ -1604,6 +1614,7 @@
                     saveBtn.dataset.farmId = farmId;
                     saveBtn.dataset.availableQty = produce.quantity;
                     await populateUserStores('transfer-store-select', true);
+                    applyCurrencyLabels();
                     document.getElementById('transfer-produce-modal').classList.remove('hidden');
                 };
             });
@@ -1633,6 +1644,7 @@
                     saveBtn.dataset.farmId = farmId;
                     saveBtn.dataset.availableQty = produce.quantity;
                     await populateUserStores('link-store-select');
+                    applyCurrencyLabels();
                     document.getElementById('link-produce-modal').classList.remove('hidden');
                 };
             });
@@ -2335,6 +2347,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             initializePage();
             loadProduceHistory();
+            applyCurrencyLabels();
         });
 
         window.testStoreLinking = async function() {
