@@ -598,271 +598,83 @@
 
             <!-- Wallet Management Section -->
             <section id="wallet" class="section-content">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
                     <div>
-                        <h2 class="text-3xl font-bold text-emerald-800">Wallet Management</h2>
-                        <p class="text-gray-600">See balances, cash out quickly, and keep payouts organized.</p>
+                        <h2 class="fr text-3xl font-bold text-emerald-900">Wallet &amp; Payouts</h2>
+                        <p class="text-gray-500">Track escrow earnings and manage where your money is paid.</p>
                     </div>
-                    <div class="flex gap-2 flex-wrap">
-                        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-800 rounded-lg text-sm font-semibold hover:bg-gray-50 transition">
-                            <i class="fas fa-plus"></i> Add Funds
-                        </button>
-                        <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
-                            <i class="fas fa-arrow-down"></i> Withdraw
-                        </button>
+                    <button id="wallet-refresh" type="button" class="self-start inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition shadow-sm"><i class="fas fa-rotate-right"></i> Refresh</button>
+                </div>
+
+                <div class="flex items-start gap-3 p-4 rounded-2xl mb-6" style="background:var(--cream);border:1px solid var(--line)">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0"><i class="fas fa-shield-halved"></i></div>
+                    <div class="text-sm text-gray-600">
+                        <p class="font-semibold text-gray-800">Secured by Flutterwave &amp; escrow</p>
+                        <p>Buyers pay into escrow on Flutterwave’s encrypted checkout — card details never touch Agricore. Funds are released to your payout account once the buyer confirms delivery.</p>
                     </div>
                 </div>
 
-                <!-- Wallet Balance Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-xl">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <p class="text-sm font-medium opacity-90">Available Balance</p>
-                                <p class="text-xs opacity-75">Ready to withdraw</p>
-                            </div>
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(255,255,255,0.2)">
-                                <i class="fas fa-wallet text-xl"></i>
-                            </div>
-                        </div>
-                        <p class="text-4xl font-bold mb-2">₦0.00</p>
-                        <div class="flex items-center gap-2 text-sm opacity-80">
-                            <i class="fas fa-arrow-up"></i> <span>+0% vs last 7 days</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-amber-100 rounded-2xl p-6 shadow-sm">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-800">Pending Balance</p>
-                                <p class="text-xs text-gray-500">Payouts in progress</p>
-                            </div>
-                            <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center">
-                                <i class="fas fa-clock text-amber-600 text-xl"></i>
-                            </div>
-                        </div>
-                        <p class="text-3xl font-bold text-gray-900 mb-2">₦0.00</p>
-                        <p class="text-xs text-gray-500">Typical processing 2–5 business days</p>
-                    </div>
-
-                    <div class="bg-white border border-blue-100 rounded-2xl p-6 shadow-sm">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-800">Total Earnings</p>
-                                <p class="text-xs text-gray-500">All-time</p>
-                            </div>
-                            <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
-                                <i class="fas fa-chart-line text-blue-600 text-xl"></i>
-                            </div>
-                        </div>
-                        <p class="text-3xl font-bold text-gray-900 mb-2">₦0.00</p>
-                        <p class="text-xs text-emerald-600 font-medium"><i class="fas fa-arrow-up"></i> +0% this month</p>
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center"><i class="fas fa-lock"></i></div></div><p class="fr text-2xl font-bold text-gray-900" id="wallet-held">—</p><p class="text-sm font-semibold text-gray-700 mt-1">Held in escrow</p><p class="text-xs text-gray-400">Paid by buyers, awaiting delivery confirmation</p></div>
+                    <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center"><i class="fas fa-circle-check"></i></div></div><p class="fr text-2xl font-bold text-gray-900" id="wallet-released">—</p><p class="text-sm font-semibold text-gray-700 mt-1">Released to you</p><p class="text-xs text-gray-400">Sent to your payout account</p></div>
+                    <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center"><i class="fas fa-hourglass-half"></i></div></div><p class="fr text-2xl font-bold text-gray-900" id="wallet-pending">—</p><p class="text-sm font-semibold text-gray-700 mt-1">Awaiting funding</p><p class="text-xs text-gray-400">Orders not yet paid by the buyer</p></div>
                 </div>
 
-                <!-- Bank Details Section -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-                    <h3 class="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-building-columns text-emerald-600"></i>
-                        Store Bank Details
-                    </h3>
-                    <form id="bank-details-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Account Name</label>
-                            <input type="text" id="bank-account-name" name="account_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Account Number</label>
-                            <input type="text" id="bank-account-number" name="account_number" maxlength="20" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Bank Name</label>
-                            <input type="text" id="bank-name" name="bank_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        </div>
-                        <div class="col-span-full flex gap-2">
-                            <button type="submit" class="px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition flex items-center gap-2">
-                                <i class="fas fa-save"></i> Save Bank Details
-                            </button>
-                            <span id="bank-details-status" class="text-sm text-gray-600"></span>
-                        </div>
-                    </form>
-                    <div id="bank-details-display" class="hidden mt-4">
-                        <h4 class="font-semibold text-gray-800 mb-2">Current Bank Details</h4>
-                        <ul class="text-gray-700 text-sm space-y-1">
-                            <li><strong>Account Name:</strong> <span id="display-account-name"></span></li>
-                            <li><strong>Account Number:</strong> <span id="display-account-number"></span></li>
-                            <li><strong>Bank Name:</strong> <span id="display-bank-name"></span></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Card Management Section -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-                    <h3 class="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-credit-card text-emerald-600"></i>
-                        Payment Methods
-                    </h3>
-                    <div class="mb-6">
-                        <h4 class="font-semibold text-gray-800 mb-4">Add Card</h4>
-                        <form id="card-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="col-span-full">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Cardholder Name</label>
-                                <input type="text" id="cardholder-name" placeholder="John Doe" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            </div>
-                            <div class="col-span-full">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Card Number</label>
-                                <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <div class="flex items-center gap-2 mb-1"><i class="fas fa-building-columns text-emerald-600"></i><h3 class="font-bold text-gray-800">Payout destination</h3></div>
+                        <p class="text-sm text-gray-400 mb-4">Where Agricore sends your released funds.</p>
+                        <div id="po-current" class="hidden mb-4 p-4 rounded-xl border border-emerald-100 bg-emerald-50"></div>
+                        <form id="payout-form" class="space-y-4">
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" id="po-tab-momo" class="po-tab px-3 py-2 rounded-xl text-sm font-semibold border-2 transition"><i class="fas fa-mobile-screen-button"></i> Mobile Money</button>
+                                <button type="button" id="po-tab-bank" class="po-tab px-3 py-2 rounded-xl text-sm font-semibold border-2 transition"><i class="fas fa-building-columns"></i> Bank</button>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Expiry Date</label>
-                                <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Account holder name</label>
+                                <input type="text" id="po-name" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Full name on the account">
                             </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">CVV</label>
-                                <input type="text" id="card-cvv" placeholder="123" maxlength="4" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <div id="po-momo-fields" class="space-y-4">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Network</label>
+                                        <select id="po-network" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500"><option value="MTN">MTN</option><option value="AIRTEL">Airtel</option></select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Mobile number</label>
+                                        <input type="tel" id="po-phone" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="+2567XXXXXXXX">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-span-full">
-                                <button type="submit" class="w-full px-4 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition flex items-center justify-center gap-2">
-                                    <i class="fas fa-plus"></i> Add Card
-                                </button>
+                            <div id="po-bank-fields" class="space-y-4 hidden">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Bank code</label>
+                                        <input type="text" id="po-bank-code" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="e.g. 044">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Account number</label>
+                                        <input type="text" id="po-acct" inputmode="numeric" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Account number">
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-400">Use your Flutterwave bank code (e.g. 044 = Access Bank).</p>
+                            </div>
+                            <div class="flex items-center gap-3 pt-1">
+                                <button type="submit" id="po-save" class="btn-primary px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2"><i class="fas fa-shield-halved"></i> Save destination</button>
+                                <span id="po-status" class="text-sm text-gray-500"></span>
                             </div>
                         </form>
                     </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-800 mb-4">Your Cards</h4>
-                        <div id="cards-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="p-4 border border-gray-200 rounded-lg text-center text-gray-500 col-span-full">
-                                <i class="fas fa-inbox text-2xl mb-2"></i>
-                                <p>No cards added yet</p>
+
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2"><i class="fas fa-receipt text-emerald-600"></i><h3 class="font-bold text-gray-800">Settlements</h3></div>
+                            <div class="flex items-center gap-2">
+                                <select id="settlement-filter" class="text-xs border border-gray-200 rounded-lg px-2 py-1 text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"><option value="all">All</option><option value="released">Released</option><option value="held">Held</option><option value="pending">Pending</option></select>
+                                <button id="settlements-export" type="button" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800"><i class="fas fa-download"></i> CSV</button>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-                    <h3 class="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-bolt text-amber-500"></i>
-                        Quick Actions
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                        <button class="p-4 border border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
-                            <div class="flex items-center gap-3 mb-2">
-                                <span class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center"><i class="fas fa-money-bill-transfer"></i></span>
-                                <div>
-                                    <p class="font-semibold text-gray-900">Transfer</p>
-                                    <p class="text-xs text-gray-500">Move funds between wallets</p>
-                                </div>
-                            </div>
-                        </button>
-                        <button class="p-4 border border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition text-left">
-                            <div class="flex items-center gap-3 mb-2">
-                                <span class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center"><i class="fas fa-building-columns"></i></span>
-                                <div>
-                                    <p class="font-semibold text-gray-900">Add Bank</p>
-                                    <p class="text-xs text-gray-500">Link payout destination</p>
-                                </div>
-                            </div>
-                        </button>
-                        <button class="p-4 border border-gray-200 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition text-left">
-                            <div class="flex items-center gap-3 mb-2">
-                                <span class="w-10 h-10 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center"><i class="fas fa-receipt"></i></span>
-                                <div>
-                                    <p class="font-semibold text-gray-900">Export</p>
-                                    <p class="text-xs text-gray-500">Statements & receipts</p>
-                                </div>
-                            </div>
-                        </button>
-                        <button class="p-4 border border-gray-200 rounded-xl hover:border-orange-500 hover:bg-orange-50 transition text-left">
-                            <div class="flex items-center gap-3 mb-2">
-                                <span class="w-10 h-10 rounded-lg bg-orange-50 text-orange-700 flex items-center justify-center"><i class="fas fa-sliders-h"></i></span>
-                                <div>
-                                    <p class="font-semibold text-gray-900">Preferences</p>
-                                    <p class="text-xs text-gray-500">Notifications & limits</p>
-                                </div>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Transaction History -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-                        <div>
-                            <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                                <i class="fas fa-history text-emerald-600"></i>
-                                Transaction History
-                            </h3>
-                            <p class="text-sm text-gray-500">Your latest wallet activity.</p>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
-                                <option>All</option>
-                                <option>Credits</option>
-                                <option>Debits</option>
-                                <option>Withdrawals</option>
-                            </select>
-                            <button class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-200 transition">
-                                <i class="fas fa-download"></i> Export
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto rounded-xl border border-gray-100">
-                        <table class="w-full">
-                            <thead class="bg-gray-50">
-                                <tr class="border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                                    <th class="text-left py-3 px-4">Date</th>
-                                    <th class="text-left py-3 px-4">Transaction ID</th>
-                                    <th class="text-left py-3 px-4">Description</th>
-                                    <th class="text-left py-3 px-4">Type</th>
-                                    <th class="text-right py-3 px-4">Amount</th>
-                                    <th class="text-center py-3 px-4">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="transactions-list" class="text-sm">
-                                <tr>
-                                    <td colspan="6" class="py-12 text-center">
-                                        <div class="flex flex-col items-center gap-2 text-gray-500">
-                                            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                                                <i class="fas fa-receipt text-gray-400"></i>
-                                            </div>
-                                            <p class="font-medium">No transactions yet</p>
-                                            <p class="text-xs text-gray-400">Activity will appear here as soon as it happens.</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Bank Accounts -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-8">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-                        <div>
-                            <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                                <i class="fas fa-building-columns text-emerald-600"></i>
-                                Linked Bank Accounts
-                            </h3>
-                            <p class="text-sm text-gray-500">Where we send your payouts.</p>
-                        </div>
-                        <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
-                            <i class="fas fa-plus"></i> Add Account
-                        </button>
-                    </div>
-
-                    <div id="bank-accounts-list" class="space-y-4">
-                        <div class="border-2 border-dashed border-gray-200 rounded-xl p-10 text-center">
-                            <div class="w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <i class="fas fa-building-columns text-gray-400 text-xl"></i>
-                            </div>
-                            <p class="text-gray-700 font-semibold mb-1">No bank accounts linked</p>
-                            <p class="text-sm text-gray-500 mb-3">Connect a bank to receive withdrawals.</p>
-                            <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
-                                <i class="fas fa-plus"></i> Link First Account
-                            </button>
-                        </div>
+                        <div id="settlements-list" class="space-y-2" style="max-height:24rem;overflow:auto"></div>
                     </div>
                 </div>
             </section>
@@ -1345,6 +1157,9 @@
                 if (sectionId === 'create-advertisement') {
                     loadMyAds();
                 }
+                if (sectionId === 'wallet') {
+                    loadWallet();
+                }
                 // Close mobile menu if open
                 if (window.innerWidth < 768) {
                     document.getElementById('sidebar').classList.remove('open');
@@ -1352,54 +1167,6 @@
             });
         });
 
-        // --- Bank Details Logic (payout account) ---
-        let payoutAccountId = null;
-        async function fetchBankDetails() {
-            try {
-                const resp = await fetch('/api/payout-accounts/', {
-                    headers: { 'Authorization': 'Bearer ' + (token || '') }
-                });
-                if (!resp.ok) throw new Error('No bank details found');
-                const list = await resp.json();
-                const data = Array.isArray(list) ? list[0] : (list.results ? list.results[0] : list);
-                if (data && data.account_name && data.account_number && data.account_bank) {
-                    payoutAccountId = data.id;
-                    document.getElementById('display-account-name').textContent = data.account_name;
-                    document.getElementById('display-account-number').textContent = data.account_number;
-                    document.getElementById('display-bank-name').textContent = data.account_bank;
-                    document.getElementById('bank-details-display').classList.remove('hidden');
-                }
-            } catch (e) {
-                document.getElementById('bank-details-display').classList.add('hidden');
-            }
-        }
-
-        document.getElementById('bank-details-form')?.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const account_name = document.getElementById('bank-account-name').value.trim();
-            const account_number = document.getElementById('bank-account-number').value.trim();
-            const account_bank = document.getElementById('bank-name').value.trim();
-            const status = document.getElementById('bank-details-status');
-            status.textContent = 'Saving...';
-            try {
-                const resp = await fetch(
-                    payoutAccountId ? `/api/payout-accounts/${payoutAccountId}/` : '/api/payout-accounts/',
-                    {
-                        method: payoutAccountId ? 'PATCH' : 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') },
-                        body: JSON.stringify({ account_name, account_number, account_bank })
-                    }
-                );
-                if (!resp.ok) throw new Error('Failed to save');
-                status.textContent = 'Saved!';
-                fetchBankDetails();
-            } catch (err) {
-                status.textContent = 'Error saving bank details';
-            }
-        });
-
-        fetchBankDetails();
-        // --- End Bank Details Logic ---
 
         // Mobile menu toggle
         document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
@@ -1413,7 +1180,7 @@
 
         document.getElementById('sidebar-wallet')?.addEventListener('click', () => {
             showSection('wallet');
-            loadPaymentCards();
+            loadWallet();
         });
 
 
@@ -3003,153 +2770,138 @@
             }
         });
 
-        // ---- Payment Card Management ----
-        async function loadPaymentCards() {
-            const cardsList = document.getElementById('cards-list');
-            if (!cardsList) return;
+        // ===== Wallet & Payouts (escrow earnings + Flutterwave payout account) =====
+        let payoutAccount = null;
+        let escrowData = [];
+        let poMethod = 'momo';
+        let settlementFilter = 'all';
+        let walletControlsWired = false;
 
-            try {
-                const response = await fetch(`${API_BASE}/payment-cards/`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+        const CUR_SYM = { NGN: '\u20a6', USD: '$', UGX: 'USh ', KES: 'KSh ', GHS: 'GH\u20b5', ZAR: 'R', TZS: 'TSh ', RWF: 'FRw ' };
+        function walletMoney(amount, cur){ const c = String(cur || '').toUpperCase(); const sym = CUR_SYM[c] || (c ? c + ' ' : ''); return sym + Number(amount || 0).toLocaleString(undefined, { maximumFractionDigits: 2 }); }
+        function maskAcct(s){ s = String(s || ''); return s.length <= 4 ? s : '\u2022\u2022\u2022\u2022 ' + s.slice(-4); }
+        function walletStoreId(){ if (typeof currentStoreId !== 'undefined' && currentStoreId != null) return currentStoreId; return new URLSearchParams(location.search).get('id'); }
+        function escListFrom(d){ return Array.isArray(d) ? d : (d && d.results ? d.results : []); }
+        async function walletApi(path, opts){ const o = opts || {}; const headers = { 'Authorization': 'Bearer ' + (token || '') }; if (o.body) headers['Content-Type'] = 'application/json'; return fetch(API_BASE + '/' + path, Object.assign({ headers }, o)); }
 
-                if (!response.ok) throw new Error('Failed to fetch cards');
+        const ESC_BADGE = { pending: 'bg-amber-50 text-amber-700', held: 'bg-blue-50 text-blue-700', released: 'bg-emerald-50 text-emerald-700', refunded: 'bg-gray-100 text-gray-500', disputed: 'bg-red-50 text-red-600' };
+        function escBadge(s){ s = String(s || '').toLowerCase(); const cls = ESC_BADGE[s] || 'bg-gray-100 text-gray-500'; return '<span class="px-2 py-0.5 rounded-full text-xs font-semibold ' + cls + '">' + (s ? s.charAt(0).toUpperCase() + s.slice(1) : '\u2014') + '</span>'; }
+        function escOrderId(e){ const o = e.order; return o && (o.id != null ? o.id : o); }
 
-                const cards = await response.json();
-                const cardsArray = Array.isArray(cards) ? cards : (cards.results || []);
-
-                if (cardsArray.length === 0) {
-                    cardsList.innerHTML = `
-                        <div class="p-4 border border-gray-200 rounded-lg text-center text-gray-500 col-span-full">
-                            <i class="fas fa-inbox text-2xl mb-2"></i>
-                            <p>No cards added yet</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                cardsList.innerHTML = cardsArray.map(card => `
-                    <div class="p-4 border-2 ${card.is_default ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200'} rounded-lg">
-                        <div class="flex items-start justify-between mb-3">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-credit-card text-2xl ${card.is_default ? 'text-emerald-600' : 'text-gray-400'}"></i>
-                                <div>
-                                    <p class="font-semibold text-gray-900">${card.card_brand || 'Card'}</p>
-                                    <p class="text-sm text-gray-600">•••• ${card.card_number_last4}</p>
-                                </div>
-                            </div>
-                            ${card.is_default ? '<span class="px-2 py-1 bg-emerald-600 text-white text-xs rounded-full">Default</span>' : ''}
-                        </div>
-                        <p class="text-xs text-gray-500 mb-3">${card.cardholder_name}</p>
-                        <p class="text-xs text-gray-500 mb-3">Expires: ${card.expiry_month.toString().padStart(2, '0')}/${card.expiry_year}</p>
-                        <div class="flex gap-2">
-                            ${!card.is_default ? `<button onclick="setDefaultCard(${card.id})" class="flex-1 px-3 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition">Set Default</button>` : ''}
-                            <button onclick="deleteCard(${card.id})" class="flex-1 px-3 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition">Remove</button>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Error loading cards:', error);
-                cardsList.innerHTML = `
-                    <div class="p-4 border border-red-200 rounded-lg text-center text-red-500 col-span-full">
-                        <i class="fas fa-exclamation-circle text-2xl mb-2"></i>
-                        <p>Failed to load cards</p>
-                    </div>
-                `;
-            }
+        async function loadWallet(){
+            wireWalletControls();
+            ['wallet-held', 'wallet-released', 'wallet-pending'].forEach(id => { const e = document.getElementById(id); if (e) e.textContent = '\u2026'; });
+            const sl = document.getElementById('settlements-list'); if (sl) sl.innerHTML = '<div class="agc-skel" style="height:48px;border-radius:10px;margin-bottom:8px"></div><div class="agc-skel" style="height:48px;border-radius:10px"></div>';
+            const sid = walletStoreId();
+            try { const r = await walletApi('payout-accounts/'); if (r.ok) { const list = escListFrom(await r.json()); payoutAccount = list[0] || null; } } catch (e) { payoutAccount = null; }
+            let escrows = [];
+            try { const r = await walletApi('escrows/'); if (r.ok) escrows = escListFrom(await r.json()); } catch (e) {}
+            let orderStore = {};
+            try { await ensureMarketData(); (MKT.orders || []).forEach(o => { const s = o.store; orderStore[Number(o.id)] = Number(s && (s.id != null ? s.id : s)); }); } catch (e) {}
+            escrowData = escrows.filter(e => { const oid = Number(escOrderId(e)); const st = orderStore[oid]; return st == null ? true : Number(st) === Number(sid); });
+            renderWallet();
         }
 
-        window.setDefaultCard = async function(cardId) {
-            try {
-                const response = await fetch(`${API_BASE}/payment-cards/${cardId}/`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ is_default: true })
-                });
+        function renderWallet(){ renderWalletBalances(); renderPayoutAccount(); renderSettlements(); }
 
-                if (!response.ok) throw new Error('Failed to set default card');
+        function renderWalletBalances(){
+            const by = { pending: 0, held: 0, released: 0, refunded: 0, disputed: 0 }; const curCount = {};
+            escrowData.forEach(e => { const s = String(e.status || '').toLowerCase(); const amt = Number(e.amount || 0) || 0; if (by[s] != null) by[s] += amt; const c = e.currency || ''; curCount[c] = (curCount[c] || 0) + 1; });
+            const cur = Object.keys(curCount).sort((a, b) => curCount[b] - curCount[a])[0] || '';
+            const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+            set('wallet-held', walletMoney(by.held, cur));
+            set('wallet-released', walletMoney(by.released, cur));
+            set('wallet-pending', walletMoney(by.pending, cur));
+        }
 
-                await loadPaymentCards();
-            } catch (error) {
-                console.error('Error setting default card:', error);
-                alert('Failed to set default card');
+        function setPoMethod(m){
+            poMethod = m;
+            document.getElementById('po-momo-fields')?.classList.toggle('hidden', m !== 'momo');
+            document.getElementById('po-bank-fields')?.classList.toggle('hidden', m !== 'bank');
+            [['po-tab-momo', m === 'momo'], ['po-tab-bank', m === 'bank']].forEach(pair => {
+                const el = document.getElementById(pair[0]); const on = pair[1]; if (!el) return;
+                el.classList.toggle('border-emerald-500', on); el.classList.toggle('bg-emerald-50', on); el.classList.toggle('text-emerald-700', on);
+                el.classList.toggle('border-gray-200', !on); el.classList.toggle('text-gray-600', !on);
+            });
+        }
+
+        function renderPayoutAccount(){
+            const cur = document.getElementById('po-current'); if (!cur) return;
+            if (!payoutAccount) { cur.classList.add('hidden'); return; }
+            const isMomo = payoutAccount.method === 'momo' || payoutAccount.account_bank === 'MPS';
+            cur.classList.remove('hidden');
+            cur.innerHTML = '<div class="flex items-center justify-between"><div class="flex items-center gap-3">'
+                + '<div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center"><i class="fas ' + (isMomo ? 'fa-mobile-screen-button' : 'fa-building-columns') + '"></i></div>'
+                + '<div><p class="font-semibold text-gray-800">' + escapeHtml(payoutAccount.account_name || 'Your account') + '</p>'
+                + '<p class="text-xs text-gray-500">' + (isMomo ? ('Mobile Money' + (payoutAccount.network ? ' \u00b7 ' + escapeHtml(payoutAccount.network) : '')) : ('Bank ' + escapeHtml(payoutAccount.account_bank || ''))) + ' \u00b7 ' + maskAcct(payoutAccount.account_number) + '</p></div>'
+                + '</div><span class="text-xs font-semibold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">Active</span></div>';
+            const nm = document.getElementById('po-name'); if (nm) nm.value = payoutAccount.account_name || '';
+            if (isMomo) { setPoMethod('momo'); const n = document.getElementById('po-network'); if (n) n.value = payoutAccount.network || 'MTN'; const p = document.getElementById('po-phone'); if (p) p.value = payoutAccount.account_number || ''; }
+            else { setPoMethod('bank'); const bc = document.getElementById('po-bank-code'); if (bc) bc.value = payoutAccount.account_bank || ''; const ac = document.getElementById('po-acct'); if (ac) ac.value = payoutAccount.account_number || ''; }
+            const save = document.getElementById('po-save'); if (save) save.innerHTML = '<i class="fas fa-shield-halved"></i> Update destination';
+        }
+
+        function renderSettlements(){
+            const box = document.getElementById('settlements-list'); if (!box) return;
+            let list = escrowData.slice();
+            if (settlementFilter !== 'all') list = list.filter(e => String(e.status || '').toLowerCase() === settlementFilter);
+            list.sort((a, b) => new Date(b.released_at || b.funded_at || b.created_at || 0) - new Date(a.released_at || a.funded_at || a.created_at || 0));
+            if (!list.length) { box.innerHTML = '<div class="text-center py-8 text-gray-400"><i class="fas fa-receipt text-3xl mb-2"></i><p class="text-sm">No settlements yet.</p></div>'; return; }
+            box.innerHTML = list.map(e => {
+                const d = new Date(e.released_at || e.funded_at || e.created_at || 0); const ds = isNaN(d) ? '' : d.toLocaleDateString();
+                return '<div class="flex items-center justify-between p-3 border border-gray-100 rounded-xl">'
+                    + '<div><p class="text-sm font-semibold text-gray-800">Order #' + escapeHtml(String(escOrderId(e))) + '</p><p class="text-xs text-gray-400">' + ds + '</p></div>'
+                    + '<div class="text-right"><p class="text-sm font-bold text-gray-800">' + walletMoney(e.amount, e.currency) + '</p>' + escBadge(e.status) + '</div></div>';
+            }).join('');
+        }
+
+        async function savePayoutAccount(){
+            const name = document.getElementById('po-name').value.trim();
+            if (!name) { toast('Enter the account holder name.', 'error'); return; }
+            let payload;
+            if (poMethod === 'momo') {
+                const phone = document.getElementById('po-phone').value.trim();
+                const network = document.getElementById('po-network').value;
+                if (!phone) { toast('Enter your mobile money number.', 'error'); return; }
+                payload = { method: 'momo', account_bank: 'MPS', network: network, account_number: phone, account_name: name };
+            } else {
+                const code = document.getElementById('po-bank-code').value.trim();
+                const acct = document.getElementById('po-acct').value.trim();
+                if (!code || !acct) { toast('Enter your bank code and account number.', 'error'); return; }
+                payload = { method: 'bank', account_bank: code, account_number: acct, account_name: name, network: '' };
             }
-        };
-
-        window.deleteCard = async function(cardId) {
-            if (!confirm('Are you sure you want to remove this card?')) return;
-
+            const ok = await confirmDialog({ title: 'Confirm payout destination', message: 'Released funds will be sent here. Make sure these details are correct.', confirmText: 'Save', danger: false });
+            if (!ok) return;
+            const statusEl = document.getElementById('po-status'); if (statusEl) statusEl.textContent = 'Saving\u2026';
             try {
-                const response = await fetch(`${API_BASE}/payment-cards/${cardId}/`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                const r = await walletApi(payoutAccount && payoutAccount.id ? 'payout-accounts/' + payoutAccount.id + '/' : 'payout-accounts/', { method: payoutAccount && payoutAccount.id ? 'PATCH' : 'POST', body: JSON.stringify(payload) });
+                if (!r.ok) { let m = 'Could not save.'; try { const j = await r.json(); m = j.detail || Object.values(j)[0] || m; } catch (e) {} throw new Error(m); }
+                payoutAccount = await r.json();
+                if (statusEl) statusEl.textContent = '';
+                toast('Payout destination saved.', 'success');
+                renderPayoutAccount();
+            } catch (err) { if (statusEl) statusEl.textContent = ''; toast(err.message || 'Could not save.', 'error'); }
+        }
 
-                if (!response.ok) throw new Error('Failed to delete card');
+        function exportSettlementsCSV(){
+            const rows = [['Order', 'Amount', 'Currency', 'Status', 'Date']];
+            escrowData.forEach(e => rows.push([escOrderId(e), e.amount || '', e.currency || '', e.status || '', String(e.released_at || e.funded_at || e.created_at || '').slice(0, 10)]));
+            const csv = rows.map(r => r.map(x => '"' + String(x).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'agricore-settlements.csv'; a.click(); URL.revokeObjectURL(a.href);
+            toast('Exported ' + (rows.length - 1) + ' settlements', 'success');
+        }
 
-                await loadPaymentCards();
-            } catch (error) {
-                console.error('Error deleting card:', error);
-                alert('Failed to delete card');
-            }
-        };
-
-        // Card form submission
-        document.getElementById('card-form')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
-
-            try {
-                const cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
-                const expiry = document.getElementById('card-expiry').value.split('/');
-
-                if (expiry.length !== 2) {
-                    throw new Error('Invalid expiry date format. Use MM/YY');
-                }
-
-                const cardData = {
-                    cardholder_name: document.getElementById('cardholder-name').value.trim(),
-                    card_number: cardNumber,
-                    expiry_month: parseInt(expiry[0]),
-                    expiry_year: parseInt('20' + expiry[1]),
-                    cvv: document.getElementById('card-cvv').value,
-                    is_default: false
-                };
-
-                const response = await fetch(`${API_BASE}/payment-cards/`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(cardData)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Failed to add card');
-                }
-
-                alert('Card added successfully!');
-                e.target.reset();
-                await loadPaymentCards();
-            } catch (error) {
-                console.error('Error adding card:', error);
-                alert('Error: ' + error.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-            }
-        });
-
-        // Load cards when wallet section is shown
-        document.querySelector('[data-section="wallet"]')?.addEventListener('click', loadPaymentCards);
+        function wireWalletControls(){
+            if (walletControlsWired) return; walletControlsWired = true;
+            document.getElementById('po-tab-momo')?.addEventListener('click', () => setPoMethod('momo'));
+            document.getElementById('po-tab-bank')?.addEventListener('click', () => setPoMethod('bank'));
+            document.getElementById('payout-form')?.addEventListener('submit', e => { e.preventDefault(); savePayoutAccount(); });
+            document.getElementById('settlement-filter')?.addEventListener('change', e => { settlementFilter = e.target.value; renderSettlements(); });
+            document.getElementById('settlements-export')?.addEventListener('click', exportSettlementsCSV);
+            document.getElementById('wallet-refresh')?.addEventListener('click', () => { MKT.loaded = false; loadWallet(); });
+            setPoMethod('momo');
+        }
 
         // ===== Advertisement studio: templates, live preview, validation, My Ads =====
         const AD_TEMPLATES = [
