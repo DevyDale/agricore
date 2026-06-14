@@ -216,7 +216,7 @@
                             <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Products Live</p>
                             <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-sm" style="background:linear-gradient(135deg,var(--primary),#0f7a4b)"><i class="fas fa-box"></i></div>
                         </div>
-                        <p class="fr text-3xl font-bold text-gray-900 mb-1">0</p>
+                        <p class="fr text-3xl font-bold text-gray-900 mb-1" id="stat-products-live">0</p>
                         <p class="text-xs text-gray-500">Published items</p>
                     </div>
                     <div class="relative bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all overflow-hidden" style="border:1px solid #ead9b0">
@@ -1851,6 +1851,11 @@
 
         // Utility to render product cards
         function renderProducts(products) {
+            const liveEl = document.getElementById('stat-products-live');
+            if (liveEl) {
+                const list = Array.isArray(products) ? products : [];
+                liveEl.textContent = list.filter(p => p.is_published !== false).length;
+            }
             const container = document.getElementById('store-products');
             if (container) {
                 container.style.minHeight = 'calc(100vh - 280px)';
@@ -2180,14 +2185,19 @@
         // Run on page load
         async function loadAttachedFarmsUI(stores) {
             const farmsContainer = document.getElementById('attached-farms');
-            farmsContainer.innerHTML = '';
-            if (!stores || !Array.isArray(stores) || stores.length === 0) return;
+            farmsContainer.innerHTML = `<div class="col-span-full flex items-center justify-center gap-2 py-8 text-gray-500"><i class="fas fa-spinner fa-spin text-emerald-600 text-xl"></i><span class="text-sm">Loading attached farms...</span></div>`;
+            if (!stores || !Array.isArray(stores) || stores.length === 0) {
+                farmsContainer.innerHTML = `<div class="text-sm text-gray-500">No farms attached to this store yet.</div>`;
+                return;
+            }
+            let cleared = false;
             for (const s of stores) {
                 if (!s.farm) continue;
                 try {
                     const res = await fetch(`${API_BASE}/farms/${s.farm}/`, { headers: { 'Authorization': 'Bearer ' + (token || '') } });
                     if (res.ok) {
                         const farm = await res.json();
+                        if (!cleared) { farmsContainer.innerHTML = ''; cleared = true; }
                         const div = document.createElement('div');
                         div.className = 'group flex items-center gap-3 p-4 rounded-xl bg-white hover:shadow-md transition cursor-pointer';
                         div.style.border = '1px solid var(--green-line)';
@@ -2203,6 +2213,7 @@
                     }
                 } catch (err) { console.warn('Failed to load farm details', err); }
             }
+            if (!cleared) farmsContainer.innerHTML = '';
             if (farmsContainer.children.length === 0) {
                 farmsContainer.innerHTML = `<div class="text-sm text-gray-500">No farms attached to this store yet.</div>`;
             }
