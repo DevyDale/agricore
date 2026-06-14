@@ -190,107 +190,115 @@
                     <p class="text-gray-600">View and manage your store details</p>
                 </div>
 
+                <!-- Stat cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-white border border-emerald-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
-                        <div class="flex items-center justify-between mb-2">
+                    <div class="relative bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all overflow-hidden" style="border:1px solid var(--green-line)">
+                        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--primary),var(--primary-dark))"></div>
+                        <div class="flex items-center justify-between mb-3">
                             <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Revenue</p>
-                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
-                                <i class="fas fa-money-bill-wave text-white"></i>
-                            </div>
+                            <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-sm" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark))"><i class="fas fa-money-bill-wave"></i></div>
                         </div>
-                        <p class="text-3xl font-bold text-gray-900 mb-1">₦0</p>
+                        <p class="fr text-3xl font-bold text-gray-900 mb-1">₦0</p>
                         <p class="text-xs text-gray-500">vs prev. period</p>
                     </div>
-                    <div class="bg-white border border-blue-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
-                        <div class="flex items-center justify-between mb-2">
+                    <div class="relative bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all overflow-hidden" style="border:1px solid var(--green-line)">
+                        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#0f7a4b,var(--secondary))"></div>
+                        <div class="flex items-center justify-between mb-3">
                             <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Orders</p>
-                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                                <i class="fas fa-shopping-cart text-white"></i>
-                            </div>
+                            <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-sm" style="background:linear-gradient(135deg,#0f7a4b,var(--secondary))"><i class="fas fa-shopping-cart"></i></div>
                         </div>
-                        <p class="text-3xl font-bold text-gray-900 mb-1">0</p>
+                        <p class="fr text-3xl font-bold text-gray-900 mb-1">0</p>
                         <p class="text-xs text-gray-500">Pending / Completed</p>
                     </div>
-                    <div class="bg-white border border-purple-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
-                        <div class="flex items-center justify-between mb-2">
+                    <div class="relative bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all overflow-hidden" style="border:1px solid var(--green-line)">
+                        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--primary),#0f7a4b)"></div>
+                        <div class="flex items-center justify-between mb-3">
                             <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Products Live</p>
-                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
-                                <i class="fas fa-box text-white"></i>
-                            </div>
+                            <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-sm" style="background:linear-gradient(135deg,var(--primary),#0f7a4b)"><i class="fas fa-box"></i></div>
                         </div>
-                        <p class="text-3xl font-bold text-gray-900 mb-1">0</p>
+                        <p class="fr text-3xl font-bold text-gray-900 mb-1">0</p>
                         <p class="text-xs text-gray-500">Published items</p>
                     </div>
-                    <div class="bg-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
-                        <div class="flex items-center justify-between mb-2">
+                    <div class="relative bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all overflow-hidden" style="border:1px solid #ead9b0">
+                        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),#9a7b25)"></div>
+                        <div class="flex items-center justify-between mb-3">
                             <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Store Rating</p>
-                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                                <i class="fas fa-star text-white"></i>
-                            </div>
+                            <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-sm" style="background:linear-gradient(135deg,var(--accent),#9a7b25)"><i class="fas fa-star"></i></div>
                         </div>
                         <div class="flex items-center gap-2 mb-1">
-                            <p class="text-3xl font-bold text-gray-900" id="store-info-rating">0.0</p>
-                            <i class="fas fa-star text-yellow-400"></i>
+                            <p class="fr text-3xl font-bold text-gray-900" id="store-info-rating">0.0</p>
+                            <i class="fas fa-star" style="color:var(--accent)"></i>
                         </div>
                         <p class="text-xs text-gray-500">Customer reviews</p>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-                    <h3 class="font-bold text-lg text-gray-800 mb-4 flex items-center gap-2">
-                        <i class="fas fa-store text-emerald-600"></i>
-                        Store Details
-                    </h3>
-                    <div id="store-details" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-4">
-                        <!-- Dynamically populated store details here -->
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-store text-emerald-600 w-4"></i>
-                            <div><span class="text-gray-500">Store:</span> <span id="store-name-detail" class="font-medium text-gray-800 ml-1">Loading...</span></div>
+                <!-- Store identity + details -->
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden mb-6" style="border:1px solid var(--green-line)">
+                    <div class="px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4" style="background:linear-gradient(135deg,#eef6f0,#f6f1e6);border-bottom:1px solid var(--line)">
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl flex-shrink-0 shadow-sm" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark))"><i class="fas fa-store"></i></div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="fr text-2xl font-bold text-gray-900 truncate" id="store-name-detail">Loading...</h3>
+                            <div class="flex items-center gap-2 mt-1 flex-wrap">
+                                <span id="store-verified" class="text-gray-800">Loading...</span>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-user text-emerald-600 w-4"></i>
-                            <div><span class="text-gray-500">Owner:</span> <span id="store-owner" class="font-medium text-gray-800 ml-1">Loading...</span></div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-envelope text-emerald-600 w-4"></i>
-                            <div><span class="text-gray-500">Email:</span> <span id="store-email" class="text-gray-800 ml-1">Loading...</span></div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-phone text-emerald-600 w-4"></i>
-                            <div><span class="text-gray-500">Contact:</span> <span id="store-phone" class="text-gray-800 ml-1">Loading...</span></div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-globe text-emerald-600 w-4"></i>
-                            <div><span class="text-gray-500">Countries:</span> <span id="store-countries" class="text-gray-800 ml-1">Loading...</span></div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-emerald-600 w-4"></i>
-                            <div><span class="text-gray-500">Status:</span> <span id="store-verified" class="text-gray-800 ml-1">Loading...</span></div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-dollar-sign text-emerald-600 w-4"></i>
-                            <div><span class="text-gray-500">Value:</span> <span id="store-value" class="font-semibold text-emerald-700 ml-1">Loading...</span></div>
+                        <div class="sm:text-right">
+                            <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Store Value</p>
+                            <p class="fr text-2xl font-bold text-emerald-700" id="store-value">Loading...</p>
                         </div>
                     </div>
-                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                        <div class="flex items-start gap-2">
-                            <i class="fas fa-info-circle text-emerald-600 w-4 mt-0.5 flex-shrink-0"></i>
-                            <div class="flex-1">
-                                <span class="text-gray-600 font-medium text-sm">Description:</span>
-                                <p id="store-description" class="text-gray-800 text-sm mt-1 leading-relaxed">Loading...</p>
+                    <div id="store-details" class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div class="flex items-center gap-3 p-3 rounded-xl" style="border:1px solid var(--green-line)">
+                            <span class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#eef6f0;color:var(--primary-dark)"><i class="fas fa-user"></i></span>
+                            <div class="min-w-0">
+                                <div class="text-xs uppercase tracking-wide text-gray-400 font-semibold">Owner</div>
+                                <div class="font-semibold text-gray-800 truncate" id="store-owner">Loading...</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 rounded-xl" style="border:1px solid var(--green-line)">
+                            <span class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#eef6f0;color:var(--primary-dark)"><i class="fas fa-envelope"></i></span>
+                            <div class="min-w-0">
+                                <div class="text-xs uppercase tracking-wide text-gray-400 font-semibold">Email</div>
+                                <div class="font-semibold text-gray-800 truncate" id="store-email">Loading...</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 rounded-xl" style="border:1px solid var(--green-line)">
+                            <span class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#eef6f0;color:var(--primary-dark)"><i class="fas fa-phone"></i></span>
+                            <div class="min-w-0">
+                                <div class="text-xs uppercase tracking-wide text-gray-400 font-semibold">Contact</div>
+                                <div class="font-semibold text-gray-800 truncate" id="store-phone">Loading...</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 rounded-xl" style="border:1px solid var(--green-line)">
+                            <span class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#eef6f0;color:var(--primary-dark)"><i class="fas fa-globe"></i></span>
+                            <div class="min-w-0">
+                                <div class="text-xs uppercase tracking-wide text-gray-400 font-semibold">Countries</div>
+                                <div class="font-semibold text-gray-800 truncate" id="store-countries">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6">
+                        <div class="rounded-xl p-4" style="border:1px solid var(--green-line);border-left:4px solid var(--primary);background:#f9faf6">
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-info-circle mt-0.5 flex-shrink-0" style="color:var(--primary-dark)"></i>
+                                <div class="flex-1">
+                                    <span class="text-gray-600 font-semibold text-sm">Description</span>
+                                    <p id="store-description" class="text-gray-800 text-sm mt-1 leading-relaxed">Loading...</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-lg p-8">
-                    <h3 class="font-semibold text-xl text-gray-800 mb-6 flex items-center gap-2">
-                        <i class="fas fa-tractor text-emerald-600"></i>
+                <!-- Attached farms -->
+                <div class="bg-white rounded-2xl shadow-sm p-6" style="border:1px solid var(--green-line)">
+                    <h3 class="fr font-bold text-xl text-gray-900 mb-1 flex items-center gap-2">
+                        <span class="w-9 h-9 rounded-lg flex items-center justify-center text-white flex-shrink-0" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark))"><i class="fas fa-tractor"></i></span>
                         Attached Farms
                     </h3>
-                    <div id="attached-farms" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <!-- Dynamically populated farm cards here -->
-                    </div>
+                    <p class="text-sm text-gray-500 mb-5">Farms supplying produce to this store.</p>
+                    <div id="attached-farms" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
             </section>
 
@@ -2181,8 +2189,16 @@
                     if (res.ok) {
                         const farm = await res.json();
                         const div = document.createElement('div');
-                        div.classList.add('bg-white', 'px-4', 'py-2', 'border-2', 'border-emerald-600', 'rounded-lg', 'text-center', 'shadow-sm', 'hover:shadow-md', 'transition-shadow');
-                        div.innerHTML = `<p class="font-semibold text-emerald-700 whitespace-nowrap">${farm.name || 'Unnamed Farm'}</p>`;
+                        div.className = 'group flex items-center gap-3 p-4 rounded-xl bg-white hover:shadow-md transition cursor-pointer';
+                        div.style.border = '1px solid var(--green-line)';
+                        div.innerHTML = `
+                            <span class="w-11 h-11 rounded-xl flex items-center justify-center text-white flex-shrink-0" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark))"><i class="fas fa-tractor"></i></span>
+                            <div class="min-w-0 flex-1">
+                                <p class="font-semibold text-emerald-800 truncate">${farm.name || 'Unnamed Farm'}</p>
+                                <p class="text-xs text-gray-500">Linked farm</p>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-300 group-hover:text-emerald-600 transition-colors"></i>`;
+                        div.onclick = () => { window.location.href = 'individual_farm.html?id=' + farm.id; };
                         farmsContainer.appendChild(div);
                     }
                 } catch (err) { console.warn('Failed to load farm details', err); }
