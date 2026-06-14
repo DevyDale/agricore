@@ -523,6 +523,18 @@
       /* keep the action row from crowding the last field */
       #transfer-produce-modal .flex.justify-end,
       #link-produce-modal .flex.justify-end { margin-top: 1.25rem !important; }
+
+      /* Align the Price / Quantity / Unit row: labels can wrap to 2 lines without
+         knocking the inputs out of line. Reserve a 2-line label block and pin each
+         input to the bottom of its cell so all three line up. */
+      #transfer-produce-modal .grid.grid-cols-3 > div,
+      #link-produce-modal .grid.grid-cols-3 > div { display:flex; flex-direction:column; }
+      #transfer-produce-modal .grid.grid-cols-3 > div > label,
+      #link-produce-modal .grid.grid-cols-3 > div > label {
+        min-height: 2.6rem; line-height: 1.2; margin-bottom: .4rem !important; align-items:flex-start;
+      }
+      #transfer-produce-modal .grid.grid-cols-3 > div > .input-field,
+      #link-produce-modal .grid.grid-cols-3 > div > .input-field { margin-top: auto; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -780,7 +792,7 @@
                 </div>
                 <div class="grid grid-cols-3 gap-4">
                     <div>
-                        <label class="block mb-2 font-semibold text-gray-700">Price (per unit)<span id="transfer-price-cur"></span> *</label>
+                        <label class="block mb-2 font-semibold text-gray-700">Price (per unit)<span id="transfer-price-cur"></span>*</label>
                         <input type="number" step="0.01" id="transfer-price" class="input-field w-full" />
                     </div>
                     <div>
@@ -828,7 +840,7 @@
                 </div>
                 <div class="grid grid-cols-3 gap-4">
                     <div>
-                        <label class="block mb-2 font-semibold text-gray-700">Price (per unit)<span id="link-price-cur"></span> *</label>
+                        <label class="block mb-2 font-semibold text-gray-700">Price (per unit)<span id="link-price-cur"></span>*</label>
                         <input type="number" step="0.01" id="link-price" class="input-field w-full" />
                     </div>
                     <div>
