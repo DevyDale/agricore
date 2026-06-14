@@ -444,62 +444,64 @@
 
             <!-- Product Performance Section -->
             <section id="product-performance" class="section-content">
-                <div class="flex items-center justify-between mb-6">
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
                     <div>
-                        <h3 class="text-2xl font-bold text-emerald-800 mb-2">Product Performance</h3>
-                        <p class="text-gray-600">Deep dive into product-level metrics</p>
+                        <h3 class="fr text-3xl font-bold text-emerald-900">Product Performance</h3>
+                        <p class="text-gray-500">Which products move — units, revenue &amp; stock health over the last 30 days.</p>
                     </div>
-                    <div class="flex gap-2 text-sm">
-                        <button data-pp-sort="top" class="pp-filter-btn px-3 py-2 border border-emerald-600 bg-emerald-600 text-white rounded-lg">Top Sellers</button>
-                        <button data-pp-sort="low" class="pp-filter-btn px-3 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Low Stock</button>
-                        <button data-pp-sort="sold" class="pp-filter-btn px-3 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Most Sold</button>
+                    <div class="flex gap-1 text-sm bg-white border border-gray-100 rounded-xl p-1 shadow-sm self-start">
+                        <button data-pp-sort="top" class="pp-filter-btn px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-semibold transition">Top Sellers</button>
+                        <button data-pp-sort="sold" class="pp-filter-btn px-3 py-1.5 rounded-lg text-gray-600 font-semibold hover:bg-gray-50 transition">Most Sold</button>
+                        <button data-pp-sort="low" class="pp-filter-btn px-3 py-1.5 rounded-lg text-gray-600 font-semibold hover:bg-gray-50 transition">Low Stock</button>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div class="bg-white border border-emerald-100 rounded-xl p-4 shadow-sm">
-                        <p class="text-xs uppercase tracking-wide text-gray-500">Top Product</p>
-                        <p class="text-lg font-semibold text-emerald-700" id="pp-top-product">—</p>
-                        <p class="text-xs text-gray-500">Highest revenue (30d)</p>
+                    <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center"><i class="fas fa-trophy"></i></div>
+                            <p class="text-xs uppercase tracking-wide text-gray-400 font-semibold">Top Product</p>
+                        </div>
+                        <p class="text-lg font-bold text-emerald-700 truncate" id="pp-top-product">—</p>
+                        <p class="text-xs text-gray-400 mt-1">Highest revenue this period</p>
                     </div>
-                    <div class="bg-white border border-blue-100 rounded-xl p-4 shadow-sm">
-                        <p class="text-xs uppercase tracking-wide text-blue-600">Units Sold</p>
-                        <p class="text-2xl font-bold text-blue-700" id="pp-units-sold">0</p>
-                        <p class="text-xs text-gray-500">Past 30 days</p>
+                    <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center"><i class="fas fa-cubes"></i></div>
+                            <p class="text-xs uppercase tracking-wide text-gray-400 font-semibold">Units Sold</p>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900" id="pp-units-sold">0</p>
+                        <p class="text-xs text-gray-400 mt-1">Across all products (30d)</p>
                     </div>
-                    <div class="bg-white border border-orange-100 rounded-xl p-4 shadow-sm">
-                        <p class="text-xs uppercase tracking-wide text-orange-600">Active Listings</p>
-                        <p class="text-2xl font-bold text-orange-700" id="pp-active">0</p>
-                        <p class="text-xs text-gray-500">Published now</p>
+                    <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center"><i class="fas fa-store"></i></div>
+                            <p class="text-xs uppercase tracking-wide text-gray-400 font-semibold">Active Listings</p>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900" id="pp-active">0</p>
+                        <p class="text-xs text-gray-400 mt-1">Published in marketplace</p>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-lg p-6 border border-emerald-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <h4 class="text-lg font-bold text-gray-800">Performance Table</h4>
-                        <div class="flex items-center gap-2 text-sm">
-                            <span class="px-2 py-1 rounded-lg bg-gray-100 text-gray-700">Sort: Revenue</span>
-                            <span class="px-2 py-1 rounded-lg bg-gray-100 text-gray-700">Window: 30d</span>
-                        </div>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                        <h4 class="font-bold text-gray-800">Performance breakdown</h4>
+                        <span class="text-xs text-gray-400 bg-gray-50 px-2.5 py-1 rounded-full">Last 30 days</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
-                                <tr class="border-b border-gray-200">
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Product</th>
-                                    <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Units Sold</th>
-                                    <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Revenue</th>
-                                    <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Stock Level</th>
-                                    <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
+                                <tr class="text-left text-xs uppercase tracking-wide text-gray-400 border-b border-gray-100">
+                                    <th class="py-3 px-5 font-semibold">Product</th>
+                                    <th class="py-3 px-4 font-semibold text-right">Units</th>
+                                    <th class="py-3 px-4 font-semibold text-right">Revenue</th>
+                                    <th class="py-3 px-4 font-semibold">Revenue share</th>
+                                    <th class="py-3 px-4 font-semibold text-right">Stock</th>
+                                    <th class="py-3 px-5 font-semibold text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="product-performance-table">
-                                <tr>
-                                    <td colspan="5" class="text-center py-8 text-gray-500">
-                                        <i class="fas fa-inbox text-4xl mb-2 opacity-50"></i>
-                                        <p>No sales data available yet</p>
-                                    </td>
-                                </tr>
+                                <tr><td colspan="6" class="text-center py-10 text-gray-400"><i class="fas fa-inbox text-4xl mb-2 opacity-50"></i><p>No sales data yet</p></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -716,7 +718,7 @@
                                 <p class="text-sm font-medium opacity-90">Available Balance</p>
                                 <p class="text-xs opacity-75">Ready to withdraw</p>
                             </div>
-                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(255,255,255,0.2)">
                                 <i class="fas fa-wallet text-xl"></i>
                             </div>
                         </div>
@@ -964,149 +966,39 @@
 
             <!-- Orders Section -->
             <section id="orders" class="section-content">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
                     <div>
-                        <h2 class="text-3xl font-bold text-emerald-800">Order Management</h2>
-                        <p class="text-gray-600">Monitor incoming orders, your purchases, and shipments.</p>
+                        <h2 class="fr text-3xl font-bold text-emerald-900">Orders</h2>
+                        <p class="text-gray-500">Incoming sales, your purchases, and live fulfilment — all in one place.</p>
                     </div>
-                    <div class="flex gap-3">
-                        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-800 rounded-lg text-sm font-semibold hover:bg-gray-50 transition">
-                            <i class="fas fa-filter"></i> Filter
-                        </button>
-                        <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">
-                            <i class="fas fa-download"></i> Export
-                        </button>
-                    </div>
+                    <button id="orders-refresh" onclick="MKT.loaded=false; loadOrders();" class="self-start inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition shadow-sm">
+                        <i class="fas fa-rotate-right"></i> Refresh
+                    </button>
                 </div>
 
-                <!-- Order Summary -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <div class="bg-white border border-emerald-100 rounded-xl p-5 shadow-sm hover:shadow-md transition" id="orders-incoming-card">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-emerald-700">Incoming</span>
-                            <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
-                                <i class="fas fa-inbox"></i>
-                            </div>
-                        </div>
-                        <p class="text-3xl font-bold text-gray-900" id="orders-incoming-count">0</p>
-                        <p class="text-xs text-gray-500">Orders placed by customers</p>
-                    </div>
-
-                    <div class="bg-white border border-blue-100 rounded-xl p-5 shadow-sm hover:shadow-md transition" id="orders-purchases-card">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-blue-700">My Purchases</span>
-                            <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
-                                <i class="fas fa-shopping-cart"></i>
-                            </div>
-                        </div>
-                        <p class="text-3xl font-bold text-gray-900" id="orders-purchases-count">0</p>
-                        <p class="text-xs text-gray-500">Orders you placed on other stores</p>
-                    </div>
-
-                    <div class="bg-white border border-teal-100 rounded-xl p-5 shadow-sm hover:shadow-md transition" id="orders-outgoing-card">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-teal-700">Outgoing</span>
-                            <div class="w-10 h-10 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center">
-                                <i class="fas fa-shipping-fast"></i>
-                            </div>
-                        </div>
-                        <p class="text-3xl font-bold text-gray-900" id="orders-outgoing-count">0</p>
-                        <p class="text-xs text-gray-500">Orders currently being fulfilled</p>
-                    </div>
-
-                    <div class="bg-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition" id="orders-issues-card">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-amber-700">Needs Attention</span>
-                            <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                        </div>
-                        <p class="text-3xl font-bold text-gray-900" id="orders-issues-count">0</p>
-                        <p class="text-xs text-gray-500">Refunds, cancellations, or delays</p>
-                    </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-7">
+                    <div class="bg-white border border-gray-100 rounded-2xl p-4 md:p-5 shadow-sm"><div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3"><i class="fas fa-inbox"></i></div><p class="text-2xl md:text-3xl font-bold text-gray-900" id="orders-incoming-count">0</p><p class="text-xs text-gray-500 mt-1">Incoming orders</p></div>
+                    <div class="bg-white border border-gray-100 rounded-2xl p-4 md:p-5 shadow-sm"><div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center mb-3"><i class="fas fa-shopping-cart"></i></div><p class="text-2xl md:text-3xl font-bold text-gray-900" id="orders-purchases-count">0</p><p class="text-xs text-gray-500 mt-1">My purchases</p></div>
+                    <div class="bg-white border border-gray-100 rounded-2xl p-4 md:p-5 shadow-sm"><div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center mb-3"><i class="fas fa-shipping-fast"></i></div><p class="text-2xl md:text-3xl font-bold text-gray-900" id="orders-outgoing-count">0</p><p class="text-xs text-gray-500 mt-1">Being fulfilled</p></div>
+                    <div class="bg-white border border-gray-100 rounded-2xl p-4 md:p-5 shadow-sm"><div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-3"><i class="fas fa-triangle-exclamation"></i></div><p class="text-2xl md:text-3xl font-bold text-gray-900" id="orders-issues-count">0</p><p class="text-xs text-gray-500 mt-1">Needs attention</p></div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Incoming Orders -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-emerald-500 to-teal-600 text-white">
-                            <div>
-                                <h4 class="text-lg font-bold">Incoming Orders</h4>
-                                <p class="text-sm opacity-90">Orders placed by your customers</p>
-                            </div>
-                            <span class="text-sm bg-white/20 px-3 py-1 rounded-full" id="incoming-orders-pill">0 open</span>
-                        </div>
-                        <div id="incoming-orders-list" class="p-6">
-                            <div class="text-center py-10 text-gray-400">
-                                <i class="fas fa-shopping-bag text-4xl mb-2"></i>
-                                <p class="font-semibold text-gray-700">No incoming orders</p>
-                                <p class="text-sm">Orders will show up here once customers start buying.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- My Purchases -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
-                            <div>
-                                <h4 class="text-lg font-bold">My Purchases</h4>
-                                <p class="text-sm opacity-90">Orders you have placed elsewhere</p>
-                            </div>
-                            <span class="text-sm bg-white/20 px-3 py-1 rounded-full" id="my-orders-pill">0 active</span>
-                        </div>
-                        <div id="my-orders-list" class="p-6">
-                            <div class="text-center py-10 text-gray-400">
-                                <i class="fas fa-receipt text-4xl mb-2"></i>
-                                <p class="font-semibold text-gray-700">No purchases yet</p>
-                                <p class="text-sm">Your purchase history will appear here.</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"><div class="flex items-center justify-between px-5 py-4 border-b border-gray-100"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center"><i class="fas fa-inbox"></i></div><div><h4 class="font-bold text-gray-800 leading-tight">Incoming Orders</h4><p class="text-xs text-gray-400">Placed by your customers</p></div></div><span id="incoming-orders-pill" class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700">0 open</span></div><div id="incoming-orders-list" class="p-4 md:p-5" style="max-height:30rem;overflow:auto"><div class="text-center py-10 text-gray-400"><i class="fas fa-shopping-bag text-4xl mb-2"></i><p class="font-semibold text-gray-700">No incoming orders</p><p class="text-sm">Orders appear here once customers start buying.</p></div></div></div>
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"><div class="flex items-center justify-between px-5 py-4 border-b border-gray-100"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center"><i class="fas fa-receipt"></i></div><div><h4 class="font-bold text-gray-800 leading-tight">My Purchases</h4><p class="text-xs text-gray-400">Orders you placed elsewhere</p></div></div><span id="my-orders-pill" class="text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700">0 active</span></div><div id="my-orders-list" class="p-4 md:p-5" style="max-height:30rem;overflow:auto"><div class="text-center py-10 text-gray-400"><i class="fas fa-receipt text-4xl mb-2"></i><p class="font-semibold text-gray-700">No purchases yet</p><p class="text-sm">Your purchase history will appear here.</p></div></div></div>
                 </div>
 
-                <!-- Outgoing Orders Tracking -->
-                <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
-                        <div>
-                            <h4 class="text-lg font-bold">Outgoing Orders</h4>
-                            <p class="text-sm opacity-90">Track shipments and delivery steps</p>
+                <div class="mt-5 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center"><i class="fas fa-route"></i></div>
+                            <div><h4 class="font-bold text-gray-800 leading-tight">Outgoing Orders</h4><p class="text-xs text-gray-400">Fulfilment &amp; delivery progress</p></div>
                         </div>
-                        <span class="text-sm bg-white/20 px-3 py-1 rounded-full" id="outgoing-orders-pill">0 in progress</span>
+                        <span id="outgoing-orders-pill" class="text-xs font-semibold px-3 py-1 rounded-full bg-teal-50 text-teal-700">0 in progress</span>
                     </div>
-                    <div id="outgoing-orders-list" class="p-6">
-                        <div class="text-center py-10 text-gray-400">
-                            <i class="fas fa-route text-4xl mb-2"></i>
-                            <p class="font-semibold text-gray-700">No outgoing orders</p>
-                            <p class="text-sm">When you dispatch orders, progress will appear here.</p>
-                        </div>
-                        <div class="hidden space-y-4" id="outgoing-orders-tracker-sample">
-                            <div class="flex items-start gap-4 p-4 border border-emerald-100 rounded-lg">
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between mb-1">
-                                        <p class="font-semibold text-gray-800">Order #1234 • Farm Supplies</p>
-                                        <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">In Transit</span>
-                                    </div>
-                                    <p class="text-sm text-gray-500 mb-3">Placed 2h ago • ETA: 3 days</p>
-                                    <div class="grid grid-cols-1 md:grid-cols-5 gap-2 text-xs font-semibold text-gray-700">
-                                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-50 border border-emerald-100">
-                                            <i class="fas fa-check-circle text-emerald-600"></i> Confirmed
-                                        </div>
-                                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-50 border border-emerald-100">
-                                            <i class="fas fa-box text-emerald-600"></i> Packed
-                                        </div>
-                                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-50 border border-emerald-100">
-                                            <i class="fas fa-truck-loading text-emerald-600"></i> Shipped
-                                        </div>
-                                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-100 text-amber-700">
-                                            <i class="fas fa-shipping-fast"></i> Out for Delivery
-                                        </div>
-                                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-500">
-                                            <i class="fas fa-flag-checkered"></i> Delivered
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="outgoing-orders-list" class="p-4 md:p-5">
+                        <div class="text-center py-10 text-gray-400"><i class="fas fa-route text-4xl mb-2"></i>
+                            <p class="font-semibold text-gray-700">No outgoing orders</p><p class="text-sm">When you dispatch orders, progress will appear here.</p></div>
                     </div>
                 </div>
             </section>
@@ -1733,6 +1625,25 @@
 
         initSalesChart();
 
+        // ===== Shared marketplace cache: orders + items + shipping fetched ONCE =====
+        const MKT = { orders: [], items: [], itemsByOrder: {}, shipByOrder: {}, loaded: false, promise: null };
+        function mktList(d){ return Array.isArray(d) ? d : (d && d.results ? d.results : []); }
+        async function mktFetch(p){ try { const r = await fetch(API_BASE + '/' + p, { headers: { 'Authorization': 'Bearer ' + (token || '') } }); if (!r.ok) return []; return mktList(await r.json()); } catch (e) { return []; } }
+        async function ensureMarketData(force){
+            if (MKT.loaded && !force) return MKT;
+            if (MKT.promise && !force) return MKT.promise;
+            MKT.promise = (async () => {
+                const [orders, items, ships] = await Promise.all([ mktFetch('orders/'), mktFetch('order-items/'), mktFetch('shippings/') ]);
+                const itemsByOrder = {};
+                items.forEach(it => { const oid = Number(it.order && (it.order.id != null ? it.order.id : it.order)); (itemsByOrder[oid] = itemsByOrder[oid] || []).push(it); });
+                const shipByOrder = {};
+                ships.forEach(s => { const oid = Number(s.order && (s.order.id != null ? s.order.id : s.order)); shipByOrder[oid] = s; });
+                MKT.orders = orders; MKT.items = items; MKT.itemsByOrder = itemsByOrder; MKT.shipByOrder = shipByOrder; MKT.loaded = true; MKT.promise = null;
+                return MKT;
+            })();
+            return MKT.promise;
+        }
+
         // ===== Sales Statistics & Product Performance (real data from orders) =====
         // NOTE: every field-read goes through a tiny mapper below. If your orders API
         // uses different field names, adjust ONLY these mappers.
@@ -1747,7 +1658,7 @@
         function orderTotal(o){ return Number(o.total_amount != null ? o.total_amount : (o.total != null ? o.total : (o.amount != null ? o.amount : 0))) || 0; }
         function orderStatus(o){ return String(o.status || '').toLowerCase(); }
         function orderDate(o){ const d = new Date(o.created_at || o.created || o.date || o.placed_at || Date.now()); return isNaN(d.getTime()) ? new Date() : d; }
-        function orderItems(o){ return o.items || o.order_items || o.orderitems || o.line_items || o.products || []; }
+        function orderItems(o){ return MKT.itemsByOrder[o.id] || o.items || o.order_items || o.orderitems || o.line_items || o.products || []; }
         function itemProductId(it){ const p = it.product; let pid = (p && (p.id != null ? p.id : p)); if (pid == null) pid = it.product_id != null ? it.product_id : it.productId; return pid != null ? Number(pid) : null; }
         function itemQty(it){ return Number(it.quantity != null ? it.quantity : (it.qty != null ? it.qty : 0)) || 0; }
         function itemRevenue(it){ if (it.subtotal != null) return Number(it.subtotal) || 0; const unit = Number(it.price_per_unit != null ? it.price_per_unit : (it.unit_price != null ? it.unit_price : (it.price != null ? it.price : 0))) || 0; return unit * itemQty(it); }
@@ -1757,36 +1668,14 @@
         function isCompleted(o){ return COMPLETED_STATUSES.indexOf(orderStatus(o)) !== -1; }
 
         async function ensureOrdersLoaded() {
-            if (ordersLoaded) return storeOrders;
-            if (ordersLoading) return ordersLoading;
-            ordersLoading = (async () => {
-                const sid = currentStoreId;
-                const urls = sid != null
-                    ? [`${API_BASE}/orders/?store=${sid}`, `${API_BASE}/orders/`]
-                    : [`${API_BASE}/orders/`];
-                for (const url of urls) {
-                    try {
-                        const r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + (token || '') } });
-                        if (!r.ok) continue;
-                        const data = await r.json();
-                        let list = Array.isArray(data) ? data : (data.results || []);
-                        if (sid != null) {
-                            list = list.filter(o => {
-                                const s = o.store;
-                                const osid = s && (s.id != null ? s.id : s);
-                                return osid == null ? true : Number(osid) === Number(sid);
-                            });
-                        }
-                        storeOrders = list;
-                        ordersLoaded = true;
-                        return storeOrders;
-                    } catch (e) { /* try next */ }
-                }
-                storeOrders = [];
-                ordersLoaded = true;
-                return storeOrders;
-            })();
-            return ordersLoading;
+            await ensureMarketData();
+            const sid = currentStoreId;
+            storeOrders = (MKT.orders || []).filter(o => {
+                const s = o.store; const osid = s && (s.id != null ? s.id : s);
+                return sid == null ? true : Number(osid) === Number(sid);
+            });
+            ordersLoaded = true;
+            return storeOrders;
         }
 
         function rangeStart() {
@@ -1883,6 +1772,7 @@
         function renderPerformance() {
             const rows = computePerformance();
             const totalUnits = rows.reduce((s, r) => s + r.units, 0);
+            const totalRevenue = rows.reduce((s, r) => s + r.revenue, 0);
             const top = rows.slice().sort((a, b) => b.revenue - a.revenue)[0];
             const active = (allProducts || []).filter(p => p.is_published !== false).length;
             const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
@@ -1898,23 +1788,44 @@
             const tbody = document.getElementById('product-performance-table');
             if (!tbody) return;
             if (!(allProducts || []).length) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-500"><i class="fas fa-inbox text-4xl mb-2 opacity-50"></i><p>No products yet</p></td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-10 text-gray-400"><i class="fas fa-inbox text-4xl mb-2 opacity-50"></i><p>No products yet</p></td></tr>';
                 return;
             }
-            tbody.innerHTML = sorted.map(r => {
+            tbody.innerHTML = sorted.map((r, i) => {
                 const st = ppStatus(r.product);
-                return '<tr class="border-b border-gray-100 hover:bg-gray-50 transition">'
-                    + '<td class="py-3 px-4 text-sm font-medium text-gray-800">' + (r.product.title || '\u2014') + '</td>'
+                const pct = totalRevenue > 0 ? Math.round((r.revenue / totalRevenue) * 100) : 0;
+                const rankCls = i === 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500';
+                return '<tr class="border-b border-gray-50 hover:bg-emerald-50 transition">'
+                    + '<td class="py-3 px-5"><div class="flex items-center gap-3 min-w-0">'
+                        + '<span class="flex-shrink-0 w-6 h-6 rounded-lg ' + rankCls + ' text-xs font-bold flex items-center justify-center">' + (i + 1) + '</span>'
+                        + '<span class="text-sm font-semibold text-gray-800 truncate">' + (r.product.title || '\u2014') + '</span></div></td>'
                     + '<td class="py-3 px-4 text-sm text-right text-gray-700">' + r.units.toLocaleString() + '</td>'
                     + '<td class="py-3 px-4 text-sm text-right font-semibold text-emerald-700">' + ngn(r.revenue) + '</td>'
+                    + '<td class="py-3 px-4" style="min-width:130px"><div class="flex items-center gap-2"><div style="flex:1;height:8px;background:#eef0ec;border-radius:9999px;overflow:hidden"><div style="height:8px;width:' + pct + '%;background:linear-gradient(90deg,#10b981,#047857)"></div></div><span class="text-xs text-gray-400" style="width:30px;text-align:right">' + pct + '%</span></div></td>'
                     + '<td class="py-3 px-4 text-sm text-right text-gray-700">' + Number(r.product.stock_quantity || 0).toLocaleString() + ' ' + (r.product.unit || '') + '</td>'
-                    + '<td class="py-3 px-4 text-center"><span class="px-2 py-1 rounded-full text-xs font-semibold ' + st.cls + '">' + st.label + '</span></td>'
+                    + '<td class="py-3 px-5 text-center"><span class="px-2 py-1 rounded-full text-xs font-semibold ' + st.cls + '">' + st.label + '</span></td>'
                     + '</tr>';
             }).join('');
         }
 
+        function setPerformanceLoading() {
+            const tb = document.getElementById('product-performance-table');
+            if (!tb) return;
+            let h = '';
+            for (let i = 0; i < 5; i++) {
+                h += '<tr class="border-b border-gray-50">'
+                    + '<td class="py-3 px-5"><div class="flex items-center gap-3"><div class="agc-skel" style="width:24px;height:24px;border-radius:8px"></div><div class="agc-skel" style="width:120px;height:13px"></div></div></td>'
+                    + '<td class="py-3 px-4"><div class="agc-skel" style="width:36px;height:13px;margin-left:auto"></div></td>'
+                    + '<td class="py-3 px-4"><div class="agc-skel" style="width:70px;height:13px;margin-left:auto"></div></td>'
+                    + '<td class="py-3 px-4"><div class="agc-skel" style="width:100%;height:8px;border-radius:9999px"></div></td>'
+                    + '<td class="py-3 px-4"><div class="agc-skel" style="width:54px;height:13px;margin-left:auto"></div></td>'
+                    + '<td class="py-3 px-5"><div class="agc-skel" style="width:64px;height:20px;border-radius:9999px;margin:auto"></div></td>'
+                    + '</tr>';
+            }
+            tb.innerHTML = h;
+        }
         async function loadAndRenderSales() { await ensureOrdersLoaded(); renderSalesStats(); }
-        async function loadAndRenderPerformance() { await ensureOrdersLoaded(); renderPerformance(); }
+        async function loadAndRenderPerformance() { setPerformanceLoading(); await ensureOrdersLoaded(); renderPerformance(); }
 
         function syncBucketButtons() {
             document.querySelectorAll('.sales-bucket-btn').forEach(b => {
@@ -2011,20 +1922,24 @@
         function emptyOrders(icon, title, sub){
             return '<div class="text-center py-10 text-gray-400"><i class="fas ' + icon + ' text-4xl mb-2"></i><p class="font-semibold text-gray-700">' + title + '</p><p class="text-sm">' + sub + '</p></div>';
         }
+        function orderSkeleton(n){
+            let h = '';
+            for (let i = 0; i < (n || 3); i++) {
+                h += '<div class="border border-gray-100 rounded-xl p-4 mb-3">'
+                    + '<div class="flex items-center justify-between mb-2"><div class="agc-skel" style="width:40%;height:14px"></div><div class="agc-skel" style="width:64px;height:20px;border-radius:9999px"></div></div>'
+                    + '<div class="agc-skel" style="width:70%;height:11px;margin-bottom:6px"></div>'
+                    + '<div class="agc-skel" style="width:52%;height:11px"></div></div>';
+            }
+            return h;
+        }
         function setOrdersLoading(){
-            const spin = '<div class="flex items-center justify-center gap-2 py-8 text-gray-500"><i class="fas fa-spinner fa-spin text-emerald-600"></i><span class="text-sm">Loading orders...</span></div>';
-            ['incoming-orders-list','my-orders-list','outgoing-orders-list'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = spin; });
+            ['incoming-orders-list','my-orders-list','outgoing-orders-list'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = orderSkeleton(id === 'outgoing-orders-list' ? 2 : 3); });
         }
 
         async function loadOrders(){
             setOrdersLoading();
-            await Promise.all([ fetchMyUserId(), cacheMyStoreIds() ]);
-            const [orders, items, ships] = await Promise.all([ ordersApiList('orders/'), ordersApiList('order-items/'), ordersApiList('shippings/') ]);
-            const itemsByOrder = {};
-            items.forEach(it => { const oid = Number(it.order && (it.order.id != null ? it.order.id : it.order)); (itemsByOrder[oid] = itemsByOrder[oid] || []).push(it); });
-            const shipByOrder = {};
-            ships.forEach(s => { const oid = Number(s.order && (s.order.id != null ? s.order.id : s.order)); shipByOrder[oid] = s; });
-            ordersData = { orders: orders, itemsByOrder: itemsByOrder, shipByOrder: shipByOrder };
+            await Promise.all([ fetchMyUserId(), cacheMyStoreIds(), ensureMarketData() ]);
+            ordersData = { orders: MKT.orders, itemsByOrder: MKT.itemsByOrder, shipByOrder: MKT.shipByOrder };
             renderOrders();
         }
 
