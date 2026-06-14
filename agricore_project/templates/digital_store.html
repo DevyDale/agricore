@@ -1570,6 +1570,9 @@
                 if (sectionId === 'product-performance') {
                     loadAndRenderPerformance();
                 }
+                if (sectionId === 'orders') {
+                    loadOrders();
+                }
                 // Close mobile menu if open
                 if (window.innerWidth < 768) {
                     document.getElementById('sidebar').classList.remove('open');
@@ -1952,6 +1955,178 @@
             }));
         });
 
+
+        // ===== Orders: incoming sales, my purchases, fulfilment tracking (real API) =====
+        let myUserId = null;
+        let myStoreIdsCache = null;
+        let ordersData = { orders: [], itemsByOrder: {}, shipByOrder: {} };
+
+        const ORDER_STAGES = ['pending','confirmed','packed','shipped','out_for_delivery','delivered'];
+        const ORDER_STAGE_LABEL = { pending:'Pending', confirmed:'Confirmed', packed:'Packed', shipped:'Shipped', out_for_delivery:'Out for delivery', delivered:'Delivered' };
+        const ATTENTION_STATUSES = ['pending','cancelled','canceled','refunded','failed','returned','disputed','rejected'];
+
+        function ordersListFrom(d){ return Array.isArray(d) ? d : (d && d.results ? d.results : []); }
+        async function ordersApiList(path){
+            try { const r = await fetch(API_BASE + '/' + path, { headers: { 'Authorization': 'Bearer ' + (token || '') } }); if (!r.ok) return []; return ordersListFrom(await r.json()); } catch (e) { return []; }
+        }
+        async function fetchMyUserId(){
+            if (myUserId != null) return myUserId;
+            try { const r = await fetch(API_BASE + '/users/me/', { headers: { 'Authorization': 'Bearer ' + (token || '') } }); if (r.ok) { const u = await r.json(); myUserId = u && (u.id != null ? u.id : null); } } catch (e) {}
+            return myUserId;
+        }
+        async function cacheMyStoreIds(){
+            try { const stores = await getUserStores(); myStoreIdsCache = new Set((stores || []).map(s => Number(s.id))); } catch (e) { myStoreIdsCache = new Set(); }
+            return myStoreIdsCache;
+        }
+
+        function ordStatus(o){ return String(o.status || '').toLowerCase().replace(/\s+/g, '_'); }
+        function ordTotal(o){ return Number(o.total_amount != null ? o.total_amount : (o.total != null ? o.total : 0)) || 0; }
+        function ordDate(o){ const d = new Date(o.created_at || o.created || Date.now()); return isNaN(d.getTime()) ? new Date() : d; }
+        function ordStoreId(o){ const s = o.store; return Number(s && (s.id != null ? s.id : s)); }
+        function ordBuyerId(o){ const b = o.buyer; return Number(b && (b.id != null ? b.id : b)); }
+        function nextStage(st){ const i = ORDER_STAGES.indexOf(String(st || '').toLowerCase().replace(/\s+/g, '_')); if (i === -1) return 'confirmed'; if (i >= ORDER_STAGES.length - 1) return null; return ORDER_STAGES[i + 1]; }
+        function statusBadge(st){
+            const s = String(st || '').toLowerCase().replace(/\s+/g, '_');
+            let cls = 'bg-gray-100 text-gray-600';
+            if (['delivered','completed','complete','paid'].indexOf(s) !== -1) cls = 'bg-emerald-50 text-emerald-700';
+            else if (['shipped','out_for_delivery','packed','confirmed','processing'].indexOf(s) !== -1) cls = 'bg-blue-50 text-blue-700';
+            else if (s === 'pending') cls = 'bg-amber-50 text-amber-700';
+            else if (['cancelled','canceled','refunded','failed','returned','rejected','disputed'].indexOf(s) !== -1) cls = 'bg-red-50 text-red-600';
+            const label = ORDER_STAGE_LABEL[s] || (st ? (String(st).charAt(0).toUpperCase() + String(st).slice(1)) : 'Unknown');
+            return '<span class="px-2 py-1 rounded-full text-xs font-semibold ' + cls + '">' + label + '</span>';
+        }
+        function itemSummary(orderId){
+            const items = ordersData.itemsByOrder[orderId] || [];
+            if (!items.length) return '';
+            const names = items.slice(0, 3).map(it => {
+                const pid = Number(it.product && (it.product.id != null ? it.product.id : it.product));
+                const prod = (allProducts || []).find(p => Number(p.id) === pid);
+                const name = prod ? prod.title : ('Item #' + (pid || ''));
+                return name + ' \u00d7' + Number(it.quantity || 0);
+            });
+            let s = names.join(', ');
+            if (items.length > 3) s += ' +' + (items.length - 3) + ' more';
+            return s;
+        }
+        function emptyOrders(icon, title, sub){
+            return '<div class="text-center py-10 text-gray-400"><i class="fas ' + icon + ' text-4xl mb-2"></i><p class="font-semibold text-gray-700">' + title + '</p><p class="text-sm">' + sub + '</p></div>';
+        }
+        function setOrdersLoading(){
+            const spin = '<div class="flex items-center justify-center gap-2 py-8 text-gray-500"><i class="fas fa-spinner fa-spin text-emerald-600"></i><span class="text-sm">Loading orders...</span></div>';
+            ['incoming-orders-list','my-orders-list','outgoing-orders-list'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = spin; });
+        }
+
+        async function loadOrders(){
+            setOrdersLoading();
+            await Promise.all([ fetchMyUserId(), cacheMyStoreIds() ]);
+            const [orders, items, ships] = await Promise.all([ ordersApiList('orders/'), ordersApiList('order-items/'), ordersApiList('shippings/') ]);
+            const itemsByOrder = {};
+            items.forEach(it => { const oid = Number(it.order && (it.order.id != null ? it.order.id : it.order)); (itemsByOrder[oid] = itemsByOrder[oid] || []).push(it); });
+            const shipByOrder = {};
+            ships.forEach(s => { const oid = Number(s.order && (s.order.id != null ? s.order.id : s.order)); shipByOrder[oid] = s; });
+            ordersData = { orders: orders, itemsByOrder: itemsByOrder, shipByOrder: shipByOrder };
+            renderOrders();
+        }
+
+        function renderOrders(){
+            const sid = Number(currentStoreId);
+            const orders = ordersData.orders || [];
+            const myStores = myStoreIdsCache || new Set();
+            const incoming = orders.filter(o => ordStoreId(o) === sid);
+            const purchases = orders.filter(o => Number(ordBuyerId(o)) === Number(myUserId) && !myStores.has(ordStoreId(o)));
+            const fulfilling = incoming.filter(o => ['confirmed','packed','shipped','out_for_delivery','processing'].indexOf(ordStatus(o)) !== -1);
+            const attention = incoming.filter(o => ATTENTION_STATUSES.indexOf(ordStatus(o)) !== -1);
+
+            const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+            set('orders-incoming-count', incoming.length);
+            set('orders-purchases-count', purchases.length);
+            set('orders-outgoing-count', fulfilling.length);
+            set('orders-issues-count', attention.length);
+            const openIncoming = incoming.filter(o => ['delivered','cancelled','canceled','refunded'].indexOf(ordStatus(o)) === -1).length;
+            set('incoming-orders-pill', openIncoming + ' open');
+            set('my-orders-pill', purchases.length + ' active');
+            set('outgoing-orders-pill', fulfilling.length + ' in progress');
+
+            renderIncomingOrders(incoming);
+            renderMyPurchases(purchases);
+            renderOutgoingOrders(fulfilling);
+        }
+
+        function renderIncomingOrders(list){
+            const c = document.getElementById('incoming-orders-list'); if (!c) return;
+            if (!list.length) { c.innerHTML = emptyOrders('fa-shopping-bag', 'No incoming orders', 'Orders will show up here once customers start buying.'); return; }
+            c.innerHTML = list.slice().sort((a, b) => ordDate(b) - ordDate(a)).map(o => {
+                const st = ordStatus(o);
+                const ns = nextStage(o.status);
+                const terminal = ['delivered','cancelled','canceled','refunded'].indexOf(st) !== -1;
+                const summary = itemSummary(o.id);
+                return '<div class="border border-gray-100 rounded-xl p-4 mb-3">'
+                    + '<div class="flex items-start justify-between gap-2 mb-1"><div><p class="font-semibold text-gray-800">Order #' + o.id + '</p>'
+                    + '<p class="text-xs text-gray-500">' + ordDate(o).toLocaleDateString() + ' \u2022 ' + ngn(ordTotal(o)) + '</p></div>' + statusBadge(o.status) + '</div>'
+                    + (summary ? '<p class="text-sm text-gray-600 mb-1">' + summary + '</p>' : '')
+                    + (o.shipping_address ? '<p class="text-xs text-gray-400 mb-2"><i class="fas fa-location-dot"></i> ' + o.shipping_address + '</p>' : '')
+                    + (terminal ? '' : '<div class="flex items-center gap-2 mt-2 flex-wrap">'
+                        + (ns ? '<button onclick="advanceOrder(' + o.id + ')" class="px-3 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"><i class="fas fa-arrow-right"></i> Mark ' + ORDER_STAGE_LABEL[ns] + '</button>' : '')
+                        + '<button onclick="cancelOrder(' + o.id + ')" class="px-3 py-1.5 text-xs font-semibold bg-white text-red-600 border border-red-100 rounded-lg hover:bg-red-50 transition">Cancel</button>'
+                        + '</div>')
+                    + '</div>';
+            }).join('');
+        }
+
+        function renderMyPurchases(list){
+            const c = document.getElementById('my-orders-list'); if (!c) return;
+            if (!list.length) { c.innerHTML = emptyOrders('fa-receipt', 'No purchases yet', 'Your purchase history will appear here.'); return; }
+            c.innerHTML = list.slice().sort((a, b) => ordDate(b) - ordDate(a)).map(o => {
+                const ship = ordersData.shipByOrder[o.id];
+                return '<div class="border border-gray-100 rounded-xl p-4 mb-3">'
+                    + '<div class="flex items-start justify-between gap-2 mb-1"><div><p class="font-semibold text-gray-800">Order #' + o.id + '</p>'
+                    + '<p class="text-xs text-gray-500">' + ordDate(o).toLocaleDateString() + ' \u2022 ' + ngn(ordTotal(o)) + '</p></div>' + statusBadge(o.status) + '</div>'
+                    + (ship && ship.tracking_number ? '<p class="text-xs text-gray-500"><i class="fas fa-truck"></i> ' + (ship.provider || 'Courier') + ' \u2022 ' + ship.tracking_number + '</p>' : '')
+                    + '</div>';
+            }).join('');
+        }
+
+        function renderOutgoingOrders(list){
+            const c = document.getElementById('outgoing-orders-list'); if (!c) return;
+            if (!list.length) { c.innerHTML = emptyOrders('fa-route', 'No outgoing orders', 'When you dispatch orders, progress will appear here.'); return; }
+            const steps = ['confirmed','packed','shipped','out_for_delivery','delivered'];
+            const stepLabel = { confirmed:'Confirmed', packed:'Packed', shipped:'Shipped', out_for_delivery:'Out for Delivery', delivered:'Delivered' };
+            const stepIcon = { confirmed:'fa-check-circle', packed:'fa-box', shipped:'fa-truck-loading', out_for_delivery:'fa-shipping-fast', delivered:'fa-flag-checkered' };
+            c.innerHTML = list.slice().sort((a, b) => ordDate(b) - ordDate(a)).map(o => {
+                const cur = ORDER_STAGES.indexOf(ordStatus(o));
+                const ship = ordersData.shipByOrder[o.id];
+                const cells = steps.map(s => {
+                    const reached = ORDER_STAGES.indexOf(s) <= cur;
+                    const cls = reached ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-gray-50 border-gray-200 text-gray-400';
+                    return '<div class="flex items-center gap-2 px-3 py-2 rounded-lg border ' + cls + ' text-xs font-semibold"><i class="fas ' + stepIcon[s] + '"></i> ' + stepLabel[s] + '</div>';
+                }).join('');
+                return '<div class="border border-emerald-100 rounded-lg p-4 mb-3">'
+                    + '<div class="flex items-center justify-between mb-1"><p class="font-semibold text-gray-800">Order #' + o.id + ' \u2022 ' + (itemSummary(o.id) || 'Items') + '</p>' + statusBadge(o.status) + '</div>'
+                    + '<p class="text-sm text-gray-500 mb-3">' + ordDate(o).toLocaleDateString() + ' \u2022 ' + ngn(ordTotal(o)) + (ship && ship.estimated_delivery_date ? ' \u2022 ETA ' + ship.estimated_delivery_date : '') + '</p>'
+                    + '<div class="grid grid-cols-1 md:grid-cols-5 gap-2">' + cells + '</div>'
+                    + '</div>';
+            }).join('');
+        }
+
+        window.advanceOrder = function(orderId){
+            const o = (ordersData.orders || []).find(x => Number(x.id) === Number(orderId)); if (!o) return;
+            const ns = nextStage(o.status); if (!ns) return;
+            const before = o.status;
+            o.status = ns; renderOrders(); toast('Order #' + orderId + ' \u2192 ' + ORDER_STAGE_LABEL[ns], 'success');
+            fetch(API_BASE + '/orders/' + orderId + '/', { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') }, body: JSON.stringify({ status: ns }) })
+                .then(r => { if (!r.ok) throw new Error(); })
+                .catch(() => { o.status = before; renderOrders(); toast("Couldn't update order status.", 'error'); });
+        };
+        window.cancelOrder = async function(orderId){
+            const ok = await confirmDialog({ title: 'Cancel this order?', message: 'The order will be marked cancelled.', confirmText: 'Cancel order', danger: true });
+            if (!ok) return;
+            const o = (ordersData.orders || []).find(x => Number(x.id) === Number(orderId)); if (!o) return;
+            const before = o.status;
+            o.status = 'cancelled'; renderOrders(); toast('Order #' + orderId + ' cancelled', 'success');
+            fetch(API_BASE + '/orders/' + orderId + '/', { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') }, body: JSON.stringify({ status: 'cancelled' }) })
+                .then(r => { if (!r.ok) throw new Error(); })
+                .catch(() => { o.status = before; renderOrders(); toast("Couldn't cancel order.", 'error'); });
+        };
 
         // ----- STORE / PRODUCT LOAD & DETECTION -----
         const API_BASE = '/api';
