@@ -1872,7 +1872,7 @@
             }
             products.forEach(p => {
                 const card = document.createElement('div');
-                card.className = 'bg-white rounded-xl shadow-lg overflow-hidden product-card border border-gray-100';
+                card.className = 'bg-white rounded-2xl overflow-hidden product-card border border-gray-100 shadow-sm';
                 const imageUrl = p.image_display || p.image || p.image_url;
                 const getInitials = (title) => {
                     if (!title) return 'P';
@@ -1890,56 +1890,60 @@
                     'Equipment': 'fa-tools',
                     'Other': 'fa-box'
                 };
-                const categoryGradients = {
-                    'Crops': 'linear-gradient(135deg, #34d399 0%, #059669 100%)',
-                    'Livestock': 'linear-gradient(135deg, #fbbf24 0%, #ea580c 100%)',
-                    'Produce': 'linear-gradient(135deg, #f87171 0%, #ec4899 100%)',
-                    'Equipment': 'linear-gradient(135deg, #9ca3af 0%, #475569 100%)',
-                    'Other': 'linear-gradient(135deg, #60a5fa 0%, #4f46e5 100%)'
+                const categoryTints = {
+                    'Crops': 'linear-gradient(135deg,#e8f5ec,#f5faf2)',
+                    'Livestock': 'linear-gradient(135deg,#f6efe0,#fbf7ee)',
+                    'Produce': 'linear-gradient(135deg,#eaf5ec,#f4faf0)',
+                    'Equipment': 'linear-gradient(135deg,#eef1f4,#f7f9fb)',
+                    'Other': 'linear-gradient(135deg,#eef6f0,#fbf7ee)'
+                };
+                const categoryColors = {
+                    'Crops': '#0c6b46',
+                    'Livestock': '#a9772a',
+                    'Produce': '#2f8f4e',
+                    'Equipment': '#5b6b7b',
+                    'Other': '#0f7a4b'
                 };
                 const icon = categoryIcons[p.category] || categoryIcons['Other'];
-                const gradient = categoryGradients[p.category] || categoryGradients['Other'];
+                const tint = categoryTints[p.category] || categoryTints['Other'];
+                const iconColor = categoryColors[p.category] || categoryColors['Other'];
                 const isDropshipped = p.is_dropshipped || p.source_produce;
+                const medallion = `<div class="w-16 h-16 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center"><i class="fas ${icon} text-2xl" style="color:${iconColor}"></i></div>`;
                 card.innerHTML = `
-                    <div class="relative h-48 flex items-center justify-center" style="background: ${gradient};">
-                        ${imageUrl 
+                    <div class="relative h-40 flex items-center justify-center overflow-hidden" style="background:${tint};">
+                        ${imageUrl
                             ? `<img src="${imageUrl}" alt="${p.title}" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                               <div class="absolute inset-0 hidden flex-col items-center justify-center text-white" style="background: ${gradient};">
-                                   <div class="text-6xl font-bold mb-2">${initials}</div>
-                               </div>`
-                            : `<div class="text-center text-white px-4">
-                                   <div class="text-6xl font-bold mb-3">${initials}</div>
-                                   <p class="text-lg font-bold">${p.title}</p>
-                               </div>`
+                               <div class="absolute inset-0 hidden items-center justify-center" style="background:${tint};">${medallion}</div>`
+                            : medallion
                         }
-                        ${isDropshipped ? `<span class="absolute top-3 left-3 px-2 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">${window.i18n ? i18n.t('Dropshipped') : 'Dropshipped'}</span>` : ''}
-                        <button class="absolute top-3 right-3 px-3 py-1.5 bg-white text-emerald-700 rounded-lg shadow-md hover:bg-emerald-50 transition text-sm font-semibold">
+                        ${isDropshipped ? `<span class="absolute top-3 left-3 px-2.5 py-1 bg-emerald-600 text-white text-xs font-semibold rounded-full shadow-sm">${window.i18n ? i18n.t('Dropshipped') : 'Dropshipped'}</span>` : ''}
+                        <button class="absolute top-3 right-3 px-3 py-1.5 bg-white text-emerald-700 rounded-lg shadow-sm hover:bg-emerald-50 transition text-sm font-semibold border border-emerald-100">
                             <i class="fas fa-edit"></i> ${window.i18n ? i18n.t('Edit') : 'Edit'}
                         </button>
                     </div>
                     <div class="p-4">
-                        <div class="flex items-start justify-between mb-2">
-                            <h3 class="font-bold text-lg text-gray-800 line-clamp-2">${p.title}</h3>
-                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-full ml-2">${p.category || (window.i18n ? i18n.t('Other') : 'Other')}</span>
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <h3 class="font-bold text-lg text-gray-800 truncate min-w-0">${p.title}</h3>
+                            <span class="flex-shrink-0 px-2 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-100">${p.category || (window.i18n ? i18n.t('Other') : 'Other')}</span>
                         </div>
-                        ${p.description ? `<p class="text-sm text-gray-600 mb-3 line-clamp-2">${p.description}</p>` : ''}
+                        ${p.description ? `<p class="text-sm text-gray-500 mb-3 line-clamp-2">${p.description}</p>` : ''}
                         ${p.source_produce_info ? `
-                            <div class="flex items-center gap-2 mb-3 p-2 bg-gray-50 rounded-lg">
+                            <div class="flex items-center gap-2 mb-3 p-2 bg-emerald-50 rounded-lg border border-emerald-100">
                                 <i class="fas fa-tractor text-emerald-600"></i>
                                 <a href="individual_farm.html?id=${p.source_produce_info.farm_id}" class="text-sm text-emerald-700 hover:underline font-medium">
                                     ${p.source_produce_info.farm_name || (window.i18n ? i18n.t('Farm') : 'Farm')}
                                 </a>
                             </div>` : ''}
-                        <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                        <div class="flex items-end justify-between pt-3 border-t border-gray-100">
                             <div>
                                 <div class="text-2xl font-bold text-emerald-700" data-raw-amount="${p.price || 0}">${window.i18n ? i18n.formatCurrency(Number(p.price || 0)) : ('₦' + Number(p.price || 0).toLocaleString())}</div>
                                 <div class="text-sm text-gray-500 mt-1">
                                     <i class="fas fa-box"></i> ${p.stock_quantity || 0} ${p.unit || ''}
                                 </div>
-                                ${p.expiration_date ? `<div class="text-xs text-orange-500 mt-1"><i class="fas fa-calendar"></i> ${window.i18n ? i18n.t('Exp:') : 'Exp:'} ${p.expiration_date}</div>` : ''}
+                                ${p.expiration_date ? `<div class="text-xs text-amber-600 mt-1"><i class="fas fa-calendar"></i> ${window.i18n ? i18n.t('Exp:') : 'Exp:'} ${p.expiration_date}</div>` : ''}
                             </div>
                             <div class="flex flex-col gap-2 items-end">
-                                <button class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg shadow-md hover:shadow-lg transition text-sm font-semibold">
+                                <button class="px-4 py-2 btn-primary text-white rounded-lg shadow-sm transition text-sm font-semibold">
                                     <i class="fas fa-bullhorn"></i> ${window.i18n ? i18n.t('Promote') : 'Promote'}
                                 </button>
                                 ${isDropshipped && !p.is_published ? `<button class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition text-sm font-semibold release-dropship-btn" data-product-id="${p.id}"><i class="fas fa-upload"></i> ${window.i18n ? i18n.t('Release') : 'Release'}</button>` : ''}
