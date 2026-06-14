@@ -295,9 +295,9 @@
                             <p class="text-gray-600">Manage inventory, pricing, and availability</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button class="px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">All</button>
-                            <button class="px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Low Stock</button>
-                            <button class="px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Draft</button>
+                            <button data-filter="all" class="product-filter-btn px-3 py-2 text-sm border border-emerald-600 bg-emerald-600 text-white rounded-lg transition">All</button>
+                            <button data-filter="low" class="product-filter-btn px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition">Low Stock</button>
+                            <button data-filter="draft" class="product-filter-btn px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition">Draft</button>
                             <button id="add-product" class="px-5 py-2.5 btn-primary text-white rounded-xl shadow-lg flex items-center gap-2">
                                 <i class="fas fa-plus"></i> Add Product
                             </button>
@@ -306,27 +306,27 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="bg-white border border-emerald-100 rounded-xl p-4 shadow-sm">
                             <p class="text-xs uppercase tracking-wide text-gray-500">Live Products</p>
-                            <p class="text-2xl font-bold text-emerald-700">0</p>
+                            <p class="text-2xl font-bold text-emerald-700" id="stat-prod-live">0</p>
                             <p class="text-xs text-gray-500">Currently visible</p>
                         </div>
                         <div class="bg-white border border-amber-100 rounded-xl p-4 shadow-sm">
                             <p class="text-xs uppercase tracking-wide text-amber-600">Low Stock</p>
-                            <p class="text-2xl font-bold text-amber-700">0</p>
+                            <p class="text-2xl font-bold text-amber-700" id="stat-prod-low">0</p>
                             <p class="text-xs text-gray-500">Need restock</p>
                         </div>
                         <div class="bg-white border border-blue-100 rounded-xl p-4 shadow-sm">
                             <p class="text-xs uppercase tracking-wide text-blue-600">Drafts</p>
-                            <p class="text-2xl font-bold text-blue-700">0</p>
+                            <p class="text-2xl font-bold text-blue-700" id="stat-prod-drafts">0</p>
                             <p class="text-xs text-gray-500">Not published</p>
                         </div>
                         <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                             <p class="text-xs uppercase tracking-wide text-gray-500">Categories</p>
-                            <p class="text-2xl font-bold text-emerald-700">0</p>
+                            <p class="text-2xl font-bold text-emerald-700" id="stat-prod-categories">0</p>
                             <p class="text-xs text-gray-500">Across catalog</p>
                         </div>
                     </div>
                 </div>
-                <div id="store-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div id="store-products" class="flex flex-col gap-3">
                     <!-- Products loaded here -->
                 </div>
             </section>
@@ -1826,139 +1826,130 @@
         }
 
         // Utility to render product cards
+        // ---- Products: state, stats, filters, row rendering ----
+        let allProducts = [];
+        let productFilter = 'all';
+        const LOW_STOCK_THRESHOLD = 10;
+
+        function updateProductStats(products) {
+            const list = Array.isArray(products) ? products : [];
+            const live = list.filter(p => p.is_published !== false).length;
+            const drafts = list.filter(p => p.is_published === false).length;
+            const low = list.filter(p => Number(p.stock_quantity || 0) <= LOW_STOCK_THRESHOLD).length;
+            const cats = new Set(list.map(p => p.category).filter(Boolean)).size;
+            const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            set('stat-products-live', live);
+            set('stat-prod-live', live);
+            set('stat-prod-low', low);
+            set('stat-prod-drafts', drafts);
+            set('stat-prod-categories', cats);
+        }
+
+        function applyProductFilter(products, filter) {
+            const list = Array.isArray(products) ? products : [];
+            if (filter === 'low') return list.filter(p => Number(p.stock_quantity || 0) <= LOW_STOCK_THRESHOLD);
+            if (filter === 'draft') return list.filter(p => p.is_published === false);
+            return list;
+        }
+
+        // Public entry point: store full catalogue, refresh stats, render current filter
         function renderProducts(products) {
-            const liveEl = document.getElementById('stat-products-live');
-            if (liveEl) {
-                const list = Array.isArray(products) ? products : [];
-                liveEl.textContent = list.filter(p => p.is_published !== false).length;
-            }
+            if (Array.isArray(products)) allProducts = products;
+            updateProductStats(allProducts);
+            renderProductRows(applyProductFilter(allProducts, productFilter));
+        }
+
+        function renderProductRows(products) {
             const container = document.getElementById('store-products');
-            if (container) {
-                container.style.minHeight = 'calc(100vh - 280px)';
-            }
+            if (!container) return;
+            container.style.minHeight = '';
             container.innerHTML = '';
-            if (!products || products.length === 0) {
+
+            if (!allProducts.length) {
                 container.innerHTML = `
-                    <div class="col-span-full w-full h-full relative border border-dashed border-emerald-200 rounded-2xl bg-gradient-to-br from-emerald-50 via-white to-emerald-50 shadow-sm flex items-center justify-center text-center px-8 overflow-hidden" style="min-height: calc(100vh - 280px);">
-                        <div class="absolute inset-0 pointer-events-none opacity-40" style="background-image: radial-gradient(circle at 20% 20%, rgba(16,185,129,0.08) 0, rgba(16,185,129,0) 50%), radial-gradient(circle at 80% 30%, rgba(6,95,70,0.08) 0, rgba(6,95,70,0) 45%);"></div>
-                        <div class="relative space-y-3">
-                            <div class="mx-auto w-16 h-16 rounded-2xl bg-white shadow-md flex items-center justify-center border border-emerald-100">
-                                <i class="fas fa-box-open text-3xl text-emerald-500"></i>
-                            </div>
-                            <p class="text-xl font-bold text-emerald-900">${window.i18n ? i18n.t('No products found in your store yet.') : 'No products found in your store yet.'}</p>
-                            <p class="text-sm text-gray-600">${window.i18n ? i18n.t('Add your first product to start selling.') : 'Add your first product to start selling.'}</p>
+                    <div class="border border-dashed border-emerald-200 rounded-2xl bg-emerald-50 px-8 py-16 text-center">
+                        <div class="mx-auto w-16 h-16 rounded-2xl bg-white shadow-md flex items-center justify-center border border-emerald-100 mb-3">
+                            <i class="fas fa-box-open text-3xl text-emerald-500"></i>
                         </div>
+                        <p class="text-xl font-bold text-emerald-900">${window.i18n ? i18n.t('No products found in your store yet.') : 'No products found in your store yet.'}</p>
+                        <p class="text-sm text-gray-600 mt-1">${window.i18n ? i18n.t('Add your first product to start selling.') : 'Add your first product to start selling.'}</p>
                     </div>`;
                 return;
             }
+            if (!products.length) {
+                container.innerHTML = `<div class="border border-dashed border-gray-200 rounded-2xl bg-gray-50 px-8 py-12 text-center text-gray-500"><i class="fas fa-filter text-2xl mb-2"></i><p class="font-semibold">${window.i18n ? i18n.t('No products match this filter.') : 'No products match this filter.'}</p></div>`;
+                return;
+            }
+
+            const categoryIcons = { 'Crops':'fa-seedling','Livestock':'fa-horse','Produce':'fa-apple-alt','Equipment':'fa-tools','Other':'fa-box' };
+            const categoryTints = { 'Crops':'#e8f5ec','Livestock':'#f6efe0','Produce':'#eaf5ec','Equipment':'#eef1f4','Other':'#eef6f0' };
+            const categoryColors = { 'Crops':'#0c6b46','Livestock':'#a9772a','Produce':'#2f8f4e','Equipment':'#5b6b7b','Other':'#0f7a4b' };
+
             products.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded-2xl overflow-hidden product-card border border-gray-100 shadow-sm';
+                const row = document.createElement('div');
+                row.className = 'product-row bg-white rounded-2xl border border-gray-100 shadow-sm px-4 py-3 flex items-center gap-4 flex-wrap';
                 const imageUrl = p.image_display || p.image || p.image_url;
-                const getInitials = (title) => {
-                    if (!title) return 'P';
-                    const words = title.trim().split(/\s+/);
-                    if (words.length >= 2) {
-                        return (words[0][0] + words[1][0]).toUpperCase();
-                    }
-                    return title.substring(0, 2).toUpperCase();
-                };
-                const initials = getInitials(p.title);
-                const categoryIcons = {
-                    'Crops': 'fa-seedling',
-                    'Livestock': 'fa-horse',
-                    'Produce': 'fa-apple-alt',
-                    'Equipment': 'fa-tools',
-                    'Other': 'fa-box'
-                };
-                const categoryTints = {
-                    'Crops': 'linear-gradient(135deg,#e8f5ec,#f5faf2)',
-                    'Livestock': 'linear-gradient(135deg,#f6efe0,#fbf7ee)',
-                    'Produce': 'linear-gradient(135deg,#eaf5ec,#f4faf0)',
-                    'Equipment': 'linear-gradient(135deg,#eef1f4,#f7f9fb)',
-                    'Other': 'linear-gradient(135deg,#eef6f0,#fbf7ee)'
-                };
-                const categoryColors = {
-                    'Crops': '#0c6b46',
-                    'Livestock': '#a9772a',
-                    'Produce': '#2f8f4e',
-                    'Equipment': '#5b6b7b',
-                    'Other': '#0f7a4b'
-                };
                 const icon = categoryIcons[p.category] || categoryIcons['Other'];
                 const tint = categoryTints[p.category] || categoryTints['Other'];
                 const iconColor = categoryColors[p.category] || categoryColors['Other'];
-                const isDropshipped = !!p.is_dropshipped;            // bought from another stall
-                const isDropshippable = !isDropshipped && !!p.is_dropshippable; // own product offered for dropshipping
+                const isDropshipped = !!p.is_dropshipped;
+                const isDropshippable = !isDropshipped && !!p.is_dropshippable;
                 const isListed = p.is_published !== false;
                 const knobX = isListed ? '18px' : '2px';
                 const trackBg = isListed ? 'var(--primary)' : '#d1d5db';
-                const medallion = `<div class="w-12 h-12 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center"><i class="fas ${icon} text-xl" style="color:${iconColor}"></i></div>`;
-                let badge = '';
-                if (isDropshipped) {
-                    badge = `<span class="absolute top-2 left-2 px-2 py-0.5 bg-emerald-600 text-white text-xs font-semibold rounded-full shadow-sm">${window.i18n ? i18n.t('Dropshipped') : 'Dropshipped'}</span>`;
-                } else if (isDropshippable) {
-                    badge = `<span class="absolute top-2 left-2 px-2 py-0.5 bg-white text-amber-700 text-xs font-semibold rounded-full shadow-sm border border-amber-200">${window.i18n ? i18n.t('Dropshippable') : 'Dropshippable'}</span>`;
-                }
-                card.innerHTML = `
-                    <div class="relative h-28 flex items-center justify-center overflow-hidden" style="background:${tint};">
-                        ${imageUrl
-                            ? `<img src="${imageUrl}" alt="${p.title}" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                               <div class="absolute inset-0 hidden items-center justify-center" style="background:${tint};">${medallion}</div>`
-                            : medallion
-                        }
-                        ${badge}
-                        <button class="absolute top-2 right-2 px-2 py-1 bg-white text-emerald-700 rounded-lg shadow-sm hover:bg-emerald-50 transition text-xs font-semibold border border-emerald-100">
-                            <i class="fas fa-edit"></i> ${window.i18n ? i18n.t('Edit') : 'Edit'}
-                        </button>
+                const thumb = imageUrl
+                    ? `<img src="${imageUrl}" alt="${p.title}" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="absolute inset-0 hidden items-center justify-center" style="background:${tint}"><i class="fas ${icon} text-xl" style="color:${iconColor}"></i></div>`
+                    : `<i class="fas ${icon} text-xl" style="color:${iconColor}"></i>`;
+                const badge = isDropshipped
+                    ? `<span class="px-2 py-0.5 bg-emerald-600 text-white text-xs font-semibold rounded-full">${window.i18n ? i18n.t('Dropshipped') : 'Dropshipped'}</span>`
+                    : (isDropshippable ? `<span class="px-2 py-0.5 bg-white text-amber-700 text-xs font-semibold rounded-full border border-amber-200">${window.i18n ? i18n.t('Dropshippable') : 'Dropshippable'}</span>` : '');
+                row.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0" style="flex:1 1 240px">
+                        <div class="relative w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0" style="background:${tint}">${thumb}</div>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <h3 class="font-bold text-base text-gray-800 truncate">${p.title}</h3>
+                                <span class="flex-shrink-0 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-100">${p.category || (window.i18n ? i18n.t('Other') : 'Other')}</span>
+                            </div>
+                            <div class="flex items-center gap-2 mt-1 text-xs text-gray-500 flex-wrap">
+                                ${badge}
+                                ${p.source_produce_info ? `<a href="individual_farm.html?id=${p.source_produce_info.farm_id}" class="inline-flex items-center gap-1 text-emerald-700 hover:underline font-medium"><i class="fas fa-tractor"></i> ${p.source_produce_info.farm_name || (window.i18n ? i18n.t('Farm') : 'Farm')}</a>` : ''}
+                                ${p.expiration_date ? `<span class="text-amber-600"><i class="fas fa-calendar"></i> ${p.expiration_date}</span>` : ''}
+                            </div>
+                        </div>
                     </div>
-                    <div class="p-3">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-bold text-base text-gray-800 truncate min-w-0">${p.title}</h3>
-                            <span class="flex-shrink-0 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-100">${p.category || (window.i18n ? i18n.t('Other') : 'Other')}</span>
+                    <div class="flex-shrink-0" style="min-width:96px">
+                        <div class="text-lg font-bold text-emerald-700" data-raw-amount="${p.price || 0}">${window.i18n ? i18n.formatCurrency(Number(p.price || 0)) : ('\u20a6' + Number(p.price || 0).toLocaleString())}</div>
+                        <div class="text-xs text-gray-500"><i class="fas fa-box"></i> ${p.stock_quantity || 0} ${p.unit || ''}</div>
+                    </div>
+                    <div class="flex items-center gap-3 flex-wrap rounded-xl flex-shrink-0" style="background:#f9faf6;border:1px solid var(--green-line);padding:8px 12px">
+                        <label class="inline-flex items-center gap-2 cursor-pointer">
+                            <span style="position:relative;display:inline-block;width:38px;height:20px;flex-shrink:0">
+                                <input type="checkbox" ${isListed ? 'checked' : ''} onchange="toggleProductListing(${p.id}, this.checked)" style="opacity:0;width:38px;height:20px;margin:0;cursor:pointer;position:relative;z-index:2">
+                                <span style="position:absolute;inset:0;border-radius:999px;background:${trackBg};transition:.2s;pointer-events:none"></span>
+                                <span style="position:absolute;top:2px;left:${knobX};width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:.2s;pointer-events:none"></span>
+                            </span>
+                            <span class="text-xs font-semibold text-gray-600">${window.i18n ? i18n.t('In marketplace') : 'In marketplace'}</span>
+                        </label>
+                        <div class="flex items-center gap-1">
+                            <span class="text-xs text-gray-500">${window.i18n ? i18n.t('Listed qty') : 'Listed qty'}:</span>
+                            <input type="number" min="0" step="0.01" value="${p.stock_quantity != null ? p.stock_quantity : 0}" id="qty-${p.id}" class="w-16 px-2 py-1 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <span class="text-xs text-gray-400">${p.unit || ''}</span>
+                            <button onclick="saveProductQty(${p.id})" class="px-2 py-1 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition flex-shrink-0"><i class="fas fa-check"></i></button>
                         </div>
-                        ${p.source_produce_info ? `
-                            <a href="individual_farm.html?id=${p.source_produce_info.farm_id}" class="inline-flex items-center gap-1 mb-2 text-xs text-emerald-700 hover:underline font-medium">
-                                <i class="fas fa-tractor"></i> ${p.source_produce_info.farm_name || (window.i18n ? i18n.t('Farm') : 'Farm')}
-                            </a>` : ''}
-                        <div class="flex items-end justify-between">
-                            <div class="text-xl font-bold text-emerald-700" data-raw-amount="${p.price || 0}">${window.i18n ? i18n.formatCurrency(Number(p.price || 0)) : ('\u20a6' + Number(p.price || 0).toLocaleString())}</div>
-                            <div class="text-xs text-gray-500"><i class="fas fa-box"></i> ${p.stock_quantity || 0} ${p.unit || ''} ${window.i18n ? i18n.t('in stock') : 'in stock'}</div>
-                        </div>
-                        ${p.expiration_date ? `<div class="text-xs text-amber-600 mt-1"><i class="fas fa-calendar"></i> ${window.i18n ? i18n.t('Exp:') : 'Exp:'} ${p.expiration_date}</div>` : ''}
-
-                        <div class="mt-2 pt-2 border-t border-gray-100 rounded-lg" style="background:#f9faf6;padding:8px;border:1px solid var(--green-line)">
-                            <div class="flex items-center justify-between gap-2 mb-2">
-                                <label class="inline-flex items-center gap-2 cursor-pointer">
-                                    <span style="position:relative;display:inline-block;width:38px;height:20px;flex-shrink:0">
-                                        <input type="checkbox" ${isListed ? 'checked' : ''} onchange="toggleProductListing(${p.id}, this.checked)" style="opacity:0;width:38px;height:20px;margin:0;cursor:pointer;position:relative;z-index:2">
-                                        <span style="position:absolute;inset:0;border-radius:999px;background:${trackBg};transition:.2s;pointer-events:none"></span>
-                                        <span style="position:absolute;top:2px;left:${knobX};width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:.2s;pointer-events:none"></span>
-                                    </span>
-                                    <span class="text-xs font-semibold text-gray-600">${window.i18n ? i18n.t('In marketplace') : 'In marketplace'}</span>
-                                </label>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <span class="text-xs text-gray-500 flex-shrink-0">${window.i18n ? i18n.t('Listed qty') : 'Listed qty'}:</span>
-                                <input type="number" min="0" step="0.01" value="${p.stock_quantity != null ? p.stock_quantity : 0}" id="qty-${p.id}" class="w-16 px-2 py-1 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                <span class="text-xs text-gray-400">${p.unit || ''}</span>
-                                <button onclick="saveProductQty(${p.id})" class="ml-auto px-2 py-1 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition flex-shrink-0"><i class="fas fa-check"></i> ${window.i18n ? i18n.t('Save') : 'Save'}</button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-2 mt-2">
-                            <button class="flex-1 px-3 py-1.5 btn-primary text-white rounded-lg shadow-sm transition text-xs font-semibold">
-                                <i class="fas fa-bullhorn"></i> ${window.i18n ? i18n.t('Promote') : 'Promote'}
-                            </button>
-                            ${isDropshipped && !p.is_published ? `<button class="px-3 py-1.5 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition text-xs font-semibold release-dropship-btn" data-product-id="${p.id}"><i class="fas fa-upload"></i> ${window.i18n ? i18n.t('Release') : 'Release'}</button>` : ''}
-                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0 ml-auto">
+                        <button class="px-3 py-2 text-xs font-semibold bg-white text-emerald-700 border border-emerald-100 rounded-lg shadow-sm hover:bg-emerald-50 transition"><i class="fas fa-edit"></i> ${window.i18n ? i18n.t('Edit') : 'Edit'}</button>
+                        <button class="px-3 py-2 text-xs font-semibold btn-primary text-white rounded-lg shadow-sm transition"><i class="fas fa-bullhorn"></i> ${window.i18n ? i18n.t('Promote') : 'Promote'}</button>
+                        ${isDropshipped && !p.is_published ? `<button class="px-3 py-2 text-xs font-semibold bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition release-dropship-btn" data-product-id="${p.id}"><i class="fas fa-upload"></i> ${window.i18n ? i18n.t('Release') : 'Release'}</button>` : ''}
                     </div>
                 `;
-                container.appendChild(card);
+                container.appendChild(row);
             });
+
             setTimeout(() => {
                 document.querySelectorAll('.release-dropship-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
+                    btn.addEventListener('click', async () => {
                         const productId = btn.getAttribute('data-product-id');
                         btn.disabled = true;
                         btn.textContent = window.i18n ? i18n.t('Releasing...') : 'Releasing...';
@@ -1979,6 +1970,26 @@
                 });
             }, 100);
         }
+
+        // Filter buttons (All / Low Stock / Draft)
+        function setProductFilter(filter, btn) {
+            productFilter = filter;
+            document.querySelectorAll('.product-filter-btn').forEach(b => {
+                b.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
+                b.classList.add('text-gray-700', 'border-gray-200', 'hover:bg-gray-50');
+            });
+            if (btn) {
+                btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+                btn.classList.remove('text-gray-700', 'border-gray-200', 'hover:bg-gray-50');
+            }
+            renderProductRows(applyProductFilter(allProducts, productFilter));
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.product-filter-btn').forEach(b => {
+                b.addEventListener('click', () => setProductFilter(b.getAttribute('data-filter'), b));
+            });
+        });
+
 
         // ---- Marketplace listing controls (per product) ----
         window.toggleProductListing = async function(productId, listed) {
