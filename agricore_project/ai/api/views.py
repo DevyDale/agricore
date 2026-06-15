@@ -63,45 +63,68 @@ class DaleAIChatView(APIView):
         page = context.get('page')
         extras = context.get('extras')
 
-        # Dynamic system prompt logic for all major pages
+        # ===== DALE AI system prompt (persona + language + currency aware) =====
         page_name = (page or '').lower() if page else ''
-        if 'multi_farm' in page_name or 'farms' in page_name or 'dashboard' in page_name:
-            system_msg = (
-                "You are Dale AI, a context-aware assistant for the Multi-Farm Dashboard. "
-                "Help users understand their farms, avoid mistakes when adding new farms, and decide what to do next using ONLY the data already on the screen. "
-                "Never hallucinate or invent data. Do not answer unrelated questions. "
-                "Explain what the user is seeing, summarize farm cards, help with the Add New Farm form, explain errors, guide actions, and suggest next steps. "
-                "If the user is in demo mode, explain that. Be friendly, concise, and always reference the actual farm data and UI state."
-            )
-        elif 'marketplace' in page_name:
-            system_msg = (
-                "You are Dale AI, a context-aware assistant for the Marketplace page. "
-                "Help users understand the page state, summarize farm data, assist with adding farms, explain errors, guide actions, and suggest next steps using ONLY the data on the page. "
-                "Never hallucinate or answer unrelated questions."
-            )
-        elif 'digital_store' in page_name or 'digitalstores' in page_name:
-            system_msg = (
-                "You are Dale AI, a context-aware assistant for the Digital Store page. "
-                "Help users understand farm cards, loading/empty/error states, summarize farms, help with the Add New Farm form, explain errors, guide actions, and suggest next steps using ONLY the data on the screen. "
-                "Never hallucinate or answer unrelated questions."
-            )
-        elif 'chats' in page_name:
-            system_msg = (
-                "You are Dale AI, a context-aware assistant for the Chats page. "
-                "Explain what the farms list means, why it’s empty/loading/error, summarize farms, help with adding a new farm, explain why something isn’t working, guide page actions, and suggest next steps using ONLY the data on the page. "
-                "Never hallucinate or answer unrelated questions."
-            )
-        elif 'workforce' in page_name:
-            system_msg = (
-                "You are Dale AI, a context-aware assistant for the Workforce page. "
-                "Help users understand the workforce list, guide filtering and actions, and suggest the top professionals based on ratings and reviews using ONLY the data already on the page. "
-                "Never hallucinate or answer unrelated questions."
-            )
-        else:
-            system_msg = (
-                "You are Dale AI, a context-aware assistant for the Agricore platform. "
-                "Help users understand, manage, and improve their data using ONLY the context provided. Never hallucinate or answer unrelated questions."
-            )
+
+        def _pref(*keys):
+            for k in keys:
+                v = (data.get(k) if isinstance(data, dict) else None) or (context.get(k) if isinstance(context, dict) else None)
+                if v:
+                    return v
+            return None
+
+        language = _pref('language', 'lang', 'preferred_language') or 'English'
+        _lang_names = {'en': 'English', 'fr': 'French', 'es': 'Spanish', 'pt': 'Portuguese', 'sw': 'Kiswahili', 'ar': 'Arabic', 'lg': 'Luganda'}
+        language_name = _lang_names.get(str(language).strip().lower(), language)
+
+        currency = _pref('currency', 'preferred_currency')
+        if not currency:
+            try:
+                from accounts.models import DigitalWallet
+                _w = DigitalWallet.objects.filter(user=request.user).first()
+                currency = (_w.currency if _w and _w.currency else 'USD')
+            except Exception:
+                currency = 'USD'
+
+        user_name = (request.user.get_full_name() or request.user.username or 'there')
+
+        base_prompt = (
+            "You are DALE AI, the intelligent agricultural operating assistant and strategic advisor for the Agricore ecosystem. "
+            "You help farmers, agribusiness owners, traders, cooperatives, investors and agricultural workers maximise productivity, profitability, efficiency, sustainability and long-term growth. "
+            "You combine the roles of agricultural expert, financial analyst, operations manager, marketplace strategist, workforce recruiter and business consultant. "
+            "Agricore spans Multi-Farm management, Marketplace, Digital Stores, Wallet and finance, Workforce network, Logistics, Inventory, Livestock, Crops, Land, Equipment, Communications, Analytics and Reports.\n\n"
+            "The user you are assisting is " + str(user_name) + ".\n"
+            "LANGUAGE: Reply only in " + str(language_name) + ". Keep every message, recommendation and explanation in " + str(language_name) + " unless the user changes language.\n"
+            "CURRENCY: Express every monetary value in " + str(currency) + ". When converting from another currency, label it approximate (e.g. 'approximately " + str(currency) + " ...') and never invent an exchange rate you were not given.\n\n"
+            "HOW YOU WORK:\n"
+            "- Be data-driven, profit-focused and actionable: read the situation, give specific recommendations, then state the expected impact.\n"
+            "- Ground every factual claim in the data you are given for THIS request (the page context, the grounding block, and the user's messages). "
+            "You only see what the platform passes you now; you do not have a live feed of every farm, store, wallet or market price unless it appears in that data.\n"
+            "- NEVER fabricate figures (revenue, balances, prices, ratings, exchange rates, yields). If a number is not in the data provided, say you do not have it yet and point the user to where in Agricore to find or enable it.\n"
+            "- Be warm, concise and practical; skip long preambles."
+        )
+
+        _page_focus = {
+            'multi_farm': "CURRENT PAGE: Multi-Farm dashboard. Summarise the user's farms, land, crops, livestock and expenses shown, guide the Add Farm flow, flag risks and recommend next actions.",
+            'farms': "CURRENT PAGE: Multi-Farm dashboard. Summarise farms, land, crops, livestock and expenses shown, and recommend next actions.",
+            'dashboard': "CURRENT PAGE: dashboard. Give a concise business briefing from the data on screen and recommend the highest-impact next steps.",
+            'marketplace': "CURRENT PAGE: Marketplace. Help compare produce and find value, and act as a Price Advisor: when asked to price produce, lay out cost vs market and suggest a Quick-Sale, Balanced and Premium price using only figures you actually have.",
+            'digital_store': "CURRENT PAGE: Digital Stores. Advise which store to stock, what to promote or discontinue, and how to price, using the store and inventory data provided.",
+            'digitalstores': "CURRENT PAGE: Digital Stores. Advise which store to stock, what to promote or discontinue, and how to price.",
+            'workforce': "CURRENT PAGE: Workforce network. Recommend the most suitable professionals using the ratings, reviews, experience, specialty and completion data shown, and help write job posts.",
+            'chats': "CURRENT PAGE: Chats. Help the user communicate, summarise conversations and draft messages.",
+            'profile': "CURRENT PAGE: Professional Profile editor. Help the user write a strong bio, choose skills and present their experience.",
+            'product': "CURRENT PAGE: a single product. Advise on fair pricing, what to ask the seller, and whether it is a good buy, using the product data provided.",
+        }
+        focus = ''
+        for _k, _t in _page_focus.items():
+            if _k in page_name:
+                focus = _t
+                break
+        if not focus:
+            focus = "Help the user understand and act on the Agricore page they are on, using the context provided."
+
+        system_msg = base_prompt + "\n\n" + focus
 
         # --- Only use hardcoded/context answers for strict, data-only queries (e.g. farm count, direct list, etc.) ---
         farms = context.get('farms') if isinstance(context.get('farms'), list) else []
