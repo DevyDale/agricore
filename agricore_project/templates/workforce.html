@@ -313,6 +313,12 @@
                     headers: token ? { 'Authorization': 'Bearer ' + token } : {}
                 });
 
+                if (response.status === 401) {
+                    localStorage.removeItem('access_token');
+                    showToast(window.i18n ? i18n.t('Your session expired — please log in again') : 'Your session expired — please log in again');
+                    setTimeout(() => { window.location.href = 'authentication.html'; }, 1000);
+                    return;
+                }
                 if (response.ok) {
                     professionals = await response.json();
                     renderProfessionals();
