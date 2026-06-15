@@ -21,7 +21,7 @@ class ProfessionalProfileListSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfessionalProfile
         fields = [
-            'id', 'user_name', 'user_email', 'profile_image_url', 'location',
+            'id', 'user', 'user_name', 'user_email', 'profile_image_url', 'location',
             'specialty', 'specialty_display', 'years_experience', 'hourly_rate',
             'availability', 'availability_display', 'average_rating', 'total_reviews',
             'is_verified', 'featured', 'bio', 'response_time', 'total_jobs_completed'
