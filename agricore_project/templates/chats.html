@@ -663,7 +663,7 @@
         // ---- shared-product message helpers ----
         function escHtmlC(v){ return String(v==null?'':v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
         window.agcProduct = function(content){ if(typeof content!=='string' || content.indexOf('__AGRICORE_PRODUCT__')!==0) return null; try{ return JSON.parse(content.slice('__AGRICORE_PRODUCT__'.length)); }catch(e){ return null; } };
-        window.agcProductCard = function(p){ return '<div style="border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;max-width:230px;background:#fff">'+(p.image?'<img src="'+escHtmlC(p.image)+'" style="width:100%;height:115px;object-fit:cover;display:block" onerror="this.style.display=\'none\'">':'')+'<div style="padding:.5rem .6rem"><div style="font-weight:700;font-size:.85rem;color:#16271c">'+escHtmlC(p.title)+'</div><div style="color:#059669;font-weight:800;font-size:.95rem">'+escHtmlC(p.price_text||'')+'</div>'+(p.unit?'<div style="font-size:.7rem;color:#94a3b8;margin-bottom:.4rem">per '+escHtmlC(p.unit)+'</div>':'')+'<a href="product_detail.html?id='+p.id+'" style="display:inline-block;background:linear-gradient(135deg,#10b981,#047857);color:#fff;font-size:.75rem;font-weight:700;padding:.35rem .7rem;border-radius:8px;text-decoration:none">View product</a></div></div>'; };
+        window.agcProductCard = function(p){ return '<div style="border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;max-width:230px;background:#fff">'+(p.image?'<img src="'+escHtmlC(p.image)+'" style="width:100%;height:115px;object-fit:cover;display:block" onerror="this.style.display=\'none\'">':'')+'<div style="padding:.5rem .6rem"><div style="font-weight:700;font-size:.85rem;color:#16271c">'+escHtmlC(p.title)+'</div><div style="color:#059669;font-weight:800;font-size:.95rem">'+escHtmlC(p.price_text||'')+'</div>'+(p.unit?'<div style="font-size:.7rem;color:#94a3b8">per '+escHtmlC(p.unit)+'</div>':'')+'</div></div>'; };
 
         // ---- realtime websocket ----
         let chatWS=null, chatWSConvId=null, renderedMsgIds=new Set();
@@ -1217,7 +1217,21 @@
                     .then(r => r.ok ? r.json() : null)
                     .then(u => { if (u) { if (u.id) localStorage.setItem('user_id', u.id); if (u.username) window.__myUsername = u.username; } });
             }
+            const _qsUser = new URLSearchParams(location.search).get('user');
+            if (_qsUser && token) openChatWithUser(_qsUser);
         };
+        async function openChatWithUser(userId) {
+            try {
+                const res = await fetch('/api/conversations/start-direct-chat/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ user: userId })
+                });
+                if (!res.ok) throw new Error('Failed to open chat');
+                const data = await res.json();
+                if (data && data.id) loadChatRoom(data.id, data.title || data.display_name || 'Chat');
+            } catch (e) { /* stay on conversation list */ }
+        }
     </script>
 
     <!-- Dale AI assistant -->

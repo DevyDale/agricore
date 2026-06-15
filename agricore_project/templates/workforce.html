@@ -392,7 +392,7 @@
                         </div>
                         <div class="flex gap-2">
                             <button onclick="event.stopPropagation(); showDetails(${pro.id})" class="flex-1 px-4 py-2 btn-primary text-sm" id="btn-view-profile">${window.i18n ? i18n.t('View Profile') : 'View Profile'}</button>
-                            <button onclick="event.stopPropagation(); startChatWithProfessional(${pro.id})" class="px-4 py-2 border-2 border-emerald-600 text-emerald-600 rounded-xl font-semibold hover:bg-emerald-50 transition" id="btn-chat-prof"><i class="fas fa-envelope"></i></button>
+                            <button onclick="event.stopPropagation(); startChatWithProfessional(${pro.user})" class="px-4 py-2 border-2 border-emerald-600 text-emerald-600 rounded-xl font-semibold hover:bg-emerald-50 transition" id="btn-chat-prof"><i class="fas fa-envelope"></i></button>
                         </div>
                     </div>
                 </div>
@@ -511,17 +511,45 @@
                     ` : ''}
 
                     <div class="flex gap-4 pt-4 flex-col sm:flex-row">
-                        <button onclick="startChatWithProfessional(${pro.id})" class="flex-1 btn-primary flex items-center justify-center gap-2" id="btn-chat-modal"><i class="fas fa-envelope"></i> ${window.i18n ? i18n.t('Chat with Professional') : 'Chat with Professional'}</button>
+                        <button onclick="startChatWithProfessional(${pro.user})" class="flex-1 btn-primary flex items-center justify-center gap-2" id="btn-chat-modal"><i class="fas fa-envelope"></i> ${window.i18n ? i18n.t('Chat with Professional') : 'Chat with Professional'}</button>
                         <button onclick="leaveReview(${pro.id})" class="px-6 py-3 border-2 border-emerald-600 text-emerald-600 rounded-xl font-bold hover:bg-emerald-50 transition flex items-center justify-center gap-2" id="btn-leave-review"><i class="fas fa-star"></i> ${window.i18n ? i18n.t('Leave Review') : 'Leave Review'}</button>
+                    </div>
+
+                    <!-- Reviews -->
+                    <div class="pt-6 mt-2 border-t" style="border-color:var(--line)">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-bold text-lg text-gray-800">Reviews <span class="text-gray-400 text-base font-semibold">(${pro.total_reviews || 0})</span></h4>
+                            <button type="button" onclick="toggleReviewForm()" class="text-emerald-700 font-semibold text-sm"><i class="fas fa-pen mr-1"></i>Write a review</button>
+                        </div>
+                        <div id="review-form" class="hidden bg-emerald-50 border rounded-2xl p-4 mb-5 space-y-3" style="border-color:#bfe6cf">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div><label class="block text-xs font-semibold text-gray-600 mb-1">Overall rating *</label>
+                                    <select id="rv-rating" class="input-field w-full"><option value="">Select</option><option value="5">5 — Excellent</option><option value="4">4 — Good</option><option value="3">3 — Average</option><option value="2">2 — Poor</option><option value="1">1 — Terrible</option></select></div>
+                                <div><label class="block text-xs font-semibold text-gray-600 mb-1">Job done (optional)</label>
+                                    <input id="rv-job" class="input-field w-full" placeholder="e.g., Soil testing"></div>
+                            </div>
+                            <input id="rv-title" class="input-field w-full" placeholder="Review title *">
+                            <textarea id="rv-comment" rows="3" class="input-field w-full" placeholder="Share your experience working with this professional *"></textarea>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                <div><label class="block text-[11px] font-semibold text-gray-500 mb-1">Work quality</label><select id="rv-quality" class="input-field w-full text-sm"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+                                <div><label class="block text-[11px] font-semibold text-gray-500 mb-1">Professionalism</label><select id="rv-prof" class="input-field w-full text-sm"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+                                <div><label class="block text-[11px] font-semibold text-gray-500 mb-1">Communication</label><select id="rv-comm" class="input-field w-full text-sm"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+                                <div><label class="block text-[11px] font-semibold text-gray-500 mb-1">Timeliness</label><select id="rv-time" class="input-field w-full text-sm"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+                            </div>
+                            <button type="button" onclick="submitReview(${pro.id})" class="btn-primary w-full"><i class="fas fa-paper-plane"></i> Submit review</button>
+                        </div>
+                        <div id="reviews-list" class="space-y-3"><div class="text-gray-400 text-sm text-center py-3"><i class="fas fa-spinner fa-spin mr-1"></i> Loading reviews…</div></div>
                     </div>
                 </div>
             `;
+            loadProfessionalReviews(pro.id);
         }
 
-        // Start chat with professional
-        function startChatWithProfessional(id) {
+        // Start chat with professional (expects the professional's USER id, not the profile id)
+        function startChatWithProfessional(userId) {
+            if (userId === undefined || userId === null || userId === '') { showToast('Chat is unavailable for this professional'); return; }
             showToast(window.i18n ? i18n.t('Opening chat...') : 'Opening chat...');
-            window.location.href = `chats.html?user=${encodeURIComponent(id)}`;
+            window.location.href = `chats.html?user=${encodeURIComponent(userId)}`;
         }
         
 
@@ -531,9 +559,65 @@
             window.location.href = 'chats.html';
         }
 
-        // Leave review
+        // Reviews
         function leaveReview(id) {
-            showToast(window.i18n ? i18n.t('Review feature coming soon!') : 'Review feature coming soon!');
+            const f = document.getElementById('review-form');
+            if (f) { f.classList.remove('hidden'); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        }
+        function toggleReviewForm() {
+            const f = document.getElementById('review-form');
+            if (f) { f.classList.toggle('hidden'); if (!f.classList.contains('hidden')) f.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        }
+        function escHtml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+        async function loadProfessionalReviews(proId) {
+            const box = document.getElementById('reviews-list');
+            if (!box) return;
+            try {
+                const token = localStorage.getItem('access_token');
+                const r = await fetch(`/api/professional-reviews/?professional=${proId}`, { headers: token ? { 'Authorization': 'Bearer ' + token } : {} });
+                const data = r.ok ? await r.json() : [];
+                const list = Array.isArray(data) ? data : (data.results || []);
+                box.innerHTML = list.length ? list.map(reviewCard).join('') : '<p class="text-gray-400 text-sm text-center py-3">No reviews yet — be the first to leave one.</p>';
+            } catch (e) { box.innerHTML = '<p class="text-gray-400 text-sm text-center py-3">Could not load reviews.</p>'; }
+        }
+        function reviewCard(rv) {
+            const name = rv.reviewer_name || rv.reviewer_username || 'User';
+            const when = rv.created_at ? new Date(rv.created_at).toLocaleDateString() : '';
+            const subs = [['Quality', rv.work_quality], ['Professionalism', rv.professionalism], ['Communication', rv.communication], ['Timeliness', rv.timeliness]]
+                .filter(s => s[1]).map(s => `<span class="text-xs bg-white border rounded-full px-2 py-0.5" style="border-color:var(--line)">${s[0]} ${s[1]}/5</span>`).join('');
+            return `<div class="rounded-2xl border p-4" style="border-color:var(--line)">
+                <div class="flex items-center justify-between gap-2 mb-1">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 grid place-items-center text-emerald-700 font-bold shrink-0">${escHtml((name || 'U')[0].toUpperCase())}</div>
+                        <span class="font-bold text-gray-800 truncate">${escHtml(name)}</span>
+                        ${rv.is_verified ? '<span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold shrink-0"><i class="fas fa-check-circle mr-1"></i>Verified hire</span>' : ''}
+                    </div>
+                    <span class="rating-stars text-sm shrink-0">${renderStars(rv.rating)}</span>
+                </div>
+                ${rv.title ? `<p class="font-semibold text-gray-800 mt-1">${escHtml(rv.title)}</p>` : ''}
+                <p class="text-gray-700 text-sm mt-1">${escHtml(rv.comment || '')}</p>
+                ${subs ? `<div class="flex flex-wrap gap-1.5 mt-2">${subs}</div>` : ''}
+                <div class="text-xs text-gray-400 mt-2">${when}</div>
+                ${rv.response ? `<div class="mt-2 bg-emerald-50 border rounded-xl p-2 text-sm" style="border-color:#bfe6cf"><span class="font-bold text-emerald-700">Professional's response:</span> ${escHtml(rv.response)}</div>` : ''}
+            </div>`;
+        }
+        async function submitReview(proId) {
+            const rating = document.getElementById('rv-rating').value;
+            const title = (document.getElementById('rv-title').value || '').trim();
+            const comment = (document.getElementById('rv-comment').value || '').trim();
+            if (!rating) return showToast('Please choose an overall rating');
+            if (!title) return showToast('Please add a review title');
+            if (!comment) return showToast('Please write a comment');
+            const body = { professional: proId, rating: Number(rating), title, comment };
+            const job = (document.getElementById('rv-job').value || '').trim(); if (job) body.job_title = job;
+            [['rv-quality', 'work_quality'], ['rv-prof', 'professionalism'], ['rv-comm', 'communication'], ['rv-time', 'timeliness']].forEach(([el, f]) => { const v = document.getElementById(el); if (v && v.value) body[f] = Number(v.value); });
+            try {
+                const token = localStorage.getItem('access_token');
+                const r = await fetch('/api/professional-reviews/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(body) });
+                if (!r.ok) { let e = {}; try { e = await r.json(); } catch (x) {} let m = e.detail || (e && typeof e === 'object' && Object.values(e)[0]) || 'Could not submit review'; if (Array.isArray(m)) m = m[0]; throw new Error(m); }
+                showToast(window.i18n ? i18n.t('Review submitted!') : 'Review submitted — thank you!');
+                showDetails(proId);
+            } catch (e) { showToast(typeof e.message === 'string' ? e.message : 'Could not submit review'); }
         }
 
         // Filter event listeners
@@ -669,115 +753,116 @@
       window.__daleIntro = "Hi, I'm Dale. I can see the professionals you're browsing — ask me to help shortlist someone, compare rates, or write a job post.";
       window.__daleChips = ["Who fits a tight budget?","Compare the top-rated ones","Help me write a job post","What should I look for?"];
     </script>
-    <!-- ===== Dale AI assistant (context-aware, brand) ===== -->
-    <script>
-    (function(){
-      if (window.__daleInit) return; window.__daleInit = true;
-      var ENDPOINT = '/api/ai/dale/ask/';
-      var history = [];
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
+<!-- ===== Dale AI assistant (context-aware, brand) ===== -->
+<script>
+(function(){
+  if (window.__daleInit) return; window.__daleInit = true;
+  var ENDPOINT = '/api/ai/dale/ask/';
+  var history = [];
 
-      var css = ''
-        + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:62px;height:62px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
-        + 'background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);'
-        + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}'
-        + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
-        + '#daleFab svg{width:28px;height:28px}'
-        + '#daleFab .dot{position:absolute;top:10px;right:11px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857}'
-        + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;'
-        + 'background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);'
-        + 'display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
-        + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
-        + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
-        + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
-        + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
-        + '.dale-head .mk svg{width:20px;height:20px}'
-        + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
-        + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
-        + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
-        + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
-        + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
-        + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
-        + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
-        + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
-        + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
-        + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
-        + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
-        + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
-        + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
-        + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
-        + '.dale-chip:hover{background:#d6efdf}'
-        + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
-        + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
-        + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
-        + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
-        + '.dale-input button svg{width:18px;height:18px}'
-        + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
-      var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+  var css = ''
+    + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:66px;height:66px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
+    + 'background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);'
+    + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;overflow:hidden}'
+    + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
+    + '#daleFab svg{width:28px;height:28px}'
+    + '#daleFab dotlottie-wc{width:54px;height:54px;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}'
+    + '#daleFab .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857;z-index:2}'
+    + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;'
+    + 'background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);'
+    + 'display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
+    + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
+    + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
+    + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
+    + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+    + '.dale-head .mk svg{width:20px;height:20px}'
+    + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
+    + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
+    + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+    + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
+    + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+    + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
+    + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
+    + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+    + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
+    + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
+    + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
+    + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
+    + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
+    + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
+    + '.dale-chip:hover{background:#d6efdf}'
+    + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
+    + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
+    + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
+    + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
+    + '.dale-input button svg{width:18px;height:18px}'
+    + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
+  var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
-      var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
-      var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
-      fab.innerHTML = '<span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>';
-      document.body.appendChild(fab);
+  var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+  var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
+  fab.innerHTML = '<span class="dot"></span><dotlottie-wc src="https://lottie.host/ac187fae-55ac-4ce4-93a9-fe037e3e2e57/jSdcU6a1Ig.lottie" autoplay loop></dotlottie-wc>';
+  document.body.appendChild(fab);
 
-      var panel = document.createElement('div'); panel.id='dalePanel';
-      panel.innerHTML =
-        '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
-        + '<div class="dale-msgs" id="daleMsgs"></div>'
-        + '<div class="dale-chips" id="daleChips"></div>'
-        + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
-        + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
-      document.body.appendChild(panel);
+  var panel = document.createElement('div'); panel.id='dalePanel';
+  panel.innerHTML =
+    '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
+    + '<div class="dale-msgs" id="daleMsgs"></div>'
+    + '<div class="dale-chips" id="daleChips"></div>'
+    + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
+    + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
+  document.body.appendChild(panel);
 
-      var msgs = panel.querySelector('#daleMsgs');
-      var text = panel.querySelector('#daleText');
-      var greeted = false;
+  var msgs = panel.querySelector('#daleMsgs');
+  var text = panel.querySelector('#daleText');
+  var greeted = false;
 
-      function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
-      function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
-      function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+  function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+  function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+  function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
 
-      function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
+  function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
 
-      function renderChips(){
-        var chips = (window.__daleChips || []);
-        var box = panel.querySelector('#daleChips'); box.innerHTML='';
-        chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); });
-      }
+  function renderChips(){
+    var chips = (window.__daleChips || []);
+    var box = panel.querySelector('#daleChips'); box.innerHTML='';
+    chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); });
+  }
 
-      async function send(q){
-        q = (q!==undefined ? q : text.value).trim();
-        if(!q) return;
-        text.value=''; bubble(q,'me'); history.push({role:'user',content:q});
-        var t = typing();
-        try{
-          var token = localStorage.getItem('access_token');
-          var res = await fetch(ENDPOINT, {
-            method:'POST',
-            headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}),
-            body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) })
-          });
-          t.remove();
-          if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
-          var data = await res.json();
-          var reply = data.reply || data.detail || 'No response.';
-          bubble(reply,'ai'); history.push({role:'assistant',content:reply});
-        }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
-      }
+  async function send(q){
+    q = (q!==undefined ? q : text.value).trim();
+    if(!q) return;
+    text.value=''; bubble(q,'me'); history.push({role:'user',content:q});
+    var t = typing();
+    try{
+      var token = localStorage.getItem('access_token');
+      var res = await fetch(ENDPOINT, {
+        method:'POST',
+        headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}),
+        body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) })
+      });
+      t.remove();
+      if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
+      var data = await res.json();
+      var reply = data.reply || data.detail || 'No response.';
+      bubble(reply,'ai'); history.push({role:'assistant',content:reply});
+    }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
+  }
 
-      function open(){
-        panel.classList.add('open');
-        if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); }
-        setTimeout(function(){ text.focus(); }, 50);
-      }
-      function close(){ panel.classList.remove('open'); }
+  function open(){
+    panel.classList.add('open');
+    if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); }
+    setTimeout(function(){ text.focus(); }, 50);
+  }
+  function close(){ panel.classList.remove('open'); }
 
-      fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
-      panel.querySelector('.x').addEventListener('click', close);
-      panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
-      text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
-      text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
-    })();
-    </script>
-
+  fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
+  panel.querySelector('.x').addEventListener('click', close);
+  panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
+  text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+  text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
+})();
+</script>
 </body>
 </html>
