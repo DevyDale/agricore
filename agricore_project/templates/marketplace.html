@@ -564,6 +564,7 @@
         window.__daleChips = ["Find me the cheapest fertilizer","What's top-rated here?","Compare these products","What should I buy for cattle?"];
 
         loadMe(); updateCart(); load();
+        if(new URLSearchParams(location.search).get('checkout')==='1'){ setTimeout(()=>{ try{ openCheckout(); }catch(e){} }, 300); }
 
         /* i18n title (safe if i18n absent) */
         if(window.i18n){ try{ ['marketplace-title','marketplace-desc'].forEach((id,i)=>{ const k=['Agricore Marketplace','Your One-Stop Shop for Everything Farming'][i]; const el=$(id); if(el) el.textContent=i18n.t(k); }); }catch(e){} }

@@ -517,202 +517,183 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
-    <div class="container mx-auto px-4 py-8 relative z-10">
-        <a href="marketplace.html" class="inline-flex items-center gap-2 text-lg font-bold text-emerald-700 hover:text-emerald-800 mb-8 transition-colors">
-            <i class="fas fa-arrow-left"></i> Back to marketplace
-        </a>
+    <div class="max-w-6xl mx-auto px-4 py-6 relative z-10 fade-in">
+        <!-- Top bar -->
+        <div class="flex items-center justify-between mb-6">
+            <a href="marketplace.html" class="inline-flex items-center gap-2 text-base font-bold text-emerald-700 hover:text-emerald-800 transition-colors">
+                <i class="fas fa-arrow-left"></i> Back to marketplace
+            </a>
+            <a href="marketplace.html" class="relative inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#ece4d6] font-bold text-emerald-700 hover:shadow-md transition">
+                <i class="fas fa-shopping-cart"></i> Cart
+                <span id="cart-count" class="ml-1 min-w-[22px] h-[22px] px-1 inline-flex items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-bold">0</span>
+            </a>
+        </div>
 
-        <div id="detail-shell" class="grid grid-cols-1 lg:grid-cols-3 gap-8 fade-in">
-            <!-- Main Product Section -->
-            <div class="lg:col-span-2 glass-card p-0">
-                <div class="gradient-header">
-                    <h1 id="product-title" class="text-4xl font-black mb-3 tracking-tight relative">Loading...</h1>
-                    <div class="flex items-center gap-3 mb-2">
-                        <div id="product-rating" class="flex items-center gap-1 text-yellow-300 text-xl"></div>
-                        <span id="product-reviews" class="text-base text-white/90 font-medium"></span>
-                    </div>
-                </div>
-                <div class="p-8">
-                    <div class="image-container aspect-video bg-gray-100 mb-6" id="product-image-container">
-                        <div class="wishlist-btn" id="wishlist-btn" title="Add to wishlist">
-                            <i class="far fa-heart"></i>
-                        </div>
+        <div class="grid lg:grid-cols-3 gap-6">
+            <!-- LEFT: gallery + buy box + description + specs -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Gallery -->
+                <div class="glass-card overflow-hidden">
+                    <div class="image-container aspect-[16/10] bg-gray-100" id="product-image-container">
+                        <div class="wishlist-btn" id="wishlist-btn" title="Save to wishlist"><i class="far fa-heart"></i></div>
                         <img id="product-image" class="w-full h-full object-cover" src="https://via.placeholder.com/1200x800?text=Product" alt="Product">
                     </div>
-
-                    <!-- Availability & Share -->
-                    <div class="flex items-center justify-between mb-6">
-                        <div id="availability-container" class="availability-badge in-stock">
-                            <i class="fas fa-check-circle"></i>
-                            <span>In Stock</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm font-bold text-gray-600 mr-2">Share:</span>
-                            <button class="share-btn facebook" title="Share on Facebook">
-                                <i class="fab fa-facebook-f"></i>
-                            </button>
-                            <button class="share-btn twitter" title="Share on Twitter">
-                                <i class="fab fa-twitter"></i>
-                            </button>
-                            <button class="share-btn whatsapp" title="Share on WhatsApp">
-                                <i class="fab fa-whatsapp"></i>
-                            </button>
-                            <button class="share-btn link" id="copy-link-btn" title="Copy link">
-                                <i class="fas fa-link"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Key Features -->
-                    <div class="mb-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-6">
-                        <h3 class="font-bold text-gray-800 mb-3 text-lg">Key Features</h3>
-                        <ul id="key-features" class="space-y-2">
-                            <li class="flex items-start gap-2">
-                                <i class="fas fa-check-circle text-emerald-600 mt-1"></i>
-                                <span class="text-gray-700 font-medium">High quality product</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <i class="fas fa-check-circle text-emerald-600 mt-1"></i>
-                                <span class="text-gray-700 font-medium">Fast delivery available</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <i class="fas fa-check-circle text-emerald-600 mt-1"></i>
-                                <span class="text-gray-700 font-medium">Customer satisfaction guaranteed</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <p id="product-description" class="text-lg text-gray-700 mb-8 leading-relaxed font-medium"></p>
-
-                    <!-- Specifications -->
-                    <div class="mb-8 glass-card p-6">
-                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Specifications</h3>
-                        <table class="specs-table">
-                            <tbody id="specifications-body">
-                                <tr>
-                                    <td>Category</td>
-                                    <td id="spec-category">-</td>
-                                </tr>
-                                <tr>
-                                    <td>Unit</td>
-                                    <td id="spec-unit">-</td>
-                                </tr>
-                                <tr>
-                                    <td>Stock</td>
-                                    <td id="spec-stock">-</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="price-badge">
-                            <p class="text-sm font-bold text-gray-600 mb-1 uppercase tracking-wider">Price</p>
-                            <div class="flex items-baseline gap-3 mb-2">
-                                <p id="product-price" class="text-4xl font-black gradient-text">₦0.00</p>
-                                <p id="original-price" class="text-xl font-bold text-gray-400 line-through hidden">₦0.00</p>
-                            </div>
-                            <div id="discount-badge" class="hidden inline-flex items-center gap-1 bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-bold mb-2">
-                                <i class="fas fa-tag"></i>
-                                <span id="discount-percent">0% OFF</span>
-                            </div>
-                            <p id="product-unit" class="text-base text-gray-600 font-semibold"></p>
-                        </div>
-                        
-                        <div class="flex flex-col gap-4 justify-center">
-                            <button id="chat-btn" class="btn-secondary text-base">
-                                <i class="fas fa-comments mr-2"></i>Chat with seller
-                            </button>
-                            
-                            <div class="flex flex-col gap-2">
-                                <label for="product-qty" class="text-gray-700 font-bold text-sm uppercase tracking-wider">Quantity</label>
-                                <input id="product-qty" type="number" min="1" value="1" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-center font-bold text-lg transition-all" />
-                            </div>
-                            
-                            <button id="add-cart-btn" class="btn-primary w-full text-lg">
-                                <i class="fas fa-shopping-cart"></i>
-                                Add to cart
-                            </button>
-                        </div>
-                    </div>
                 </div>
-            </div>
 
-            <!-- Related Products -->
-            <div class="lg:col-span-2 glass-card p-8 mt-8">
-                <h2 class="text-2xl font-black gradient-text mb-6">Related Products</h2>
-                <div id="related-products" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="text-center text-gray-500 col-span-full py-8">
-                        <i class="fas fa-box-open text-4xl mb-2 opacity-50"></i>
-                        <p class="font-medium">Loading related products...</p>
+                <!-- Buy box -->
+                <div class="glass-card p-6 md:p-8">
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <span id="cat-pill" class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wide hidden"></span>
+                        <span id="availability-container" class="availability-badge in-stock"><i class="fas fa-check-circle"></i><span>In stock</span></span>
                     </div>
-                </div>
-            </div>
 
-            <!-- Sidebar -->
-            <div class="space-y-6">
-                <!-- Store Card -->
-                <div class="store-card">
-                    <h3 class="text-lg font-bold mb-3 text-emerald-700 uppercase tracking-wider">Store</h3>
-                    <p id="store-name" class="text-2xl font-black mb-2 gradient-text">Loading...</p>
-                    <p id="store-owner" class="text-base text-gray-600 mb-2 font-medium"></p>
-                    <p id="store-verified" class="text-sm text-gray-500 mb-4 font-semibold"></p>
-                    <button id="view-store-btn" class="btn-primary w-full">
-                        <i class="fas fa-store"></i>
-                        View Store
+                    <h1 id="product-title" class="text-3xl md:text-4xl font-black mb-2 text-[#16271c]">Loading&hellip;</h1>
+
+                    <div class="flex items-center gap-2 mb-5">
+                        <div id="product-rating" class="flex items-center gap-0.5"></div>
+                        <span id="product-reviews" class="text-sm text-gray-500 font-semibold"></span>
+                    </div>
+
+                    <div class="flex items-end gap-3 mb-6">
+                        <p id="product-price" class="text-4xl font-black gradient-text">&#8358;0.00</p>
+                        <p id="product-unit" class="text-base text-gray-500 font-semibold mb-1"></p>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="flex items-center gap-4 mb-5 flex-wrap">
+                        <span class="text-sm font-bold text-gray-600 uppercase tracking-wider">Qty</span>
+                        <div class="inline-flex items-center rounded-xl border-2 border-gray-200 overflow-hidden">
+                            <button id="qty-minus" type="button" class="w-11 h-11 text-2xl font-black text-gray-400 hover:bg-gray-50 leading-none">&minus;</button>
+                            <input id="product-qty" type="number" min="1" value="1" class="w-16 h-11 text-center font-bold text-lg border-0 focus:ring-0 p-0">
+                            <button id="qty-plus" type="button" class="w-11 h-11 text-2xl font-black text-gray-400 hover:bg-gray-50 leading-none">+</button>
+                        </div>
+                        <span id="stock-hint" class="text-sm text-gray-400 font-medium"></span>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="grid sm:grid-cols-2 gap-3 mb-3">
+                        <button id="add-cart-btn" class="btn-primary w-full justify-center text-base"><i class="fas fa-cart-plus"></i> Add to cart</button>
+                        <button id="buy-now-btn" class="btn-secondary w-full text-base"><i class="fas fa-bolt mr-1"></i> Buy now</button>
+                    </div>
+                    <button id="chat-btn" class="w-full justify-center inline-flex items-center gap-2 px-4 py-3 rounded-xl border-2 border-emerald-100 bg-emerald-50 text-emerald-700 font-bold hover:bg-emerald-100 transition mb-4">
+                        <i class="fas fa-comments"></i> Chat with seller
                     </button>
+
+                    <!-- Escrow trust note -->
+                    <div class="flex items-start gap-3 rounded-xl bg-[#fbf7ee] border border-[#ece4d6] p-3 mb-5">
+                        <i class="fas fa-shield-halved text-emerald-600 mt-0.5"></i>
+                        <p class="text-xs text-gray-600 leading-relaxed font-medium">Your payment is held in <b>escrow</b> and only released to the seller once you confirm the order has arrived.</p>
+                    </div>
+
+                    <!-- Share row -->
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-sm font-bold text-gray-500 mr-1">Share:</span>
+                        <button id="share-chat-btn" class="px-3 py-2 rounded-lg border-2 border-emerald-100 text-emerald-700 text-sm font-bold hover:bg-emerald-50 transition"><i class="fas fa-paper-plane mr-1"></i> To a chat</button>
+                        <button class="share-btn whatsapp" id="share-whatsapp" title="Share on WhatsApp"><i class="fab fa-whatsapp"></i></button>
+                        <button class="share-btn link" id="copy-link-btn" title="Copy link"><i class="fas fa-link"></i></button>
+                    </div>
                 </div>
 
-                <!-- Product Reviews -->
-                <div class="glass-card p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xl font-bold gradient-text">Product Reviews</h3>
-                        <span id="reviews-count" class="text-sm text-gray-500 font-semibold"></span>
-                    </div>
-                    <form id="product-review-form" class="mb-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 space-y-3">
-                        <label class="font-bold text-gray-700 text-sm uppercase tracking-wider">Your Rating:</label>
-                        <select id="product-review-rating" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold transition-all">
-                            <option value="">Select</option>
-                            <option value="5">5 - Excellent ⭐⭐⭐⭐⭐</option>
-                            <option value="4">4 - Good ⭐⭐⭐⭐</option>
-                            <option value="3">3 - Average ⭐⭐⭐</option>
-                            <option value="2">2 - Poor ⭐⭐</option>
-                            <option value="1">1 - Terrible ⭐</option>
-                        </select>
-                        <textarea id="product-review-comment" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 font-medium transition-all" rows="3" placeholder="Share your experience..."></textarea>
-                        <button type="submit" class="btn-primary w-full">
-                            <i class="fas fa-paper-plane"></i>
-                            Submit Review
-                        </button>
-                    </form>
-                    <div id="product-reviews-list" class="space-y-3"></div>
+                <!-- Description -->
+                <div class="glass-card p-6 md:p-8">
+                    <h3 class="font-bold text-lg text-gray-800 mb-3">Description</h3>
+                    <p id="product-description" class="text-gray-700 leading-relaxed font-medium whitespace-pre-line">&mdash;</p>
                 </div>
 
-                <!-- Store Reviews -->
-                <div class="glass-card p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xl font-bold gradient-text">Store Reviews</h3>
-                        <span id="store-reviews-count" class="text-sm text-gray-500 font-semibold"></span>
-                    </div>
-                    <form id="store-review-form" class="mb-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 space-y-3">
-                        <label class="font-bold text-gray-700 text-sm uppercase tracking-wider">Your Rating:</label>
-                        <select id="store-review-rating" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold transition-all">
-                            <option value="">Select</option>
-                            <option value="5">5 - Excellent ⭐⭐⭐⭐⭐</option>
-                            <option value="4">4 - Good ⭐⭐⭐⭐</option>
-                            <option value="3">3 - Average ⭐⭐⭐</option>
-                            <option value="2">2 - Poor ⭐⭐</option>
-                            <option value="1">1 - Terrible ⭐</option>
-                        </select>
-                        <textarea id="store-review-comment" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 font-medium transition-all" rows="3" placeholder="Share your experience..."></textarea>
-                        <button type="submit" class="btn-primary w-full">
-                            <i class="fas fa-paper-plane"></i>
-                            Submit Review
-                        </button>
-                    </form>
-                    <div id="store-reviews-list" class="space-y-3"></div>
+                <!-- Specifications -->
+                <div class="glass-card p-6 md:p-8">
+                    <h3 class="font-bold text-lg text-gray-800 mb-4">Specifications</h3>
+                    <table class="specs-table">
+                        <tbody>
+                            <tr><td>Category</td><td id="ts-category">&mdash;</td></tr>
+                            <tr><td>Unit</td><td id="ts-unit">&mdash;</td></tr>
+                            <tr><td>Stock</td><td id="ts-stock">&mdash;</td></tr>
+                            <tr><td>Store</td><td id="ts-store">&mdash;</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+
+            <!-- RIGHT: sticky sidebar -->
+            <div class="lg:col-span-1">
+                <div class="lg:sticky lg:top-6 space-y-6">
+                    <div class="store-card">
+                        <h3 class="text-xs font-bold mb-2 text-emerald-700 uppercase tracking-wider">Sold by</h3>
+                        <p id="store-name" class="text-2xl font-black mb-1 gradient-text">Loading&hellip;</p>
+                        <p id="store-owner" class="text-sm text-gray-600 mb-1 font-medium"></p>
+                        <p id="store-verified" class="text-sm mb-4 font-semibold"></p>
+                        <button id="view-store-btn" class="btn-primary w-full justify-center"><i class="fas fa-store"></i> View store</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related products -->
+        <div class="glass-card p-6 md:p-8 mt-6">
+            <h2 class="text-2xl font-black gradient-text mb-6">Related products</h2>
+            <div id="related-products" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center text-gray-500 col-span-full py-8"><i class="fas fa-box-open text-4xl mb-2 opacity-50"></i><p class="font-medium">Loading related products&hellip;</p></div>
+            </div>
+        </div>
+
+        <!-- Reviews -->
+        <div class="grid md:grid-cols-2 gap-6 mt-6">
+            <!-- Product reviews -->
+            <div class="glass-card p-6 md:p-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold gradient-text">Product reviews</h3>
+                    <span id="reviews-count" class="text-sm text-gray-500 font-semibold"></span>
+                </div>
+                <form id="product-review-form" class="mb-6 bg-[#fbf7ee] border border-[#ece4d6] rounded-xl p-4 space-y-3">
+                    <label class="font-bold text-gray-700 text-sm uppercase tracking-wider">Your rating</label>
+                    <select id="product-review-rating" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold transition-all">
+                        <option value="">Select</option>
+                        <option value="5">5 &mdash; Excellent</option>
+                        <option value="4">4 &mdash; Good</option>
+                        <option value="3">3 &mdash; Average</option>
+                        <option value="2">2 &mdash; Poor</option>
+                        <option value="1">1 &mdash; Terrible</option>
+                    </select>
+                    <textarea id="product-review-comment" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 font-medium transition-all" rows="3" placeholder="Share your experience with this product&hellip;"></textarea>
+                    <button type="submit" class="btn-primary w-full justify-center"><i class="fas fa-paper-plane"></i> Submit review</button>
+                </form>
+                <div id="product-reviews-list" class="space-y-3"></div>
+            </div>
+
+            <!-- Store reviews -->
+            <div class="glass-card p-6 md:p-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold gradient-text">Store reviews</h3>
+                    <span id="store-reviews-count" class="text-sm text-gray-500 font-semibold"></span>
+                </div>
+                <form id="store-review-form" class="mb-6 bg-[#fbf7ee] border border-[#ece4d6] rounded-xl p-4 space-y-3">
+                    <label class="font-bold text-gray-700 text-sm uppercase tracking-wider">Your rating</label>
+                    <select id="store-review-rating" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold transition-all">
+                        <option value="">Select</option>
+                        <option value="5">5 &mdash; Excellent</option>
+                        <option value="4">4 &mdash; Good</option>
+                        <option value="3">3 &mdash; Average</option>
+                        <option value="2">2 &mdash; Poor</option>
+                        <option value="1">1 &mdash; Terrible</option>
+                    </select>
+                    <textarea id="store-review-comment" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 font-medium transition-all" rows="3" placeholder="Share your experience with this store&hellip;"></textarea>
+                    <button type="submit" class="btn-primary w-full justify-center"><i class="fas fa-paper-plane"></i> Submit review</button>
+                </form>
+                <div id="store-reviews-list" class="space-y-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share-to-chat modal -->
+    <div id="share-modal" class="fixed inset-0 hidden items-center justify-center z-50 chat-modal">
+        <div class="chat-modal-content rounded-3xl shadow-2xl w-full max-w-md p-6 flex flex-col gap-3 max-h-[80vh]">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-black gradient-text">Share to a chat</h3>
+                <button id="share-close" class="text-gray-400 hover:text-gray-700 transition-colors text-2xl"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="share-product-preview" class="flex items-center gap-3 p-3 rounded-xl bg-[#fbf7ee] border border-[#ece4d6]"></div>
+            <input id="share-search" class="border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium" placeholder="Search people by username&hellip;">
+            <div id="share-results" class="flex-1 overflow-y-auto space-y-2 min-h-[120px]"></div>
         </div>
     </div>
 
@@ -761,342 +742,343 @@
         const token = localStorage.getItem('access_token');
         if (!token) window.location.href = 'authentication.html';
         const wsScheme = location.protocol === 'https:' ? 'wss' : 'ws';
+        const NAIRA = '\u20a6';
 
         const params = new URLSearchParams(window.location.search);
         const productId = params.get('id');
         if (!productId) window.location.href = 'marketplace.html';
 
         let productData = null;
-        let chatSocket = null;
+        let myUserId = null, myUsername = null;
+        let chatSocket = null, chatConvId = null;
+        const renderedIds = new Set();
 
-        function ratingStars(avg) {
-            const r = Math.round(avg || 0);
-            return '★★★★★'.split('').map((s, i) => `<span class="${i < r ? 'text-yellow-400' : 'text-gray-300'} text-xl">★</span>`).join('');
+        /* ---------- helpers ---------- */
+        const $ = id => document.getElementById(id);
+        function money(n){ return NAIRA + (Number(n)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+        function escHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+        function toast(msg){
+            let t = $('agc-toast');
+            if(!t){ t=document.createElement('div'); t.id='agc-toast'; t.style.cssText='position:fixed;left:50%;bottom:1.4rem;transform:translateX(-50%);background:#16271c;color:#fff;padding:.7rem 1.1rem;border-radius:12px;font-weight:600;font-size:.9rem;z-index:2000;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);opacity:0;transition:opacity .2s,transform .2s'; document.body.appendChild(t); }
+            t.textContent = msg; t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+            clearTimeout(t._h); t._h=setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(8px)'; }, 2200);
+        }
+        function ratingStars(avg){
+            const r = Math.round(avg||0);
+            return '\u2605\u2605\u2605\u2605\u2605'.split('').map((s,i)=>`<span class="${i<r?'text-yellow-400':'text-gray-300'} text-lg">\u2605</span>`).join('');
+        }
+        function imgOf(p){ return p.image_display || p.image || p.image_url || 'https://via.placeholder.com/1200x800?text=Product'; }
+
+        /* ---------- cart (shared shape with marketplace) ---------- */
+        function getCart(){ try{ return JSON.parse(localStorage.getItem('agricore_cart')||'{}'); }catch(e){ return {}; } }
+        function saveCart(c){ try{ localStorage.setItem('agricore_cart', JSON.stringify(c)); }catch(e){} refreshCartCount(); }
+        function refreshCartCount(){ const c=getCart(); const n=Object.values(c).reduce((s,i)=>s+(i.qty||1),0); const el=$('cart-count'); if(el) el.textContent=n; return n; }
+        function addToCart(qty){
+            if(!productData) return false;
+            const stock = productData.stock_quantity||0;
+            if(stock<=0){ toast('Out of stock'); return false; }
+            const c=getCart(), k=String(productData.id);
+            const have = c[k]? (c[k].qty||0):0;
+            let want = have + qty;
+            if(want>stock){ want=stock; toast('Only '+stock+' in stock'); }
+            c[k] = { id:productData.id, title:productData.title||'Item', price:parseFloat(productData.price)||0, unit:productData.unit||'', image:imgOf(productData), stock:stock, store:(productData.store!=null?productData.store:null), store_name:productData.store_name||'Agricore Seller', qty:want };
+            saveCart(c);
+            return true;
         }
 
-        function appendMessage(text, mine=false) {
-            const box = document.getElementById('chat-messages');
-            const row = document.createElement('div');
-            row.className = `flex ${mine ? 'justify-end' : 'justify-start'}`;
-            row.innerHTML = `<div class="px-4 py-3 rounded-xl ${mine ? 'bg-emerald-600 text-white' : 'bg-white border-2 border-gray-100'} max-w-[75%] text-sm font-medium shadow-sm">${text}</div>`;
-            box.appendChild(row);
-            box.scrollTop = box.scrollHeight;
+        /* ---------- product-card payload (shared with chats/marketplace) ---------- */
+        function productPayload(){
+            return '__AGRICORE_PRODUCT__'+JSON.stringify({ id:productData.id, title:productData.title, price_text:money(productData.price), unit:productData.unit||'', image:imgOf(productData) });
+        }
+        function agcProduct(text){
+            if(typeof text!=='string' || text.indexOf('__AGRICORE_PRODUCT__')!==0) return null;
+            try{ return JSON.parse(text.slice('__AGRICORE_PRODUCT__'.length)); }catch(e){ return null; }
+        }
+        function agcProductCard(p){
+            return `<a href="product_detail.html?id=${p.id}" class="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-[#ece4d6] no-underline max-w-[78%]">
+                <img src="${escHtml(p.image||'')}" class="w-12 h-12 rounded-lg object-cover bg-gray-100" alt="">
+                <div class="min-w-0"><div class="font-bold text-sm text-[#16271c] truncate">${escHtml(p.title||'Product')}</div>
+                <div class="text-emerald-700 font-black text-sm">${escHtml(p.price_text||'')}${p.unit?` <span class="text-gray-400 font-medium">/ ${escHtml(p.unit)}</span>`:''}</div></div></a>`;
         }
 
-        function openChatSocket(conversationId) {
-            if (chatSocket) chatSocket.close();
-            document.getElementById('chat-messages').innerHTML = '';
-            document.getElementById('chat-modal').classList.remove('hidden');
-            document.getElementById('chat-modal').classList.add('flex');
-            chatSocket = new WebSocket(`${wsScheme}://${location.host}/ws/chat/${conversationId}/?token=${token}`);
-            chatSocket.onmessage = (event) => {
-                try {
-                    const payload = JSON.parse(event.data);
-                    if (payload.message) appendMessage(payload.message.content || payload.message, false);
-                } catch (err) { console.warn('WS parse', err); }
-            };
+        /* ---------- me ---------- */
+        async function loadMe(){
+            try{
+                const r = await fetch(`${API_BASE}/users/me/`, { headers:{ 'Authorization':`Bearer ${token}` } });
+                if(r.ok){ const u=await r.json(); myUserId=u.id; myUsername=u.username; }
+            }catch(e){}
         }
 
-        async function startChat() {
-            try {
-                const res = await fetch(`${API_BASE}/conversations/start-product-chat/`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ product: productId })
-                });
-                if (!res.ok) throw new Error('Unable to start chat');
-                const convo = await res.json();
-                openChatSocket(convo.id);
-            } catch (err) {
-                alert('Unable to start chat');
-            }
-        }
-
-        async function loadProduct() {
-            const res = await fetch(`${API_BASE}/products/${productId}/`, { headers: { 'Authorization': `Bearer ${token}` } });
+        /* ---------- product ---------- */
+        async function loadProduct(){
+            const res = await fetch(`${API_BASE}/products/${productId}/`, { headers:{ 'Authorization':`Bearer ${token}` } });
+            if(!res.ok){ document.querySelector('#product-title').textContent='Product not found'; return; }
             productData = await res.json();
-            
-            document.getElementById('product-title').textContent = productData.title;
-            document.getElementById('product-description').textContent = productData.description || '';
-            document.getElementById('product-image').src = productData.image_display || 'https://via.placeholder.com/1200x800?text=Product';
-            document.getElementById('zoom-image').src = productData.image_display || 'https://via.placeholder.com/1200x800?text=Product';
-            
-            const price = parseFloat(productData.price || 0);
-            document.getElementById('product-price').textContent = `₦${price.toFixed(2)}`;
-            document.getElementById('sticky-price').textContent = `₦${price.toFixed(2)}`;
-            
-            // Show discount if available
-            if (productData.original_price && productData.original_price > price) {
-                const originalPrice = parseFloat(productData.original_price);
-                const discount = Math.round(((originalPrice - price) / originalPrice) * 100);
-                document.getElementById('original-price').textContent = `₦${originalPrice.toFixed(2)}`;
-                document.getElementById('original-price').classList.remove('hidden');
-                document.getElementById('discount-percent').textContent = `${discount}% OFF`;
-                document.getElementById('discount-badge').classList.remove('hidden');
-            }
-            
-            document.getElementById('product-unit').textContent = productData.unit || '';
-            document.getElementById('product-rating').innerHTML = ratingStars(productData.average_rating || 0);
-            document.getElementById('product-reviews').textContent = `${(productData.average_rating || 0).toFixed(1)} • ${productData.reviews_count || 0} reviews`;
-            
-            // Availability
-            const availContainer = document.getElementById('availability-container');
-            if (productData.stock_quantity && productData.stock_quantity > 0) {
-                availContainer.className = 'availability-badge in-stock';
-                availContainer.innerHTML = '<i class="fas fa-check-circle"></i><span>In Stock</span>';
-            } else {
-                availContainer.className = 'availability-badge out-of-stock';
-                availContainer.innerHTML = '<i class="fas fa-times-circle"></i><span>Out of Stock</span>';
-            }
-            
-            // Specifications
-            document.getElementById('spec-category').textContent = productData.category || '-';
-            document.getElementById('spec-unit').textContent = productData.unit || '-';
-            document.getElementById('spec-stock').textContent = productData.stock_quantity ? `${productData.stock_quantity} available` : 'Out of stock';
-            
-            // Store info
-            document.getElementById('store-name').textContent = productData.store_name || 'Store';
-            document.getElementById('store-owner').textContent = productData.store_owner_name ? `Owner: ${productData.store_owner_name}` : '';
-            document.getElementById('store-verified').textContent = productData.store_verified ? '✓ Verified store' : 'Unverified store';
-            
-            // Load related products
-            loadRelatedProducts(productData.category, productData.store);
+
+            $('product-title').textContent = productData.title || 'Product';
+            $('product-description').textContent = productData.description || 'No description provided.';
+            const src = imgOf(productData);
+            $('product-image').src = src; $('zoom-image').src = src;
+
+            $('product-price').textContent = money(productData.price);
+            $('sticky-price').textContent = money(productData.price);
+            $('product-unit').textContent = productData.unit ? `/ ${productData.unit}` : '';
+
+            $('product-rating').innerHTML = ratingStars(productData.average_rating||0);
+            $('product-reviews').textContent = `${(productData.average_rating||0).toFixed(1)} \u00b7 ${productData.reviews_count||0} reviews`;
+
+            if(productData.category){ const pill=$('cat-pill'); pill.textContent=productData.category; pill.classList.remove('hidden'); }
+
+            const stock = productData.stock_quantity||0;
+            const avail = $('availability-container');
+            if(stock>0){ avail.className='availability-badge in-stock'; avail.innerHTML='<i class="fas fa-check-circle"></i><span>In stock</span>'; $('stock-hint').textContent=`${stock} available`; }
+            else { avail.className='availability-badge out-of-stock'; avail.innerHTML='<i class="fas fa-times-circle"></i><span>Out of stock</span>'; $('stock-hint').textContent='Currently unavailable'; }
+            const qtyEl=$('product-qty'); if(stock>0){ qtyEl.max=stock; } if(parseInt(qtyEl.value,10)>stock && stock>0) qtyEl.value=stock;
+
+            $('ts-category').textContent = productData.category || '\u2014';
+            $('ts-unit').textContent = productData.unit || '\u2014';
+            $('ts-stock').textContent = stock>0 ? `${stock} available` : 'Out of stock';
+            $('ts-store').textContent = productData.store_name || '\u2014';
+
+            $('store-name').textContent = productData.store_name || 'Store';
+            $('store-owner').textContent = productData.store_owner_name ? `Owner: ${productData.store_owner_name}` : '';
+            const ver=$('store-verified');
+            if(productData.store_verified){ ver.textContent='\u2713 Verified store'; ver.classList.add('text-emerald-700'); }
+            else { ver.textContent='Unverified store'; ver.classList.add('text-gray-400'); }
+
+            loadRelated(productData.category, productData.store);
         }
 
-        async function loadRelatedProducts(category, storeId) {
-            try {
-                const res = await fetch(`${API_BASE}/products/?category=${category || ''}&store=${storeId || ''}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+        async function loadRelated(category, storeId){
+            try{
+                const res = await fetch(`${API_BASE}/products/?category=${encodeURIComponent(category||'')}&store=${storeId||''}`, { headers:{ 'Authorization':`Bearer ${token}` } });
                 const products = await res.json();
-                const related = products.filter(p => p.id !== parseInt(productId)).slice(0, 4);
-                
-                const container = document.getElementById('related-products');
-                if (related.length === 0) {
-                    container.innerHTML = '<div class="text-center text-gray-500 col-span-full py-8"><i class="fas fa-box-open text-4xl mb-2 opacity-50"></i><p class="font-medium">No related products found</p></div>';
-                    return;
-                }
-                
-                container.innerHTML = related.map(p => `
-                    <a href="product_detail.html?id=${p.id}" class="related-product-card">
-                        <div class="aspect-square bg-gray-100">
-                            <img src="${p.image_display || 'https://via.placeholder.com/300'}" alt="${p.title}" class="w-full h-full object-cover">
-                        </div>
+                const list = (Array.isArray(products)?products:[]).filter(p=>p.id!==parseInt(productId)).slice(0,4);
+                const box=$('related-products');
+                if(!list.length){ box.innerHTML='<div class="text-center text-gray-500 col-span-full py-8"><i class="fas fa-box-open text-4xl mb-2 opacity-50"></i><p class="font-medium">No related products found.</p></div>'; return; }
+                box.innerHTML = list.map(p=>`
+                    <a href="product_detail.html?id=${p.id}" class="related-product-card no-underline">
+                        <div class="aspect-square bg-gray-100"><img src="${escHtml(imgOf(p))}" alt="${escHtml(p.title)}" class="w-full h-full object-cover"></div>
                         <div class="p-3">
-                            <h4 class="font-bold text-sm text-gray-800 line-clamp-2 mb-1">${p.title}</h4>
-                            <p class="text-emerald-700 font-black text-sm">₦${parseFloat(p.price || 0).toFixed(2)}</p>
+                            <h4 class="font-bold text-sm text-gray-800 line-clamp-2 mb-1">${escHtml(p.title)}</h4>
+                            <p class="text-emerald-700 font-black text-sm">${money(p.price)}</p>
                         </div>
-                    </a>
-                `).join('');
-            } catch (err) {
-                console.error('Error loading related products:', err);
-            }
+                    </a>`).join('');
+            }catch(e){ console.error('related', e); }
         }
 
-        // Image zoom
-        document.getElementById('product-image-container').addEventListener('click', function(e) {
-            if (!e.target.closest('.wishlist-btn')) {
-                document.getElementById('zoom-modal').classList.add('active');
-            }
-        });
+        /* ---------- quantity steppers ---------- */
+        function clampQty(){
+            const el=$('product-qty'); let v=parseInt(el.value,10)||1; if(v<1)v=1;
+            const stock=productData?(productData.stock_quantity||0):0;
+            if(stock>0 && v>stock){ v=stock; toast('Only '+stock+' in stock'); }
+            el.value=v;
+        }
+        $('qty-minus').addEventListener('click', ()=>{ const el=$('product-qty'); el.value=Math.max(1,(parseInt(el.value,10)||1)-1); });
+        $('qty-plus').addEventListener('click', ()=>{ const el=$('product-qty'); el.value=(parseInt(el.value,10)||1)+1; clampQty(); });
+        $('product-qty').addEventListener('change', clampQty);
 
-        document.getElementById('zoom-modal').addEventListener('click', function() {
-            this.classList.remove('active');
-        });
+        /* ---------- add to cart / buy now ---------- */
+        $('add-cart-btn').addEventListener('click', ()=>{ clampQty(); const q=parseInt($('product-qty').value,10)||1; if(addToCart(q)) toast(`Added ${q} to cart`); });
+        $('sticky-add-cart').addEventListener('click', ()=>$('add-cart-btn').click());
+        $('buy-now-btn').addEventListener('click', ()=>{ clampQty(); const q=parseInt($('product-qty').value,10)||1; if(addToCart(q)) window.location.href='marketplace.html?checkout=1'; });
 
-        // Wishlist toggle
-        let isWishlisted = false;
-        document.getElementById('wishlist-btn').addEventListener('click', function(e) {
+        /* ---------- image zoom ---------- */
+        $('product-image-container').addEventListener('click', e=>{ if(!e.target.closest('.wishlist-btn')) $('zoom-modal').classList.add('active'); });
+        $('zoom-modal').addEventListener('click', function(){ this.classList.remove('active'); });
+
+        /* ---------- wishlist (persisted locally) ---------- */
+        function wishlist(){ try{ return JSON.parse(localStorage.getItem('agricore_wishlist')||'[]'); }catch(e){ return []; } }
+        function setWishlist(a){ try{ localStorage.setItem('agricore_wishlist', JSON.stringify(a)); }catch(e){} }
+        function paintWishlist(){
+            const on = wishlist().includes(parseInt(productId));
+            const btn=$('wishlist-btn'); btn.classList.toggle('active', on);
+            btn.querySelector('i').className = on ? 'fas fa-heart' : 'far fa-heart';
+        }
+        $('wishlist-btn').addEventListener('click', e=>{
             e.stopPropagation();
-            isWishlisted = !isWishlisted;
-            this.classList.toggle('active', isWishlisted);
-            const icon = this.querySelector('i');
-            icon.className = isWishlisted ? 'fas fa-heart' : 'far fa-heart';
-            // TODO: Integrate with backend wishlist API
+            const id=parseInt(productId); let a=wishlist();
+            if(a.includes(id)){ a=a.filter(x=>x!==id); toast('Removed from wishlist'); } else { a.push(id); toast('Saved to wishlist'); }
+            setWishlist(a); paintWishlist();
         });
 
-        // Share buttons
+        /* ---------- share ---------- */
         const shareUrl = window.location.href;
-        const shareTitle = 'Check out this product on Agricore!';
-
-        document.querySelector('.share-btn.facebook').addEventListener('click', () => {
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+        $('share-whatsapp').addEventListener('click', ()=> window.open(`https://wa.me/?text=${encodeURIComponent('Check out this product on Agricore: '+shareUrl)}`,'_blank'));
+        $('copy-link-btn').addEventListener('click', function(){
+            navigator.clipboard.writeText(shareUrl).then(()=>{ const h=this.innerHTML; this.innerHTML='<i class="fas fa-check"></i>'; toast('Link copied'); setTimeout(()=>this.innerHTML=h,1500); });
         });
 
-        document.querySelector('.share-btn.twitter').addEventListener('click', () => {
-            window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`, '_blank');
-        });
-
-        document.querySelector('.share-btn.whatsapp').addEventListener('click', () => {
-            window.open(`https://wa.me/?text=${encodeURIComponent(shareTitle + ' ' + shareUrl)}`, '_blank');
-        });
-
-        document.getElementById('copy-link-btn').addEventListener('click', function() {
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                const originalHTML = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-check"></i>';
-                setTimeout(() => {
-                    this.innerHTML = originalHTML;
-                }, 2000);
-            });
-        });
-
-        // Sticky CTA
-        document.getElementById('sticky-add-cart').addEventListener('click', () => {
-            document.getElementById('add-cart-btn').click();
-        });
-
-        async function loadProductReviews() {
-            try {
-                const res = await fetch(`${API_BASE}/product-reviews/?product=${productId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const reviews = await res.json();
-                document.getElementById('reviews-count').textContent = `${reviews.length} review(s)`;
-                document.getElementById('product-reviews-list').innerHTML = reviews.length ? reviews.map(r => {
-                    const avatar = `<div class='w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg mr-3'>${(r.user_name||'U')[0]}</div>`;
-                    let time = '';
-                    if (r.created_at) {
-                        const d = new Date(r.created_at);
-                        time = `<span class='text-xs text-gray-400 ml-2'>${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
-                    }
-                    return `
-                    <div class="review-card flex gap-3 items-start">
-                        ${avatar}
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="font-bold text-gray-800">${r.user_name || 'User'}</span>
-                                <span class="text-sm text-emerald-700 font-bold">${r.rating} ★</span>
-                                ${time}
-                            </div>
-                            <p class="text-gray-700 font-medium">${r.comment || ''}</p>
-                        </div>
-                    </div>
-                    `;
-                }).join('') : '<p class="text-gray-500 text-center py-4 font-medium">No reviews yet.</p>';
-            } catch (err) {
-                document.getElementById('product-reviews-list').innerHTML = '<p class="text-gray-500 text-center py-4">Unable to load reviews.</p>';
-            }
+        $('share-chat-btn').addEventListener('click', openShare);
+        $('share-close').addEventListener('click', ()=>{ $('share-modal').classList.add('hidden'); $('share-modal').classList.remove('flex'); });
+        async function openShare(){
+            if(!productData) return;
+            $('share-product-preview').innerHTML = `<img src="${escHtml(imgOf(productData))}" class="w-12 h-12 rounded-lg object-cover bg-gray-100" alt=""><div class="min-w-0"><div class="font-bold text-sm truncate">${escHtml(productData.title)}</div><div class="text-emerald-700 font-black text-sm">${money(productData.price)}</div></div>`;
+            $('share-search').value='';
+            $('share-modal').classList.remove('hidden'); $('share-modal').classList.add('flex');
+            await loadShareConversations();
         }
-
-        async function submitProductReview(e) {
-            e.preventDefault();
-            const rating = document.getElementById('product-review-rating').value;
-            const comment = document.getElementById('product-review-comment').value.trim();
-            if (!rating) return alert('Please select a rating.');
-            try {
-                const res = await fetch(`${API_BASE}/product-reviews/`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ product: productId, rating: rating, comment: comment })
-                });
-                if (!res.ok) throw new Error('Failed to submit review');
-                document.getElementById('product-review-rating').value = '';
-                document.getElementById('product-review-comment').value = '';
-                await loadProductReviews();
-                alert('Review submitted!');
-            } catch (err) {
-                alert('Unable to submit review.');
-            }
+        async function loadShareConversations(){
+            const box=$('share-results'); box.innerHTML='<p class="text-gray-400 text-sm text-center py-4">Loading chats&hellip;</p>';
+            try{
+                const r=await fetch(`${API_BASE}/conversations/`, { headers:{ 'Authorization':`Bearer ${token}` } });
+                const convos = r.ok ? await r.json() : [];
+                if(!convos.length){ box.innerHTML='<p class="text-gray-400 text-sm text-center py-4">No chats yet. Search a person above.</p>'; return; }
+                box.innerHTML = convos.map(c=>`
+                    <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl border border-[#ece4d6] hover:bg-[#fbf7ee] transition">
+                        <div class="min-w-0"><div class="font-bold text-sm truncate">${escHtml(c.display_name||c.title||'Chat')}</div>${c.product_title?`<div class="text-xs text-gray-400 truncate">about ${escHtml(c.product_title)}</div>`:''}</div>
+                        <button class="btn-primary text-sm px-3 py-1.5" onclick="shareToConversation(${c.id}, this)">Share</button>
+                    </div>`).join('');
+            }catch(e){ box.innerHTML='<p class="text-gray-400 text-sm text-center py-4">Could not load chats.</p>'; }
         }
-        document.getElementById('product-review-form').addEventListener('submit', submitProductReview);
-
-        async function loadStoreReviews(storeId) {
-            if (!storeId) return;
-            try {
-                const res = await fetch(`${API_BASE}/store-reviews/?store=${storeId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const reviews = await res.json();
-                document.getElementById('store-reviews-count').textContent = `${reviews.length} review(s)`;
-                document.getElementById('store-reviews-list').innerHTML = reviews.length ? reviews.map(r => {
-                    const avatar = `<div class='w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg mr-3'>${(r.user_name||'U')[0]}</div>`;
-                    let time = '';
-                    if (r.created_at) {
-                        const d = new Date(r.created_at);
-                        time = `<span class='text-xs text-gray-400 ml-2'>${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
-                    }
-                    return `
-                    <div class="review-card flex gap-3 items-start">
-                        ${avatar}
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="font-bold text-gray-800">${r.user_name || 'User'}</span>
-                                <span class="text-sm text-emerald-700 font-bold">${r.rating} ★</span>
-                                ${time}
-                            </div>
-                            <p class="text-gray-700 font-medium">${r.comment || ''}</p>
-                        </div>
-                    </div>
-                    `;
-                }).join('') : '<p class="text-gray-500 text-center py-4 font-medium">No reviews yet.</p>';
-            } catch (err) {
-                document.getElementById('store-reviews-list').innerHTML = '<p class="text-gray-500 text-center py-4">Unable to load reviews.</p>';
-            }
+        let shareSearchTimer=null;
+        $('share-search').addEventListener('input', function(){
+            clearTimeout(shareSearchTimer); const q=this.value.trim();
+            if(!q){ loadShareConversations(); return; }
+            shareSearchTimer=setTimeout(async ()=>{
+                const box=$('share-results'); box.innerHTML='<p class="text-gray-400 text-sm text-center py-4">Searching&hellip;</p>';
+                try{
+                    const r=await fetch(`${API_BASE}/users/search/?q=${encodeURIComponent(q)}`, { headers:{ 'Authorization':`Bearer ${token}` } });
+                    const users = r.ok ? await r.json() : [];
+                    if(!users.length){ box.innerHTML='<p class="text-gray-400 text-sm text-center py-4">No people found.</p>'; return; }
+                    box.innerHTML = users.map(u=>`
+                        <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl border border-[#ece4d6] hover:bg-[#fbf7ee] transition">
+                            <div class="flex items-center gap-2 min-w-0"><div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold">${escHtml((u.username||'U')[0].toUpperCase())}</div><span class="font-bold text-sm truncate">${escHtml(u.username)}</span></div>
+                            <button class="btn-primary text-sm px-3 py-1.5" onclick="shareToUser(${u.id}, this)">Share</button>
+                        </div>`).join('');
+                }catch(e){ box.innerHTML='<p class="text-gray-400 text-sm text-center py-4">Search failed.</p>'; }
+            }, 300);
+        });
+        async function postProductMessage(conversationId){
+            return fetch(`${API_BASE}/messages/`, { method:'POST', headers:{ 'Authorization':`Bearer ${token}`, 'Content-Type':'application/json' }, body:JSON.stringify({ conversation:conversationId, content:productPayload() }) });
         }
+        window.shareToConversation = async (cid, btn)=>{
+            if(btn){ btn.disabled=true; btn.textContent='Sending\u2026'; }
+            try{ const r=await postProductMessage(cid); if(!r.ok) throw 0; toast('Shared to chat'); $('share-close').click(); }
+            catch(e){ toast('Could not share'); if(btn){ btn.disabled=false; btn.textContent='Share'; } }
+        };
+        window.shareToUser = async (uid, btn)=>{
+            if(btn){ btn.disabled=true; btn.textContent='Sending\u2026'; }
+            try{
+                const r=await fetch(`${API_BASE}/conversations/start-direct-chat/`, { method:'POST', headers:{ 'Authorization':`Bearer ${token}`, 'Content-Type':'application/json' }, body:JSON.stringify({ user:uid }) });
+                if(!r.ok) throw 0; const convo=await r.json();
+                const m=await postProductMessage(convo.id); if(!m.ok) throw 0;
+                toast('Shared to chat'); $('share-close').click();
+            }catch(e){ toast('Could not share'); if(btn){ btn.disabled=false; btn.textContent='Share'; } }
+        };
 
-        async function submitStoreReview(e) {
-            e.preventDefault();
-            const rating = document.getElementById('store-review-rating').value;
-            const comment = document.getElementById('store-review-comment').value.trim();
-            if (!rating) return alert('Please select a rating.');
-            try {
-                const res = await fetch(`${API_BASE}/store-reviews/`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ store: productData.store, rating: rating, comment: comment })
-                });
-                if (!res.ok) throw new Error('Failed to submit review');
-                document.getElementById('store-review-rating').value = '';
-                document.getElementById('store-review-comment').value = '';
-                await loadStoreReviews(productData.store);
-                alert('Review submitted!');
-            } catch (err) {
-                alert('Unable to submit review.');
-            }
+        /* ---------- chat with seller ---------- */
+        function renderMsg(m){
+            if(m.id!=null){ if(renderedIds.has(m.id)) return; renderedIds.add(m.id); }
+            let mine=false;
+            if(typeof m.sender==='number') mine = (m.sender===myUserId);
+            else if(typeof m.sender==='string') mine = (m.sender===myUsername);
+            const prod = agcProduct(m.content);
+            const body = prod ? agcProductCard(prod) : `<div class="px-4 py-3 rounded-xl ${mine?'bg-emerald-600 text-white':'bg-white border-2 border-gray-100 text-gray-800'} max-w-[78%] text-sm font-medium shadow-sm">${escHtml(m.content)}</div>`;
+            const row=document.createElement('div');
+            row.className = `flex ${mine?'justify-end':'justify-start'}`;
+            row.innerHTML = body;
+            const box=$('chat-messages'); box.appendChild(row); box.scrollTop=box.scrollHeight;
         }
-        document.getElementById('store-review-form').addEventListener('submit', submitStoreReview);
-
-        document.getElementById('chat-close').addEventListener('click', () => {
-            document.getElementById('chat-modal').classList.add('hidden');
-            document.getElementById('chat-modal').classList.remove('flex');
-            if (chatSocket) chatSocket.close();
-        });
-        
-        document.getElementById('chat-send').addEventListener('click', () => {
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if (!text || !chatSocket) return;
-            chatSocket.send(JSON.stringify({ content: text }));
-            appendMessage(text, true);
-            input.value = '';
-        });
-        
-        document.getElementById('chat-input').addEventListener('keypress', (e) => { 
-            if (e.key === 'Enter') document.getElementById('chat-send').click(); 
-        });
-        
-        document.getElementById('chat-btn').addEventListener('click', startChat);
-        
-        document.getElementById('add-cart-btn').addEventListener('click', () => {
-            const qty = parseInt(document.getElementById('product-qty').value, 10) || 1;
-            if (qty < 1) return alert('Please enter a valid quantity.');
-            alert(`Added ${qty} to cart (stub)`);
-            // TODO: Integrate with actual cart logic
-        });
-        
-        document.getElementById('view-store-btn').addEventListener('click', () => {
-            if (productData && productData.store) {
-                window.location.href = `store_profile.html?id=${productData.store}`;
+        async function loadHistory(conversationId){
+            try{
+                const r=await fetch(`${API_BASE}/messages/?conversation=${conversationId}`, { headers:{ 'Authorization':`Bearer ${token}` } });
+                if(r.ok){ const msgs=await r.json(); (Array.isArray(msgs)?msgs:[]).forEach(renderMsg); }
+            }catch(e){}
+        }
+        function connectWS(conversationId){
+            try{
+                chatSocket = new WebSocket(`${wsScheme}://${location.host}/ws/chat/${conversationId}/?token=${token}`);
+                chatSocket.onmessage = ev => { try{ renderMsg(JSON.parse(ev.data)); }catch(e){} };
+                chatSocket.onerror = ()=>{ /* falls back to REST */ };
+            }catch(e){}
+        }
+        async function startChat(){
+            try{
+                const res = await fetch(`${API_BASE}/conversations/start-product-chat/`, { method:'POST', headers:{ 'Authorization':`Bearer ${token}`, 'Content-Type':'application/json' }, body:JSON.stringify({ product:productId }) });
+                if(!res.ok) throw 0;
+                const convo = await res.json();
+                chatConvId = convo.id; renderedIds.clear();
+                $('chat-messages').innerHTML='';
+                $('chat-modal').classList.remove('hidden'); $('chat-modal').classList.add('flex');
+                await loadHistory(chatConvId);
+                connectWS(chatConvId);
+            }catch(e){ toast('Unable to start chat'); }
+        }
+        async function sendChat(){
+            const input=$('chat-input'); const txt=input.value.trim();
+            if(!txt || !chatConvId) return; input.value='';
+            if(chatSocket && chatSocket.readyState===1){
+                chatSocket.send(JSON.stringify({ content:txt }));   // echo renders it
             } else {
-                alert('Store information not available.');
+                try{
+                    const r=await fetch(`${API_BASE}/messages/`, { method:'POST', headers:{ 'Authorization':`Bearer ${token}`, 'Content-Type':'application/json' }, body:JSON.stringify({ conversation:chatConvId, content:txt }) });
+                    if(r.ok) renderMsg(await r.json());
+                }catch(e){ toast('Message failed'); }
             }
+        }
+        $('chat-btn').addEventListener('click', startChat);
+        $('chat-close').addEventListener('click', ()=>{ $('chat-modal').classList.add('hidden'); $('chat-modal').classList.remove('flex'); if(chatSocket){ chatSocket.close(); chatSocket=null; } });
+        $('chat-send').addEventListener('click', sendChat);
+        $('chat-input').addEventListener('keypress', e=>{ if(e.key==='Enter') sendChat(); });
+
+        /* ---------- reviews ---------- */
+        function reviewCard(r){
+            const avatar=`<div class='w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg mr-3'>${escHtml((r.user_name||'U')[0])}</div>`;
+            let time=''; if(r.created_at){ const d=new Date(r.created_at); time=`<span class='text-xs text-gray-400 ml-2'>${d.toLocaleDateString()}</span>`; }
+            return `<div class="review-card flex gap-3 items-start">${avatar}<div class="flex-1"><div class="flex items-center gap-2 mb-1"><span class="font-bold text-gray-800">${escHtml(r.user_name||'User')}</span><span class="text-sm text-emerald-700 font-bold">${escHtml(r.rating)} \u2605</span>${time}</div><p class="text-gray-700 font-medium">${escHtml(r.comment||'')}</p></div></div>`;
+        }
+        async function loadProductReviews(){
+            try{
+                const r=await fetch(`${API_BASE}/product-reviews/?product=${productId}`, { headers:{ 'Authorization':`Bearer ${token}` } });
+                const reviews=r.ok?await r.json():[];
+                $('reviews-count').textContent=`${reviews.length} review(s)`;
+                $('product-reviews-list').innerHTML = reviews.length ? reviews.map(reviewCard).join('') : '<p class="text-gray-500 text-center py-4 font-medium">No reviews yet.</p>';
+            }catch(e){ $('product-reviews-list').innerHTML='<p class="text-gray-500 text-center py-4">Unable to load reviews.</p>'; }
+        }
+        async function loadStoreReviews(storeId){
+            if(!storeId) return;
+            try{
+                const r=await fetch(`${API_BASE}/store-reviews/?store=${storeId}`, { headers:{ 'Authorization':`Bearer ${token}` } });
+                const reviews=r.ok?await r.json():[];
+                $('store-reviews-count').textContent=`${reviews.length} review(s)`;
+                $('store-reviews-list').innerHTML = reviews.length ? reviews.map(reviewCard).join('') : '<p class="text-gray-500 text-center py-4 font-medium">No reviews yet.</p>';
+            }catch(e){ $('store-reviews-list').innerHTML='<p class="text-gray-500 text-center py-4">Unable to load reviews.</p>'; }
+        }
+        $('product-review-form').addEventListener('submit', async e=>{
+            e.preventDefault();
+            const rating=$('product-review-rating').value, comment=$('product-review-comment').value.trim();
+            if(!rating) return toast('Please select a rating.');
+            try{
+                const r=await fetch(`${API_BASE}/product-reviews/`, { method:'POST', headers:{ 'Authorization':`Bearer ${token}`, 'Content-Type':'application/json' }, body:JSON.stringify({ product:productId, rating, comment }) });
+                if(!r.ok) throw 0;
+                $('product-review-rating').value=''; $('product-review-comment').value='';
+                await loadProductReviews(); toast('Review submitted');
+            }catch(e){ toast('Unable to submit review.'); }
+        });
+        $('store-review-form').addEventListener('submit', async e=>{
+            e.preventDefault();
+            const rating=$('store-review-rating').value, comment=$('store-review-comment').value.trim();
+            if(!rating) return toast('Please select a rating.');
+            try{
+                const r=await fetch(`${API_BASE}/store-reviews/`, { method:'POST', headers:{ 'Authorization':`Bearer ${token}`, 'Content-Type':'application/json' }, body:JSON.stringify({ store:productData.store, rating, comment }) });
+                if(!r.ok) throw 0;
+                $('store-review-rating').value=''; $('store-review-comment').value='';
+                await loadStoreReviews(productData.store); toast('Review submitted');
+            }catch(e){ toast('Unable to submit review.'); }
         });
 
-        (async () => {
+        /* ---------- view store ---------- */
+        $('view-store-btn').addEventListener('click', ()=>{ if(productData && productData.store!=null) window.location.href=`store_profile.html?id=${productData.store}`; else toast('Store information not available.'); });
+
+        /* ---------- init ---------- */
+        (async ()=>{
+            refreshCartCount();
+            await loadMe();
             await loadProduct();
+            paintWishlist();
             await loadProductReviews();
-            await loadStoreReviews(productData.store);
+            if(productData) await loadStoreReviews(productData.store);
         })();
     </script>
     <!-- Dale AI context for this page -->
