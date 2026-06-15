@@ -907,16 +907,18 @@
                     const presence = isActive
                         ? '<span class="text-green-600 text-xs font-semibold"><span class="inline-block w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>Active</span>'
                         : `<span class="text-gray-500 text-xs">${formatTimeAgo(updated)}</span>`;
-                    const initials = (conv.title || 'C').split(' ').map(s => s[0]).join('').slice(0, 2).toUpperCase();
+                    const dn = conv.display_name || conv.title || 'Conversation';
+                    const initials = (dn.replace(/[^A-Za-z0-9 ]/g, '').trim().split(/\s+/).map(s => s[0] || '').join('').slice(0, 2).toUpperCase()) || 'C';
+                    const sub = conv.product_title ? `about ${conv.product_title}` : presence;
 
                     return `
                     <div class="conversation-card ${currentConversationId === conv.id ? 'active' : ''}"
-                         onclick="loadChatRoom(${conv.id}, '${conv.title.replace(/'/g, "\\'")}')">
+                         onclick="loadChatRoom(${conv.id}, '${dn.replace(/'/g, "\\'")}')">
                         <div class="flex items-center gap-3">
                             <div class="avatar" style="background: linear-gradient(135deg, ${isActive ? '#10b981' : '#94a3b8'}, ${isActive ? '#059669' : '#64748b'})">${initials}</div>
                             <div class="flex-1 min-w-0">
-                                <h3 class="text-sm font-bold text-gray-800 truncate">${conv.title}</h3>
-                                <p class="text-xs text-gray-500 truncate mt-0.5">${presence}</p>
+                                <h3 class="text-sm font-bold text-gray-800 truncate">${dn}</h3>
+                                <p class="text-xs text-gray-500 truncate mt-0.5">${sub}</p>
                             </div>
                         </div>
                     </div>`;
