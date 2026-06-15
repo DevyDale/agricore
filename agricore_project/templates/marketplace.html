@@ -112,6 +112,53 @@
         .share-sec{ font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#94a3b8; margin:.7rem 0 .4rem }
         #share-convos{ max-height:13rem; overflow:auto }
     </style>
+    <style>
+      /* ===== Marketplace redesign ===== */
+      .hero-in{ padding:1rem 1.5rem 2.1rem }
+      .hgt{ margin:1.3rem auto 0 }
+      .hgt h1{ font-size:clamp(2rem,5vw,3.2rem) }
+      .hgt p{ font-size:1.04rem; margin-bottom:1.2rem }
+
+      .stats{ margin:-1.3rem 0 1.5rem }
+      .stat{ padding:.8rem .6rem } .stat .n{ font-size:1.5rem } .stat .l{ font-size:.72rem }
+
+      .chips{ display:flex; gap:.55rem; flex-wrap:wrap; margin:0 0 1.4rem }
+      .chip{ border:1px solid var(--line); background:#fff; color:#475569; padding:.5rem .95rem; border-radius:999px; font-weight:600; font-size:.85rem; cursor:pointer; display:inline-flex; align-items:center; gap:.45rem; transition:all .18s; box-shadow:0 8px 18px -16px rgba(20,40,25,.6) }
+      .chip i{ font-size:.85em; opacity:.85 }
+      .chip:hover{ border-color:var(--g500); color:var(--g700); transform:translateY(-1px) }
+      .chip.active{ background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; border-color:transparent }
+      .chip.active i{ opacity:1 }
+
+      .layout{ display:grid; grid-template-columns:250px 1fr; gap:1.5rem; align-items:start }
+      .side{ padding:1.2rem; position:sticky; top:1rem }
+      .side-h{ display:flex; align-items:center; justify-content:space-between; margin-bottom:.4rem }
+      .side-h h3{ font-size:1.05rem; margin:0; display:flex; align-items:center; gap:.5rem } .side-h h3 i{ color:var(--g600) }
+      .linkbtn{ background:none; border:0; color:var(--g600); font-weight:600; font-size:.8rem; cursor:pointer }
+      .linkbtn:hover{ text-decoration:underline }
+      .side-sec{ padding:.95rem 0; border-bottom:1px solid var(--line) }
+      .side-sec:last-child{ border-bottom:0; padding-bottom:0 }
+      .side .prow{ display:flex; align-items:center; gap:.4rem } .side .prow input{ width:auto; flex:1 }
+      .rate-chips{ display:flex; flex-wrap:wrap; gap:.4rem }
+      .rchip{ border:1px solid var(--line); background:#fff; color:#475569; padding:.35rem .7rem; border-radius:9px; font-size:.8rem; font-weight:600; cursor:pointer; transition:all .15s }
+      .rchip:hover{ border-color:var(--g500) }
+      .rchip.active{ background:var(--g600); color:#fff; border-color:transparent }
+
+      .prodarea .gridhead{ margin-bottom:1.1rem } .prodarea .gridhead h2{ font-size:1.4rem; margin:0 }
+
+      .pcard{ display:flex; flex-direction:column }
+      .heart{ position:absolute; top:.7rem; right:.7rem; width:38px; height:38px; border-radius:50%; border:0; background:rgba(255,255,255,.95); cursor:pointer; display:grid; place-items:center; box-shadow:0 4px 12px rgba(0,0,0,.14); color:#94a3b8; z-index:2; transition:all .2s; font-size:.95rem }
+      .heart:hover{ transform:scale(1.08); color:#f43f5e } .heart.active{ color:#f43f5e }
+      .pacts{ display:flex; gap:.4rem; margin-top:.7rem; padding-top:.7rem; border-top:1px solid var(--line) }
+      .pact{ flex:1; border:1px solid var(--line); background:#fff; border-radius:10px; padding:.45rem .3rem; font-size:.78rem; font-weight:600; color:#64748b; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:.3rem; transition:all .15s }
+      .pact i{ font-size:.85em }
+      .pact:hover{ background:#f0fdf4; color:var(--g700); border-color:var(--g500) }
+      .pact.chat:hover{ background:#f5f3ff; color:#7c3aed; border-color:#c4b5fd }
+      .pact.share:hover{ background:#f0f9ff; color:#0ea5e9; border-color:#7dd3fc }
+      .pact.drop:hover{ background:#eff6ff; color:#2563eb; border-color:#93c5fd }
+
+      @media(max-width:900px){ .layout{ grid-template-columns:1fr } .side{ position:static } }
+      @media(max-width:480px){ .pacts{ flex-wrap:wrap } .pact{ flex:1 1 30% } }
+    </style>
 </head>
 <body>
     <header class="hero">
@@ -127,9 +174,9 @@
             </nav>
             <div class="hgt">
                 <h1 id="marketplace-title">Marketplace</h1>
-                <p id="marketplace-desc">Your one-stop shop for everything farming</p>
+                <p id="marketplace-desc">Fresh crops and animal products, straight from the farm</p>
                 <div class="searchbar">
-                    <input type="text" id="search-input" placeholder="Search seeds, livestock, tractors, fertilizers...">
+                    <input type="text" id="search-input" placeholder="Search crops, vegetables, grains, eggs, milk...">
                     <button><i class="fas fa-search"></i></button>
                 </div>
             </div>
@@ -140,34 +187,44 @@
         <div class="stats">
             <div class="stat"><div class="n" id="stats-products">0</div><div class="l">Products</div></div>
             <div class="stat"><div class="n" id="stats-sellers">0</div><div class="l">Sellers</div></div>
-            <div class="stat"><div class="n" id="stats-deals">0</div><div class="l">Active Deals</div></div>
+            <div class="stat"><div class="n" id="stats-deals">0</div><div class="l">Showing</div></div>
             <div class="stat"><div class="n" id="stats-cart">0</div><div class="l">In Cart</div></div>
         </div>
 
-        <div class="card filters">
-            <h3><i class="fas fa-sliders-h"></i> Refine results</h3>
-            <div class="frow">
-                <div><span class="lbl">Category</span>
-                    <select id="filter-category-select" class="field">
-                        <option value="all">All categories</option>
-                        <option value="Livestock and Animal Products">Livestock</option>
-                        <option value="Crops and Agricultural Produce">Crops</option>
-                        <option value="Agricultural Machinery and Equipment">Machinery</option>
-                        <option value="Agricultural Chemicals and Inputs">Chemicals</option>
-                    </select></div>
-                <div><span class="lbl">Price range</span>
-                    <div class="prow"><input id="price-min" type="number" class="field" placeholder="Min"><span>–</span><input id="price-max" type="number" class="field" placeholder="Max"><button id="price-apply" class="gobtn">Go</button></div></div>
-                <div><span class="lbl">Minimum rating</span>
-                    <select id="filter-rating-select" class="field"><option value="">Any rating</option><option value="4.5">4.5+ ★</option><option value="4.0">4.0+ ★</option><option value="3.5">3.5+ ★</option></select></div>
-                <div><span class="lbl">Sort</span>
-                    <select id="sort-select" class="field"><option value="relevance">Relevance</option><option value="price-asc">Price: low → high</option><option value="price-desc">Price: high → low</option><option value="rating">Top rated</option></select></div>
-            </div>
+        <div class="chips" id="cat-chips">
+            <button class="chip active" data-cat="all"><i class="fas fa-border-all"></i> All</button>
+            <button class="chip" data-cat="Livestock and Animal Products"><i class="fas fa-cow"></i> Livestock</button>
+            <button class="chip" data-cat="Crops and Agricultural Produce"><i class="fas fa-wheat-awn"></i> Crops</button>
         </div>
 
-        <div class="card" style="padding:1.5rem">
-            <div class="gridhead"><h2 style="font-size:1.5rem;margin:0">Available products</h2><span class="muted" id="result-count"></span></div>
-            <div class="pgrid" id="product-grid-all"></div>
-            <div id="pager" style="display:flex;justify-content:center;gap:.7rem;margin-top:1.6rem"></div>
+        <div class="layout">
+            <aside class="side card" id="side">
+                <div class="side-h"><h3><i class="fas fa-sliders-h"></i> Filters</h3><button id="clear-filters" class="linkbtn">Clear all</button></div>
+                <div class="side-sec">
+                    <span class="lbl">Price range</span>
+                    <div class="prow"><input id="price-min" type="number" class="field" placeholder="Min"><span>–</span><input id="price-max" type="number" class="field" placeholder="Max"></div>
+                    <button id="price-apply" class="gobtn" style="width:100%;margin-top:.6rem">Apply price</button>
+                </div>
+                <div class="side-sec">
+                    <span class="lbl">Minimum rating</span>
+                    <div class="rate-chips" id="rate-chips">
+                        <button class="rchip active" data-r="">Any</button>
+                        <button class="rchip" data-r="4.5">4.5+ ★</button>
+                        <button class="rchip" data-r="4.0">4.0+ ★</button>
+                        <button class="rchip" data-r="3.5">3.5+ ★</button>
+                    </div>
+                </div>
+                <div class="side-sec">
+                    <span class="lbl">Sort by</span>
+                    <select id="sort-select" class="field"><option value="relevance">Relevance</option><option value="price-asc">Price: low → high</option><option value="price-desc">Price: high → low</option><option value="rating">Top rated</option></select>
+                </div>
+            </aside>
+
+            <section class="prodarea">
+                <div class="gridhead"><h2>Available products</h2><span class="muted" id="result-count"></span></div>
+                <div class="pgrid" id="product-grid-all"></div>
+                <div id="pager" style="display:flex;justify-content:center;gap:.7rem;margin-top:1.6rem"></div>
+            </section>
         </div>
     </main>
 
@@ -258,30 +315,30 @@
             const sclass = stock<=0?'stock-out':(stock<=5?'stock-low':'stock-in');
             const slabel = stock<=0?'Out of stock':(stock<=5?('Low · '+stock+' left'):'In stock');
             const sn = p.store_name||'Agricore Seller';
+            const w = isWished(p.id);
             return `<div class="pcard">
-                <div class="pimg">${img?`<img src="${img}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="ini" style="display:none">${initials(p.title)}</div>`:`<div class="ini">${initials(p.title)}</div>`}
-                    <span class="ptag">${p.category? (p.category.split(' ')[0]):'Deal'}</span>
-                    <div class="pquick">
-                        <button class="qb chat" title="Message seller" onclick="openChat(${p.id})"><i class="fas fa-comment-dots"></i></button>
-                        <button class="qb share" title="Share product" onclick="openShare(${p.id})"><i class="fas fa-share-nodes"></i></button>
-                        <button class="qb wish" title="Wishlist" onclick="toast('Saved to wishlist')"><i class="fas fa-heart"></i></button>
-                        <button class="qb drop" title="Dropship to my store" onclick="openDropship(${p.id})"><i class="fas fa-truck"></i></button>
-                    </div></div>
+                <div class="pimg">${img?`<img src="${escHtml(img)}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="ini" style="display:none">${initials(p.title)}</div>`:`<div class="ini">${initials(p.title)}</div>`}
+                    <span class="ptag">${p.category? escHtml(p.category.split(' ')[0]):'Deal'}</span>
+                    <button class="heart ${w?'active':''}" title="Save to wishlist" onclick="toggleWish(${p.id}, this)"><i class="fa${w?'s':'r'} fa-heart"></i></button></div>
                 <div class="pbody">
                     <div class="store-badge"><i class="fas fa-store"></i> ${escHtml(sn)} ${p.store_verified?'<i class="fas fa-circle-check vf" title="Verified store"></i>':''}</div>
-                    <h3>${p.title||''}</h3>
+                    <h3>${escHtml(p.title||'')}</h3>
                     <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem">${stars(rating)}<span class="muted">${rating.toFixed(1)} • ${rc} review${rc===1?'':'s'}</span></div>
-                    <p class="pdesc">${p.description||'Quality farm product'}</p>
+                    <p class="pdesc">${escHtml(p.description||'Quality farm product')}</p>
                     <div style="display:flex;align-items:center;justify-content:space-between;margin:.55rem 0 .15rem">
                         <div class="prc">${money(p.price)}</div>
                         <span class="stockpill ${sclass}">${slabel}</span>
                     </div>
-                    <div style="font-size:.72rem;color:#94a3b8;margin-bottom:.65rem">per ${p.unit||'unit'}</div>
+                    <div style="font-size:.72rem;color:#94a3b8;margin-bottom:.6rem">per ${escHtml(p.unit||'unit')}</div>
                     <div style="display:flex;gap:.5rem">
                         <button class="addbtn" ${stock<=0?'disabled':''} onclick="addToCart(${p.id})"><i class="fas fa-cart-plus"></i> Add</button>
                         <button class="buybtn" ${stock<=0?'disabled':''} onclick="buyNow(${p.id})">Buy now</button>
                     </div>
-                    <button class="viewb" style="width:100%;margin-top:.5rem;background:none;color:#64748b;border:1px solid var(--line)" onclick="location.href='product_detail.html?id=${p.id}'"><i class="fas fa-eye"></i> View details</button>
+                    <div class="pacts">
+                        <button class="pact chat" onclick="openChat(${p.id})"><i class="fas fa-comment-dots"></i> Chat</button>
+                        <button class="pact share" onclick="openShare(${p.id})"><i class="fas fa-share-nodes"></i> Share</button>
+                        <button class="pact drop" onclick="openDropship(${p.id})"><i class="fas fa-truck"></i> Dropship</button>
+                    </div>
                 </div></div>`;
         }
 
@@ -307,17 +364,28 @@
         }
         window.go = d=>{ page+=d; render(); window.scrollTo({top:300,behavior:'smooth'}); };
 
+        /* wishlist (persisted locally) */
+        function getWishlist(){ try{ return JSON.parse(localStorage.getItem('agricore_wishlist')||'[]'); }catch(e){ return []; } }
+        function isWished(id){ return getWishlist().includes(Number(id)); }
+        window.toggleWish=function(id, btn){ id=Number(id); let a=getWishlist(); const on=!a.includes(id); a = on? a.concat(id) : a.filter(x=>x!==id); try{ localStorage.setItem('agricore_wishlist',JSON.stringify(a)); }catch(e){} toast(on?'Saved to wishlist':'Removed from wishlist'); if(btn){ btn.classList.toggle('active',on); const ic=btn.querySelector('i'); if(ic) ic.className='fa'+(on?'s':'r')+' fa-heart'; } };
+
+        /* filters */
         $('search-input').addEventListener('input', e=>{ filters.q=e.target.value; page=1; render(); });
-        $('filter-category-select').addEventListener('change', e=>{ filters.category=e.target.value; page=1; render(); });
         $('price-apply').addEventListener('click', ()=>{ filters.min=$('price-min').value||null; filters.max=$('price-max').value||null; page=1; render(); });
-        $('filter-rating-select').addEventListener('change', e=>{ filters.rating=e.target.value?parseFloat(e.target.value):null; page=1; render(); });
         $('sort-select').addEventListener('change', e=>{ filters.sort=e.target.value; page=1; render(); });
+        document.querySelectorAll('#cat-chips .chip').forEach(b=> b.addEventListener('click', ()=>{ document.querySelectorAll('#cat-chips .chip').forEach(x=>x.classList.remove('active')); b.classList.add('active'); filters.category=b.dataset.cat; page=1; render(); }));
+        document.querySelectorAll('#rate-chips .rchip').forEach(b=> b.addEventListener('click', ()=>{ document.querySelectorAll('#rate-chips .rchip').forEach(x=>x.classList.remove('active')); b.classList.add('active'); filters.rating=b.dataset.r?parseFloat(b.dataset.r):null; page=1; render(); }));
+        $('clear-filters').addEventListener('click', ()=>{ filters.q=''; filters.category='all'; filters.min=null; filters.max=null; filters.rating=null; filters.sort='relevance'; $('search-input').value=''; $('price-min').value=''; $('price-max').value=''; $('sort-select').value='relevance'; document.querySelectorAll('#cat-chips .chip').forEach(x=>x.classList.toggle('active', x.dataset.cat==='all')); document.querySelectorAll('#rate-chips .rchip').forEach(x=>x.classList.toggle('active', x.dataset.r==='')); page=1; render(); });
+
+        /* Produce-only marketplace: keep crops + animal products, hide everything else */
+        const PRODUCE_CATS = ['crops and agricultural produce','livestock and animal products'];
+        function isProduce(p){ const c=(p.category||'').toLowerCase().trim(); return !c || PRODUCE_CATS.includes(c); }
 
         async function load(){
             try{
                 const res=await fetch(`${API}/products/`,{ headers:{'Authorization':'Bearer '+token} });
                 if(res.status===401){ window.location.href='authentication.html'; return; }
-                const data=await res.json(); products=Array.isArray(data)?data:(data.results||[]); render();
+                const data=await res.json(); products=(Array.isArray(data)?data:(data.results||[])).filter(isProduce); render();
             }catch(e){ $('product-grid-all').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:4rem;color:#dc2626">Failed to load products</div>'; }
         }
 
@@ -524,7 +592,7 @@
         let shareProduct=null;
         function productShareContent(p){ return '__AGRICORE_PRODUCT__'+JSON.stringify({ id:p.id, title:p.title||'Product', price_text:money(p.price), unit:p.unit||'', image:(p.image_display||p.image||p.image_url||'') }); }
         window.agcProduct=function(content){ if(typeof content!=='string'||content.indexOf('__AGRICORE_PRODUCT__')!==0) return null; try{ return JSON.parse(content.slice('__AGRICORE_PRODUCT__'.length)); }catch(e){ return null; } };
-        window.agcProductCard=function(p){ return '<div style="border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;max-width:230px;background:#fff">'+(p.image?'<img src="'+escHtml(p.image)+'" style="width:100%;height:115px;object-fit:cover;display:block" onerror="this.style.display=\'none\'">':'')+'<div style="padding:.5rem .6rem"><div style="font-weight:700;font-size:.85rem;color:#16271c">'+escHtml(p.title)+'</div><div style="color:#059669;font-weight:800;font-size:.95rem">'+escHtml(p.price_text||'')+'</div>'+(p.unit?'<div style="font-size:.7rem;color:#94a3b8;margin-bottom:.4rem">per '+escHtml(p.unit)+'</div>':'')+'<a href="product_detail.html?id='+p.id+'" style="display:inline-block;background:linear-gradient(135deg,var(--g500),var(--g700));color:#fff;font-size:.75rem;font-weight:700;padding:.35rem .7rem;border-radius:8px;text-decoration:none">View product</a></div></div>'; };
+        window.agcProductCard=function(p){ return '<div style="border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;max-width:230px;background:#fff">'+(p.image?'<img src="'+escHtml(p.image)+'" style="width:100%;height:115px;object-fit:cover;display:block" onerror="this.style.display=\'none\'">':'')+'<div style="padding:.5rem .6rem"><div style="font-weight:700;font-size:.85rem;color:#16271c">'+escHtml(p.title)+'</div><div style="color:#059669;font-weight:800;font-size:.95rem">'+escHtml(p.price_text||'')+'</div>'+(p.unit?'<div style="font-size:.7rem;color:#94a3b8">per '+escHtml(p.unit)+'</div>':'')+'</div></div>'; };
         window.openShare=function(productId){ const p=prodById(productId); if(!p){ toast('Product unavailable'); return; } shareProduct=p;
             const img=p.image_display||p.image||p.image_url||'';
             $('share-prev').innerHTML=(img?'<img src="'+escHtml(img)+'" onerror="this.style.display=\'none\'">':'')+'<div style="min-width:0"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(p.title||'')+'</div><div class="muted">'+money(p.price)+'</div></div>';
@@ -567,7 +635,7 @@
         if(new URLSearchParams(location.search).get('checkout')==='1'){ setTimeout(()=>{ try{ openCheckout(); }catch(e){} }, 300); }
 
         /* i18n title (safe if i18n absent) */
-        if(window.i18n){ try{ ['marketplace-title','marketplace-desc'].forEach((id,i)=>{ const k=['Agricore Marketplace','Your One-Stop Shop for Everything Farming'][i]; const el=$(id); if(el) el.textContent=i18n.t(k); }); }catch(e){} }
+        if(window.i18n){ try{ ['marketplace-title','marketplace-desc'].forEach((id,i)=>{ const k=['Agricore Marketplace','Fresh crops and animal products, straight from the farm'][i]; const el=$(id); if(el) el.textContent=i18n.t(k); }); }catch(e){} }
     </script>
     <!-- ===== Dale AI assistant (context-aware, brand) ===== -->
     <script>
