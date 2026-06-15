@@ -101,6 +101,16 @@
         .chat-input{ display:flex; gap:.5rem; padding:.8rem; border-top:1px solid var(--line); background:#fff }
         .chat-input textarea{ flex:1; resize:none; border:1.5px solid #e2ddd0; border-radius:12px; padding:.6rem .8rem; font:inherit; font-size:.9rem; max-height:90px; outline:none }
         .chat-input button{ flex:none; width:46px; border:0; border-radius:12px; cursor:pointer; background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff }
+        /* ---- share to chat ---- */
+        .qb.share{ color:#0ea5e9 }
+        .share-prev{ display:flex; gap:.6rem; align-items:center; background:#f8fafc; border:1px solid var(--line); border-radius:12px; padding:.6rem; margin-bottom:.9rem }
+        .share-prev img{ width:46px; height:46px; border-radius:8px; object-fit:cover }
+        .share-tile{ display:flex; align-items:center; gap:.6rem; padding:.55rem .6rem; border:1px solid var(--line); border-radius:12px; margin-bottom:.5rem; background:#fff }
+        .share-tile .av{ width:38px; height:38px; border-radius:50%; display:grid; place-items:center; font-weight:700; color:#fff; background:linear-gradient(135deg,var(--g500),var(--g700)); flex-shrink:0 }
+        .share-tile .nm{ flex:1; min-width:0; font-weight:600; font-size:.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+        .share-go{ border:0; background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; border-radius:9px; padding:.4rem .8rem; font-weight:700; font-size:.8rem; cursor:pointer }
+        .share-sec{ font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#94a3b8; margin:.7rem 0 .4rem }
+        #share-convos{ max-height:13rem; overflow:auto }
     </style>
 </head>
 <body>
@@ -207,6 +217,17 @@
         <div style="display:flex;gap:.6rem;margin-top:1rem"><button id="orders-refresh" class="field" style="flex:1;cursor:pointer"><i class="fas fa-rotate"></i> Refresh</button><button id="orders-close" class="btn" style="flex:1">Done</button></div>
     </div></div>
 
+    <!-- Share to chat modal -->
+    <div id="share-modal" class="modal"><div class="mc">
+        <h3 style="margin-top:0"><i class="fas fa-share-nodes" style="color:var(--g600)"></i> Share product</h3>
+        <div id="share-prev" class="share-prev"></div>
+        <input id="share-search" class="field" placeholder="Search people to share with…" autocomplete="off">
+        <div id="share-people"></div>
+        <div class="share-sec">Your chats</div>
+        <div id="share-convos"><div class="muted">Loading…</div></div>
+        <div style="display:flex;gap:.6rem;margin-top:1rem"><button id="share-close" class="field" style="flex:1;cursor:pointer">Close</button></div>
+    </div></div>
+
     <script>
         (function(){ function bf(){var W=1200,H=520,cols=8,rows=4,jx=(W/cols)*.32,jy=(H/rows)*.32,P=[];for(var r=0;r<=rows;r++){P[r]=[];for(var c=0;c<=cols;c++){var e=(r===0||r===rows||c===0||c===cols);P[r][c]={x:(c/cols)*W+(e?0:(Math.random()*2-1)*jx),y:(r/rows)*H+(e?0:(Math.random()*2-1)*jy)};}}var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']],ang=[0,16,90,74,16,0,90,30,16],defs='';pal.forEach(function(c,i){defs+='<pattern id="mp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>';});var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8],cells='';for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e2=P[r2+1][c2],fi=bag[Math.floor(Math.random()*bag.length)];cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e2.x.toFixed(1)+','+e2.y.toFixed(1)+'" fill="url(#mp'+fi+')" stroke="rgba(22,15,7,.16)" stroke-width="1.2"/>';}return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';}var el=document.getElementById('mk-farmland'); if(el) el.innerHTML=bf(); })();
 
@@ -242,6 +263,7 @@
                     <span class="ptag">${p.category? (p.category.split(' ')[0]):'Deal'}</span>
                     <div class="pquick">
                         <button class="qb chat" title="Message seller" onclick="openChat(${p.id})"><i class="fas fa-comment-dots"></i></button>
+                        <button class="qb share" title="Share product" onclick="openShare(${p.id})"><i class="fas fa-share-nodes"></i></button>
                         <button class="qb wish" title="Wishlist" onclick="toast('Saved to wishlist')"><i class="fas fa-heart"></i></button>
                         <button class="qb drop" title="Dropship to my store" onclick="openDropship(${p.id})"><i class="fas fa-truck"></i></button>
                     </div></div>
@@ -456,7 +478,9 @@
             const box=$('chat-msgs'); const w=document.createElement('div');
             w.className='cb '+(chatMine(m.sender)?'me':'them');
             let when=''; try{ when=new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){}
-            w.innerHTML=escHtml(m.content)+'<span class="ts">'+when+'</span>';
+            const _pp=(typeof window.agcProduct==='function')?window.agcProduct(m.content):null;
+            if(_pp) w.style.padding='.4rem';
+            w.innerHTML=(_pp?window.agcProductCard(_pp):escHtml(m.content))+'<span class="ts">'+when+'</span>';
             box.appendChild(w); box.scrollTop=box.scrollHeight;
         }
         async function loadChatHistory(convId){
@@ -495,6 +519,44 @@
         if($('chat-send')) $('chat-send').addEventListener('click', sendChat);
         if($('chat-text')){ $('chat-text').addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendChat(); } });
             $('chat-text').addEventListener('input', function(){ this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,90)+'px'; }); }
+
+        /* ============ Share product to chat ============ */
+        let shareProduct=null;
+        function productShareContent(p){ return '__AGRICORE_PRODUCT__'+JSON.stringify({ id:p.id, title:p.title||'Product', price_text:money(p.price), unit:p.unit||'', image:(p.image_display||p.image||p.image_url||'') }); }
+        window.agcProduct=function(content){ if(typeof content!=='string'||content.indexOf('__AGRICORE_PRODUCT__')!==0) return null; try{ return JSON.parse(content.slice('__AGRICORE_PRODUCT__'.length)); }catch(e){ return null; } };
+        window.agcProductCard=function(p){ return '<div style="border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;max-width:230px;background:#fff">'+(p.image?'<img src="'+escHtml(p.image)+'" style="width:100%;height:115px;object-fit:cover;display:block" onerror="this.style.display=\'none\'">':'')+'<div style="padding:.5rem .6rem"><div style="font-weight:700;font-size:.85rem;color:#16271c">'+escHtml(p.title)+'</div><div style="color:#059669;font-weight:800;font-size:.95rem">'+escHtml(p.price_text||'')+'</div>'+(p.unit?'<div style="font-size:.7rem;color:#94a3b8;margin-bottom:.4rem">per '+escHtml(p.unit)+'</div>':'')+'<a href="product_detail.html?id='+p.id+'" style="display:inline-block;background:linear-gradient(135deg,var(--g500),var(--g700));color:#fff;font-size:.75rem;font-weight:700;padding:.35rem .7rem;border-radius:8px;text-decoration:none">View product</a></div></div>'; };
+        window.openShare=function(productId){ const p=prodById(productId); if(!p){ toast('Product unavailable'); return; } shareProduct=p;
+            const img=p.image_display||p.image||p.image_url||'';
+            $('share-prev').innerHTML=(img?'<img src="'+escHtml(img)+'" onerror="this.style.display=\'none\'">':'')+'<div style="min-width:0"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(p.title||'')+'</div><div class="muted">'+money(p.price)+'</div></div>';
+            $('share-search').value=''; $('share-people').innerHTML=''; $('share-modal').classList.add('show'); loadShareConvos();
+        };
+        async function loadShareConvos(){
+            const box=$('share-convos'); box.innerHTML='<div class="muted">Loading\u2026</div>';
+            try{ const r=await fetch(API+'/conversations/',{headers:{'Authorization':'Bearer '+token}}); const d=await r.json(); const list=Array.isArray(d)?d:(d.results||[]);
+                if(!list.length){ box.innerHTML='<div class="muted" style="padding:.5rem">No chats yet \u2014 search for someone above to start one.</div>'; return; }
+                box.innerHTML=list.map(function(c){ const t=c.title||'Chat'; const ini=(t.replace(/[^A-Za-z0-9 ]/g,'').trim().split(/\s+/).map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase())||'C'; return '<div class="share-tile"><div class="av">'+escHtml(ini)+'</div><div class="nm">'+escHtml(t)+'</div><button class="share-go" onclick="shareToConversation('+c.id+', \''+t.replace(/\\/g,"\\\\").replace(/'/g,"\\'")+'\')">Share</button></div>'; }).join('');
+            }catch(e){ box.innerHTML='<div style="color:#dc2626">Could not load chats.</div>'; }
+        }
+        let shareSearchT=null;
+        if($('share-search')) $('share-search').addEventListener('input', function(){ const q=this.value.trim(); if(shareSearchT) clearTimeout(shareSearchT); if(!q){ $('share-people').innerHTML=''; return; } shareSearchT=setTimeout(function(){ searchSharePeople(q); }, 300); });
+        async function searchSharePeople(q){
+            const box=$('share-people'); box.innerHTML='<div class="muted" style="padding:.3rem">Searching\u2026</div>';
+            try{ const r=await fetch(API+'/users/search/?q='+encodeURIComponent(q),{headers:{'Authorization':'Bearer '+token}}); const d=await r.json(); const list=Array.isArray(d)?d:(d.results||[]);
+                if(!list.length){ box.innerHTML='<div class="muted" style="padding:.3rem">No people found.</div>'; return; }
+                box.innerHTML='<div class="share-sec">People</div>'+list.map(function(u){ const ini=(u.username||'U').slice(0,2).toUpperCase(); return '<div class="share-tile"><div class="av">'+escHtml(ini)+'</div><div class="nm">'+escHtml(u.username)+'</div><button class="share-go" onclick="shareToUser('+u.id+', \''+String(u.username).replace(/\\/g,"\\\\").replace(/'/g,"\\'")+'\')">Share</button></div>'; }).join('');
+            }catch(e){ box.innerHTML='<div style="color:#dc2626;padding:.3rem">Could not search.</div>'; }
+        }
+        window.shareToConversation=async function(convId, title){
+            if(!shareProduct) return;
+            try{ await apiPost('/messages/', { conversation:convId, content:productShareContent(shareProduct) }); toast('Shared to '+(title||'chat')); $('share-modal').classList.remove('show'); }
+            catch(e){ toast(e.message||'Could not share'); }
+        };
+        window.shareToUser=async function(userId, username){
+            try{ const convo=await apiPost('/conversations/start-direct-chat/', { user:userId }); if(convo&&convo.id!=null) shareToConversation(convo.id, username); else toast('Could not start chat'); }
+            catch(e){ toast(e.message||'Could not start chat'); }
+        };
+        if($('share-close')) $('share-close').addEventListener('click', function(){ $('share-modal').classList.remove('show'); });
+        if($('share-modal')) $('share-modal').addEventListener('click', function(e){ if(e.target===$('share-modal')) $('share-modal').classList.remove('show'); });
 
         /* Dale context for this page */
         window.__daleCtx = function(){ const v=(window.__mkView||products).slice(0,15).map(p=>({title:p.title,price:p.price,category:p.category,rating:p.average_rating,stock:p.stock_quantity})); return { page:'Marketplace', type:'marketplace', extras:{ filters:filters, visible_count:(window.__mkView||products).length, products:v } }; };

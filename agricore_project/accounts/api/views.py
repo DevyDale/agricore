@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiResponse
 from rest_framework import serializers
 from rest_framework.views import APIView
@@ -147,6 +148,16 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         if user.is_staff:
             return CustomUser.objects.all()
         return CustomUser.objects.filter(pk=user.pk)
+
+    @action(detail=False, methods=['get'], url_path='search', permission_classes=[IsAuthenticated])
+    def search(self, request):
+        """Minimal user lookup for starting/sharing chats: returns id + username only."""
+        q = (request.query_params.get('q') or request.query_params.get('search') or '').strip()
+        qs = CustomUser.objects.all()
+        if q:
+            qs = qs.filter(username__icontains=q)
+        qs = qs.exclude(pk=request.user.pk).order_by('username')[:20]
+        return Response([{'id': u.id, 'username': u.username} for u in qs])
 
 
 class AttachmentViewSet(viewsets.ModelViewSet):

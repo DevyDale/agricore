@@ -80,6 +80,43 @@ class ConversationViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(convo)
         return Response(serializer.data)
 
+    def perform_create(self, serializer):
+        # Always add the creator as a participant so the new conversation
+        # (group, channel or direct) is visible to them in their chat list.
+        convo = serializer.save()
+        if not convo.participants.filter(user=self.request.user).exists():
+            ConversationParticipant.objects.create(conversation=convo, user=self.request.user)
+
+    @action(detail=False, methods=['post'], url_path='start-direct-chat')
+    def start_direct_chat(self, request):
+        """Create or return a 1:1 conversation between the current user and another user."""
+        from accounts.models import CustomUser
+        other_id = request.data.get('user')
+        if not other_id:
+            return Response({'detail': 'user is required'}, status=400)
+        try:
+            other = CustomUser.objects.get(id=other_id)
+        except CustomUser.DoesNotExist:
+            return Response({'detail': 'User not found'}, status=404)
+
+        user = request.user
+        if other == user:
+            return Response({'detail': 'Cannot start a chat with yourself'}, status=400)
+
+        convo = (Conversation.objects
+                 .filter(product__isnull=True, participants__user=user)
+                 .filter(participants__user=other)
+                 .first())
+        if not convo:
+            convo = Conversation.objects.create(title=other.username)
+            ConversationParticipant.objects.bulk_create([
+                ConversationParticipant(conversation=convo, user=user),
+                ConversationParticipant(conversation=convo, user=other),
+            ])
+
+        serializer = self.get_serializer(convo)
+        return Response(serializer.data)
+
 
 class ConversationParticipantViewSet(viewsets.ModelViewSet):
     queryset = ConversationParticipant.objects.all()
