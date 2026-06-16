@@ -6,6 +6,7 @@
     <title>Your Farms — Agricore</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
     <style>
         :root{ --g500:#10b981; --g600:#059669; --g700:#047857; --g900:#064e3b; --line:#ece4d6; --ink:#16271c; --cream:#faf6ee;
                --crops:#4f8438; --livestock:#c39a48; --mixed:#7c8c42 }
@@ -44,7 +45,7 @@
         .btn:hover{ transform:translateY(-2px); box-shadow:0 12px 24px -8px rgba(5,120,80,.6) }
         .count{ font-size:.84rem; color:#8a9588; margin:.4rem 0 1rem; font-weight:500 } .count b{ color:var(--g700) }
 
-        /* ---------- estate map ---------- */
+        /* ---------- estate panel ---------- */
         .estate{ background:#fff; border:1px solid var(--line); border-radius:20px; box-shadow:0 22px 54px -34px rgba(20,40,25,.55); padding:1.3rem 1.4rem 1.5rem; opacity:0; transform:translateY(14px); animation:rise .55s .04s cubic-bezier(.2,.8,.2,1) forwards }
         @keyframes rise{ to{ opacity:1; transform:none } }
         .estate-head{ display:flex; align-items:flex-start; gap:1rem; flex-wrap:wrap; margin-bottom:1rem }
@@ -56,38 +57,57 @@
         .metric .mv{ font-family:Fraunces; font-weight:800; font-size:1.5rem; line-height:1; color:var(--ink) }
         .metric .mu{ font-size:.86rem; font-weight:600; color:#94a39a; margin-left:.15rem }
         .metric .ml{ font-size:.74rem; color:#8a9588; margin-top:.2rem }
-        .legend{ display:flex; gap:1.1rem; flex-wrap:wrap; margin:0 0 .9rem; font-size:.8rem; color:#5b6b60 }
+        .legend{ display:flex; gap:1.1rem; flex-wrap:wrap; margin:0 0 1.1rem; font-size:.8rem; color:#5b6b60 }
         .legend span{ display:inline-flex; align-items:center; gap:.45rem; font-weight:600 }
         .legend i{ width:11px; height:11px; border-radius:3px; display:inline-block }
         .lg-crops{ background:var(--crops) } .lg-livestock{ background:var(--livestock) } .lg-mixed{ background:var(--mixed) }
 
         .map{ position:relative; min-height:240px }
-        .plots{ display:grid; grid-template-columns:repeat(auto-fill,minmax(228px,1fr)); gap:.9rem }
-        .plot{ position:relative; height:168px; border-radius:13px; overflow:hidden; cursor:pointer; color:#fff;
-               box-shadow:inset 0 0 0 1px rgba(255,255,255,.16), 0 8px 22px -16px rgba(20,40,25,.6);
-               transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s, filter .2s;
-               opacity:0; transform:translateY(14px) scale(.985); animation:plotin .5s forwards }
-        @keyframes plotin{ to{ opacity:1; transform:none } }
-        .plot:hover{ transform:translateY(-5px); z-index:6; box-shadow:inset 0 0 0 1px rgba(255,255,255,.3), 0 20px 40px -16px rgba(5,120,80,.5); filter:brightness(1.05) }
-        .plot-share{ position:absolute; left:0; right:0; bottom:0; height:5px; background:rgba(255,255,255,.25) }
-        .plot-share i{ display:block; height:100%; width:0; background:rgba(255,255,255,.9); transition:width .9s cubic-bezier(.2,.8,.2,1) }
-        .plot.crops{ background:repeating-linear-gradient(118deg, rgba(0,0,0,.13) 0 3px, rgba(255,255,255,.06) 3px 8px), linear-gradient(160deg,#549040,#3c7330) }
-        .plot.livestock{ background-color:#bd8f3e; background-image:radial-gradient(rgba(255,255,255,.2) 1.5px, transparent 1.8px), linear-gradient(160deg, rgba(220,176,96,.18), rgba(150,110,48,.4)); background-size:15px 15px, 100% 100% }
-        .plot.mixed{ background:repeating-linear-gradient(45deg, rgba(0,0,0,.13) 0 6px, transparent 6px 12px), repeating-linear-gradient(-45deg, rgba(255,255,255,.08) 0 6px, transparent 6px 12px), linear-gradient(160deg,#7e9046,#5f722d) }
-        .plot-tex{ position:absolute; inset:0; background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(0,0,0,.3)); pointer-events:none }
-        .plot-lab{ position:absolute; inset:0; padding:.6rem .7rem; display:flex; flex-direction:column; justify-content:flex-end; gap:.1rem; text-shadow:0 1px 5px rgba(0,0,0,.55); pointer-events:none; transition:opacity .2s }
-        .plot-lab .ptag{ align-self:flex-start; font-size:.56rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; background:rgba(0,0,0,.3); padding:.18rem .45rem; border-radius:999px; margin-bottom:.2rem }
-        .plot-lab h4{ font-weight:800; font-size:.98rem; margin:0; line-height:1.1 }
-        .plot-lab .parea{ font-size:.76rem; font-weight:700 } .plot-lab .ploc{ font-size:.7rem; opacity:.88 }
-        .plot.small .plot-lab{ opacity:0 } .plot.small:hover .plot-lab{ opacity:1 }
-        .plot-acts{ position:absolute; top:.55rem; right:.55rem; display:flex; gap:.35rem; opacity:0; transform:translateY(-4px); transition:opacity .2s, transform .2s }
-        .plot:hover .plot-acts{ opacity:1; transform:none }
-        .pa{ border:0; border-radius:9px; padding:.42rem .55rem; font-size:.75rem; font-weight:700; cursor:pointer; background:rgba(0,0,0,.45); color:#fff; backdrop-filter:blur(3px); display:inline-flex; align-items:center; gap:.3rem }
-        .pa:hover{ background:rgba(0,0,0,.66) } .pa.manage{ background:rgba(5,120,80,.92) } .pa.manage:hover{ background:rgba(4,100,66,1) } .pa.del:hover{ background:#dc2626 }
+
+        /* ---------- FARM CARDS (redesigned) ---------- */
+        .farm-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(286px,1fr)); gap:1.1rem }
+        .farm-card{ position:relative; background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden; cursor:pointer;
+                    box-shadow:0 12px 30px -22px rgba(20,40,25,.6); display:flex; flex-direction:column;
+                    transition:transform .26s cubic-bezier(.34,1.56,.64,1), box-shadow .26s, border-color .26s;
+                    opacity:0; transform:translateY(14px); animation:rise .5s forwards }
+        .farm-card:hover{ transform:translateY(-6px); box-shadow:0 26px 48px -24px rgba(5,120,80,.5); border-color:var(--g500) }
+
+        .fc-banner{ position:relative; height:92px }
+        .fc-banner .fc-ov{ position:absolute; inset:0; background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(0,0,0,.3)) }
+        .fc-banner.crops{ background:repeating-linear-gradient(118deg, rgba(0,0,0,.13) 0 3px, rgba(255,255,255,.06) 3px 8px), linear-gradient(160deg,#549040,#3c7330) }
+        .fc-banner.livestock{ background-color:#bd8f3e; background-image:radial-gradient(rgba(255,255,255,.22) 1.5px, transparent 1.8px), linear-gradient(160deg, rgba(220,176,96,.2), rgba(150,110,48,.45)); background-size:15px 15px, 100% 100% }
+        .fc-banner.mixed{ background:repeating-linear-gradient(45deg, rgba(0,0,0,.13) 0 6px, transparent 6px 12px), repeating-linear-gradient(-45deg, rgba(255,255,255,.08) 0 6px, transparent 6px 12px), linear-gradient(160deg,#7e9046,#5f722d) }
+
+        .fc-type{ position:absolute; top:.6rem; left:.6rem; z-index:2; display:inline-flex; align-items:center; gap:.35rem; font-size:.6rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:#fff; background:rgba(0,0,0,.36); padding:.26rem .58rem; border-radius:999px; backdrop-filter:blur(3px) }
+        .fc-emblem{ position:absolute; right:.85rem; bottom:-20px; z-index:3; width:48px; height:48px; border-radius:14px; display:grid; place-items:center; color:#fff; font-size:1.15rem; border:3px solid #fff; box-shadow:0 10px 20px -10px rgba(0,0,0,.55) }
+        .fc-emblem.crops{ background:linear-gradient(135deg,#4f8438,#3c7330) }
+        .fc-emblem.livestock{ background:linear-gradient(135deg,#c39a48,#a9772e) }
+        .fc-emblem.mixed{ background:linear-gradient(135deg,#7c8c42,#5c6b1f) }
+
+        .fc-body{ padding:1.4rem 1.1rem 1.1rem; flex:1; display:flex; flex-direction:column }
+        .fc-name{ font-family:Fraunces; font-weight:800; font-size:1.12rem; margin:0 0 .3rem; line-height:1.15; color:var(--ink) }
+        .fc-loc{ font-size:.82rem; color:#8a9588; display:flex; align-items:center; gap:.45rem; margin-bottom:.85rem }
+        .fc-loc i{ color:var(--g600) }
+        .fc-stats{ display:flex; gap:.55rem; margin-bottom:.95rem }
+        .fc-stat{ flex:1; background:#faf7ef; border:1px solid var(--line); border-radius:12px; padding:.55rem .65rem }
+        .fc-stat .k{ font-size:.6rem; text-transform:uppercase; letter-spacing:.05em; color:#94a39a; font-weight:800; display:flex; align-items:center; gap:.3rem }
+        .fc-stat .v{ font-family:Fraunces; font-weight:800; font-size:1.02rem; color:var(--ink); margin-top:.18rem }
+        .fc-share{ margin-bottom:1rem }
+        .fc-share .bar{ height:7px; border-radius:999px; background:#eee7d8; overflow:hidden }
+        .fc-share .bar i{ display:block; height:100%; width:0; border-radius:999px; transition:width .9s cubic-bezier(.2,.8,.2,1); background:linear-gradient(90deg,var(--g500),var(--g700)) }
+        .farm-card.livestock .fc-share .bar i{ background:linear-gradient(90deg,#d3ab57,#a9772e) }
+        .farm-card.mixed .fc-share .bar i{ background:linear-gradient(90deg,#94a05a,#5c6b1f) }
+        .fc-share .lab{ font-size:.7rem; color:#8a9588; margin-top:.4rem; display:flex; justify-content:space-between; gap:.5rem }
+        .fc-acts{ display:flex; gap:.5rem; margin-top:auto }
+        .fc-manage{ flex:1; background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; border:0; border-radius:12px; padding:.62rem; font-weight:700; font-size:.85rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:.45rem; transition:filter .2s, transform .2s }
+        .fc-manage:hover{ filter:brightness(1.07); transform:translateY(-1px) }
+        .fc-icon-btn{ width:42px; flex:none; border:1px solid var(--line); background:#faf7ef; border-radius:12px; cursor:pointer; color:#5b6b60; font-size:.85rem; transition:.2s }
+        .fc-icon-btn:hover{ background:#f1ece1; color:var(--ink) }
+        .fc-icon-btn.del:hover{ background:#fee2e2; color:#dc2626; border-color:#fca5a5 }
 
         .empty{ text-align:center; padding:3.2rem 2rem }
-        .empty .ei{ width:84px; height:84px; margin-bottom:1rem; border-radius:50%; display:grid; place-items:center; background:#e4ede2; color:#6f9b7c; font-size:2.1rem }
-        .empty h3{ font-size:1.4rem; color:#3f4f45; margin:.2rem 0 } .empty p{ color:#7a857c; margin:0 0 1.2rem; max-width:34ch }
+        .empty .ei{ width:84px; height:84px; margin:0 auto 1rem; border-radius:50%; display:grid; place-items:center; background:#e4ede2; color:#6f9b7c; font-size:2.1rem }
+        .empty h3{ font-size:1.4rem; color:#3f4f45; margin:.2rem 0 } .empty p{ color:#7a857c; margin:0 auto 1.2rem; max-width:34ch }
 
         /* ---------- modals ---------- */
         .modal{ display:none; position:fixed; inset:0; background:rgba(15,23,42,.55); backdrop-filter:blur(6px); z-index:1000; padding:1rem; overflow-y:auto }
@@ -98,7 +118,7 @@
         .fg{ display:grid; grid-template-columns:1fr 1fr; gap:1rem } .fg .full{ grid-column:1/-1 }
         .fg .field, .mc .field{ width:100% }
         .mf{ display:flex; justify-content:flex-end; gap:.7rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid #f1ece1; flex-wrap:wrap }
-        .mbtn{ padding:.75rem 1.4rem; border-radius:12px; font-weight:600; cursor:pointer; border:0 }
+        .mbtn{ padding:.75rem 1.4rem; border-radius:12px; font-weight:600; cursor:pointer; border:0; display:inline-flex; align-items:center; gap:.45rem }
         .mb-cancel{ background:#f6f1e6; color:#5b6b60; border:1.5px solid var(--line) }
         .mb-save{ background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff }
         #form-error{ background:#fee2e2; border:1px solid #fca5a5; color:#dc2626; border-radius:12px; padding:.85rem; margin-bottom:1rem; white-space:pre-line }
@@ -108,6 +128,11 @@
         .spin{ display:none; justify-content:center; padding:3rem } .spin.on{ display:flex }
         .sp{ width:3rem; height:3rem; border:3px solid var(--line); border-top-color:var(--g500); border-radius:50%; animation:spin 1s linear infinite }
         @keyframes spin{ to{ transform:rotate(360deg) } }
+        .busy-overlay{ display:none; position:fixed; inset:0; background:rgba(15,23,42,.45); backdrop-filter:blur(4px); z-index:1200; align-items:center; justify-content:center }
+        .busy-overlay.show{ display:flex }
+        .busy-card{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:1.7rem 2.1rem; display:flex; flex-direction:column; align-items:center; gap:.95rem; box-shadow:0 24px 60px -20px rgba(6,28,15,.5) }
+        .busy-card .sp{ width:2.6rem; height:2.6rem; padding:0 }
+        .busy-card span{ font-weight:600; color:#475569; font-size:.95rem }
 
         @media(max-width:720px){ .metrics{ margin-left:0; width:100% } }
         @media(max-width:620px){ .fg{ grid-template-columns:1fr } .nav .lbl{ display:none } }
@@ -131,7 +156,7 @@
             </div>
             <span class="eyebrow"><span class="pulse-dot"></span> <span id="hero-greet">Welcome back</span></span>
             <h1 class="title">Your Farms</h1>
-            <p class="sub">Your whole operation, seen from above — every plot sized by the land it works.</p>
+            <p class="sub">Your whole operation in one place — every farm as its own card, sized by the land it works.</p>
         </div>
     </header>
 
@@ -151,8 +176,8 @@
         <section class="estate">
             <div class="estate-head">
                 <div>
-                    <h2>Your land from above</h2>
-                    <p class="hint">Each plot is a farm, sized by its area. Hover for detail, click to manage.</p>
+                    <h2>Your farms at a glance</h2>
+                    <p class="hint">Each card is a farm. Hover for the lift, click to manage.</p>
                 </div>
                 <div class="metrics">
                     <div class="metric"><div class="mi a"><i class="fas fa-tractor"></i></div><div><div><span class="mv" id="m-farms">0</span></div><div class="ml">Total farms</div></div></div>
@@ -188,7 +213,7 @@
                 </div>
                 <div class="mf">
                     <button type="button" id="f-cancel" class="mbtn mb-cancel">Cancel</button>
-                    <button type="submit" class="mbtn mb-save">Save Farm</button>
+                    <button type="submit" class="mbtn mb-save"><i class="fas fa-floppy-disk"></i> Save Farm</button>
                 </div>
             </form>
         </div>
@@ -207,6 +232,7 @@
     </div>
 
     <div id="snack"></div>
+    <div id="busy" class="busy-overlay"><div class="busy-card"><div class="sp"></div><span id="busy-text">Working…</span></div></div>
 
     <script>
         /* ---------- farmland hero mosaic ---------- */
@@ -241,8 +267,6 @@
             requestAnimationFrame(step);
         }
 
-        /* farms render as fixed-size plot tiles in a responsive grid */
-
         function renderOverview(){
             const farms=allFarms;
             const totalHa=farms.reduce((s,f)=>s+toHa(f),0);
@@ -262,33 +286,41 @@
         function renderMap(){
             const map=$('map'); const view=applyView();
             $('count').innerHTML = allFarms.length ? 'Showing <b>'+view.length+'</b> of <b>'+allFarms.length+'</b> '+(allFarms.length===1?'farm':'farms') : '';
-            if(!allFarms.length){ map.innerHTML='<div class="empty"><div class="ei"><i class="fas fa-seedling"></i></div><h3>No farms yet</h3><p>Add your first farm and it’ll appear here as a plot on your estate map.</p><button class="btn" onclick="document.getElementById(\'create-farm-btn\').click()"><i class="fas fa-plus"></i> Add your first farm</button></div>'; return; }
+            if(!allFarms.length){ map.innerHTML='<div class="empty"><div class="ei"><i class="fas fa-seedling"></i></div><h3>No farms yet</h3><p>Add your first farm and it’ll appear here as a card.</p><button class="btn" onclick="document.getElementById(\'create-farm-btn\').click()"><i class="fas fa-plus"></i> Add your first farm</button></div>'; return; }
             if(!view.length){ map.innerHTML='<div class="empty"><div class="ei"><i class="fas fa-magnifying-glass"></i></div><h3>No matches</h3><p>Try a different search or clear the type filter.</p></div>'; return; }
 
             const totalHa = allFarms.reduce((s,f)=>s+toHa(f),0);
             const tiles = view.map((f,idx)=>{
                 const t=(f.type||'mixed').toLowerCase(), cls=(t==='crops'||t==='livestock')?t:'mixed';
-                const ha=toHa(f); const areaTxt = ha>0? ha.toFixed(ha<100?1:0)+' ha' : (f.total_size? esc(f.total_size)+' '+esc(f.size_unit||''):'size not set');
+                const ha=toHa(f);
+                const areaTxt = ha>0? ha.toFixed(ha<100?1:0)+' ha' : (f.total_size? esc(f.total_size)+' '+esc(f.size_unit||''):'—');
+                const rawArea = f.total_size? esc(f.total_size)+' '+esc(f.size_unit||'') : '';
                 const sharePct = totalHa>0 ? (ha/totalHa*100) : 0;
                 const icon = cls==='crops'?'fa-wheat-awn':cls==='livestock'?'fa-cow':'fa-tractor';
-                const loc=[f.city,f.country].filter(Boolean).map(esc).join(', ');
-                const titleShare = totalHa>0 ? ' ('+sharePct.toFixed(0)+'% of your land)' : '';
-                return '<div class="plot '+cls+'" data-id="'+f.id+'" style="animation-delay:'+Math.min(idx*55,520)+'ms" onclick="manageFarm('+f.id+')" title="'+esc(f.name||'Farm')+' — '+areaTxt+titleShare+'">'
-                    + '<div class="plot-tex"></div>'
-                    + '<div class="plot-lab"><span class="ptag"><i class="fas '+icon+'"></i> '+cap(cls)+'</span>'
-                    + '<h4>'+esc(f.name||'Untitled')+'</h4>'
-                    + '<span class="parea"><i class="fas fa-ruler-combined"></i> '+areaTxt+'</span>'
-                    + (loc?'<span class="ploc">'+loc+'</span>':'')+'</div>'
-                    + '<div class="plot-acts">'
-                    + '<button class="pa manage" onclick="event.stopPropagation();manageFarm('+f.id+')"><i class="fas fa-arrow-right"></i> Manage</button>'
-                    + '<button class="pa" onclick="event.stopPropagation();editFarm('+f.id+')" title="Edit"><i class="fas fa-pen"></i></button>'
-                    + '<button class="pa del" onclick="event.stopPropagation();deleteFarm('+f.id+')" title="Delete"><i class="fas fa-trash"></i></button>'
+                const loc=[f.city,f.country].filter(Boolean).map(esc).join(', ') || 'Location not set';
+                return '<div class="farm-card '+cls+'" data-id="'+f.id+'" style="animation-delay:'+Math.min(idx*55,520)+'ms" onclick="manageFarm('+f.id+')" title="'+esc(f.name||'Farm')+'">'
+                    + '<div class="fc-banner '+cls+'"><div class="fc-ov"></div>'
+                    +   '<span class="fc-type"><i class="fas '+icon+'"></i> '+cap(cls)+'</span>'
+                    +   '<span class="fc-emblem '+cls+'"><i class="fas '+icon+'"></i></span>'
                     + '</div>'
-                    + '<div class="plot-share" title="Share of your total land"><i data-w="'+Math.max(sharePct,2)+'"></i></div>'
+                    + '<div class="fc-body">'
+                    +   '<h4 class="fc-name">'+esc(f.name||'Untitled')+'</h4>'
+                    +   '<div class="fc-loc"><i class="fas fa-location-dot"></i> '+loc+'</div>'
+                    +   '<div class="fc-stats">'
+                    +     '<div class="fc-stat"><div class="k"><i class="fas fa-ruler-combined"></i> Area</div><div class="v">'+areaTxt+'</div></div>'
+                    +     '<div class="fc-stat"><div class="k"><i class="fas fa-chart-pie"></i> Share</div><div class="v">'+(totalHa>0?sharePct.toFixed(0)+'%':'—')+'</div></div>'
+                    +   '</div>'
+                    +   '<div class="fc-share"><div class="bar"><i data-w="'+Math.max(sharePct,2)+'"></i></div><div class="lab"><span>Share of your land</span>'+(rawArea?'<span>'+rawArea+'</span>':'')+'</div></div>'
+                    +   '<div class="fc-acts">'
+                    +     '<button class="fc-manage" onclick="event.stopPropagation();manageFarm('+f.id+')"><i class="fas fa-arrow-right"></i> Manage</button>'
+                    +     '<button class="fc-icon-btn" onclick="event.stopPropagation();editFarm('+f.id+')" title="Edit"><i class="fas fa-pen"></i></button>'
+                    +     '<button class="fc-icon-btn del" onclick="event.stopPropagation();deleteFarm('+f.id+')" title="Delete"><i class="fas fa-trash"></i></button>'
+                    +   '</div>'
+                    + '</div>'
                     + '</div>';
             }).join('');
-            map.innerHTML = '<div class="plots">'+tiles+'</div>';
-            requestAnimationFrame(()=>requestAnimationFrame(()=>{ map.querySelectorAll('.plot-share i').forEach(el=>{ el.style.width=el.dataset.w+'%'; }); }));
+            map.innerHTML = '<div class="farm-grid">'+tiles+'</div>';
+            requestAnimationFrame(()=>requestAnimationFrame(()=>{ map.querySelectorAll('.fc-share .bar i').forEach(el=>{ el.style.width=el.dataset.w+'%'; }); }));
         }
         window.manageFarm = id => { window.location.href='individual_farm.html?id='+id; };
 
@@ -318,12 +350,14 @@
             const data = { name:$('f-name').value.trim(), type:$('f-type').value.trim().toLowerCase(), country:$('f-country').value.trim(), state:$('f-state').value.trim(), city:$('f-city').value.trim(), address:$('f-address').value.trim(), total_size:size, size_unit:$('f-unit').value.trim(), additional_notes:$('f-notes').value.trim() };
             const err=$('form-error');
             if(!data.name||!data.type||!data.country||!data.state||!data.city){ err.textContent='Please fill all fields marked with *'; err.style.display='block'; return; }
+            showBusy(editingId?'Saving changes…':'Creating farm…');
             try{
                 const url = editingId?'/api/farms/'+editingId+'/':'/api/farms/';
                 const res = await fetch(url, { method: editingId?'PATCH':'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body:JSON.stringify(data) });
                 if(!res.ok){ const txt=await res.text(); let j=null; try{j=JSON.parse(txt);}catch(_){} err.textContent = j?Object.entries(j).map(([k,v])=>k+': '+(Array.isArray(v)?v.join(', '):v)).join('\n'):(res.statusText||txt); err.style.display='block'; return; }
-                $('farm-modal').classList.remove('show'); loadFarms();
+                $('farm-modal').classList.remove('show'); await loadFarms();
             }catch(_){ err.textContent='Couldn’t save the farm. Please try again.'; err.style.display='block'; }
+            finally{ hideBusy(); }
         });
         window.editFarm = async id=>{
             event?.stopPropagation();
@@ -334,18 +368,21 @@
             $('f-name').value=farm.name||''; $('f-type').value=farm.type||''; $('f-country').value=farm.country||''; $('f-state').value=farm.state||''; $('f-city').value=farm.city||''; $('f-address').value=farm.address||''; $('f-size').value=farm.total_size||''; $('f-unit').value=farm.size_unit||'acres'; $('f-notes').value=farm.additional_notes||'';
             $('form-error').style.display='none'; $('farm-modal').classList.add('show');
         };
-        let lastDeleted=null;
+        function showBusy(msg){ $('busy-text').textContent = msg || 'Working…'; $('busy').classList.add('show'); }
+        function hideBusy(){ $('busy').classList.remove('show'); }
         window.deleteFarm = async id=>{
             event?.stopPropagation();
             if(!confirm('Delete this farm? This cannot be undone.')) return;
             const farm = allFarms.find(f=>f.id===id);
+            showBusy('Deleting farm…');
             try{
                 const res = await fetch('/api/farms/'+id+'/', { method:'DELETE', headers:{'Authorization':'Bearer '+token} });
-                if(res.ok){ lastDeleted={data:farm}; loadFarms(); snackbar('Farm “'+(farm?.name||'')+'” deleted', async ()=>{ if(!lastDeleted) return; const d=Object.assign({},lastDeleted.data); delete d.id; try{ await fetch('/api/farms/',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(d)}); loadFarms(); }catch(_){} lastDeleted=null; }); }
+                if(res.ok){ await loadFarms(); snackbar('Farm “'+(farm?.name||'')+'” deleted'); }
                 else alert('Failed to delete farm.');
             }catch(_){ alert('Error deleting farm.'); }
+            finally{ hideBusy(); }
         };
-        function snackbar(msg,onUndo){ const b=$('snack'); b.innerHTML='<span>'+msg+'</span><button>Undo</button>'; b.style.display='flex'; b.querySelector('button').onclick=()=>{ onUndo&&onUndo(); b.style.display='none'; }; setTimeout(()=>b.style.display='none',8000); }
+        function snackbar(msg){ const b=$('snack'); b.innerHTML='<span>'+msg+'</span>'; b.style.display='flex'; clearTimeout(snackbar._t); snackbar._t=setTimeout(()=>{ b.style.display='none'; },4000); }
 
         /* ---------- settings ---------- */
         $('settings-btn').addEventListener('click', ()=> $('settings-modal').classList.add('show'));
@@ -372,57 +409,129 @@
       var ENDPOINT = '/api/ai/dale/ask/';
       var history = [];
       var css = ''
-        + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:62px;height:62px;border:0;border-radius:50%;cursor:pointer;z-index:1000;background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}'
+        + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:66px;height:66px;border:0;border-radius:50%;cursor:pointer;z-index:1000;background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;overflow:hidden}'
         + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
         + '#daleFab svg{width:28px;height:28px}'
-        + '#daleFab .dot{position:absolute;top:10px;right:11px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857}'
-        + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
-        + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
-        + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
+        + '#daleFab dotlottie-wc{width:54px;height:54px;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}'
+        + '#daleFab .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857;z-index:2}'
+        + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif;transform-origin:bottom right}'
+        + '#dalePanel.open{display:flex;animation:daleUp .36s cubic-bezier(.16,1,.3,1)}'
+        + '@keyframes daleUp{from{opacity:0;transform:translateY(20px) scale(.9)}to{opacity:1;transform:none}}'
         + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
-        + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+        + '.dale-head .mk{position:relative;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+        + '.dale-head .mk::after{content:"";position:absolute;right:-2px;bottom:-2px;width:11px;height:11px;border-radius:50%;background:#34d399;border:2.5px solid #0c6b46;animation:daleLive 2.4s infinite}'
+        + '@keyframes daleLive{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55)}70%{box-shadow:0 0 0 6px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}'
         + '.dale-head .mk svg{width:20px;height:20px}'
         + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
         + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
-        + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+        + '.dale-head .x{margin-left:.15rem;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+        + '.dale-head .spk{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);cursor:pointer;padding:.25rem;display:grid;place-items:center;border-radius:8px}'
+        + '.dale-head .spk:hover{background:rgba(255,255,255,.14)}'
+        + '.dale-head .spk svg{width:19px;height:19px}'
+        + '.dale-head .spk.off{color:rgba(255,255,255,.45)}'
         + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
-        + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+        + '.dale-b{max-width:88%;padding:.72rem .9rem;border-radius:15px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
         + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
         + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
         + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+        + '.dale-b.ai{white-space:normal}'
+        + '.dale-b.ai>:first-child{margin-top:0}.dale-b.ai>:last-child{margin-bottom:0}'
+        + '.dale-b.ai p{margin:0 0 .55rem}'
+        + '.dale-b.ai ul,.dale-b.ai ol{margin:.25rem 0 .55rem;padding-left:1.15rem}'
+        + '.dale-b.ai li{margin:.18rem 0}'
+        + '.dale-b.ai strong{font-weight:700;color:#0d3b25}'
+        + '.dale-b.ai h4{margin:.15rem 0 .45rem;font-family:Fraunces,serif;font-size:1rem;line-height:1.25;color:#0d3b25}'
+        + '.dale-b.ai code{background:#eef5f0;border:1px solid #dcebe2;border-radius:5px;padding:.03rem .3rem;font-size:.84em;font-family:ui-monospace,SFMono-Regular,monospace}'
         + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
         + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
         + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
         + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
-        + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
-        + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
-        + '.dale-chip:hover{background:#d6efdf}'
+        + '.dale-sugg{align-self:stretch;display:flex;flex-direction:column;gap:.4rem;margin:.15rem 0 .1rem}'
+        + '.dale-sugg .lbl{font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a89c84;display:flex;align-items:center;gap:.4rem;margin:.1rem .15rem .2rem}'
+        + '.dale-sugg .lbl svg{width:13px;height:13px;color:#0f7a4b}'
+        + '.dale-sg{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;font:inherit;font-size:.86rem;font-weight:600;color:#16271c;background:#fff;border:1px solid #ece4d6;border-radius:13px;padding:.62rem .7rem .62rem .8rem;cursor:pointer;transition:transform .12s,border-color .15s,box-shadow .15s}'
+        + '.dale-sg:hover{border-color:#bfe3cd;box-shadow:0 8px 18px -12px rgba(6,90,55,.6);transform:translateY(-1px)}'
+        + '.dale-sg .tx{flex:1}'
+        + '.dale-sg .ch{flex:none;display:grid;place-items:center;color:#c8bfac;transition:transform .15s,color .15s}'
+        + '.dale-sg .ch svg{width:16px;height:16px}'
+        + '.dale-sg:hover .ch{color:#0f7a4b;transform:translateX(3px)}'
         + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
         + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
         + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
         + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
         + '.dale-input button svg{width:18px;height:18px}'
+        + '.dale-input .mic{background:#fff;border:1.5px solid #cdead8;color:#0f7a4b;transition:transform .12s}'
+        + '.dale-input .mic:hover{transform:scale(1.05)}'
+        + '.dale-input .mic.live{background:#ef4444;border-color:#ef4444;color:#fff;animation:daleMic 1s infinite}'
+        + '@keyframes daleMic{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 7px rgba(239,68,68,0)}}'
         + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
       var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
       var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+      var micIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>';
+      var spkOn = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 6a9 9 0 0 1 0 12"/></svg>';
+      var spkOff = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
+      var chevron = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
+      var sprout = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M12 20c0-5 0-7-3.5-9"/><path d="M12 13c0-3.5 2-5.5 5.5-5.5C17.5 11 15.5 13 12 13Z"/><path d="M12 12C12 9 10.2 7.2 7 7.2 7 10 8.8 12 12 12Z"/></svg>';
       var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
-      fab.innerHTML = '<span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>';
+      fab.innerHTML = '<span class="dot"></span><dotlottie-wc src="https://lottie.host/ac187fae-55ac-4ce4-93a9-fe037e3e2e57/jSdcU6a1Ig.lottie" autoplay loop></dotlottie-wc>';
       document.body.appendChild(fab);
       var panel = document.createElement('div'); panel.id='dalePanel';
       panel.innerHTML =
-        '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
-        + '<div class="dale-msgs" id="daleMsgs"></div><div class="dale-chips" id="daleChips"></div>'
+        '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="spk" id="daleSpk" aria-label="Toggle voice"></button><button class="x" aria-label="Close">&times;</button></div>'
+        + '<div class="dale-msgs" id="daleMsgs"></div>'
         + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
+        + '<button id="daleMic" class="mic" aria-label="Speak to Dale">'+micIcon+'</button>'
         + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
       document.body.appendChild(panel);
       var msgs = panel.querySelector('#daleMsgs'); var text = panel.querySelector('#daleText'); var greeted=false;
+      var micBtn = panel.querySelector('#daleMic'); var spkBtn = panel.querySelector('#daleSpk');
+      // ----- Voice (free, browser-native Web Speech API) -----
+      var synth = window.speechSynthesis || null;
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+      var voiceOn = localStorage.getItem('dale_voice') !== 'off';
+      var rec = null, listening = false;
+      function vLang(){ var m={en:'en-US',fr:'fr-FR',es:'es-ES',pt:'pt-PT',sw:'sw-KE',ar:'ar-SA',lg:'lg-UG'}; var l=(localStorage.getItem('preferred_language')||'en').toLowerCase(); return m[l]||l; }
+      function plain(s){ return String(s).replace(/```[\s\S]*?```/g,' ').replace(/`([^`]+)`/g,'$1').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/__([^_]+)__/g,'$1').replace(/^\s*[-*]\s+/gm,'').replace(/[*_#>`]/g,'').replace(/\n{2,}/g,'. ').replace(/\n/g,'. ').replace(/\s{2,}/g,' ').trim(); }
+      function pickVoice(lc){ try{ var vs=synth.getVoices()||[]; var c=lc.slice(0,2).toLowerCase(); return vs.filter(function(v){return v.lang&&v.lang.toLowerCase().indexOf(c)===0;})[0]||null; }catch(e){ return null; } }
+      function speak(t){ if(!voiceOn||!synth) return; try{ synth.cancel(); var u=new SpeechSynthesisUtterance(plain(t)); var lc=vLang(); u.lang=lc; var v=pickVoice(lc); if(v) u.voice=v; synth.speak(u); }catch(e){} }
+      function setSpk(){ if(!spkBtn) return; spkBtn.innerHTML = voiceOn ? spkOn : spkOff; spkBtn.classList.toggle('off', !voiceOn); spkBtn.title = voiceOn ? 'Voice on \u2014 tap to mute' : 'Voice off \u2014 tap to unmute'; }
+      if(spkBtn){ setSpk(); spkBtn.addEventListener('click', function(){ voiceOn=!voiceOn; localStorage.setItem('dale_voice', voiceOn?'on':'off'); if(!voiceOn && synth){ try{ synth.cancel(); }catch(e){} } setSpk(); }); }
+      if(synth){ try{ synth.getVoices(); synth.onvoiceschanged=function(){ synth.getVoices(); }; }catch(e){} }
+      function stopMic(){ listening=false; if(micBtn) micBtn.classList.remove('live'); }
+      function toggleMic(){ if(!SR) return; if(listening){ try{ rec && rec.stop(); }catch(e){} return; } try{ rec=new SR(); }catch(e){ return; } rec.lang=vLang(); rec.interimResults=true; rec.maxAlternatives=1; listening=true; if(micBtn) micBtn.classList.add('live'); if(synth){ try{ synth.cancel(); }catch(e){} }
+        rec.onresult=function(e){ var f='',i=''; for(var k=e.resultIndex;k<e.results.length;k++){ var r=e.results[k]; if(r.isFinal) f+=r[0].transcript; else i+=r[0].transcript; } text.value=(f+i).replace(/\s+/g,' ').trim(); };
+        rec.onerror=function(){ stopMic(); };
+        rec.onend=function(){ stopMic(); var q=text.value.trim(); if(q) send(); };
+        try{ rec.start(); }catch(e){ stopMic(); }
+      }
+      if(micBtn){ if(SR){ micBtn.addEventListener('click', toggleMic); } else { micBtn.style.display='none'; } }
       function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
-      function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+      function md(s){
+        s = esc(s).replace(/\r/g,'');
+        s = s.replace(/`([^`]+)`/g,'<code>$1</code>');
+        s = s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+        s = s.replace(/__([^_]+)__/g,'<strong>$1</strong>');
+        s = s.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>');
+        var lines = s.split('\n'), out='', lt=null;
+        function cl(){ if(lt){ out+='</'+lt+'>'; lt=null; } }
+        for(var i=0;i<lines.length;i++){
+          var ln=lines[i].trim();
+          if(!ln){ cl(); continue; }
+          var h=ln.match(/^#{1,6}\s+(.*)$/); if(h){ cl(); out+='<h4>'+h[1]+'</h4>'; continue; }
+          var u=ln.match(/^[-*]\s+(.*)$/), o=ln.match(/^\d+[.)]\s+(.*)$/);
+          if(u){ if(lt!=='ul'){ cl(); out+='<ul>'; lt='ul'; } out+='<li>'+u[1]+'</li>'; }
+          else if(o){ if(lt!=='ol'){ cl(); out+='<ol>'; lt='ol'; } out+='<li>'+o[1]+'</li>'; }
+          else { cl(); out+='<p>'+ln+'</p>'; }
+        }
+        cl(); return out;
+      }
+      function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=(cls==='ai')?md(content):esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
       function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
       function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
-      function renderChips(){ var chips=(window.__daleChips||[]); var box=panel.querySelector('#daleChips'); box.innerHTML=''; chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); }); }
+      function renderChips(){ var chips=(window.__daleChips||[]); if(!chips.length) return; clearSugg(); var wrap=document.createElement('div'); wrap.className='dale-sugg'; wrap.id='daleSugg'; var lbl=document.createElement('div'); lbl.className='lbl'; lbl.innerHTML=sprout+'<span>Try asking</span>'; wrap.appendChild(lbl); chips.forEach(function(c){ var b=document.createElement('button'); b.type='button'; b.className='dale-sg'; b.innerHTML='<span class="tx"></span><span class="ch">'+chevron+'</span>'; b.querySelector('.tx').textContent=c; b.onclick=function(){ send(c); }; wrap.appendChild(b); }); msgs.appendChild(wrap); msgs.scrollTop=msgs.scrollHeight; }
+      function clearSugg(){ var s=panel.querySelector('#daleSugg'); if(s) s.remove(); }
       async function send(q){
-        q = (q!==undefined ? q : text.value).trim(); if(!q) return;
+        q = (q!==undefined ? q : text.value).trim(); if(!q) return; clearSugg();
         text.value=''; bubble(q,'me'); history.push({role:'user',content:q}); var t=typing();
         try{
           var token = localStorage.getItem('access_token');
@@ -430,11 +539,11 @@
           t.remove();
           if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
           var data = await res.json(); var reply = data.reply || data.detail || 'No response.';
-          bubble(reply,'ai'); history.push({role:'assistant',content:reply});
+          bubble(reply,'ai'); history.push({role:'assistant',content:reply}); speak(reply);
         }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
       }
-      function open(){ panel.classList.add('open'); if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); } setTimeout(function(){ text.focus(); }, 50); }
-      function close(){ panel.classList.remove('open'); }
+      function open(){ panel.classList.add('open'); if(!greeted){ greeted=true; var intro = window.__daleIntro || "Hi, I'm Dale. How can I help with this page?"; bubble(intro, 'ai'); speak(intro); renderChips(); } setTimeout(function(){ text.focus(); }, 50); }
+      function close(){ panel.classList.remove('open'); if(synth){ try{ synth.cancel(); }catch(e){} } if(listening){ try{ rec && rec.stop(); }catch(e){} } }
       fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
       panel.querySelector('.x').addEventListener('click', close);
       panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
