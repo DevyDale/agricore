@@ -2411,113 +2411,161 @@
         };
     </script>    <!-- ===== Dale AI assistant (context-aware, brand) ===== -->
 <script>
-(function(){
-  if (window.__daleInit) return; window.__daleInit = true;
-  var ENDPOINT = '/api/ai/dale/ask/';
-  var history = [];
-
-  var css = ''
-    + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:66px;height:66px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
-    + 'background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);'
-    + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;overflow:hidden}'
-    + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
-    + '#daleFab svg{width:28px;height:28px}'
-    + '#daleFab dotlottie-wc{width:54px;height:54px;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}'
-    + '#daleFab .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857;z-index:2}'
-    + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;'
-    + 'background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);'
-    + 'display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
-    + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
-    + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
-    + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
-    + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
-    + '.dale-head .mk svg{width:20px;height:20px}'
-    + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
-    + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
-    + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
-    + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
-    + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
-    + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
-    + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
-    + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
-    + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
-    + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
-    + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
-    + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
-    + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
-    + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
-    + '.dale-chip:hover{background:#d6efdf}'
-    + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
-    + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
-    + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
-    + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
-    + '.dale-input button svg{width:18px;height:18px}'
-    + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
-  var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
-
-  var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
-  var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
-  fab.innerHTML = '<span class="dot"></span><dotlottie-wc src="https://lottie.host/ac187fae-55ac-4ce4-93a9-fe037e3e2e57/jSdcU6a1Ig.lottie" autoplay loop></dotlottie-wc>';
-  document.body.appendChild(fab);
-
-  var panel = document.createElement('div'); panel.id='dalePanel';
-  panel.innerHTML =
-    '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
-    + '<div class="dale-msgs" id="daleMsgs"></div>'
-    + '<div class="dale-chips" id="daleChips"></div>'
-    + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
-    + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
-  document.body.appendChild(panel);
-
-  var msgs = panel.querySelector('#daleMsgs');
-  var text = panel.querySelector('#daleText');
-  var greeted = false;
-
-  function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
-  function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
-  function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
-
-  function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
-
-  function renderChips(){
-    var chips = (window.__daleChips || []);
-    var box = panel.querySelector('#daleChips'); box.innerHTML='';
-    chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); });
-  }
-
-  async function send(q){
-    q = (q!==undefined ? q : text.value).trim();
-    if(!q) return;
-    text.value=''; bubble(q,'me'); history.push({role:'user',content:q});
-    var t = typing();
-    try{
-      var token = localStorage.getItem('access_token');
-      var res = await fetch(ENDPOINT, {
-        method:'POST',
-        headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}),
-        body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) })
-      });
-      t.remove();
-      if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
-      var data = await res.json();
-      var reply = data.reply || data.detail || 'No response.';
-      bubble(reply,'ai'); history.push({role:'assistant',content:reply});
-    }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
-  }
-
-  function open(){
-    panel.classList.add('open');
-    if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); }
-    setTimeout(function(){ text.focus(); }, 50);
-  }
-  function close(){ panel.classList.remove('open'); }
-
-  fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
-  panel.querySelector('.x').addEventListener('click', close);
-  panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
-  text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
-  text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
-})();
-</script>
+    (function(){
+      if (window.__daleInit) return; window.__daleInit = true;
+      var ENDPOINT = '/api/ai/dale/ask/';
+      var history = [];
+      var css = ''
+        + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:66px;height:66px;border:0;border-radius:50%;cursor:pointer;z-index:1000;background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;overflow:hidden}'
+        + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
+        + '#daleFab svg{width:28px;height:28px}'
+        + '#daleFab dotlottie-wc{width:54px;height:54px;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}'
+        + '#daleFab .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857;z-index:2}'
+        + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif;transform-origin:bottom right}'
+        + '#dalePanel.open{display:flex;animation:daleUp .36s cubic-bezier(.16,1,.3,1)}'
+        + '@keyframes daleUp{from{opacity:0;transform:translateY(20px) scale(.9)}to{opacity:1;transform:none}}'
+        + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
+        + '.dale-head .mk{position:relative;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+        + '.dale-head .mk::after{content:"";position:absolute;right:-2px;bottom:-2px;width:11px;height:11px;border-radius:50%;background:#34d399;border:2.5px solid #0c6b46;animation:daleLive 2.4s infinite}'
+        + '@keyframes daleLive{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55)}70%{box-shadow:0 0 0 6px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}'
+        + '.dale-head .mk svg{width:20px;height:20px}'
+        + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
+        + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
+        + '.dale-head .x{margin-left:.15rem;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+        + '.dale-head .spk{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);cursor:pointer;padding:.25rem;display:grid;place-items:center;border-radius:8px}'
+        + '.dale-head .spk:hover{background:rgba(255,255,255,.14)}'
+        + '.dale-head .spk svg{width:19px;height:19px}'
+        + '.dale-head .spk.off{color:rgba(255,255,255,.45)}'
+        + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
+        + '.dale-b{max-width:88%;padding:.72rem .9rem;border-radius:15px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+        + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
+        + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
+        + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+        + '.dale-b.ai{white-space:normal}'
+        + '.dale-b.ai>:first-child{margin-top:0}.dale-b.ai>:last-child{margin-bottom:0}'
+        + '.dale-b.ai p{margin:0 0 .55rem}'
+        + '.dale-b.ai ul,.dale-b.ai ol{margin:.25rem 0 .55rem;padding-left:1.15rem}'
+        + '.dale-b.ai li{margin:.18rem 0}'
+        + '.dale-b.ai strong{font-weight:700;color:#0d3b25}'
+        + '.dale-b.ai h4{margin:.15rem 0 .45rem;font-family:Fraunces,serif;font-size:1rem;line-height:1.25;color:#0d3b25}'
+        + '.dale-b.ai code{background:#eef5f0;border:1px solid #dcebe2;border-radius:5px;padding:.03rem .3rem;font-size:.84em;font-family:ui-monospace,SFMono-Regular,monospace}'
+        + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
+        + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
+        + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
+        + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
+        + '.dale-sugg{align-self:stretch;display:flex;flex-direction:column;gap:.4rem;margin:.15rem 0 .1rem}'
+        + '.dale-sugg .lbl{font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a89c84;display:flex;align-items:center;gap:.4rem;margin:.1rem .15rem .2rem}'
+        + '.dale-sugg .lbl svg{width:13px;height:13px;color:#0f7a4b}'
+        + '.dale-sg{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;font:inherit;font-size:.86rem;font-weight:600;color:#16271c;background:#fff;border:1px solid #ece4d6;border-radius:13px;padding:.62rem .7rem .62rem .8rem;cursor:pointer;transition:transform .12s,border-color .15s,box-shadow .15s}'
+        + '.dale-sg:hover{border-color:#bfe3cd;box-shadow:0 8px 18px -12px rgba(6,90,55,.6);transform:translateY(-1px)}'
+        + '.dale-sg .tx{flex:1}'
+        + '.dale-sg .ch{flex:none;display:grid;place-items:center;color:#c8bfac;transition:transform .15s,color .15s}'
+        + '.dale-sg .ch svg{width:16px;height:16px}'
+        + '.dale-sg:hover .ch{color:#0f7a4b;transform:translateX(3px)}'
+        + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
+        + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
+        + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
+        + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
+        + '.dale-input button svg{width:18px;height:18px}'
+        + '.dale-input .mic{background:#fff;border:1.5px solid #cdead8;color:#0f7a4b;transition:transform .12s}'
+        + '.dale-input .mic:hover{transform:scale(1.05)}'
+        + '.dale-input .mic.live{background:#ef4444;border-color:#ef4444;color:#fff;animation:daleMic 1s infinite}'
+        + '@keyframes daleMic{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 7px rgba(239,68,68,0)}}'
+        + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
+      var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+      var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+      var micIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>';
+      var spkOn = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 6a9 9 0 0 1 0 12"/></svg>';
+      var spkOff = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
+      var chevron = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
+      var sprout = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M12 20c0-5 0-7-3.5-9"/><path d="M12 13c0-3.5 2-5.5 5.5-5.5C17.5 11 15.5 13 12 13Z"/><path d="M12 12C12 9 10.2 7.2 7 7.2 7 10 8.8 12 12 12Z"/></svg>';
+      var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
+      fab.innerHTML = '<span class="dot"></span><dotlottie-wc src="https://lottie.host/ac187fae-55ac-4ce4-93a9-fe037e3e2e57/jSdcU6a1Ig.lottie" autoplay loop></dotlottie-wc>';
+      document.body.appendChild(fab);
+      var panel = document.createElement('div'); panel.id='dalePanel';
+      panel.innerHTML =
+        '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="spk" id="daleSpk" aria-label="Toggle voice"></button><button class="x" aria-label="Close">&times;</button></div>'
+        + '<div class="dale-msgs" id="daleMsgs"></div>'
+        + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
+        + '<button id="daleMic" class="mic" aria-label="Speak to Dale">'+micIcon+'</button>'
+        + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
+      document.body.appendChild(panel);
+      var msgs = panel.querySelector('#daleMsgs'); var text = panel.querySelector('#daleText'); var greeted=false;
+      var micBtn = panel.querySelector('#daleMic'); var spkBtn = panel.querySelector('#daleSpk');
+      // ----- Voice (free, browser-native Web Speech API) -----
+      var synth = window.speechSynthesis || null;
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+      var voiceOn = localStorage.getItem('dale_voice') !== 'off';
+      var rec = null, listening = false;
+      function vLang(){ var m={en:'en-US',fr:'fr-FR',es:'es-ES',pt:'pt-PT',sw:'sw-KE',ar:'ar-SA',lg:'lg-UG'}; var l=(localStorage.getItem('preferred_language')||'en').toLowerCase(); return m[l]||l; }
+      function plain(s){ return String(s).replace(/```[\s\S]*?```/g,' ').replace(/`([^`]+)`/g,'$1').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/__([^_]+)__/g,'$1').replace(/^\s*[-*]\s+/gm,'').replace(/[*_#>`]/g,'').replace(/\n{2,}/g,'. ').replace(/\n/g,'. ').replace(/\s{2,}/g,' ').trim(); }
+      function ttsVoice(){ try{ var vs=synth.getVoices()||[]; var l=(localStorage.getItem('preferred_language')||'en').toLowerCase();
+          if(l.indexOf('en')===0){
+            var prefer=['google uk english female','google uk english male','serena','kate','stephanie','arthur','jamie','daniel'];
+            for(var p=0;p<prefer.length;p++){ for(var i=0;i<vs.length;i++){ var v=vs[i]; if(v.name && v.lang && v.lang.toLowerCase().indexOf('en')===0 && v.name.toLowerCase().indexOf(prefer[p])!==-1) return {voice:v,lang:'en-GB'}; } }
+            for(var j=0;j<vs.length;j++){ if(vs[j].lang && vs[j].lang.toLowerCase()==='en-gb') return {voice:vs[j],lang:'en-GB'}; }
+          }
+          var code=vLang(), c=code.slice(0,2).toLowerCase();
+          for(var k=0;k<vs.length;k++){ if(vs[k].lang && vs[k].lang.toLowerCase().indexOf(c)===0) return {voice:vs[k],lang:code}; }
+          return {voice:null,lang:code};
+        }catch(e){ return {voice:null,lang:'en-GB'}; } }
+      function speak(t){ if(!voiceOn||!synth) return; try{ synth.cancel(); var u=new SpeechSynthesisUtterance(plain(t)); var sel=ttsVoice(); if(sel.voice) u.voice=sel.voice; u.lang=sel.lang; u.rate=1.05; u.pitch=1.08; synth.speak(u); }catch(e){} }
+      function setSpk(){ if(!spkBtn) return; spkBtn.innerHTML = voiceOn ? spkOn : spkOff; spkBtn.classList.toggle('off', !voiceOn); spkBtn.title = voiceOn ? 'Voice on \u2014 tap to mute' : 'Voice off \u2014 tap to unmute'; }
+      if(spkBtn){ setSpk(); spkBtn.addEventListener('click', function(){ voiceOn=!voiceOn; localStorage.setItem('dale_voice', voiceOn?'on':'off'); if(!voiceOn && synth){ try{ synth.cancel(); }catch(e){} } setSpk(); }); }
+      if(synth){ try{ synth.getVoices(); synth.onvoiceschanged=function(){ synth.getVoices(); }; }catch(e){} }
+      function stopMic(){ listening=false; if(micBtn) micBtn.classList.remove('live'); }
+      function toggleMic(){ if(!SR) return; if(listening){ try{ rec && rec.stop(); }catch(e){} return; } try{ rec=new SR(); }catch(e){ return; } rec.lang=vLang(); rec.interimResults=true; rec.maxAlternatives=1; listening=true; if(micBtn) micBtn.classList.add('live'); if(synth){ try{ synth.cancel(); }catch(e){} }
+        rec.onresult=function(e){ var f='',i=''; for(var k=e.resultIndex;k<e.results.length;k++){ var r=e.results[k]; if(r.isFinal) f+=r[0].transcript; else i+=r[0].transcript; } text.value=(f+i).replace(/\s+/g,' ').trim(); };
+        rec.onerror=function(){ stopMic(); };
+        rec.onend=function(){ stopMic(); var q=text.value.trim(); if(q) send(); };
+        try{ rec.start(); }catch(e){ stopMic(); }
+      }
+      if(micBtn){ if(SR){ micBtn.addEventListener('click', toggleMic); } else { micBtn.style.display='none'; } }
+      function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+      function md(s){
+        s = esc(s).replace(/\r/g,'');
+        s = s.replace(/`([^`]+)`/g,'<code>$1</code>');
+        s = s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+        s = s.replace(/__([^_]+)__/g,'<strong>$1</strong>');
+        s = s.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>');
+        var lines = s.split('\n'), out='', lt=null;
+        function cl(){ if(lt){ out+='</'+lt+'>'; lt=null; } }
+        for(var i=0;i<lines.length;i++){
+          var ln=lines[i].trim();
+          if(!ln){ cl(); continue; }
+          var h=ln.match(/^#{1,6}\s+(.*)$/); if(h){ cl(); out+='<h4>'+h[1]+'</h4>'; continue; }
+          var u=ln.match(/^[-*]\s+(.*)$/), o=ln.match(/^\d+[.)]\s+(.*)$/);
+          if(u){ if(lt!=='ul'){ cl(); out+='<ul>'; lt='ul'; } out+='<li>'+u[1]+'</li>'; }
+          else if(o){ if(lt!=='ol'){ cl(); out+='<ol>'; lt='ol'; } out+='<li>'+o[1]+'</li>'; }
+          else { cl(); out+='<p>'+ln+'</p>'; }
+        }
+        cl(); return out;
+      }
+      function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=(cls==='ai')?md(content):esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+      function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+      function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
+      function renderChips(){ var chips=(window.__daleChips||[]); if(!chips.length) return; clearSugg(); var wrap=document.createElement('div'); wrap.className='dale-sugg'; wrap.id='daleSugg'; var lbl=document.createElement('div'); lbl.className='lbl'; lbl.innerHTML=sprout+'<span>Try asking</span>'; wrap.appendChild(lbl); chips.forEach(function(c){ var b=document.createElement('button'); b.type='button'; b.className='dale-sg'; b.innerHTML='<span class="tx"></span><span class="ch">'+chevron+'</span>'; b.querySelector('.tx').textContent=c; b.onclick=function(){ send(c); }; wrap.appendChild(b); }); msgs.appendChild(wrap); msgs.scrollTop=msgs.scrollHeight; }
+      function clearSugg(){ var s=panel.querySelector('#daleSugg'); if(s) s.remove(); }
+      async function send(q){
+        q = (q!==undefined ? q : text.value).trim(); if(!q) return; clearSugg();
+        text.value=''; bubble(q,'me'); history.push({role:'user',content:q}); var t=typing();
+        try{
+          var token = localStorage.getItem('access_token');
+          var res = await fetch(ENDPOINT, { method:'POST', headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}), body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) }) });
+          t.remove();
+          if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
+          var data = await res.json(); var reply = data.reply || data.detail || 'No response.';
+          bubble(reply,'ai'); history.push({role:'assistant',content:reply}); speak(reply);
+        }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
+      }
+      function open(){ panel.classList.add('open'); if(!greeted){ greeted=true; var intro = window.__daleIntro || "Hi, I'm Dale. How can I help with this page?"; bubble(intro, 'ai'); speak(intro); renderChips(); } setTimeout(function(){ text.focus(); }, 50); }
+      function close(){ panel.classList.remove('open'); if(synth){ try{ synth.cancel(); }catch(e){} } if(listening){ try{ rec && rec.stop(); }catch(e){} } }
+      fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
+      panel.querySelector('.x').addEventListener('click', close);
+      panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
+      text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+      text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
+    })();
+    </script>
 </body>
 </html>
