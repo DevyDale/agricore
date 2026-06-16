@@ -492,8 +492,17 @@
       var rec = null, listening = false;
       function vLang(){ var m={en:'en-US',fr:'fr-FR',es:'es-ES',pt:'pt-PT',sw:'sw-KE',ar:'ar-SA',lg:'lg-UG'}; var l=(localStorage.getItem('preferred_language')||'en').toLowerCase(); return m[l]||l; }
       function plain(s){ return String(s).replace(/```[\s\S]*?```/g,' ').replace(/`([^`]+)`/g,'$1').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/__([^_]+)__/g,'$1').replace(/^\s*[-*]\s+/gm,'').replace(/[*_#>`]/g,'').replace(/\n{2,}/g,'. ').replace(/\n/g,'. ').replace(/\s{2,}/g,' ').trim(); }
-      function pickVoice(lc){ try{ var vs=synth.getVoices()||[]; var c=lc.slice(0,2).toLowerCase(); return vs.filter(function(v){return v.lang&&v.lang.toLowerCase().indexOf(c)===0;})[0]||null; }catch(e){ return null; } }
-      function speak(t){ if(!voiceOn||!synth) return; try{ synth.cancel(); var u=new SpeechSynthesisUtterance(plain(t)); var lc=vLang(); u.lang=lc; var v=pickVoice(lc); if(v) u.voice=v; synth.speak(u); }catch(e){} }
+      function ttsVoice(){ try{ var vs=synth.getVoices()||[]; var l=(localStorage.getItem('preferred_language')||'en').toLowerCase();
+          if(l.indexOf('en')===0){
+            var prefer=['google uk english female','google uk english male','serena','kate','stephanie','arthur','jamie','daniel'];
+            for(var p=0;p<prefer.length;p++){ for(var i=0;i<vs.length;i++){ var v=vs[i]; if(v.name && v.lang && v.lang.toLowerCase().indexOf('en')===0 && v.name.toLowerCase().indexOf(prefer[p])!==-1) return {voice:v,lang:'en-GB'}; } }
+            for(var j=0;j<vs.length;j++){ if(vs[j].lang && vs[j].lang.toLowerCase()==='en-gb') return {voice:vs[j],lang:'en-GB'}; }
+          }
+          var code=vLang(), c=code.slice(0,2).toLowerCase();
+          for(var k=0;k<vs.length;k++){ if(vs[k].lang && vs[k].lang.toLowerCase().indexOf(c)===0) return {voice:vs[k],lang:code}; }
+          return {voice:null,lang:code};
+        }catch(e){ return {voice:null,lang:'en-GB'}; } }
+      function speak(t){ if(!voiceOn||!synth) return; try{ synth.cancel(); var u=new SpeechSynthesisUtterance(plain(t)); var sel=ttsVoice(); if(sel.voice) u.voice=sel.voice; u.lang=sel.lang; u.rate=1.05; u.pitch=1.08; synth.speak(u); }catch(e){} }
       function setSpk(){ if(!spkBtn) return; spkBtn.innerHTML = voiceOn ? spkOn : spkOff; spkBtn.classList.toggle('off', !voiceOn); spkBtn.title = voiceOn ? 'Voice on \u2014 tap to mute' : 'Voice off \u2014 tap to unmute'; }
       if(spkBtn){ setSpk(); spkBtn.addEventListener('click', function(){ voiceOn=!voiceOn; localStorage.setItem('dale_voice', voiceOn?'on':'off'); if(!voiceOn && synth){ try{ synth.cancel(); }catch(e){} } setSpk(); }); }
       if(synth){ try{ synth.getVoices(); synth.onvoiceschanged=function(){ synth.getVoices(); }; }catch(e){} }
