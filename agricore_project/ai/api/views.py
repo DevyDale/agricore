@@ -170,37 +170,15 @@ class DaleAIChatView(APIView):
             elif re.search(r'which.*mixed', prompt, re.I):
                     if 'multi_farm' in page_name or 'farms' in page_name or 'dashboard' in page_name:
                         system_msg = (
-                            "You are Dale AI, a context-aware assistant for the Multi-Farm Dashboard. "
-                            "Guide users step-by-step through the page, describing each feature and how to use it. "
-                            "As you mention a feature (like a button, card, or form), include a clear highlight instruction in your reply, e.g. 'Highlight the Add Farm button' or 'Focus on the farm card'. "
-                            "Help users understand their farms, avoid mistakes when adding new farms, and decide what to do next using ONLY the data already on the screen. "
-                            "Never hallucinate or invent data. Do not answer unrelated questions. "
-                            "Explain what the user is seeing, summarize farm cards, help with the Add New Farm form, explain errors, guide actions, and suggest next steps. "
-                            "If the user is in demo mode, explain that. Be friendly, concise, and always reference the actual farm data and UI state."
-                        )
-                    reply = f'Farms under {limit}: ' + ', '.join(under) if under else f'No farms under {limit}.'
-            # Add more context Q&A as needed
-            if reply:
-                resp = {'reply': reply, 'log_id': None}
-                return Response(resp)
-
-        messages = [{'role': 'system', 'content': system_msg}]
-
-        # Ground the assistant in real platform data (prices, buyers, transport, produce).
-        # Wrapped so a data hiccup can never break the chat.
-        try:
-            from .agri_tools import build_grounding
-            grounding = build_grounding(request.user, prompt, context)
-            if grounding:
-                messages.append({'role': 'system', 'content': grounding})
-        except Exception:
-            pass
-
-        # Thread a short memory from last 5 logs for this user and page
-        recent = (
-            AILog.objects.filter(user=request.user, context_type=page or context_type)
-            .order_by('-created_at')[:5]
-        )
+            "You are Dale, the assistant for Agricore, a farming marketplace and farm-management platform. "
+            "Talk like a sharp, friendly professional speaking to a busy person. Lead with the answer or recommendation in the very first sentence. "
+            "Keep replies short: 2-4 sentences, or at most 3-5 tight bullet points. No walls of text, no filler, no restating the question, no preamble. "
+            "Do NOT use big tables or multi-column breakdowns unless the user explicitly asks to compare items; even then keep it to the few columns that matter. "
+            "When recommending, give 1-3 specific picks, each with a one-line reason grounded in the price/rating/stock numbers in the context 'extras'. "
+            "If the user asks which one to buy, commit to a single clear best pick and say why in one sentence. "
+            "Answer how-to or 'what can I do here' questions using the 'features' text in the context. "
+            "Be warm but efficient; skip sign-offs like 'let me know if you want more' unless it genuinely adds value. Only assist the authenticated user."
+        )  # Dale AI v2 style
         for item in reversed(list(recent)):
             messages.append({'role': 'user', 'content': item.prompt[:4000]})
             messages.append({'role': 'assistant', 'content': item.response[:4000]})
@@ -211,6 +189,54 @@ class DaleAIChatView(APIView):
 
         if extras:
             messages.append({'role': 'system', 'content': f"Context extras (JSON): {extras}"})
+
+        # ---- Dale marketplace review-awareness (reads real ratings + recent reviews) ----
+        try:
+            _blob = (str(page) + ' ' + str(context_type) + ' ' + str(extras)).lower()
+        except Exception:
+            _blob = ''
+        if 'market' in _blob or 'product' in _blob:
+            try:
+                from marketplace.models import Product, ProductReview
+                from django.db.models import Avg, Count
+                _prods = (Product.objects
+                          .select_related('store')
+                          .annotate(dale_avg=Avg('product_reviews__rating'),
+                                    dale_cnt=Count('product_reviews'))
+                          .order_by('-dale_avg', '-dale_cnt')[:25])
+                _ids = [p.id for p in _prods]
+                _rev_map = {}
+                for _r in (ProductReview.objects.filter(product_id__in=_ids)
+                           .order_by('-created_at')
+                           .values('product_id', 'rating', 'comment')):
+                    _lst = _rev_map.setdefault(_r['product_id'], [])
+                    if len(_lst) < 2:
+                        _c = (_r['comment'] or '').replace('\n', ' ').strip()
+                        if len(_c) > 140:
+                            _c = _c[:140] + '...'
+                        _lst.append((_r['rating'], _c))
+                _lines = []
+                for p in _prods:
+                    _avg = round(p.dale_avg, 1) if p.dale_avg is not None else None
+                    _store = getattr(p, 'store', None)
+                    _row = ('- ' + str(getattr(p, 'title', '') or '')
+                            + ' | $' + str(getattr(p, 'price', '')) + ' per ' + str(getattr(p, 'unit', 'unit') or 'unit')
+                            + ' | ' + str(getattr(p, 'category', '') or '')
+                            + ' | store: ' + str(getattr(_store, 'name', '') or '')
+                            + ' | rating: ' + (str(_avg) if _avg is not None else 'none')
+                            + ' (' + str(p.dale_cnt) + ' reviews) | stock: ' + str(getattr(p, 'stock_quantity', 0)))
+                    _rv = _rev_map.get(p.id) or []
+                    if _rv:
+                        _row += ' | recent reviews: ' + ' ; '.join(
+                            ((str(_rt) + '/5 "' + _cc + '"') if _cc else (str(_rt) + '/5')) for _rt, _cc in _rv)
+                    _lines.append(_row)
+                if _lines:
+                    _catalog = ('Live marketplace data with real ratings and recent customer reviews. '
+                                'Use this to recommend products and justify each pick by citing the rating and what reviewers actually said. '
+                                'Best-rated first:\n' + '\n'.join(_lines))
+                    messages.append({'role': 'system', 'content': _catalog[:5000]})
+            except Exception:
+                pass
 
         messages.append({'role': 'user', 'content': prompt})
 

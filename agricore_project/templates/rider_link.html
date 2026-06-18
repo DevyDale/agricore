@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agricore Delivery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { background:#f0fdf4; }
+    .card { max-width:480px; margin:0 auto; }
+    .inp { width:100%; border:1px solid #d1d5db; border-radius:12px; padding:.8rem 1rem; font-size:1.4rem; letter-spacing:.25em; text-align:center; font-weight:800; color:#065f46; }
+    .inp:focus { outline:none; border-color:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.25); }
+    .btn { width:100%; padding:.85rem; border:none; border-radius:12px; font-weight:800; font-size:1rem; cursor:pointer; }
+  </style>
+</head>
+<body class="min-h-screen p-4">
+  <div class="card pt-6">
+    <div class="flex items-center gap-2 mb-4">
+      <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white grid place-items-center"><i class="fas fa-seedling"></i></div>
+      <div class="font-extrabold text-emerald-800 text-lg">Agricore Delivery</div>
+    </div>
+    <div id="root" class="bg-white rounded-2xl shadow-sm border border-emerald-100 p-5">
+      <div id="loading" class="text-center text-gray-500 py-8"><i class="fas fa-spinner fa-spin"></i> Loading your delivery…</div>
+    </div>
+    <p class="text-center text-xs text-gray-400 mt-4">This link is just for you. Do not share your codes.</p>
+  </div>
+
+  <script>
+    var API = window.location.origin + '/api';
+    var TOKEN = new URLSearchParams(window.location.search).get('t') || '';
+    var root = document.getElementById('root');
+
+    function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]); }); }
+    function money(v, cur){ return (cur || 'UGX') + ' ' + esc(v); }
+
+    async function api(path, opts){
+      var r = await fetch(API + path, opts || {});
+      var d = null;
+      try { d = await r.json(); } catch(e) { d = {}; }
+      if (!r.ok) { throw new Error((d && d.detail) || ('Error ' + r.status)); }
+      return d;
+    }
+
+    function row(icon, label, value){
+      if (!value) return '';
+      return '<div class="flex items-start gap-2 text-sm text-gray-700 mb-2"><i class="fas ' + icon + ' text-emerald-600 mt-0.5 w-4"></i><div><span class="text-gray-400">' + label + '</span><br>' + value + '</div></div>';
+    }
+
+    function render(job){
+      if (!job) return;
+      var closed = (job.status === 'delivered' || job.status === 'cancelled');
+      var sellerPhone = job.seller_phone ? ('<a href="tel:' + esc(job.seller_phone) + '" class="text-emerald-700 underline font-semibold">' + esc(job.seller_phone) + '</a>') : '';
+      var seller = (job.seller_name || '') + (sellerPhone ? (' · ' + sellerPhone) : '');
+
+      var html = '<div class="flex items-center justify-between mb-3">'
+        + '<div class="font-bold text-gray-800">Order #' + esc(job.order_id) + '</div>'
+        + '<span class="text-xs font-semibold px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">' + esc(job.status) + '</span>'
+        + '</div>';
+
+      html += row('fa-user-tie', 'Seller', seller || '—');
+      html += row('fa-location-dot', 'Pick up at', esc(job.pickup_location) || '—');
+      html += row('fa-flag-checkered', 'Deliver to', esc(job.drop_location) || '—');
+      html += row('fa-coins', 'Your fee', money(job.offered_fee, job.currency));
+
+      html += '<div class="border-t border-gray-100 mt-3 pt-4">';
+
+      if (job.next_action === 'pickup') {
+        html += '<p class="text-sm font-semibold text-gray-800 mb-1">Confirm pickup</p>'
+          + '<p class="text-xs text-gray-500 mb-3">Ask the seller for the pickup code and enter it here when you collect the goods.</p>'
+          + '<input id="code" class="inp mb-3" inputmode="numeric" placeholder="------">'
+          + '<button class="btn bg-emerald-600 text-white" onclick="doPickup()"><i class="fas fa-box"></i> I have collected the goods</button>'
+          + '<div id="msg" class="text-sm text-center mt-3"></div>';
+      } else if (job.next_action === 'deliver') {
+        html += '<p class="text-sm font-semibold text-gray-800 mb-1">Confirm delivery</p>'
+          + '<p class="text-xs text-gray-500 mb-3">Ask the buyer for their delivery code and enter it here once you hand over the goods.</p>'
+          + '<input id="code" class="inp mb-3" inputmode="numeric" placeholder="------">'
+          + '<button class="btn bg-blue-600 text-white" onclick="doDeliver()"><i class="fas fa-circle-check"></i> I have delivered the goods</button>'
+          + '<div id="msg" class="text-sm text-center mt-3"></div>';
+      } else if (job.status === 'delivered') {
+        html += '<div class="text-center text-emerald-700 py-4"><i class="fas fa-circle-check text-3xl"></i><p class="mt-2 font-semibold">Delivered. Thank you!</p></div>';
+      } else {
+        html += '<div class="text-center text-gray-500 py-4"><i class="fas fa-circle-info text-2xl"></i><p class="mt-2">This delivery is closed.</p></div>';
+      }
+      html += '</div>';
+      root.innerHTML = html;
+    }
+
+    function setMsg(text, ok){
+      var m = document.getElementById('msg');
+      if (m) m.innerHTML = '<span class="' + (ok ? 'text-emerald-700' : 'text-red-600') + ' font-semibold">' + esc(text) + '</span>';
+    }
+
+    async function load(){
+      if (!TOKEN) { root.innerHTML = '<div class="text-center text-red-600 py-6">This link is missing its code.</div>'; return; }
+      try {
+        var job = await api('/rider-link/' + encodeURIComponent(TOKEN) + '/');
+        render(job);
+      } catch (e) {
+        root.innerHTML = '<div class="text-center text-red-600 py-6"><i class="fas fa-triangle-exclamation text-2xl"></i><p class="mt-2">' + esc(e.message || 'This link is not valid.') + '</p></div>';
+      }
+    }
+
+    window.doPickup = async function(){
+      var code = (document.getElementById('code').value || '').trim();
+      if (!code) { setMsg('Enter the pickup code.', false); return; }
+      setMsg('Checking…', true);
+      try {
+        await api('/rider-link/' + encodeURIComponent(TOKEN) + '/pickup/', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pickup_code: code })
+        });
+        await load();
+      } catch (e) { setMsg(e.message || 'Could not confirm pickup.', false); }
+    };
+
+    window.doDeliver = async function(){
+      var code = (document.getElementById('code').value || '').trim();
+      if (!code) { setMsg('Enter the delivery code.', false); return; }
+      setMsg('Checking…', true);
+      try {
+        await api('/rider-link/' + encodeURIComponent(TOKEN) + '/deliver/', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ otp: code })
+        });
+        await load();
+      } catch (e) { setMsg(e.message || 'Could not confirm delivery.', false); }
+    };
+
+    load();
+  </script>
+</body>
+</html>

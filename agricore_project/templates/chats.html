@@ -461,7 +461,63 @@
             .chat-body { padding: 0.75rem; }
             .message-input-area { padding: 1rem; }
         }
-    </style>
+            /* ===== chat feature additions ===== */
+        .message-mine { background: linear-gradient(135deg, var(--g600), var(--g900)); color:#fff; margin-left:auto; border-bottom-right-radius:.3rem; }
+        .message-theirs { background:#e3f3e6; color:var(--ink); border:1px solid #c7e7cf; border-bottom-left-radius:.3rem; }
+        .reply-quote { border-left:3px solid var(--g500); padding:.2rem .5rem; margin-bottom:.35rem; font-size:.78rem; opacity:.9; background:rgba(0,0,0,.05); border-radius:.3rem; }
+        .message-mine .reply-quote { background:rgba(255,255,255,.18); border-left-color:#bbf7d0; }
+        .rx { display:inline-flex; align-items:center; gap:.25rem; background:none; border:none; cursor:pointer; }
+        .message-mine .rx { color:rgba(255,255,255,.85)!important; }
+        #msg-menu { position:absolute; z-index:1500; background:#fff; border:1px solid var(--line); border-radius:.75rem; box-shadow:0 12px 30px rgba(20,30,18,.22); padding:.3rem; display:none; min-width:150px; }
+        #msg-menu.show { display:block; }
+        #msg-menu button { display:flex; align-items:center; gap:.6rem; width:100%; text-align:left; padding:.55rem .7rem; border:none; background:none; border-radius:.5rem; font-size:.875rem; cursor:pointer; color:var(--ink); }
+        #msg-menu button:hover { background:var(--parch); }
+        #record-btn.recording { background:#ef4444!important; color:#fff!important; border-color:#ef4444!important; animation:recPulse 1s infinite; }
+        @keyframes recPulse { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5);} 50%{box-shadow:0 0 0 7px rgba(239,68,68,0);} }
+        #toast { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%) translateY(20px); background:#16271c; color:#fff; padding:.7rem 1.2rem; border-radius:.75rem; font-size:.875rem; opacity:0; pointer-events:none; transition:all .25s; z-index:2000; }
+        #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+        .search-wrap #user-search-results { position:absolute; left:0; right:0; z-index:50; }
+
+        /* ===== redesign v1: compact list + modern polish ===== */
+        #conversations-list > * + * { margin-top: 0 !important; }
+        .conversation-card{ display:flex; align-items:center; gap:.7rem; padding:.55rem .55rem; margin:0; border:none; border-radius:.7rem; box-shadow:none; background:transparent; border-bottom:1px solid #efe8da; transition:background .15s; cursor:pointer; }
+        .conversation-card:hover{ transform:none; box-shadow:none; background:#f3f7f1; border-color:transparent; }
+        .conversation-card.active{ background:linear-gradient(135deg,#eaf7ec,#dcf0e0); border-color:transparent; box-shadow:none; }
+        .conv-av{ position:relative; flex-shrink:0; }
+        .conv-av .avatar{ box-shadow:none; }
+        .conv-dot{ position:absolute; right:1px; bottom:1px; width:12px; height:12px; border-radius:50%; background:#22c55e; border:2.5px solid #fffdf8; }
+        .conv-main{ flex:1; min-width:0; }
+        .conv-r1{ display:flex; align-items:baseline; justify-content:space-between; gap:.5rem; }
+        .conv-name{ flex:1; min-width:0; font-weight:600; font-size:.92rem; color:var(--ink); }
+        .conv-time{ font-size:.68rem; color:var(--muted); flex-shrink:0; }
+        .conv-r2{ font-size:.78rem; color:var(--muted); margin-top:.05rem; }
+        .conv-r2.online{ color:#16a34a; font-weight:600; }
+        .sidebar, .chat-room{ box-shadow:0 8px 30px rgba(60,46,20,.07); }
+        .tabs{ background:#f1ece1; }
+        .tab-btn.active{ box-shadow:0 1px 4px rgba(60,46,20,.12); }
+
+        /* ===== chatroom polish v2 ===== */
+        .tabs{ display:flex; gap:.3rem; }
+        .tab-btn{ flex:1; white-space:nowrap; }
+        #discover-btn{ display:inline-flex; align-items:center; gap:.35rem; font-size:.72rem; font-weight:600; padding:.3rem .7rem; border-radius:999px; background:var(--parch); color:#5a5346; border:1px solid var(--line); cursor:pointer; }
+        #discover-btn.on{ background:var(--g600); color:#fff; border-color:var(--g600); }
+        #discover-btn i{ font-size:.8rem; }
+        .chat-body{ padding:1rem 1.25rem; }
+        .message-list{ border:none; background:transparent; padding:.4rem .2rem; box-shadow:none; }
+        .message-bubble{ padding:.45rem .65rem .3rem; border-radius:1rem; max-width:70%; min-width:54px; box-shadow:0 1px 2px rgba(60,46,20,.08); }
+        .message-mine{ border-bottom-right-radius:.35rem; }
+        .message-theirs{ border-bottom-left-radius:.35rem; }
+        .msg-name{ font-size:.72rem; font-weight:700; color:var(--g700); margin:0 0 .15rem; }
+        .message-mine .msg-name{ color:#bbf7d0; }
+        .msg-text{ font-size:.9rem; line-height:1.35; white-space:pre-wrap; word-break:break-word; }
+        .msg-meta{ display:flex; align-items:center; justify-content:flex-end; gap:.35rem; margin-top:.05rem; line-height:1; }
+        .msg-time{ font-size:.6rem; opacity:.75; }
+        .message-mine .msg-time{ color:rgba(255,255,255,.85); }
+        .message-theirs .msg-time{ color:var(--muted); }
+        .rx-pill{ font-size:.6rem; background:rgba(0,0,0,.08); border-radius:999px; padding:.02rem .35rem; }
+        .message-mine .rx-pill{ background:rgba(255,255,255,.2); }
+        #reply-bar{ background:#eef7f0!important; }
+</style>
 </head>
 <body>
     <!-- Navigation Overlay -->
@@ -510,109 +566,130 @@
         </div>
     </header>
 
-    <!-- Main Content -->
+        <!-- Main Content -->
     <main class="main-container">
-        <!-- Sidebar: Chat List -->
         <div class="sidebar glass" id="sidebar">
             <div class="sidebar-content">
-                <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center justify-between mb-4">
                     <h2 class="panel-title text-lg font-bold" style="color:var(--ink);">Messages</h2>
-                    <span id="conv-count" class="text-xs font-semibold text-green-800 bg-green-50 px-2.5 py-1 rounded-full border border-green-100">Loading…</span>
+                    <div class="flex items-center gap-2">
+                        <button id="discover-btn"><i class="fas fa-compass"></i><span id="discover-label">Discover</span></button>
+                        <span id="conv-count" class="text-xs font-semibold text-green-800 bg-green-50 px-2.5 py-1 rounded-full border border-green-100">Loading…</span>
+                    </div>
                 </div>
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="all">All</button>
-                    <button class="tab-btn" data-tab="direct">Direct</button>
+                <div class="tabs" style="margin:0 0 1rem;">
+                    <button class="tab-btn active" data-tab="direct">Inbox</button>
                     <button class="tab-btn" data-tab="groups">Groups</button>
                     <button class="tab-btn" data-tab="channels">Channels</button>
                 </div>
-
-                <!-- Universal search: conversations + people -->
                 <div class="search-wrap mb-4">
                     <i class="fas fa-search search-ic"></i>
-                    <input type="text" id="conversation-search" placeholder="Search conversations &amp; people..." class="input-field" autocomplete="off">
+                    <input type="text" id="conversation-search" placeholder="Search chats, channels &amp; people..." class="input-field" autocomplete="off">
                     <span id="clear-search" class="clear-search"><i class="fas fa-circle-xmark"></i></span>
                     <div id="user-search-results" class="bg-white rounded-lg shadow mt-2 max-h-56 overflow-y-auto hidden" style="border:1px solid var(--line);"></div>
                 </div>
-
                 <div id="conversations-list" class="conversations-list space-y-2"></div>
             </div>
         </div>
 
-        <!-- Chat Room -->
         <div class="chat-room glass" id="chat-room">
             <div id="chat-placeholder" class="flex-1 flex items-center justify-center p-8" style="color:var(--muted);">
                 <div class="text-center">
                     <i class="fas fa-comments text-5xl mb-4" style="color:#d8cdb5;"></i>
                     <p class="panel-title text-lg font-semibold" style="color:#4a4434;">Select a conversation to start chatting</p>
-                    <p class="text-sm mt-2" style="color:var(--muted);">Your messages will appear here</p>
                 </div>
             </div>
             <div id="chat-content" class="hidden flex-1 flex flex-col overflow-hidden">
                 <div class="chat-header">
                     <div class="flex items-center">
-                        <button class="back-btn" id="back-btn">
-                            <i class="fas fa-arrow-left" style="color:#5a5346;"></i>
-                        </button>
+                        <button class="back-btn" id="back-btn"><i class="fas fa-arrow-left" style="color:#5a5346;"></i></button>
                         <h2 id="chat-title" class="text-lg font-bold" style="color:var(--ink);"></h2>
                     </div>
-                    <div id="presence-indicator" class="text-sm pill px-3 py-1.5 bg-white shadow-sm" style="color:#5a5346;border:1px solid var(--line);"></div>
+                    <div class="flex items-center gap-2">
+                        <div id="presence-indicator" class="text-sm pill px-3 py-1.5 bg-white shadow-sm" style="color:#5a5346;border:1px solid var(--line);"></div>
+                        <button id="members-btn" class="hidden btn-secondary text-sm px-3 py-1.5"><i class="fas fa-users"></i></button>
+                    </div>
                 </div>
                 <div class="chat-body">
                     <div id="message-list" class="message-list space-y-4"></div>
                 </div>
+                <div id="reply-bar" class="hidden" style="padding:.5rem 1.2rem;border-top:1px solid var(--line);background:#f0faf2;display:flex;align-items:center;gap:.6rem;">
+                    <i class="fas fa-reply" style="color:var(--g700)"></i>
+                    <span id="reply-bar-text" class="text-sm flex-1 truncate" style="color:#4a4434;"></span>
+                    <button id="reply-cancel" class="text-gray-500"><i class="fas fa-times"></i></button>
+                </div>
                 <div class="message-input-area">
-                    <div class="message-actions">
-                        <label for="image-input" class="px-3 py-2 pill text-sm cursor-pointer flex items-center font-medium transition" style="background:var(--parch);color:#5a5346;border:1px solid var(--line);">
-                            <i class="fas fa-image mr-2"></i>
-                            <span class="hidden sm:inline">Attach</span>
-                        </label>
-                        <input id="image-input" type="file" accept="image/*" class="hidden">
-                        <button id="forward-mode-btn" class="px-3 py-2 pill text-sm flex items-center font-medium transition" style="background:#fffdf8;color:var(--g700);border:1px solid var(--line);">
-                            <i class="fas fa-share mr-2"></i>
-                            <span class="hidden sm:inline">Forward</span>
-                        </button>
-                        <span id="forward-selected-count" class="text-sm hidden" style="color:var(--muted);">0 selected</span>
-                    </div>
                     <div class="message-compose">
+                        <label for="image-input" class="px-3 py-2 pill text-sm cursor-pointer flex items-center font-medium" style="background:var(--parch);color:#5a5346;border:1px solid var(--line);"><i class="fas fa-paperclip"></i></label>
+                        <input id="image-input" type="file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" class="hidden">
+                        <button id="record-btn" class="px-3 py-2 pill text-sm flex items-center font-medium" style="background:#fffdf8;color:var(--g700);border:1px solid var(--line);"><i class="fas fa-microphone"></i></button>
+                        <span id="rec-ready" class="hidden text-xs" style="color:var(--g700);align-self:center;">audio ready</span>
                         <textarea id="message-input" placeholder="Type your message..." class="input-field p-3 text-sm" rows="2"></textarea>
-                        <button id="send-message" class="btn-primary px-5 py-3 flex items-center whitespace-nowrap">
-                            <i class="fas fa-paper-plane mr-2"></i>
-                            <span>Send</span>
-                        </button>
+                        <button id="send-message" class="btn-primary px-5 py-3 flex items-center whitespace-nowrap"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-
     <!-- New Conversation Modal -->
     <div id="new-conversation-modal" class="modal">
         <div class="modal-content">
             <h2 class="panel-title text-xl font-bold mb-6" style="color:var(--ink);">Create Group / Channel</h2>
             <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-semibold mb-2" style="color:#4a4434;">Title</label>
-                    <input id="new-conv-title" type="text" class="input-field" placeholder="Enter group or channel name">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2" style="color:#4a4434;">Type</label>
+                <div><label class="block text-sm font-semibold mb-2" style="color:#4a4434;">Title</label>
+                    <input id="new-conv-title" type="text" class="input-field" placeholder="Enter a name"></div>
+                <div><label class="block text-sm font-semibold mb-2" style="color:#4a4434;">Type</label>
                     <select id="new-conv-type" class="input-field">
-                        <option value="group">Group</option>
-                        <option value="channel">Channel</option>
-                        <option value="forum">Forum</option>
-                    </select>
-                </div>
-                <p class="text-xs" style="color:var(--muted);">Type is for display only for now.</p>
+                        <option value="group">Group — private, you add members</option>
+                        <option value="channel">Channel — public, anyone can find &amp; join</option>
+                    </select></div>
             </div>
-            <div class="flex flex-col sm:flex-row justify-end gap-3 mt-8">
-                <button id="new-conv-cancel" class="btn-secondary px-6 py-2.5 order-2 sm:order-1">Cancel</button>
-                <button id="new-conv-create" class="btn-primary px-6 py-2.5 order-1 sm:order-2">Create</button>
+            <div class="flex justify-end gap-3 mt-8">
+                <button id="new-conv-cancel" class="btn-secondary px-6 py-2.5">Cancel</button>
+                <button id="new-conv-create" class="btn-primary px-6 py-2.5">Create</button>
             </div>
         </div>
     </div>
 
-    <!-- Farmland mosaic generator -->
+    <!-- Members / Admin Modal -->
+    <div id="members-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="panel-title text-xl font-bold mb-4" style="color:var(--ink);">Members</h2>
+            <div id="member-add-wrap" class="hidden mb-3">
+                <input id="member-add-input" class="input-field" placeholder="Search a user to add...">
+                <div id="member-add-results" class="mt-1"></div>
+            </div>
+            <div id="members-list" class="max-h-72 overflow-y-auto"></div>
+            <div class="flex justify-end mt-6"><button class="btn-secondary px-6 py-2.5" onclick="document.getElementById('members-modal').classList.remove('show')">Close</button></div>
+        </div>
+    </div>
+
+    <!-- Forward Modal -->
+    <div id="forward-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="panel-title text-xl font-bold mb-4" style="color:var(--ink);">Forward to…</h2>
+            <div id="forward-list" class="max-h-72 overflow-y-auto space-y-1"></div>
+            <div class="flex justify-end mt-6"><button class="btn-secondary px-6 py-2.5" onclick="document.getElementById('forward-modal').classList.remove('show')">Cancel</button></div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content" style="max-width:420px;">
+            <h2 class="panel-title text-lg font-bold mb-2" style="color:var(--ink);">Delete chat?</h2>
+            <p class="text-sm mb-6" style="color:var(--muted);">This permanently deletes &quot;<span id="delete-name" class="font-semibold"></span>&quot; for everyone. This can't be undone.</p>
+            <div class="flex justify-end gap-3">
+                <button class="btn-secondary px-6 py-2.5" onclick="document.getElementById('delete-modal').classList.remove('show')">Cancel</button>
+                <button id="delete-confirm-btn" class="px-6 py-2.5 rounded-lg font-semibold text-white" style="background:#dc2626;">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Long-press message menu -->
+    <div id="msg-menu"></div>
+
+<!-- Farmland mosaic generator -->
     <script>
         (function buildFarmland(){
             const host = document.getElementById('ch-farmland');
@@ -649,589 +726,522 @@
     </script>
 
     <script>
-        // [All chat functionality preserved]
-        const token = localStorage.getItem('access_token');
-        const isGuest = !token;
+/* ===== Agricore Chats — full feature script ===== */
+const token = localStorage.getItem('access_token');
+let myUserId = localStorage.getItem('user_id');
+let myUsername = null;
+let currentConversationId = null;
+let currentConv = null;
+let currentTab = 'direct';
+let discoverMode = false;
+let replyTo = null;            // {id, sender_name, snippet}
+let chatWS = null, chatWSConvId = null;
+let renderedMsgIds = new Set();
+let mediaRecorder = null, recordedChunks = [], recordedBlob = null;
+
+function escH(v){ return String(v==null?'':v).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function authH(extra){ return Object.assign({ 'Authorization': 'Bearer ' + token }, extra||{}); }
+function fmtAgo(d){
+  const s = Math.floor((Date.now()-d.getTime())/1000);
+  if (s<60) return 'just now';
+  const m=Math.floor(s/60); if (m<60) return m+'m ago';
+  const h=Math.floor(m/60); if (h<24) return h+'h ago';
+  const dd=Math.floor(h/24); if (dd<7) return dd+'d ago';
+  return d.toLocaleDateString();
+}
+function typeBadge(t){
+  const map={direct:'',group:'<i class="fas fa-user-group"></i> Group',channel:'<i class="fas fa-bullhorn"></i> Channel'};
+  return map[t]||'';
+}
+
+/* ---------- conversation list ---------- */
+async function loadConversations(search=''){
+  const list = document.getElementById('conversations-list');
+  if (!token){ location.href='authentication.html'; return; }
+  if (discoverMode){ return discoverChannels(search); }
+  try{
+    let url = '/api/conversations/';
+    if (search) url += '?search='+encodeURIComponent(search);
+    const res = await fetch(url, { headers: authH() });
+    if (res.status===401){ localStorage.clear(); location.href='authentication.html'; return; }
+    let convs = res.ok ? await res.json() : [];
+    convs.sort((a,b)=> new Date(b.updated_at)-new Date(a.updated_at));
+    if (search) convs = convs.filter(c => (c.display_name||c.title||'').toLowerCase().includes(search.toLowerCase()));
+    convs = convs.filter(c => currentTab==='all' ? true : c.type===currentTab.replace(/s$/,'') );
+    const cc = document.getElementById('conv-count');
+    if (cc) cc.textContent = convs.length ? convs.length+' chat'+(convs.length===1?'':'s') : 'No chats';
+    list.innerHTML = convs.length ? convs.map(renderConvTile).join('') : emptyConvHtml();
+    wireConvTiles();
+  }catch(e){ console.error(e); list.innerHTML='<p class="text-red-500 text-center text-sm">Failed to load conversations.</p>'; }
+}
+
+function renderConvTile(c){
+  const dn = c.display_name || c.title || 'Conversation';
+  const initials = (dn.replace(/[^A-Za-z0-9 ]/g,'').trim().split(/\s+/).map(s=>s[0]||'').join('').slice(0,2).toUpperCase())||'C';
+  const online = c.type==='direct' && c.other_online;
+  let sub, subCls='';
+  if (c.type==='direct'){
+    if (online){ sub='Active now'; subCls='online'; }
+    else sub = c.other_last_seen ? ('last seen '+fmtAgo(new Date(c.other_last_seen))) : 'offline';
+  } else {
+    sub = (c.type==='channel'?'Channel':'Group')+' · '+(c.participant_count||0)+' members';
+  }
+  const active = currentConversationId===c.id ? 'active' : '';
+  const time = c.updated_at ? fmtAgo(new Date(c.updated_at)) : '';
+  return '<div class="conversation-card '+active+'" data-id="'+c.id+'" data-name="'+escH(dn)+'" data-admin="'+(c.my_role==='admin'?'1':'0')+'">'
+    + '<div class="conv-av"><div class="avatar" style="width:46px;height:46px;background:linear-gradient(135deg,'+(online?'#10b981':'#94a3b8')+','+(online?'#059669':'#64748b')+')">'+initials+'</div>'+(online?'<span class="conv-dot"></span>':'')+'</div>'
+    + '<div class="conv-main"><div class="conv-r1"><span class="conv-name truncate">'+escH(dn)+'</span><span class="conv-time">'+time+'</span></div>'
+    + '<div class="conv-r2 truncate '+subCls+'">'+escH(sub)+'</div></div></div>';
+}
+function emptyConvHtml(){
+  return '<div class="text-center py-8"><i class="fas fa-comment-slash text-4xl text-gray-200 mb-3"></i>'
+    + '<p class="text-gray-600 text-sm font-medium mb-4">No conversations yet.</p>'
+    + '<button id="empty-create-btn" class="btn-primary px-4 py-2 text-sm">Create Group / Channel</button></div>';
+}
+function wireConvTiles(){
+  document.querySelectorAll('.conversation-card').forEach(card=>{
+    const id = Number(card.dataset.id), name = card.dataset.name, isAdmin = card.dataset.admin==='1';
+    card.addEventListener('click', ()=> loadChatRoom(id, name));
+    let timer=null;
+    const start=()=>{ timer=setTimeout(()=>{ if(isAdmin) confirmDeleteChat(id, name); else toast('Only an admin can delete this chat.'); }, 600); };
+    const cancel=()=>{ if(timer){ clearTimeout(timer); timer=null; } };
+    card.addEventListener('mousedown', start); card.addEventListener('touchstart', start, {passive:true});
+    card.addEventListener('mouseup', cancel); card.addEventListener('mouseleave', cancel);
+    card.addEventListener('touchend', cancel); card.addEventListener('touchmove', cancel);
+  });
+  const ec = document.getElementById('empty-create-btn');
+  if (ec) ec.addEventListener('click', ()=> document.getElementById('new-conversation-modal').classList.add('show'));
+}
+
+/* ---------- discover public channels ---------- */
+async function discoverChannels(search=''){
+  const list = document.getElementById('conversations-list');
+  try{
+    let url='/api/conversations/public/'; if(search) url+='?search='+encodeURIComponent(search);
+    const res = await fetch(url, { headers: authH() });
+    const chans = res.ok ? await res.json() : [];
+    const cc=document.getElementById('conv-count'); if(cc) cc.textContent=chans.length+' channel'+(chans.length===1?'':'s');
+    list.innerHTML = chans.length ? chans.map(c=>{
+      const dn=c.title||'Channel';
+      const initials=(dn.replace(/[^A-Za-z0-9 ]/g,'').trim().split(/\s+/).map(s=>s[0]||'').join('').slice(0,2).toUpperCase())||'C';
+      const joined = c.my_role!=null;
+      return '<div class="conversation-card"><div class="flex items-center gap-3">'
+        +'<div class="avatar" style="background:linear-gradient(135deg,#10b981,#047857)">'+initials+'</div>'
+        +'<div class="flex-1 min-w-0"><h3 class="text-sm font-bold text-gray-800 truncate">'+escH(dn)+'</h3>'
+        +'<p class="text-xs text-gray-500 truncate">'+escH(c.description||'Public channel')+' · '+(c.participant_count||0)+'</p></div>'
+        +(joined?'<button class="btn-secondary text-xs px-3 py-1.5" data-open="'+c.id+'" data-name="'+escH(dn)+'">Open</button>'
+                :'<button class="btn-primary text-xs px-3 py-1.5" data-join="'+c.id+'" data-name="'+escH(dn)+'">Join</button>')
+        +'</div></div>';
+    }).join('') : '<p class="text-center text-sm py-8" style="color:var(--muted);">No public channels found.</p>';
+    list.querySelectorAll('[data-join]').forEach(b=> b.addEventListener('click', async ()=>{
+      const id=b.dataset.join;
+      const res=await fetch('/api/conversations/'+id+'/join/', {method:'POST', headers: authH()});
+      if(res.ok){ toggleDiscover(false); loadChatRoom(Number(id), b.dataset.name); } else toast('Could not join.');
+    }));
+    list.querySelectorAll('[data-open]').forEach(b=> b.addEventListener('click', ()=>{ toggleDiscover(false); loadChatRoom(Number(b.dataset.open), b.dataset.name); }));
+  }catch(e){ console.error(e); }
+}
+function toggleDiscover(on){
+  discoverMode = on;
+  document.getElementById('discover-btn').classList.toggle('on', on);
+  document.getElementById('discover-label').textContent = on ? 'My chats' : 'Discover';
+  loadConversations(document.getElementById('conversation-search').value.trim());
+}
+
+/* ---------- people search (existing behaviour) ---------- */
+async function searchPeople(q){
+  const box=document.getElementById('user-search-results');
+  if(!q){ box.classList.add('hidden'); box.innerHTML=''; return; }
+  try{
+    const res=await fetch('/api/users/search/?q='+encodeURIComponent(q), {headers:authH()});
+    let users=res.ok?await res.json():[];
+    users=users.filter(u=>String(u.id)!==String(myUserId));
+    box.innerHTML = users.length ? ('<div class="px-3 pt-2 pb-1 text-xs font-bold uppercase tracking-wide text-gray-400">People</div>'
+      + users.map(u=>'<div class="flex items-center justify-between px-3 py-2 border-b last:border-b-0 hover:bg-green-50"><div class="flex items-center gap-3"><div class="avatar" style="width:32px;height:32px;font-size:1rem;">'+escH((u.username||'U').slice(0,2).toUpperCase())+'</div><span class="font-medium text-gray-800">'+escH(u.username)+'</span></div><button class="btn-primary px-3 py-1.5 text-xs" data-uid="'+u.id+'" data-username="'+escH(u.username)+'">Chat</button></div>').join(''))
+      : '<div class="p-3 text-gray-500 text-sm">No people found.</div>';
+    box.classList.remove('hidden');
+    box.querySelectorAll('[data-uid]').forEach(b=> b.addEventListener('click', ()=> startDirect(b.dataset.uid, b.dataset.username)));
+  }catch(e){ box.innerHTML='<div class="p-3 text-red-500 text-sm">Error searching people.</div>'; box.classList.remove('hidden'); }
+}
+async function startDirect(uid, username){
+  try{
+    const res=await fetch('/api/conversations/start-direct-chat/', {method:'POST', headers:authH({'Content-Type':'application/json'}), body:JSON.stringify({user:uid})});
+    if(!res.ok) throw 0;
+    const d=await res.json();
+    document.getElementById('user-search-results').classList.add('hidden');
+    document.getElementById('conversation-search').value='';
+    loadChatRoom(d.id, d.display_name||d.title||username);
+    loadConversations();
+  }catch(e){ toast('Failed to start chat.'); }
+}
+
+/* ---------- chat room ---------- */
+async function loadChatRoom(id, title){
+  currentConversationId=id;
+  document.getElementById('chat-placeholder').classList.add('hidden');
+  document.getElementById('chat-content').classList.remove('hidden');
+  document.getElementById('chat-title').textContent=title;
+  if (window.innerWidth<=768){ document.getElementById('sidebar').classList.add('hidden-mobile'); document.getElementById('chat-room').classList.remove('hidden-mobile'); }
+  try{
+    const cres=await fetch('/api/conversations/'+id+'/', {headers:authH()});
+    currentConv = cres.ok ? await cres.json() : {id, type:'direct'};
+  }catch(e){ currentConv={id, type:'direct'}; }
+  updateChatHeader();
+  try{
+    const res=await fetch('/api/messages/?conversation='+id, {headers:authH()});
+    if(res.status===401){ localStorage.clear(); location.href='authentication.html'; return; }
+    const msgs=res.ok?await res.json():[];
+    renderedMsgIds=new Set(msgs.map(m=>m.id));
+    renderMessages(msgs);
+    ensureWS(id);
+  }catch(e){ document.getElementById('message-list').innerHTML='<p class="text-red-500 text-sm text-center">Failed to load messages.</p>'; }
+  cancelReply();
+  loadConversations(document.getElementById('conversation-search').value.trim());
+}
+
+function updateChatHeader(){
+  const p=document.getElementById('presence-indicator');
+  const adminBtn=document.getElementById('members-btn');
+  if(currentConv.type==='direct'){
+    p.innerHTML = currentConv.other_online
+      ? '<span class="inline-flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>Active now</span>'
+      : (currentConv.other_last_seen ? 'last seen '+fmtAgo(new Date(currentConv.other_last_seen)) : 'offline');
+    adminBtn.classList.add('hidden');
+  } else {
+    p.innerHTML = typeBadge(currentConv.type)+' · '+(currentConv.participant_count||0)+' members';
+    adminBtn.classList.remove('hidden');
+  }
+}
+
+function renderMessages(msgs){
+  const list=document.getElementById('message-list');
+  const byDay={};
+  msgs.forEach(m=>{ const k=new Date(m.created_at).toDateString(); (byDay[k]=byDay[k]||[]).push(m); });
+  const sections=Object.keys(byDay).sort((a,b)=>new Date(a)-new Date(b)).map(day=>{
+    const items=byDay[day].map(renderMessage).join('');
+    return '<div><div class="text-center text-xs text-gray-500 my-4"><span class="px-3 py-1.5 bg-white rounded-full shadow-sm font-medium">'+day+'</span></div><div class="space-y-3">'+items+'</div></div>';
+  });
+  list.innerHTML = sections.length ? sections.join('') : '<p class="text-gray-500 text-sm text-center py-8">No messages yet. Start the conversation!</p>';
+  list.scrollTop=list.scrollHeight;
+  wireMessageGestures();
+}
+
+function isMine(m){ return (myUserId && Number(m.sender_id)===Number(myUserId)) || (myUsername && String(m.sender)===String(myUsername)); }
+
+function attachmentHtml(m){
+  if(!m.attachment_url) return '';
+  const u=escH(m.attachment_url);
+  switch(m.message_type){
+    case 'image': return '<img src="'+u+'" class="mt-2 max-h-60 rounded-lg shadow" onerror="this.style.display=\'none\'">';
+    case 'video': return '<video src="'+u+'" controls class="mt-2 max-h-60 rounded-lg w-full"></video>';
+    case 'audio': return '<audio src="'+u+'" controls class="mt-2 w-full"></audio>';
+    default: return '<a href="'+u+'" target="_blank" class="mt-2 inline-flex items-center gap-2 text-sm underline"><i class="fas fa-paperclip"></i> Attachment</a>';
+  }
+}
+function reactionsHtml(m){
+  const r=m.reactions||{like:0,dislike:0,mine:null};
+  const likeOn=r.mine==='like'?'font-bold text-green-700':'text-gray-500';
+  const disOn=r.mine==='dislike'?'font-bold text-red-600':'text-gray-500';
+  return '<div class="flex items-center gap-3 mt-1 text-xs">'
+    +'<button class="rx '+likeOn+'" data-rx="like" data-mid="'+m.id+'"><i class="fas fa-thumbs-up"></i> '+(r.like||0)+'</button>'
+    +'<button class="rx '+disOn+'" data-rx="dislike" data-mid="'+m.id+'"><i class="fas fa-thumbs-down"></i> '+(r.dislike||0)+'</button></div>';
+}
+function reactionPills(m){
+  const r=m.reactions||{like:0,dislike:0,mine:null};
+  let out='';
+  if(r.like>0) out+='<span class="rx-pill'+(r.mine==='like'?' on':'')+'">\uD83D\uDC4D '+r.like+'</span>';
+  if(r.dislike>0) out+='<span class="rx-pill'+(r.mine==='dislike'?' on':'')+'">\uD83D\uDC4E '+r.dislike+'</span>';
+  return out;
+}
+
+function renderMessage(m){
+  const mine=isMine(m);
+  const showName = !mine && currentConv && currentConv.type!=='direct';
+  const reply = m.reply_preview ? '<div class="reply-quote">'+escH(m.reply_preview.sender_name)+': '+escH(m.reply_preview.snippet)+'</div>' : '';
+  let when=''; try{ when=new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){}
+  const txt = m.content ? '<div class="msg-text">'+escH(m.content)+'</div>' : '';
+  return '<div class="flex '+(mine?'justify-end':'justify-start')+'" data-mid="'+m.id+'">'
+    + '<div class="message-bubble '+(mine?'message-mine':'message-theirs')+'">'
+    + (showName?'<p class="msg-name">'+escH(m.sender_name||'Member')+'</p>':'')
+    + reply + txt + attachmentHtml(m)
+    + '<div class="msg-meta">'+reactionPills(m)+'<span class="msg-time">'+when+'</span></div>'
+    + '</div></div>';
+}
+
+function wireMessageGestures(){
+  document.querySelectorAll('.rx').forEach(b=> b.addEventListener('click', e=>{ e.stopPropagation(); reactMessage(b.dataset.mid, b.dataset.rx); }));
+  document.querySelectorAll('#message-list [data-mid]').forEach(row=>{
+    let timer=null;
+    const start=()=>{ timer=setTimeout(()=> openMsgMenu(row.dataset.mid), 500); };
+    const cancel=()=>{ if(timer){clearTimeout(timer);timer=null;} };
+    row.addEventListener('mousedown', start); row.addEventListener('touchstart', start, {passive:true});
+    row.addEventListener('mouseup', cancel); row.addEventListener('mouseleave', cancel);
+    row.addEventListener('touchend', cancel); row.addEventListener('touchmove', cancel);
+  });
+}
+
+/* ---------- message action menu ---------- */
+function openMsgMenu(mid){
+  closeMsgMenu();
+  const row=document.querySelector('#message-list [data-mid="'+mid+'"]');
+  const menu=document.getElementById('msg-menu');
+  const msg=lastMsgCache[mid];
+  menu.innerHTML = '<button data-act="reply"><i class="fas fa-reply"></i> Reply</button>'
+    + '<button data-act="like"><i class="fas fa-thumbs-up"></i> Like</button>'
+    + '<button data-act="dislike"><i class="fas fa-thumbs-down"></i> Dislike</button>'
+    + '<button data-act="forward"><i class="fas fa-share"></i> Forward</button>';
+  menu.classList.add('show');
+  const r=row.getBoundingClientRect();
+  menu.style.top=(window.scrollY+r.top-6)+'px';
+  menu.style.left=Math.max(8, r.left)+'px';
+  menu.querySelectorAll('button').forEach(b=> b.addEventListener('click', ()=>{
+    const a=b.dataset.act; closeMsgMenu();
+    if(a==='reply') setReply(msg);
+    else if(a==='like'||a==='dislike') reactMessage(mid, a);
+    else if(a==='forward') openForward(msg);
+  }));
+}
+function closeMsgMenu(){ const m=document.getElementById('msg-menu'); if(m) m.classList.remove('show'); }
+document.addEventListener('click', e=>{ if(!e.target.closest('#msg-menu') && !e.target.closest('[data-mid]')) closeMsgMenu(); });
+
+let lastMsgCache={};
+async function reactMessage(mid, reaction){
+  try{
+    const res=await fetch('/api/messages/'+mid+'/react/', {method:'POST', headers:authH({'Content-Type':'application/json'}), body:JSON.stringify({reaction})});
+    if(res.ok){ const m=await res.json(); patchMessage(m); }
+  }catch(e){}
+}
+function patchMessage(m){
+  lastMsgCache[m.id]=m;
+  const row=document.querySelector('#message-list [data-mid="'+m.id+'"]');
+  if(row){ const tmp=document.createElement('div'); tmp.innerHTML=renderMessage(m); row.replaceWith(tmp.firstChild); wireMessageGestures(); }
+}
+
+/* ---------- reply ---------- */
+function setReply(m){ replyTo={id:m.id, sender_name:m.sender_name, snippet:(m.content||'')||'['+m.message_type+']'};
+  document.getElementById('reply-bar').classList.remove('hidden');
+  document.getElementById('reply-bar-text').textContent='Replying to '+(m.sender_name||'message')+': '+replyTo.snippet.slice(0,60);
+  document.getElementById('message-input').focus();
+}
+function cancelReply(){ replyTo=null; const b=document.getElementById('reply-bar'); if(b) b.classList.add('hidden'); }
+
+/* ---------- forward ---------- */
+async function openForward(m){
+  const modal=document.getElementById('forward-modal');
+  const listEl=document.getElementById('forward-list');
+  modal.classList.add('show');
+  listEl.innerHTML='<p class="text-sm text-gray-500 p-3">Loading…</p>';
+  const res=await fetch('/api/conversations/', {headers:authH()});
+  const convs=res.ok?await res.json():[];
+  listEl.innerHTML=convs.map(c=>'<button class="w-full text-left px-3 py-2 rounded-lg hover:bg-green-50 flex items-center gap-2" data-dest="'+c.id+'"><i class="fas fa-comment text-green-600"></i> '+escH(c.display_name||c.title)+'</button>').join('');
+  listEl.querySelectorAll('[data-dest]').forEach(b=> b.addEventListener('click', async ()=>{
+    const dest=b.dataset.dest;
+    const fd=new FormData(); fd.append('conversation', dest);
+    let content=m.content||'';
+    if(m.attachment_url) content=(content?content+'\n':'')+m.attachment_url;
+    fd.append('content', content||'[forwarded]');
+    await fetch('/api/messages/', {method:'POST', headers:authH(), body:fd});
+    modal.classList.remove('show'); toast('Forwarded.');
+  }));
+}
+
+/* ---------- sending ---------- */
+async function sendMessage(){
+  if(!currentConversationId) return toast('Pick a conversation first.');
+  const input=document.getElementById('message-input');
+  const fileIn=document.getElementById('image-input');
+  const content=input.value.trim();
+  const hasFile=(fileIn.files&&fileIn.files.length)||recordedBlob;
+  if(!content && !hasFile) return;
+  const fd=new FormData();
+  fd.append('conversation', currentConversationId);
+  if(content) fd.append('content', content);
+  if(replyTo) fd.append('reply_to', replyTo.id);
+  if(recordedBlob) fd.append('attachment', recordedBlob, 'audio_'+Date.now()+'.webm');
+  else if(fileIn.files&&fileIn.files.length) fd.append('attachment', fileIn.files[0]);
+  try{
+    const res=await fetch('/api/messages/', {method:'POST', headers:authH(), body:fd});
+    if(res.status===401){ localStorage.clear(); location.href='authentication.html'; return; }
+    if(!res.ok) throw 0;
+    input.value=''; fileIn.value=''; recordedBlob=null; updateRecUI(false); cancelReply();
+    const m=await res.json(); if(m && m.id){ renderedMsgIds.add(m.id); appendMessage(m); }
+  }catch(e){ toast('Failed to send.'); }
+}
+function appendMessage(m){
+  lastMsgCache[m.id]=m;
+  const list=document.getElementById('message-list');
+  if(list.querySelector('.text-center')&&!list.querySelector('[data-mid]')) list.innerHTML='';
+  const tmp=document.createElement('div'); tmp.innerHTML=renderMessage(m);
+  list.appendChild(tmp.firstChild); list.scrollTop=list.scrollHeight; wireMessageGestures();
+}
+
+/* ---------- audio recording ---------- */
+async function toggleRecord(){
+  if(mediaRecorder && mediaRecorder.state==='recording'){ mediaRecorder.stop(); return; }
+  if(!navigator.mediaDevices || !window.MediaRecorder){ return toast('Recording not supported here.'); }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    recordedChunks=[]; mediaRecorder=new MediaRecorder(stream);
+    mediaRecorder.ondataavailable=e=>{ if(e.data.size) recordedChunks.push(e.data); };
+    mediaRecorder.onstop=()=>{ recordedBlob=new Blob(recordedChunks, {type:'audio/webm'}); stream.getTracks().forEach(t=>t.stop()); updateRecUI(false, true); };
+    mediaRecorder.start(); updateRecUI(true);
+  }catch(e){ toast('Mic permission denied.'); }
+}
+function updateRecUI(recording, ready){
+  const b=document.getElementById('record-btn');
+  b.classList.toggle('recording', !!recording);
+  b.innerHTML = recording ? '<i class="fas fa-stop"></i>' : '<i class="fas fa-microphone"></i>';
+  const tag=document.getElementById('rec-ready');
+  if(tag) tag.classList.toggle('hidden', !ready);
+}
+
+/* ---------- members / admin ---------- */
+async function openMembers(){
+  if(!currentConv || currentConv.type==='direct') return;
+  const modal=document.getElementById('members-modal');
+  modal.classList.add('show');
+  const res=await fetch('/api/conversations/'+currentConversationId+'/members/', {headers:authH()});
+  const members=res.ok?await res.json():[];
+  const amAdmin=currentConv.my_role==='admin';
+  document.getElementById('members-list').innerHTML=members.map(p=>{
+    const pres = p.online ? '<span class="text-green-600 text-xs">● active</span>' : '<span class="text-gray-400 text-xs">'+(p.last_seen?('seen '+fmtAgo(new Date(p.last_seen))):'offline')+'</span>';
+    const role = p.role==='admin' ? '<span class="text-xs font-bold" style="color:var(--g700)">Admin</span>' : '';
+    const rm = (amAdmin && p.role!=='admin') ? '<button class="text-red-500 text-xs" data-remove="'+p.user+'">Remove</button>' : '';
+    return '<div class="flex items-center justify-between py-2 border-b"><div><div class="font-medium text-gray-800">'+escH(p.username)+' '+role+'</div>'+pres+'</div>'+rm+'</div>';
+  }).join('');
+  document.getElementById('member-add-wrap').classList.toggle('hidden', !amAdmin);
+  document.getElementById('members-list').querySelectorAll('[data-remove]').forEach(b=> b.addEventListener('click', async ()=>{
+    await fetch('/api/conversations/'+currentConversationId+'/remove-member/', {method:'POST', headers:authH({'Content-Type':'application/json'}), body:JSON.stringify({user:b.dataset.remove})});
+    openMembers(); loadChatRoom(currentConversationId, document.getElementById('chat-title').textContent);
+  }));
+}
+async function memberAddSearch(q){
+  const box=document.getElementById('member-add-results'); if(!q){ box.innerHTML=''; return; }
+  const res=await fetch('/api/users/search/?q='+encodeURIComponent(q), {headers:authH()});
+  const users=res.ok?await res.json():[];
+  box.innerHTML=users.map(u=>'<button class="block w-full text-left px-2 py-1.5 hover:bg-green-50 rounded text-sm" data-add="'+u.id+'">'+escH(u.username)+'</button>').join('');
+  box.querySelectorAll('[data-add]').forEach(b=> b.addEventListener('click', async ()=>{
+    await fetch('/api/conversations/'+currentConversationId+'/add-member/', {method:'POST', headers:authH({'Content-Type':'application/json'}), body:JSON.stringify({user:b.dataset.add})});
+    document.getElementById('member-add-input').value=''; box.innerHTML=''; openMembers();
+  }));
+}
+
+/* ---------- delete chat ---------- */
+function confirmDeleteChat(id, name){
+  const modal=document.getElementById('delete-modal');
+  modal.classList.add('show');
+  document.getElementById('delete-name').textContent=name;
+  const btn=document.getElementById('delete-confirm-btn');
+  btn.disabled=false; btn.innerHTML='Delete';
+  btn.onclick=async ()=>{
+    btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Deleting…';
+    try{
+      const res=await fetch('/api/conversations/'+id+'/', {method:'DELETE', headers:authH()});
+      if(res.status===403){ toast('Only an admin can delete this chat.'); }
+      else if(!res.ok && res.status!==204) throw 0;
+      else { if(currentConversationId===id){ currentConversationId=null; document.getElementById('chat-content').classList.add('hidden'); document.getElementById('chat-placeholder').classList.remove('hidden'); } }
+    }catch(e){ toast('Failed to delete.'); }
+    modal.classList.remove('show'); loadConversations();
+  };
+}
+
+/* ---------- websocket ---------- */
+function wsURL(id){ const p=location.protocol==='https:'?'wss':'ws'; return p+'://'+location.host+'/ws/chat/'+id+'/?token='+encodeURIComponent(token||''); }
+function ensureWS(id){
+  if(!token||id==null) return;
+  if(chatWSConvId===id && chatWS && chatWS.readyState===1) return;
+  try{ if(chatWS){ chatWS.onclose=null; chatWS.close(); } }catch(e){}
+  chatWSConvId=id;
+  try{
+    chatWS=new WebSocket(wsURL(id));
+    chatWS.onmessage=ev=>{ try{ handleWS(JSON.parse(ev.data)); }catch(e){} };
+    chatWS.onclose=()=>{ chatWS=null; };
+    chatWS.onerror=()=>{ try{ chatWS.close(); }catch(e){} };
+  }catch(e){ chatWS=null; }
+}
+function handleWS(d){
+  if(d && d._presence){
+    if(currentConv && currentConv.type==='direct'){
+      currentConv.other_online=d._presence.online; currentConv.other_last_seen=d._presence.last_seen; updateChatHeader();
+    }
+    return;
+  }
+  if(String(chatWSConvId)!==String(currentConversationId)) return;
+  if(d && d.id!=null){
+    if(d._update){ patchMessage(d); return; }
+    if(renderedMsgIds.has(d.id)) return;
+    renderedMsgIds.add(d.id); lastMsgCache[d.id]=d; appendMessage(d);
+  }
+}
+
+/* ---------- misc ui ---------- */
+function toast(msg){
+  let t=document.getElementById('toast'); if(!t){ t=document.createElement('div'); t.id='toast'; document.body.appendChild(t); }
+  t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ---------- wiring ---------- */
+function initChat(){
+  if(!token){ location.href='authentication.html'; return; } // initChat guard
+  const search=document.getElementById('conversation-search');
+  const clear=document.getElementById('clear-search');
+  let pt=null;
+  search.addEventListener('input', ()=>{
+    const q=search.value.trim(); clear.style.display=q?'block':'none';
+    loadConversations(q);
+    if(pt) clearTimeout(pt);
+    if(!q){ document.getElementById('user-search-results').classList.add('hidden'); return; }
+    pt=setTimeout(()=>searchPeople(q), 300);
+  });
+  clear.addEventListener('click', ()=>{ search.value=''; clear.style.display='none'; document.getElementById('user-search-results').classList.add('hidden'); loadConversations(''); });
+
+  document.querySelectorAll('.tab-btn').forEach(b=> b.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active');
+    currentTab=b.dataset.tab; if(discoverMode) toggleDiscover(false); else loadConversations(search.value.trim());
+  }));
+  document.getElementById('discover-btn').addEventListener('click', ()=> toggleDiscover(!discoverMode));
+
+  document.getElementById('send-message').addEventListener('click', sendMessage);
+  document.getElementById('message-input').addEventListener('keydown', e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMessage(); } });
+  document.getElementById('record-btn').addEventListener('click', toggleRecord);
+  document.getElementById('reply-cancel').addEventListener('click', cancelReply);
+  document.getElementById('members-btn').addEventListener('click', openMembers);
+  document.getElementById('back-btn').addEventListener('click', ()=>{ document.getElementById('chat-content').classList.add('hidden'); document.getElementById('chat-placeholder').classList.remove('hidden'); if(window.innerWidth<=768){ document.getElementById('sidebar').classList.remove('hidden-mobile'); document.getElementById('chat-room').classList.add('hidden-mobile'); } });
+
+  const memIn=document.getElementById('member-add-input'); if(memIn){ let mt=null; memIn.addEventListener('input', ()=>{ if(mt)clearTimeout(mt); mt=setTimeout(()=>memberAddSearch(memIn.value.trim()),300); }); }
+
+  // create group/channel
+  const modal=document.getElementById('new-conversation-modal');
+  document.getElementById('new-conversation-btn').addEventListener('click', ()=> modal.classList.add('show'));
+  document.getElementById('new-conv-cancel').addEventListener('click', ()=> modal.classList.remove('show'));
+  document.getElementById('new-conv-create').addEventListener('click', async ()=>{
+    const title=document.getElementById('new-conv-title').value.trim();
+    const type=document.getElementById('new-conv-type').value;
+    if(!title) return toast('Enter a title.');
+    const body={title, type, is_public: type==='channel'};
+    try{
+      const res=await fetch('/api/conversations/', {method:'POST', headers:authH({'Content-Type':'application/json'}), body:JSON.stringify(body)});
+      if(!res.ok) throw 0;
+      const d=await res.json();
+      modal.classList.remove('show'); document.getElementById('new-conv-title').value='';
+      loadConversations(); loadChatRoom(d.id, d.display_name||d.title||title);
+    }catch(e){ toast('Failed to create.'); }
+  });
+
+  document.querySelectorAll('.modal').forEach(m=> m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('show'); }));
+  document.getElementById('logout-btn').addEventListener('click', ()=>{ localStorage.removeItem('access_token'); localStorage.removeItem('refresh_token'); location.href='authentication.html'; });
+
+  // mobile nav
+  const mb=document.getElementById('mobile-menu-btn'), nav=document.getElementById('header-nav'), ov=document.getElementById('nav-overlay');
+  if(mb){ mb.addEventListener('click', ()=>{ nav.classList.toggle('open'); ov.classList.toggle('show'); }); ov.addEventListener('click', ()=>{ nav.classList.remove('open'); ov.classList.remove('show'); }); }
+
+  if(token){
+    fetch('/api/users/me/', {headers:authH()}).then(r=>r.ok?r.json():null).then(u=>{ if(u){ if(u.id){ myUserId=u.id; localStorage.setItem('user_id', u.id);} if(u.username) myUsername=u.username; } });
+  }
+  loadConversations();
+}
+document.addEventListener('DOMContentLoaded', initChat);
 
-        if (!token) {
-            console.log('No token found - running in demo mode');
-        }
-
-        let currentConversationId = null;
-        let currentTab = 'all';
-
-        // ---- shared-product message helpers ----
-        function escHtmlC(v){ return String(v==null?'':v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-        window.agcProduct = function(content){ if(typeof content!=='string' || content.indexOf('__AGRICORE_PRODUCT__')!==0) return null; try{ return JSON.parse(content.slice('__AGRICORE_PRODUCT__'.length)); }catch(e){ return null; } };
-        window.agcProductCard = function(p){ return '<div style="border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;max-width:230px;background:#fff">'+(p.image?'<img src="'+escHtmlC(p.image)+'" style="width:100%;height:115px;object-fit:cover;display:block" onerror="this.style.display=\'none\'">':'')+'<div style="padding:.5rem .6rem"><div style="font-weight:700;font-size:.85rem;color:#16271c">'+escHtmlC(p.title)+'</div><div style="color:#059669;font-weight:800;font-size:.95rem">'+escHtmlC(p.price_text||'')+'</div>'+(p.unit?'<div style="font-size:.7rem;color:#94a3b8">per '+escHtmlC(p.unit)+'</div>':'')+'</div></div>'; };
-
-        // ---- realtime websocket ----
-        let chatWS=null, chatWSConvId=null, renderedMsgIds=new Set();
-        function chatWsURL(convId){ const proto=location.protocol==='https:'?'wss':'ws'; return proto+'://'+location.host+'/ws/chat/'+convId+'/?token='+encodeURIComponent(token||''); }
-        function ensureChatWS(convId){
-            if(!token || convId==null) return;
-            if(chatWSConvId===convId && chatWS && chatWS.readyState===1) return;
-            try{ if(chatWS){ chatWS.onclose=null; chatWS.close(); } }catch(e){}
-            chatWSConvId=convId;
-            try{ chatWS=new WebSocket(chatWsURL(convId));
-                chatWS.onmessage=function(ev){ try{ wsAppend(JSON.parse(ev.data)); }catch(e){} };
-                chatWS.onclose=function(){ chatWS=null; };
-                chatWS.onerror=function(){ try{ chatWS.close(); }catch(e){} };
-            }catch(e){ chatWS=null; }
-        }
-        function wsAppend(m){
-            if(String(chatWSConvId)!==String(currentConversationId)) return;
-            if(m.id!=null){ if(renderedMsgIds.has(m.id)) return; renderedMsgIds.add(m.id); }
-            const list=document.getElementById('message-list'); if(!list) return;
-            const mine=(window.__myUsername && String(m.sender)===String(window.__myUsername)) || (Number(m.sender)===Number(localStorage.getItem('user_id')));
-            const prod=window.agcProduct?window.agcProduct(m.content):null;
-            const body=prod?window.agcProductCard(prod):('<p class="text-sm whitespace-pre-wrap break-words">'+(m.content||'')+'</p>');
-            let when=''; try{ when=new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){}
-            const wrap=document.createElement('div'); wrap.className='flex '+(mine?'justify-end':'justify-start');
-            wrap.innerHTML='<div class="message-bubble '+(mine?'message-mine':'message-theirs')+' shadow-sm">'+(mine?'':('<p class="text-xs font-bold mb-1 text-gray-600">'+escHtmlC(m.sender||'Member')+'</p>'))+body+'<div class="flex items-center '+(mine?'justify-end':'')+' gap-2 mt-2 text-xs '+(mine?'text-white/70':'text-gray-500')+'"><span>'+when+'</span></div></div>';
-            list.appendChild(wrap); list.scrollTop=list.scrollHeight;
-        }
-
-        // ===== UNIVERSAL SEARCH (conversations + people) =====
-        const universalSearch = document.getElementById('conversation-search');
-        const userSearchResults = document.getElementById('user-search-results');
-        const clearSearchBtn = document.getElementById('clear-search');
-        let userSearchTimeout = null;
-
-        async function searchUsers(query) {
-            if (!token) { userSearchResults.classList.add('hidden'); return; }
-            try {
-                const res = await fetch(`/api/users/search/?q=${encodeURIComponent(query)}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!res.ok) throw new Error('Failed to search users');
-                const data = await res.json();
-                let users = data;
-                if (Array.isArray(data.results)) users = data.results;
-                if (!Array.isArray(users)) users = [];
-                const myId = localStorage.getItem('user_id');
-                users = users.filter(u => String(u.id) !== String(myId));
-                if (users.length === 0) {
-                    userSearchResults.innerHTML = '<div class="p-3 text-gray-500 text-sm">No people found.</div>';
-                } else {
-                    userSearchResults.innerHTML =
-                        '<div class="px-3 pt-2 pb-1 text-xs font-bold uppercase tracking-wide text-gray-400">People</div>' +
-                        users.map(u => `
-                            <div class="flex items-center justify-between px-3 py-2 border-b last:border-b-0 hover:bg-green-50 cursor-pointer">
-                                <div class="flex items-center gap-3">
-                                    <div class="avatar" style="width:32px;height:32px;font-size:1rem;">${(u.username||'U').slice(0,2).toUpperCase()}</div>
-                                    <span class="font-medium text-gray-800">${u.username}</span>
-                                </div>
-                                <button class="btn-primary px-3 py-1.5 text-xs" data-uid="${u.id}" data-username="${u.username}">Chat</button>
-                            </div>
-                        `).join('');
-                }
-                userSearchResults.classList.remove('hidden');
-            } catch (err) {
-                userSearchResults.innerHTML = '<div class="p-3 text-red-500 text-sm">Error searching people.</div>';
-                userSearchResults.classList.remove('hidden');
-            }
-        }
-
-        // Single handler: filters conversations live AND searches people
-        universalSearch.addEventListener('input', function() {
-            const query = universalSearch.value.trim();
-            clearSearchBtn.style.display = query ? 'block' : 'none';
-
-            // 1) Filter the conversation list
-            loadConversations(query);
-
-            // 2) Search people (debounced)
-            if (userSearchTimeout) clearTimeout(userSearchTimeout);
-            if (!query) {
-                userSearchResults.innerHTML = '';
-                userSearchResults.classList.add('hidden');
-                return;
-            }
-            userSearchTimeout = setTimeout(() => searchUsers(query), 350);
-        });
-
-        clearSearchBtn.addEventListener('click', function() {
-            universalSearch.value = '';
-            clearSearchBtn.style.display = 'none';
-            userSearchResults.innerHTML = '';
-            userSearchResults.classList.add('hidden');
-            loadConversations('');
-            universalSearch.focus();
-        });
-
-        // Start a direct chat from a person result
-        userSearchResults.addEventListener('click', async function(e) {
-            const btn = e.target.closest('button[data-uid]');
-            if (!btn) return;
-            const userId = btn.getAttribute('data-uid');
-            const username = btn.getAttribute('data-username');
-            if (!userId) return;
-            try {
-                if (!token) return alert('Please login.');
-                let convId = null;
-                let convTitle = username;
-                const res = await fetch('/api/conversations/start-direct-chat/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ user: userId })
-                });
-                if (!res.ok) throw new Error('Failed to create chat');
-                const data = await res.json();
-                convId = data.id;
-                convTitle = data.title || username;
-                if (convId) {
-                    loadChatRoom(convId, convTitle);
-                    userSearchResults.innerHTML = '';
-                    userSearchResults.classList.add('hidden');
-                    universalSearch.value = '';
-                    clearSearchBtn.style.display = 'none';
-                }
-            } catch (err) {
-                alert('Failed to start chat: ' + err.message);
-            }
-        });
-
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const headerNav = document.getElementById('header-nav');
-        const navOverlay = document.getElementById('nav-overlay');
-
-        mobileMenuBtn?.addEventListener('click', () => {
-            headerNav.classList.toggle('open');
-            navOverlay.classList.toggle('show');
-        });
-
-        navOverlay?.addEventListener('click', () => {
-            headerNav.classList.remove('open');
-            navOverlay.classList.remove('show');
-        });
-
-        document.getElementById('back-btn')?.addEventListener('click', () => {
-            showSidebar();
-        });
-
-        function showSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const chatRoom = document.getElementById('chat-room');
-            const chatContent = document.getElementById('chat-content');
-            const chatPlaceholder = document.getElementById('chat-placeholder');
-
-            if (window.innerWidth <= 768) {
-                sidebar.classList.remove('hidden-mobile');
-                chatRoom.classList.add('hidden-mobile');
-            }
-
-            chatContent.classList.add('hidden');
-            chatPlaceholder.classList.remove('hidden');
-            currentConversationId = null;
-        }
-
-        function showChatRoom() {
-            const sidebar = document.getElementById('sidebar');
-            const chatRoom = document.getElementById('chat-room');
-
-            if (window.innerWidth <= 768) {
-                sidebar.classList.add('hidden-mobile');
-                chatRoom.classList.remove('hidden-mobile');
-            }
-        }
-
-        window.addEventListener('resize', () => {
-            const sidebar = document.getElementById('sidebar');
-            const chatRoom = document.getElementById('chat-room');
-
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('hidden-mobile');
-                chatRoom.classList.remove('hidden-mobile');
-                headerNav.classList.remove('open');
-                navOverlay.classList.remove('show');
-            }
-        });
-
-        async function loadConversations(search = '') {
-            const list = document.getElementById('conversations-list');
-
-            const demoConversations = [
-                { id: 1, title: 'Farmers Group', updated_at: new Date().toISOString() },
-                { id: 2, title: 'Marketplace Channel', updated_at: new Date(Date.now() - 3600000).toISOString() },
-                { id: 3, title: 'Direct Message - John', updated_at: new Date(Date.now() - 86400000).toISOString() },
-                { id: 4, title: 'Crop Planning Group', updated_at: new Date(Date.now() - 172800000).toISOString() },
-            ];
-
-            try {
-                let conversations = demoConversations;
-
-                if (token) {
-                    let url = '/api/conversations/';
-                    if (search) url += `?search=${encodeURIComponent(search)}`;
-                    const response = await fetch(url, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    if (response.status === 401) {
-                        alert('Session expired');
-                        localStorage.clear();
-                        window.location.href = 'authentication.html';
-                        return;
-                    }
-                    if (response.ok) {
-                        conversations = await response.json();
-                    }
-                }
-
-                conversations = conversations.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-
-                if (search) {
-                    conversations = conversations.filter(c =>
-                        (c.title || '').toLowerCase().includes(search.toLowerCase())
-                    );
-                }
-
-                conversations = conversations.filter(c => {
-                    if (currentTab === 'all') return true;
-                    const t = (c.title || '').toLowerCase();
-                    if (currentTab === 'direct') return !(t.includes('group') || t.includes('channel'));
-                    if (currentTab === 'groups') return t.includes('group');
-                    if (currentTab === 'channels') return t.includes('channel');
-                    return true;
-                });
-
-                const cc = document.getElementById('conv-count');
-                if (cc) cc.textContent = conversations.length ? `${conversations.length} chat${conversations.length === 1 ? '' : 's'}` : 'No chats';
-
-                list.innerHTML = conversations.length ? conversations.map(conv => {
-                    const updated = new Date(conv.updated_at);
-                    const isActive = (Date.now() - updated.getTime()) < (5 * 60 * 1000);
-                    const presence = isActive
-                        ? '<span class="text-green-600 text-xs font-semibold"><span class="inline-block w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>Active</span>'
-                        : `<span class="text-gray-500 text-xs">${formatTimeAgo(updated)}</span>`;
-                    const dn = conv.display_name || conv.title || 'Conversation';
-                    const initials = (dn.replace(/[^A-Za-z0-9 ]/g, '').trim().split(/\s+/).map(s => s[0] || '').join('').slice(0, 2).toUpperCase()) || 'C';
-                    const sub = conv.product_title ? `about ${conv.product_title}` : presence;
-
-                    return `
-                    <div class="conversation-card ${currentConversationId === conv.id ? 'active' : ''}"
-                         onclick="loadChatRoom(${conv.id}, '${dn.replace(/'/g, "\\'")}')">
-                        <div class="flex items-center gap-3">
-                            <div class="avatar" style="background: linear-gradient(135deg, ${isActive ? '#10b981' : '#94a3b8'}, ${isActive ? '#059669' : '#64748b'})">${initials}</div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="text-sm font-bold text-gray-800 truncate">${dn}</h3>
-                                <p class="text-xs text-gray-500 truncate mt-0.5">${sub}</p>
-                            </div>
-                        </div>
-                    </div>`;
-                }).join('') : `
-                    <div class="text-center py-8">
-                        <i class="fas fa-comment-slash text-4xl text-gray-200 mb-3"></i>
-                        <p class="text-gray-600 text-sm font-medium mb-4">No conversations found.</p>
-                        <button id="empty-create-btn" class="btn-primary px-4 py-2 text-sm">
-                            Create Group/Channel
-                        </button>
-                    </div>
-                `;
-
-                const emptyCreate = document.getElementById('empty-create-btn');
-                if (emptyCreate) {
-                    emptyCreate.addEventListener('click', () => {
-                        document.getElementById('new-conversation-modal').classList.add('show');
-                    });
-                }
-            } catch (error) {
-                console.error('Error loading conversations:', error);
-                list.innerHTML = '<p class="text-red-500 text-center text-sm">Failed to load conversations.</p>';
-            }
-        }
-
-        function formatTimeAgo(date) {
-            const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-            if (seconds < 60) return 'Just now';
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes}m ago`;
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `${hours}h ago`;
-            const days = Math.floor(hours / 24);
-            if (days < 7) return `${days}d ago`;
-            return date.toLocaleDateString();
-        }
-
-        async function loadChatRoom(conversationId, title) {
-            currentConversationId = conversationId;
-            const chatPlaceholder = document.getElementById('chat-placeholder');
-            const chatContent = document.getElementById('chat-content');
-            const chatTitle = document.getElementById('chat-title');
-            const presenceIndicator = document.getElementById('presence-indicator');
-            const messageList = document.getElementById('message-list');
-
-            chatPlaceholder.classList.add('hidden');
-            chatContent.classList.remove('hidden');
-            chatTitle.textContent = title;
-            presenceIndicator.innerHTML = '<span class="inline-flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>Active</span>';
-
-            showChatRoom();
-
-            const demoMessages = [
-                { id: 1, sender: 'John Farmer', sender_id: 1, content: 'Hello everyone! How are the crops this season?', created_at: new Date(Date.now() - 3600000).toISOString() },
-                { id: 2, sender: 'Mary Smith', sender_id: 2, content: 'Pretty good! The rain last week really helped.', created_at: new Date(Date.now() - 3000000).toISOString() },
-                { id: 3, sender: 'You', sender_id: localStorage.getItem('user_id') || 3, content: 'Great to hear! Anyone need supplies from the marketplace?', created_at: new Date(Date.now() - 1800000).toISOString() },
-            ];
-
-            try {
-                let messages = demoMessages;
-
-                if (token) {
-                    const response = await fetch(`/api/messages/?conversation=${conversationId}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    if (response.status === 401) {
-                        alert('Session expired');
-                        localStorage.clear();
-                        window.location.href = 'authentication.html';
-                        return;
-                    }
-                    if (response.ok) {
-                        messages = await response.json();
-                    }
-                }
-
-                const byDay = {};
-                messages.forEach(m => {
-                    const d = new Date(m.created_at);
-                    const key = d.toDateString();
-                    (byDay[key] = byDay[key] || []).push(m);
-                });
-
-                const sections = Object.keys(byDay).sort((a, b) => new Date(a) - new Date(b)).map(day => {
-                    const dayMsgs = byDay[day];
-                    const items = dayMsgs.map(msg => {
-                        const attachmentHtml = msg.attachment_url
-                            ? `<img src="${msg.attachment_url}" class="mt-2 max-h-48 rounded-lg shadow" onerror="this.style.display='none'">`
-                            : '';
-                        const mine = (Number(msg.sender) === Number(localStorage.getItem('user_id'))) || (window.__myUsername && String(msg.sender) === String(window.__myUsername));
-                        const bubbleClass = mine ? 'message-mine' : 'message-theirs';
-                        const align = mine ? 'justify-end' : 'justify-start';
-
-                        return `
-                        <div class="flex ${align}">
-                            <div class="message-bubble ${bubbleClass} shadow-sm">
-                                ${!mine ? `<p class="text-xs font-bold mb-1 ${mine ? 'text-white/80' : 'text-gray-600'}">${msg.sender_name || 'Member'}</p>` : ''}
-                                ${(window.agcProduct && window.agcProduct(msg.content)) ? window.agcProductCard(window.agcProduct(msg.content)) : ('<p class="text-sm whitespace-pre-wrap break-words">' + (msg.content || '') + '</p>')}
-                                ${attachmentHtml}
-                                <div class="flex items-center ${mine ? 'justify-end' : ''} gap-2 mt-2 text-xs ${mine ? 'text-white/70' : 'text-gray-500'}">
-                                    <span>${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                </div>
-                            </div>
-                        </div>`;
-                    }).join('');
-
-                    return `
-                        <div>
-                            <div class="text-center text-xs text-gray-500 my-4">
-                                <span class="px-3 py-1.5 bg-white rounded-full shadow-sm font-medium">${day}</span>
-                            </div>
-                            <div class="space-y-3">${items}</div>
-                        </div>
-                    `;
-                });
-
-                messageList.innerHTML = sections.length ? sections.join('') : '<p class="text-gray-500 text-sm text-center py-8">No messages yet. Start the conversation!</p>';
-                messageList.scrollTop = messageList.scrollHeight;
-                try{ renderedMsgIds = new Set((messages||[]).map(function(m){ return m.id; })); }catch(e){}
-                ensureChatWS(conversationId);
-            } catch (error) {
-                console.error('Error loading messages:', error);
-                messageList.innerHTML = '<p class="text-red-500 text-sm text-center">Failed to load messages.</p>';
-            }
-
-            loadConversations(document.getElementById('conversation-search').value);
-        }
-
-        document.getElementById('send-message').addEventListener('click', async () => {
-            if (!currentConversationId) return alert('Please select a conversation.');
-            const content = document.getElementById('message-input').value;
-            const imageInput = document.getElementById('image-input');
-            if (!content && (!imageInput.files || imageInput.files.length === 0)) return alert('Please enter a message or attach an image.');
-
-            try {
-                if (token) {
-                    const form = new FormData();
-                    form.append('conversation', currentConversationId);
-                    if (content) form.append('content', content);
-                    if (imageInput.files && imageInput.files.length > 0) form.append('attachment', imageInput.files[0]);
-
-                    const response = await fetch('/api/messages/', {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` },
-                        body: form
-                    });
-
-                    if (response.status === 401) {
-                        alert('Session expired');
-                        localStorage.clear();
-                        window.location.href = 'authentication.html';
-                        return;
-                    }
-                    if (!response.ok) throw new Error('Failed to send message');
-                }
-
-                document.getElementById('message-input').value = '';
-                imageInput.value = '';
-                loadChatRoom(currentConversationId, document.getElementById('chat-title').textContent);
-            } catch (error) {
-                console.error('Error sending message:', error);
-                alert('Failed to send message.');
-            }
-        });
-
-        document.getElementById('message-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                document.getElementById('send-message').click();
-            }
-        });
-
-        let forwardMode = false;
-
-        function updateForwardSelectedCount() {
-            const countEl = document.getElementById('forward-selected-count');
-            const checkboxes = Array.from(document.querySelectorAll('.forward-checkbox')).filter(cb => !cb.classList.contains('hidden'));
-            const selected = checkboxes.filter(cb => cb.checked).length;
-            countEl.textContent = `${selected} selected`;
-            countEl.classList.toggle('hidden', selected === 0 && !forwardMode);
-        }
-
-        document.getElementById('forward-mode-btn').addEventListener('click', () => {
-            forwardMode = !forwardMode;
-            const checkboxes = document.querySelectorAll('.forward-checkbox');
-            checkboxes.forEach(cb => cb.classList.toggle('hidden', !forwardMode));
-
-            const btn = document.getElementById('forward-mode-btn');
-            btn.innerHTML = forwardMode
-                ? '<i class="fas fa-check mr-2"></i><span class="hidden sm:inline">Done</span>'
-                : '<i class="fas fa-share mr-2"></i><span class="hidden sm:inline">Forward</span>';
-
-            updateForwardSelectedCount();
-
-            if (!forwardMode) {
-                const selected = Array.from(document.querySelectorAll('.forward-checkbox'))
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.dataset.messageId);
-                if (selected.length) openForwardPicker(selected);
-            }
-        });
-
-        function toggleForwardCheckbox(messageId) {
-            const cb = document.querySelector(`.forward-checkbox[data-message-id='${messageId}']`);
-            if (!cb) return;
-            cb.classList.remove('hidden');
-            cb.checked = !cb.checked;
-            forwardMode = true;
-            updateForwardSelectedCount();
-        }
-
-        async function openForwardPicker(messageIds) {
-            const destTitle = prompt('Enter title of destination conversation to forward to:');
-            if (!destTitle) return;
-
-            alert(`Would forward ${messageIds.length} message(s) to "${destTitle}"`);
-
-            document.querySelectorAll('.forward-checkbox').forEach(cb => {
-                cb.checked = false;
-                cb.classList.add('hidden');
-            });
-            forwardMode = false;
-            updateForwardSelectedCount();
-        }
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentTab = btn.dataset.tab;
-                loadConversations(document.getElementById('conversation-search').value);
-            });
-        });
-
-        const newConvModal = document.getElementById('new-conversation-modal');
-        document.getElementById('new-conversation-btn').addEventListener('click', () => {
-            newConvModal.classList.add('show');
-            headerNav.classList.remove('open');
-            navOverlay.classList.remove('show');
-        });
-        document.getElementById('new-conv-cancel').addEventListener('click', () => newConvModal.classList.remove('show'));
-        document.getElementById('new-conv-create').addEventListener('click', async () => {
-            const title = document.getElementById('new-conv-title').value.trim();
-            const type = document.getElementById('new-conv-type').value;
-            if (!title) return alert('Please enter a title.');
-
-            try {
-                if (token) {
-                    const response = await fetch('/api/conversations/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ title })
-                    });
-
-                    if (response.status === 401) {
-                        alert('Session expired');
-                        localStorage.clear();
-                        window.location.href = 'authentication.html';
-                        return;
-                    }
-                    if (!response.ok) throw new Error('Failed to create conversation');
-                }
-
-                newConvModal.classList.remove('show');
-                document.getElementById('new-conv-title').value = '';
-                loadConversations();
-                alert(`${type.charAt(0).toUpperCase() + type.slice(1)} "${title}" created.`);
-            } catch (error) {
-                console.error('Create conversation failed', error);
-                alert('Failed to create conversation.');
-            }
-        });
-
-
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            window.location.href = 'authentication.html';
-        });
-
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('show');
-                }
-            });
-        });
-
-        window.onload = () => {
-            loadConversations();
-            if (token) {
-                fetch('/api/users/me/', { headers: { 'Authorization': `Bearer ${token}` } })
-                    .then(r => r.ok ? r.json() : null)
-                    .then(u => { if (u) { if (u.id) localStorage.setItem('user_id', u.id); if (u.username) window.__myUsername = u.username; } });
-            }
-            const _qsUser = new URLSearchParams(location.search).get('user');
-            if (_qsUser && token) openChatWithUser(_qsUser);
-        };
-        async function openChatWithUser(userId) {
-            try {
-                const res = await fetch('/api/conversations/start-direct-chat/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ user: userId })
-                });
-                if (!res.ok) throw new Error('Failed to open chat');
-                const data = await res.json();
-                if (data && data.id) loadChatRoom(data.id, data.title || data.display_name || 'Chat');
-            } catch (e) { /* stay on conversation list */ }
-        }
     </script>
 
     <!-- Dale AI assistant -->

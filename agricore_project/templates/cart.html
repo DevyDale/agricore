@@ -3,432 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart - Agricore Solutions</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Shopping Cart · Agricore</title>
+    <script src="/static/i18n.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            font-family: 'Inter', sans-serif;
+        :root{
+            --g500:#10b981; --g600:#059669; --g700:#047857; --g900:#064e3b;
+            --line:#ece4d6; --ink:#16271c; --cream:#faf6ee; --parch:#f4efe3;
         }
-        
-        body {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
-            min-height: 100vh;
+        *{ font-family:'Inter', sans-serif; }
+        body{
+            color:var(--ink);
+            background:
+                radial-gradient(1200px 600px at 82% -12%, #fff6e2 0%, transparent 58%),
+                radial-gradient(900px 520px at -12% 112%, #edf2e0 0%, transparent 55%),
+                var(--cream);
+            min-height:100vh;
         }
+        .font-display{ font-family:'Fraunces', serif; }
 
-        /* Header */
-        .header-gradient {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
-        }
+        /* Hero */
+        .hero{ position:relative; overflow:hidden; }
+        #ct-farmland{ position:absolute; inset:0; }
+        #ct-farmland svg{ display:block; width:100%; height:100%; }
+        .hero-scrim{ position:absolute; inset:0; background:linear-gradient(100deg, rgba(8,30,18,.84), rgba(8,30,18,.5)); }
+        .wordmark{ font-family:'Fraunces', serif; font-weight:900; color:#fff; font-size:1.5rem; display:inline-flex; align-items:center; gap:.55rem; letter-spacing:-.01em; }
+        .nav-pill{ background:rgba(255,255,255,.14); backdrop-filter:blur(8px); color:#fff; border:1px solid rgba(255,255,255,.28); padding:.55rem 1rem; border-radius:999px; font-weight:600; font-size:.875rem; transition:.25s; display:inline-flex; align-items:center; gap:.5rem; }
+        .nav-pill:hover{ background:rgba(255,255,255,.26); border-color:rgba(255,255,255,.45); transform:translateY(-2px); }
 
-        .nav-btn {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            padding: 0.625rem 1.125rem;
-            border-radius: 0.875rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .nav-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.4);
-            transform: translateY(-2px);
-        }
-
-        /* Glass container */
-        .glass-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 1.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-        }
+        /* Panels */
+        .panel{ background:#fff; border:1px solid var(--line); border-radius:1.25rem; box-shadow:0 10px 30px rgba(20,39,28,.06); }
 
         /* Cart items */
-        .cart-item {
-            background: white;
-            border: 1px solid #f1f5f9;
-            border-radius: 1.25rem;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-        
-        .cart-item:hover {
-            transform: translateX(8px);
-            border-color: #10b981;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
-        }
+        .cart-item{ background:#fff; border:1px solid var(--line); border-radius:1rem; transition:all .3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 2px 8px rgba(20,39,28,.04); }
+        .cart-item:hover{ transform:translateX(6px); border-color:var(--g500); box-shadow:0 10px 26px rgba(16,185,129,.12); }
+        .ci-thumb{ width:100%; height:7rem; border-radius:.85rem; object-fit:cover; flex-shrink:0; }
+        @media(min-width:640px){ .ci-thumb{ width:7rem; } }
+        .ci-name{ font-family:'Fraunces', serif; font-weight:700; font-size:1.15rem; color:var(--ink); margin-bottom:.15rem; }
+        .ci-store{ font-size:.8rem; color:#5b6b5f; }
+        .ci-store i{ color:var(--g600); }
+        .ci-unit{ font-size:.8rem; color:#8a9389; margin:.1rem 0 .55rem; }
+        .ci-price{ font-family:'Fraunces', serif; font-size:1.4rem; font-weight:700; color:var(--g700); }
+        .ci-remove{ color:#c0492f; padding:.5rem; border-radius:.6rem; transition:.2s; }
+        .ci-remove:hover{ background:#fbeae5; }
+        .qty-wrap{ display:flex; align-items:center; gap:.5rem; background:var(--parch); border:1px solid var(--line); border-radius:.8rem; padding:.35rem .5rem; }
+        .qty-btn{ width:32px; height:32px; display:flex; align-items:center; justify-content:center; background:#fff; border:1px solid var(--line); border-radius:.55rem; color:#5b6b5f; font-weight:700; cursor:pointer; transition:.2s; }
+        .qty-btn:hover{ background:var(--g600); border-color:var(--g600); color:#fff; }
+        .qty-val{ font-weight:700; min-width:32px; text-align:center; }
+        .ci-sub-label{ font-size:.7rem; color:#8a9389; }
+        .ci-sub{ font-family:'Fraunces', serif; font-weight:700; font-size:1.05rem; color:var(--ink); }
 
         /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            font-weight: 700;
-            padding: 0.875rem 1.75rem;
-            border-radius: 1rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-        }
+        .btn-primary{ background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; font-weight:700; padding:.85rem 1.5rem; border-radius:999px; border:none; cursor:pointer; transition:all .3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 8px 20px rgba(16,185,129,.28); }
+        .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(16,185,129,.4); }
+        .btn-secondary{ background:var(--parch); color:var(--ink); font-weight:600; padding:.6rem 1.1rem; border-radius:.8rem; border:1px solid var(--line); cursor:pointer; transition:.2s; }
+        .btn-secondary:hover{ background:#ece2cf; }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-        }
+        /* Inputs */
+        .input-field{ background:#fff; border:1px solid var(--line); color:var(--ink); border-radius:.8rem; padding:.7rem 1rem; font-size:.9375rem; transition:.2s; }
+        .input-field:focus{ outline:none; border-color:var(--g500); box-shadow:0 0 0 4px rgba(16,185,129,.12); }
 
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            font-weight: 600;
-            padding: 0.625rem 1.25rem;
-            border-radius: 0.875rem;
-            border: 2px solid #e2e8f0;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        /* Summary */
+        .summary-card{ background:linear-gradient(180deg,#fff,#fdfaf3); border:1px solid var(--line); border-radius:1.25rem; padding:1.75rem; box-shadow:0 12px 32px rgba(20,39,28,.08); position:sticky; top:1.5rem; }
+        .tot-divider{ border-top:1px solid var(--line); }
+        .total-amt{ font-family:'Fraunces', serif; color:var(--g700); }
+        .promo-box{ background:var(--parch); border:1px solid var(--line); border-left:3px solid var(--g500); border-radius:.9rem; padding:1rem; }
+        .secure-box{ background:#fbf7ee; border:1px solid var(--line); border-radius:.7rem; }
 
-        .btn-secondary:hover {
-            background: #e2e8f0;
-            border-color: #cbd5e1;
-        }
-
-        /* Input fields */
-        .input-field {
-            background: white;
-            border: 2px solid #e2e8f0;
-            color: #1e293b;
-            border-radius: 0.875rem;
-            padding: 0.75rem 1rem;
-            font-size: 0.9375rem;
-            transition: all 0.2s;
-        }
-        
-        .input-field:focus {
-            outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-        }
-
-        /* Quantity controls */
-        .qty-btn {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 0.5rem;
-            color: #64748b;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .qty-btn:hover {
-            background: #10b981;
-            border-color: #10b981;
-            color: white;
-        }
-
-        /* Summary card */
-        .summary-card {
-            background: white;
-            border: 1px solid #f1f5f9;
-            border-radius: 1.5rem;
-            padding: 2rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-            position: sticky;
-            top: 6rem;
-        }
-
-        /* Payment icons */
-        .payment-icon {
-            color: #94a3b8;
-            transition: all 0.2s;
-        }
-
-        .payment-icon:hover {
-            color: #10b981;
-            transform: scale(1.1);
-        }
-
-        /* Toast */
-        .toast {
-            background: white;
-            border-left: 4px solid #10b981;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        /* Empty state */
-        .empty-state {
-            padding: 4rem 2rem;
-            text-align: center;
-            background: #fafafa;
-            border-radius: 1.25rem;
-            border: 2px dashed #e2e8f0;
-        }
-
-        /* Promo badge */
-        .promo-badge {
-            background: linear-gradient(135deg, #fef3c7, #fcd34d);
-            color: #92400e;
-            padding: 0.375rem 0.875rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-        }
+        /* Misc */
+        .empty-state{ padding:3.5rem 2rem; text-align:center; background:#fbf7ee; border-radius:1.1rem; border:2px dashed var(--line); }
+        .payment-icon{ color:#b7ab93; transition:.2s; }
+        .payment-icon:hover{ color:var(--g600); transform:scale(1.1); }
+        .toast{ background:#fff; border-left:4px solid var(--g500); box-shadow:0 12px 30px rgba(20,39,28,.16); border-radius:.9rem; }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header-gradient shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <a href="marketplace.html" class="text-2xl font-black text-white flex items-center gap-2">
-                    <i class="fas fa-leaf"></i>
-                    Agricore
-                </a>
-                <nav class="flex items-center gap-3">
-                    <a href="marketplace.html" class="nav-btn flex items-center gap-2">
-                        <i class="fas fa-store"></i>
-                        <span class="hidden sm:inline">Marketplace</span>
-                    </a>
-                    <a href="multi_farm.html" class="nav-btn flex items-center gap-2">
-                        <i class="fas fa-tractor"></i>
-                        <span class="hidden sm:inline">My Farms</span>
-                    </a>
-                    <a href="chats.html" class="nav-btn flex items-center gap-2">
-                        <i class="fas fa-comments"></i>
-                        <span class="hidden sm:inline">Chats</span>
-                    </a>
+    <!-- Hero -->
+    <header class="hero">
+        <div id="ct-farmland"></div>
+        <div class="hero-scrim"></div>
+        <div class="relative container mx-auto px-6 pt-6 pb-12">
+            <div class="flex items-center justify-between mb-10">
+                <a href="marketplace.html" class="wordmark"><i class="fas fa-leaf"></i> Agricore</a>
+                <nav class="flex items-center gap-2 md:gap-3">
+                    <a href="marketplace.html" class="nav-pill"><i class="fas fa-store"></i><span class="hidden sm:inline">Marketplace</span></a>
+                    <a href="multi_farm.html" class="nav-pill"><i class="fas fa-tractor"></i><span class="hidden sm:inline">My Farms</span></a>
+                    <a href="chats.html" class="nav-pill"><i class="fas fa-comments"></i><span class="hidden sm:inline">Chats</span></a>
                 </nav>
             </div>
+            <h1 class="font-display text-4xl md:text-5xl font-black text-white mb-2 flex items-center gap-3">
+                <i class="fas fa-shopping-basket"></i> Shopping Cart
+            </h1>
+            <p class="text-white/80 text-lg">Review your items before checkout</p>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="container mx-auto px-6 py-12">
+    <!-- Main -->
+    <main class="container mx-auto px-6 py-10">
         <div class="max-w-7xl mx-auto">
-            <!-- Page Title -->
-            <div class="mb-8">
-                <h1 class="text-4xl md:text-5xl font-black text-gray-800 mb-2 flex items-center gap-3">
-                    <i class="fas fa-shopping-cart text-emerald-600"></i>
-                    Shopping Cart
-                </h1>
-                <p class="text-gray-600 text-lg">Review your items before checkout</p>
-            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Cart Items Section -->
+                <!-- Cart items -->
                 <div class="lg:col-span-2">
-                    <div class="glass-container p-6 md:p-8">
+                    <div class="panel p-6 md:p-8">
                         <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                            <h2 class="font-display text-2xl font-bold text-gray-900 flex items-center gap-2">
                                 <span>Cart Items</span>
-                                <span class="text-lg font-normal text-gray-600">(<span id="item-count">0</span>)</span>
+                                <span class="text-lg font-normal text-gray-500">(<span id="item-count">0</span>)</span>
                             </h2>
-                            <button id="clear-cart-btn" class="text-red-500 hover:text-red-700 font-semibold text-sm flex items-center gap-2 transition">
+                            <button id="clear-cart-btn" class="font-semibold text-sm flex items-center gap-2 transition" style="color:#c0492f;">
                                 <i class="fas fa-trash"></i>
                                 <span class="hidden sm:inline">Clear Cart</span>
                             </button>
                         </div>
-                        
-                        <!-- Cart Items List -->
+
                         <div id="cart-items" class="space-y-4">
                             <!-- Populated by JavaScript -->
                         </div>
 
-                        <!-- Empty Cart Message -->
+                        <!-- Empty state -->
                         <div id="empty-cart" class="hidden empty-state">
-                            <i class="fas fa-shopping-cart text-gray-300 text-6xl mb-4"></i>
-                            <h3 class="text-xl font-bold text-gray-700 mb-2">Your cart is empty</h3>
-                            <p class="text-gray-500 mb-6">Add some items from the marketplace to get started</p>
+                            <i class="fas fa-shopping-basket text-6xl mb-4" style="color:#d8cdb5;"></i>
+                            <h3 class="font-display text-xl font-bold text-gray-800 mb-2">Your cart is empty</h3>
+                            <p class="text-gray-500 mb-6">Add items from the marketplace to get started</p>
                             <a href="marketplace.html" class="btn-primary inline-flex items-center gap-2">
-                                <i class="fas fa-store"></i>
-                                Browse Marketplace
+                                <i class="fas fa-store"></i> Browse Marketplace
                             </a>
                         </div>
 
-                        <!-- Continue Shopping -->
-                        <div class="mt-6 pt-6 border-t border-gray-200">
-                            <a href="marketplace.html" class="text-emerald-600 hover:text-emerald-700 font-semibold flex items-center gap-2 transition">
-                                <i class="fas fa-arrow-left"></i>
-                                Continue Shopping
+                        <div class="mt-6 pt-6" style="border-top:1px solid var(--line);">
+                            <a href="marketplace.html" class="font-semibold flex items-center gap-2 transition" style="color:var(--g700);">
+                                <i class="fas fa-arrow-left"></i> Continue Shopping
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Order Summary Section -->
+                <!-- Order summary -->
                 <div class="lg:col-span-1">
                     <div class="summary-card">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6">Order Summary</h2>
-                        
+                        <h2 class="font-display text-2xl font-bold text-gray-900 mb-6">Order Summary</h2>
+
                         <div class="space-y-4 mb-6">
                             <div class="flex justify-between text-gray-700">
-                                <span class="font-medium">Subtotal:</span>
-                                <span id="subtotal" class="font-bold">$0.00</span>
+                                <span class="font-medium">Subtotal</span>
+                                <span id="subtotal" class="font-bold">—</span>
                             </div>
                             <div class="flex justify-between text-gray-700">
-                                <span class="font-medium">Shipping:</span>
-                                <span id="shipping" class="font-bold">$0.00</span>
+                                <span class="font-medium">Shipping <span class="text-xs text-gray-400">(est.)</span></span>
+                                <span id="shipping" class="font-bold">—</span>
                             </div>
                             <div class="flex justify-between text-gray-700">
-                                <span class="font-medium">Tax (10%):</span>
-                                <span id="tax" class="font-bold">$0.00</span>
+                                <span class="font-medium">Tax (10%) <span class="text-xs text-gray-400">(est.)</span></span>
+                                <span id="tax" class="font-bold">—</span>
                             </div>
-                            <div id="discount-row" class="hidden flex justify-between text-emerald-700">
-                                <span class="font-medium">Discount:</span>
-                                <span id="discount" class="font-bold">-$0.00</span>
+                            <div id="discount-row" class="hidden flex justify-between" style="color:var(--g700);">
+                                <span class="font-medium">Discount</span>
+                                <span id="discount" class="font-bold">—</span>
                             </div>
-                            <div class="border-t pt-4 flex justify-between items-center">
-                                <span class="text-xl font-bold text-gray-800">Total:</span>
-                                <span id="total" class="text-2xl font-black text-emerald-700">$0.00</span>
+                            <div class="tot-divider pt-4 flex justify-between items-center">
+                                <span class="text-xl font-bold text-gray-900">Estimated Total</span>
+                                <span id="total" class="total-amt text-2xl font-black">—</span>
                             </div>
+                            <p class="text-xs text-gray-500 leading-relaxed"><i class="fas fa-circle-info" style="color:var(--g600);"></i> Shipping &amp; tax are estimates. Your escrow-protected total is confirmed on the secure checkout, where payment is held until you confirm delivery.</p>
                         </div>
 
-                        <!-- Promo Code -->
-                        <div class="mb-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
-                            <label class="block text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
-                                <i class="fas fa-tag text-emerald-600"></i>
-                                Have a Promo Code?
+                        <!-- Promo -->
+                        <div class="promo-box mb-6">
+                            <label class="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                <i class="fas fa-tag" style="color:var(--g600);"></i> Have a promo code?
                             </label>
                             <div class="flex gap-2">
-                                <input 
-                                    type="text" 
-                                    id="promo-input" 
-                                    placeholder="Enter code" 
-                                    class="flex-1 input-field"
-                                >
-                                <button id="apply-promo-btn" class="btn-secondary whitespace-nowrap">
-                                    Apply
-                                </button>
+                                <input type="text" id="promo-input" placeholder="Enter code" class="flex-1 input-field">
+                                <button id="apply-promo-btn" class="btn-secondary whitespace-nowrap">Apply</button>
                             </div>
                             <p id="promo-message" class="text-sm mt-2 hidden"></p>
-                            <p class="text-xs text-gray-600 mt-2">
-                                <i class="fas fa-info-circle"></i> Try code: <strong>FARM20</strong>
-                            </p>
+                            <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle"></i> Try code: <strong>FARM20</strong></p>
                         </div>
 
-                        <!-- Checkout Button -->
+                        <!-- Checkout -->
                         <button id="checkout-btn" class="btn-primary w-full py-4 text-lg mb-4 flex items-center justify-center gap-2">
-                            <i class="fas fa-lock"></i>
-                            Proceed to Checkout
+                            <i class="fas fa-lock"></i> Proceed to Checkout
                         </button>
 
-                        <!-- Security Badge -->
-                        <div class="text-center mb-4 p-3 bg-gray-50 rounded-lg">
-                            <i class="fas fa-shield-alt text-emerald-600 text-lg mb-1"></i>
-                            <p class="text-xs text-gray-600 font-semibold">Secure Checkout · SSL Encrypted</p>
+                        <div class="secure-box text-center mb-4 p-3">
+                            <i class="fas fa-shield-halved text-lg mb-1" style="color:var(--g600);"></i>
+                            <p class="text-xs text-gray-600 font-semibold">Secure Checkout · Escrow Protected</p>
                         </div>
 
-                        <!-- Payment Options -->
                         <div class="text-center text-sm text-gray-600">
-                            <p class="mb-3 font-semibold">We accept:</p>
+                            <p class="mb-3 font-semibold">We accept</p>
                             <div class="flex justify-center gap-4">
                                 <i class="fab fa-cc-visa text-3xl payment-icon"></i>
                                 <i class="fab fa-cc-mastercard text-3xl payment-icon"></i>
                                 <i class="fab fa-cc-paypal text-3xl payment-icon"></i>
-                                <i class="fas fa-mobile-alt text-3xl payment-icon"></i>
+                                <i class="fas fa-mobile-screen text-3xl payment-icon"></i>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
-    </div>
+    </main>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-6 right-6 toast px-6 py-4 rounded-xl transform translate-x-full transition-transform z-50">
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 toast px-6 py-4 transform translate-x-full transition-transform z-50">
         <div class="flex items-center gap-3">
-            <i class="fas fa-check-circle text-emerald-600 text-xl"></i>
+            <i class="fas fa-circle-check text-xl" style="color:var(--g600);"></i>
             <span id="toast-message" class="font-semibold text-gray-800">Action completed</span>
         </div>
     </div>
 
     <script>
-        // Cart management
+        /* ---------- Currency (matches marketplace.html: i18n with symbol fallback) ---------- */
+        const CUR_SYM = { NGN:'₦', USD:'$', UGX:'USh ', KES:'KSh ', GHS:'GH₵', ZAR:'R', TZS:'TSh ', RWF:'FRw ' };
+        function money(n){
+            const v = Number(n || 0);
+            if(window.i18n && i18n.formatCurrency){ try{ return i18n.formatCurrency(v); }catch(e){} }
+            return '$' + v.toLocaleString(undefined, { minimumFractionDigits:2, maximumFractionDigits:2 });
+        }
+        function escHtml(v){ return String(v==null?'':v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+        /* ---------- Farmland mosaic backdrop ---------- */
+        function shade(hex,p){
+            const n=parseInt(hex.slice(1),16);
+            let r=(n>>16)+p, g=((n>>8)&255)+p, b=(n&255)+p;
+            r=Math.max(0,Math.min(255,r)); g=Math.max(0,Math.min(255,g)); b=Math.max(0,Math.min(255,b));
+            return '#'+((r<<16)|(g<<8)|b).toString(16).padStart(6,'0');
+        }
+        function bf(){
+            const host=document.getElementById('ct-farmland');
+            if(!host) return;
+            const W=host.clientWidth||1200, H=host.clientHeight||260;
+            const cols=Math.max(6,Math.round(W/120)), rows=Math.max(3,Math.round(H/90));
+            const cw=W/cols, ch=H/rows;
+            const fills=['#6f8f3c','#7da046','#8caf52','#5e7d34','#9b7d2e','#b2902f','#c98f3a','#a8b15a','#7e9b3f','#caa64a'];
+            const jit=(n)=> (Math.random()-0.5)*n;
+            const pts=[];
+            for(let r=0;r<=rows;r++){ pts[r]=[]; for(let c=0;c<=cols;c++){
+                pts[r][c]={ x:c*cw+(c>0&&c<cols? jit(cw*0.4):0), y:r*ch+(r>0&&r<rows? jit(ch*0.4):0) };
+            }}
+            let defs='', polys='', pid=0;
+            for(let r=0;r<rows;r++){ for(let c=0;c<cols;c++){
+                const a=pts[r][c], b=pts[r][c+1], d=pts[r+1][c+1], e=pts[r+1][c];
+                const fill=fills[Math.floor(Math.random()*fills.length)];
+                const id='ct-p'+(pid++);
+                const ang=Math.floor(Math.random()*4)*45;
+                const gap=3+Math.random()*4;
+                defs+='<pattern id="'+id+'" patternUnits="userSpaceOnUse" width="'+gap+'" height="'+gap+'" patternTransform="rotate('+ang+')"><rect width="'+gap+'" height="'+gap+'" fill="'+fill+'"/><line x1="0" y1="0" x2="0" y2="'+gap+'" stroke="'+shade(fill,-18)+'" stroke-width="1"/></pattern>';
+                polys+='<polygon points="'+a.x+','+a.y+' '+b.x+','+b.y+' '+d.x+','+d.y+' '+e.x+','+e.y+'" fill="url(#'+id+')" stroke="rgba(40,30,10,.15)" stroke-width="1"/>';
+            }}
+            host.innerHTML='<svg width="100%" height="100%" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+polys+'</svg>';
+        }
+
+        /* ---------- Cart state ---------- */
         let cart = new Map();
         let promoCode = null;
         const SHIPPING_RATE = 15;
         const TAX_RATE = 0.10;
 
-        // Sample products
-        const sampleProducts = [
-            { 
-                id: 1, 
-                name: 'Hybrid Maize Seeds', 
-                price: 45, 
-                unit: 'per 25kg bag', 
-                image: 'https://images.unsplash.com/photo-1600429998282-53b5e656e48b?q=80&w=400&auto=format&fit=crop',
-                store: 'Green Valley Seeds'
-            },
-            { 
-                id: 2, 
-                name: 'Organic Fertilizer', 
-                price: 28, 
-                unit: 'per 10kg', 
-                image: 'https://images.unsplash.com/photo-1565958011703-44f9829d5f4d?q=80&w=400&auto=format&fit=crop',
-                store: 'EcoFarm Supplies'
-            },
-            { 
-                id: 3, 
-                name: 'Dairy Cow (Holstein)', 
-                price: 1200, 
-                unit: 'per cow', 
-                image: 'https://images.unsplash.com/photo-1509817316-3fd58e7f1a82?q=80&w=400&auto=format&fit=crop',
-                store: 'Premium Livestock'
-            }
-        ];
+        // Resolve fields that the marketplace actually stores (title / store_name),
+        // with backward-compatible fallbacks.
+        function itemName(item){ return item.title || item.name || 'Item'; }
+        function itemStore(item){ return item.store_name || (typeof item.store === 'string' ? item.store : '') || 'Agricore Store'; }
 
-        // Load cart from localStorage
-        function loadCart() {
-            try {
+        function loadCart(){
+            try{
                 const saved = localStorage.getItem('agricore_cart');
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    cart = new Map(Object.entries(parsed));
-                } else {
-                    // For demo purposes, add sample items
-                    sampleProducts.forEach(p => {
-                        cart.set(String(p.id), { ...p, qty: 1 });
-                    });
-                    saveCart();
-                }
-            } catch (e) {
-                console.error('Error loading cart:', e);
-            }
+                if(saved){ cart = new Map(Object.entries(JSON.parse(saved))); }
+            }catch(e){ console.error('Error loading cart:', e); }
             renderCart();
         }
 
-        // Save cart to localStorage
-        function saveCart() {
-            const obj = Object.fromEntries(cart);
-            localStorage.setItem('agricore_cart', JSON.stringify(obj));
+        function saveCart(){
+            localStorage.setItem('agricore_cart', JSON.stringify(Object.fromEntries(cart)));
         }
 
-        // Render cart items
-        function renderCart() {
+        function renderCart(){
             const container = document.getElementById('cart-items');
             const emptyMsg = document.getElementById('empty-cart');
             const items = Array.from(cart.values());
 
-            if (items.length === 0) {
+            if(items.length === 0){
                 container.classList.add('hidden');
                 emptyMsg.classList.remove('hidden');
+                document.getElementById('item-count').textContent = 0;
                 updateSummary();
                 return;
             }
@@ -436,118 +298,90 @@
             container.classList.remove('hidden');
             emptyMsg.classList.add('hidden');
 
-            container.innerHTML = items.map(item => `
-                <div class="cart-item p-4">
+            container.innerHTML = items.map(item => {
+                const name = itemName(item);
+                const store = itemStore(item);
+                const initials = (name || '').substring(0,2);
+                return `
+                <div class="cart-item p-4 md:p-5">
                     <div class="flex gap-4 flex-col sm:flex-row">
-                        <img 
-                            src="${item.image}" 
-                            alt="${item.name}" 
-                            class="w-full sm:w-28 h-28 rounded-xl object-cover flex-shrink-0"
-                            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%2310b981%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22 font-size=%2224%22%3E${item.name.substring(0,2)}%3C/text%3E%3C/svg%3E'"
-                        >
+                        <img src="${escHtml(item.image||'')}" alt="${escHtml(name)}" class="ci-thumb"
+                            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23047857%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22 font-size=%2224%22%3E${escHtml(initials)}%3C/text%3E%3C/svg%3E'">
                         <div class="flex-1 min-w-0">
-                            <h3 class="font-bold text-lg text-gray-800 mb-1 truncate">${item.name}</h3>
-                            <p class="text-sm text-gray-600 mb-1">
-                                <i class="fas fa-store text-emerald-600"></i>
-                                ${item.store || 'Agricore Store'}
-                            </p>
-                            <p class="text-sm text-gray-500 mb-3">${item.unit}</p>
-                            <p class="text-2xl font-bold text-emerald-700">$${item.price.toFixed(2)}</p>
+                            <h3 class="ci-name truncate">${escHtml(name)}</h3>
+                            <p class="ci-store"><i class="fas fa-store"></i> ${escHtml(store)}</p>
+                            <p class="ci-unit">${item.unit ? ('per ' + escHtml(item.unit)) : ''}</p>
+                            <p class="ci-price">${money(item.price)}</p>
                         </div>
-                        <div class="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-between gap-4">
-                            <button 
-                                onclick="removeFromCart('${item.id}')" 
-                                class="text-red-500 hover:text-red-700 transition p-2 hover:bg-red-50 rounded-lg"
-                                title="Remove item"
-                            >
+                        <div class="flex flex-row sm:flex-col items-center sm:items-end justify-between gap-4">
+                            <button onclick="removeFromCart('${item.id}')" class="ci-remove" title="Remove item">
                                 <i class="fas fa-trash"></i>
                             </button>
-                            <div class="flex items-center gap-2 bg-gray-50 rounded-xl px-2 py-2 border-2 border-gray-100">
-                                <button onclick="changeQty('${item.id}', -1)" class="qty-btn">
-                                    <i class="fas fa-minus text-sm"></i>
-                                </button>
-                                <span class="font-bold text-gray-800 min-w-[32px] text-center">${item.qty}</span>
-                                <button onclick="changeQty('${item.id}', 1)" class="qty-btn">
-                                    <i class="fas fa-plus text-sm"></i>
-                                </button>
+                            <div class="qty-wrap">
+                                <button onclick="changeQty('${item.id}', -1)" class="qty-btn"><i class="fas fa-minus text-sm"></i></button>
+                                <span class="qty-val">${item.qty}</span>
+                                <button onclick="changeQty('${item.id}', 1)" class="qty-btn"><i class="fas fa-plus text-sm"></i></button>
                             </div>
                             <div class="text-right">
-                                <p class="text-xs text-gray-500 mb-1">Subtotal</p>
-                                <p class="text-lg font-bold text-gray-800">
-                                    $${(item.price * item.qty).toFixed(2)}
-                                </p>
+                                <p class="ci-sub-label">Subtotal</p>
+                                <p class="ci-sub">${money(Number(item.price) * item.qty)}</p>
                             </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
 
             document.getElementById('item-count').textContent = items.length;
             updateSummary();
         }
 
-        // Update order summary
-        function updateSummary() {
+        function updateSummary(){
             const items = Array.from(cart.values());
-            const subtotal = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const subtotal = items.reduce((sum, item) => sum + (Number(item.price) * item.qty), 0);
             const shipping = items.length > 0 ? SHIPPING_RATE : 0;
             const tax = subtotal * TAX_RATE;
             let discount = 0;
-
-            if (promoCode === 'FARM20') {
-                discount = subtotal * 0.20;
-            }
-
+            if(promoCode === 'FARM20'){ discount = subtotal * 0.20; }
             const total = subtotal + shipping + tax - discount;
 
-            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-            document.getElementById('shipping').textContent = `$${shipping.toFixed(2)}`;
-            document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
-            
+            document.getElementById('subtotal').textContent = money(subtotal);
+            document.getElementById('shipping').textContent = money(shipping);
+            document.getElementById('tax').textContent = money(tax);
+
             const discountRow = document.getElementById('discount-row');
-            if (discount > 0) {
-                document.getElementById('discount').textContent = `-$${discount.toFixed(2)}`;
+            if(discount > 0){
+                document.getElementById('discount').textContent = '-' + money(discount);
                 discountRow.classList.remove('hidden');
             } else {
                 discountRow.classList.add('hidden');
             }
-            
-            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+            document.getElementById('total').textContent = money(total);
         }
 
-        // Change quantity
-        function changeQty(id, delta) {
+        function changeQty(id, delta){
             const item = cart.get(id);
-            if (!item) return;
-            
-            item.qty += delta;
-            if (item.qty <= 0) {
-                cart.delete(id);
-                showToast('Item removed from cart');
-            } else {
-                showToast('Quantity updated');
+            if(!item) return;
+            if(delta > 0){
+                const stock = Number(item.stock);
+                if(stock && item.qty >= stock){ showToast('Stock limit reached'); return; }
             }
-            
+            item.qty += delta;
+            if(item.qty <= 0){ cart.delete(id); showToast('Item removed from cart'); }
+            else { showToast('Quantity updated'); }
             saveCart();
             renderCart();
         }
 
-        // Remove from cart
-        function removeFromCart(id) {
+        function removeFromCart(id){
             cart.delete(id);
             saveCart();
             renderCart();
             showToast('Item removed from cart');
         }
 
-        // Clear cart
         document.getElementById('clear-cart-btn').addEventListener('click', () => {
-            if (cart.size === 0) {
-                showToast('Cart is already empty');
-                return;
-            }
-            
-            if (confirm('Are you sure you want to clear your cart?')) {
+            if(cart.size === 0){ showToast('Cart is already empty'); return; }
+            if(confirm('Are you sure you want to clear your cart?')){
                 cart.clear();
                 promoCode = null;
                 saveCart();
@@ -556,60 +390,49 @@
             }
         });
 
-        // Apply promo code
         document.getElementById('apply-promo-btn').addEventListener('click', () => {
             const input = document.getElementById('promo-input');
             const code = input.value.trim().toUpperCase();
             const message = document.getElementById('promo-message');
-
-            if (code === 'FARM20') {
+            if(code === 'FARM20'){
                 promoCode = code;
-                message.innerHTML = '<i class="fas fa-check-circle"></i> 20% discount applied!';
-                message.className = 'text-sm mt-2 text-emerald-700 font-bold';
+                message.innerHTML = '<i class="fas fa-circle-check"></i> 20% discount applied to your estimate!';
+                message.className = 'text-sm mt-2 font-bold';
+                message.style.color = 'var(--g700)';
                 message.classList.remove('hidden');
                 updateSummary();
                 showToast('Promo code applied successfully!');
                 input.value = '';
-            } else if (code === '') {
-                message.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please enter a promo code';
-                message.className = 'text-sm mt-2 text-amber-700 font-semibold';
+            } else if(code === ''){
+                message.innerHTML = '<i class="fas fa-circle-exclamation"></i> Please enter a promo code';
+                message.className = 'text-sm mt-2 font-semibold';
+                message.style.color = '#b45309';
                 message.classList.remove('hidden');
             } else {
-                message.innerHTML = '<i class="fas fa-times-circle"></i> Invalid promo code';
-                message.className = 'text-sm mt-2 text-red-600 font-semibold';
+                message.innerHTML = '<i class="fas fa-circle-xmark"></i> Invalid promo code';
+                message.className = 'text-sm mt-2 font-semibold';
+                message.style.color = '#c0492f';
                 message.classList.remove('hidden');
             }
         });
 
-        // Checkout
+        // Hand off to the marketplace's real escrow checkout, which reads this same
+        // localStorage cart and auto-opens when ?checkout=1 is present.
         document.getElementById('checkout-btn').addEventListener('click', () => {
-            if (cart.size === 0) {
-                showToast('Your cart is empty');
-                return;
-            }
-
-            const total = document.getElementById('total').textContent;
-            if (confirm(`Proceed to checkout?\nTotal: ${total}\n\nYou will be redirected to payment.`)) {
-                showToast('Redirecting to secure payment...');
-                setTimeout(() => {
-                    alert('🎉 Payment integration coming soon!\n\nFor now, your order has been saved.\nThank you for using Agricore!');
-                }, 1000);
-            }
+            if(cart.size === 0){ showToast('Your cart is empty'); return; }
+            showToast('Taking you to secure checkout…');
+            setTimeout(() => { window.location.href = 'marketplace.html?checkout=1'; }, 600);
         });
 
-        // Show toast notification
-        function showToast(message) {
+        function showToast(message){
             const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toast-message');
-            toastMessage.textContent = message;
+            document.getElementById('toast-message').textContent = message;
             toast.classList.remove('translate-x-full');
-            setTimeout(() => {
-                toast.classList.add('translate-x-full');
-            }, 3000);
+            setTimeout(() => { toast.classList.add('translate-x-full'); }, 3000);
         }
 
-        // Initialize
-        window.addEventListener('DOMContentLoaded', loadCart);
+        window.addEventListener('DOMContentLoaded', () => { bf(); loadCart(); });
+        window.addEventListener('resize', () => { clearTimeout(window.__rt); window.__rt = setTimeout(bf, 200); });
     </script>
 </body>
 </html>

@@ -111,7 +111,75 @@
         .share-go{ border:0; background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; border-radius:9px; padding:.4rem .8rem; font-weight:700; font-size:.8rem; cursor:pointer }
         .share-sec{ font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#94a3b8; margin:.7rem 0 .4rem }
         #share-convos{ max-height:13rem; overflow:auto }
-    </style>
+
+        /* ---- sponsored advertisements band ---- */
+        .ad-band{ margin:0 0 1.6rem }
+        .ad-band-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:.6rem }
+        .ad-band-title{ font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:#94a3b8; display:inline-flex; align-items:center; gap:.4rem }
+        .ad-band-title i{ color:var(--g600) }
+        .ad-nav{ display:flex; gap:.4rem }
+        .ad-arrow{ width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:#fff; cursor:pointer; color:#475569; display:grid; place-items:center; transition:all .2s }
+        .ad-arrow:hover{ border-color:var(--g500); color:var(--g600) }
+        .ad-viewport{ overflow:hidden; border-radius:20px; box-shadow:0 14px 36px -26px rgba(20,40,25,.5) }
+        .ad-track{ display:flex; transition:transform .5s cubic-bezier(.16,1,.3,1) }
+        .ad-slide{ flex:0 0 100%; display:flex; align-items:stretch; min-height:210px }
+        .ad-slide .ad-img{ flex:0 0 42%; overflow:hidden }
+        .ad-slide .ad-img img{ width:100%; height:100%; display:block }
+        .ad-copy{ flex:1; padding:1.6rem 1.9rem; display:flex; flex-direction:column; justify-content:center }
+        .ad-spon{ font-size:.62rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; opacity:.75 }
+        .ad-copy h3{ margin:.3rem 0 .4rem; line-height:1.15 }
+        .ad-cta{ align-self:flex-start; border:0; background:#fff; border-radius:11px; padding:.6rem 1.1rem; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:.45rem }
+        .ad-dots{ display:flex; justify-content:center; gap:.4rem; margin-top:.7rem }
+        .ad-dot{ width:8px; height:8px; border-radius:50%; border:0; background:#cbd5c5; cursor:pointer; padding:0; transition:all .2s }
+        .ad-dot.on{ background:var(--g600); width:22px; border-radius:999px }
+        @media(max-width:640px){ .ad-slide{ flex-direction:column } .ad-slide .ad-img{ flex:0 0 150px } .ad-copy{ padding:1.2rem } }
+
+        /* ---- product detail + reviews ---- */
+        .qb.rate{ color:#f59e0b }
+        .detail-hero{ height:220px; border-radius:16px; overflow:hidden; background:linear-gradient(135deg,#f0fdf4,#e0f2ea); display:flex; align-items:center; justify-content:center; margin:.4rem 0 .8rem }
+        .detail-hero img{ width:100%; height:100%; object-fit:cover }
+        .detail-hero .ini-lg{ font-size:4rem; font-weight:800; color:var(--g600) }
+        .detail-rating{ display:flex; gap:1.2rem; align-items:center; background:#fbf7ee; border:1px solid var(--line); border-radius:14px; padding:1rem; margin-bottom:1rem }
+        .review-form{ border:1px solid var(--line); border-radius:14px; padding:1rem; background:#fff }
+        .review-stars{ display:flex; gap:.25rem; font-size:1.8rem; line-height:1; cursor:pointer }
+        .review-stars span{ color:#e2e8f0; transition:color .12s }
+        .rev-card{ display:flex; gap:.7rem; border:1px solid var(--line); border-radius:12px; padding:.7rem }
+        .rev-av{ width:36px; height:36px; border-radius:50%; flex-shrink:0; display:grid; place-items:center; font-weight:700; color:#fff; background:linear-gradient(135deg,var(--g500),var(--g700)) }
+            /* ---- product loading skeletons ---- */
+        .skel{ background:linear-gradient(90deg,#eef2ec 25%,#f6faf4 37%,#eef2ec 63%); background-size:400% 100%; animation:skelg 1.3s ease infinite; border-radius:8px }
+        @keyframes skelg{ 0%{ background-position:100% 0 } 100%{ background-position:-100% 0 } }
+        .skel-card{ background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden }
+        .skel-img{ height:190px; border-radius:0 }
+        .skel-line{ height:12px; margin:.5rem 0 }
+        /* ===== reviews dialog redesign v1 ===== */
+        #detail-modal .mc{ border-radius:24px; box-shadow:0 40px 90px -30px rgba(6,28,15,.55) }
+        #detail-modal .detail-hero{ height:240px; border-radius:18px; background:linear-gradient(135deg,#ecfdf5,#d1fae5); box-shadow:inset 0 0 0 1px rgba(16,40,28,.06) }
+        #detail-modal .detail-hero img{ transition:transform .5s cubic-bezier(.16,1,.3,1) }
+        #detail-modal .detail-hero:hover img{ transform:scale(1.04) }
+        #detail-modal .detail-hero .ini-lg{ background:linear-gradient(135deg,var(--g500),var(--g700)); -webkit-background-clip:text; background-clip:text; color:transparent }
+        #detail-modal .detail-rating{ background:linear-gradient(135deg,#ffffff,#fbfdfb); border:1px solid var(--line); border-radius:18px; padding:1.25rem 1.4rem; gap:1.6rem; box-shadow:0 14px 36px -28px rgba(20,40,25,.5) }
+        #detail-modal #detail-avg{ font-family:Fraunces,serif; font-size:3.1rem !important; line-height:1 !important; background:linear-gradient(135deg,var(--g500),var(--g700)); -webkit-background-clip:text; background-clip:text; color:transparent !important }
+        #detail-modal #detail-avgstars .stars{ font-size:1rem; letter-spacing:1px }
+        #detail-modal #detail-bars{ padding-left:1.6rem; border-left:1px solid var(--line) }
+        #detail-modal .review-form{ border:1px solid var(--line); border-radius:18px; padding:1.3rem; background:linear-gradient(180deg,#fbfdfb,#ffffff); box-shadow:0 14px 36px -28px rgba(20,40,25,.5) }
+        #detail-modal .review-form h4{ font-family:Fraunces,serif }
+        #detail-modal .review-stars{ font-size:2.2rem; gap:.4rem }
+        #detail-modal .review-stars span{ transition:transform .12s ease, color .12s ease; transform-origin:center bottom; filter:drop-shadow(0 2px 4px rgba(0,0,0,.06)) }
+        #detail-modal .review-stars span:hover{ transform:scale(1.22) rotate(-4deg) }
+        #detail-modal #review-comment{ border-radius:13px; min-height:84px }
+        #detail-modal #review-submit{ width:auto; min-width:180px; padding:.72rem 1.4rem; border-radius:13px }
+        #detail-modal .rev-card{ border:1px solid var(--line); border-radius:16px; padding:.95rem 1.05rem; background:#fff; box-shadow:0 8px 22px -18px rgba(20,40,25,.5); transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease }
+        #detail-modal .rev-card:hover{ transform:translateY(-2px); border-color:#bfe3cd; box-shadow:0 16px 34px -22px rgba(5,120,80,.4) }
+        #detail-modal .rev-av{ width:42px; height:42px; box-shadow:0 0 0 3px rgba(16,185,129,.12); font-size:.95rem }
+        /* ---- auto product thumbnails ---- */
+        .genthumb{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.55rem; text-align:center; padding:1rem; color:#fff }
+        .genthumb i{ font-size:3rem; filter:drop-shadow(0 3px 8px rgba(0,0,0,.22)); opacity:.97 }
+        .genthumb .gt-name{ font-family:Fraunces,serif; font-weight:700; font-size:1.02rem; line-height:1.15; text-shadow:0 1px 5px rgba(0,0,0,.28); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden }
+        .genthumb.big i{ font-size:4.6rem }
+        .genthumb.big .gt-name{ font-size:1.5rem; -webkit-line-clamp:3 }
+        .detail-hero{ position:relative }
+</style>
+
 </head>
 <body>
     <header class="hero">
@@ -143,6 +211,19 @@
             <div class="stat"><div class="n" id="stats-deals">0</div><div class="l">Active Deals</div></div>
             <div class="stat"><div class="n" id="stats-cart">0</div><div class="l">In Cart</div></div>
         </div>
+
+        <!-- Sponsored ads band (rendered from /api/advertisements/) -->
+        <section id="ad-band" class="ad-band" style="display:none">
+            <div class="ad-band-head">
+                <span class="ad-band-title"><i class="fas fa-bullhorn"></i> Sponsored</span>
+                <div class="ad-nav">
+                    <button type="button" class="ad-arrow" onclick="adPrev()" aria-label="Previous ad"><i class="fas fa-chevron-left"></i></button>
+                    <button type="button" class="ad-arrow" onclick="adNext()" aria-label="Next ad"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="ad-viewport"><div id="ad-track" class="ad-track"></div></div>
+            <div id="ad-dots" class="ad-dots"></div>
+        </section>
 
         <div class="card" style="padding:1.5rem">
             <div class="gridhead" style="margin-bottom:1.2rem">
@@ -193,6 +274,45 @@
         <div id="store-list" style="display:grid;gap:.5rem;margin-bottom:1rem"></div>
         <div id="dropship-error" style="color:#dc2626;font-size:.85rem;display:none;margin-bottom:.6rem"></div>
         <div style="display:flex;gap:.6rem"><button id="dropship-cancel" class="field" style="flex:1;cursor:pointer">Cancel</button><button id="dropship-confirm" class="btn" style="flex:1">Confirm</button></div>
+    </div></div>
+
+    <!-- Product detail + reviews modal -->
+    <div id="detail-modal" class="modal"><div class="mc mc-lg">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
+            <div style="min-width:0">
+                <h3 id="detail-title" style="margin:0 0 .25rem">Product</h3>
+                <div id="detail-store" class="store-badge"></div>
+            </div>
+            <button id="detail-close" style="border:0;background:none;font-size:1.5rem;cursor:pointer;color:#94a3b8;line-height:1">&times;</button>
+        </div>
+        <div id="detail-hero" class="detail-hero"></div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin:.4rem 0">
+            <div class="prc" id="detail-price"></div>
+            <span class="muted" id="detail-unit"></span>
+        </div>
+        <p id="detail-desc" style="color:#475569;font-size:.9rem;margin:0 0 1rem"></p>
+
+        <div class="detail-rating">
+            <div style="text-align:center">
+                <div class="fr" id="detail-avg" style="font-size:2.4rem;font-weight:900;color:var(--g600)">0.0</div>
+                <div id="detail-avgstars"></div>
+                <div class="muted" id="detail-count" style="font-size:.78rem">0 reviews</div>
+            </div>
+            <div id="detail-bars" style="flex:1;display:flex;flex-direction:column;gap:.3rem"></div>
+        </div>
+
+        <div class="review-form">
+            <h4 style="margin:0 0 .5rem;font-size:1rem">Write a review</h4>
+            <div id="review-stars" class="review-stars">
+                <span onclick="detailSetStars(1)">★</span><span onclick="detailSetStars(2)">★</span><span onclick="detailSetStars(3)">★</span><span onclick="detailSetStars(4)">★</span><span onclick="detailSetStars(5)">★</span>
+            </div>
+            <textarea id="review-comment" class="field" rows="3" placeholder="Share your experience with this product…" style="margin-top:.5rem"></textarea>
+            <div id="review-error" style="color:#dc2626;font-size:.82rem;display:none;margin-top:.4rem"></div>
+            <button id="review-submit" class="btn" style="margin-top:.6rem"><i class="fas fa-paper-plane"></i> Post review</button>
+        </div>
+
+        <h4 style="margin:1.2rem 0 .6rem;font-size:1rem">Customer reviews</h4>
+        <div id="detail-reviews" style="display:flex;flex-direction:column;gap:.6rem"></div>
     </div></div>
 
     <!-- Checkout modal -->
@@ -251,6 +371,12 @@
         function stars(a){ const r=Math.round(a||0); return '<span class="stars">'+'★★★★★'.split('').map((s,i)=>i<r?'★':'<span style="color:#e2e8f0">★</span>').join('')+'</span>'; }
         function initials(t){ if(!t) return 'P'; const w=t.trim().split(/\s+/); return (w.length>=2?w[0][0]+w[1][0]:t.slice(0,2)).toUpperCase(); }
 
+        /* auto product thumbnails: instant gradient+icon, AI photo swaps in when ready */
+        function prodHue(s){ s=String(s||''); let h=0; for(let i=0;i<s.length;i++){ h=(h*31 + s.charCodeAt(i))>>>0; } return h%360; }
+        function catIcon(c){ c=(c||'').toLowerCase(); if(/beef|cattle|cow|goat|sheep|pork|pig|lamb|mutton|meat|livestock|poultry|chicken|egg|animal/.test(c)) return 'fa-cow'; if(/milk|dairy|yogurt|cheese|butter/.test(c)) return 'fa-bottle-droplet'; if(/tractor|machin|equip|tool|harvester|plough|plow/.test(c)) return 'fa-tractor'; if(/chemical|fertil|pesticide|herbicide|spray|input/.test(c)) return 'fa-flask'; if(/fruit|vegetable|tomato|mango|banana|apple|orange/.test(c)) return 'fa-apple-whole'; if(/maize|corn|grain|wheat|rice|cereal|sorghum|barley|millet|bean|sesame|simsim|seed|crop|produce/.test(c)) return 'fa-wheat-awn'; return 'fa-seedling'; }
+
+        function genThumb(p, big){ const h=prodHue(p.title), h2=(h+38)%360; const icon=catIcon((p.title||'')+' '+(p.category||'')), t=escHtml(p.title||'Product'); return `<div class="genthumb${big?' big':''}" style="background:linear-gradient(135deg,hsl(${h},48%,44%),hsl(${h2},52%,30%))"><i class="fas ${icon}"></i><span class="gt-name">${t}</span></div>`; }
+        function pimgInner(p, big){ const real=p.image_display||p.image||p.image_url; const base=genThumb(p,big); const oc=`onclick="openDetail(${p.id})"`; if(real){ return base + `<img ${oc} src="${escHtml(real)}" onerror="this.remove()" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;cursor:pointer">`; } return base; }
         function card(p){
             const img=p.image_display||p.image||p.image_url, rating=p.average_rating||0, rc=p.reviews_count||0;
             const stock=p.stock_quantity||0;
@@ -258,18 +384,19 @@
             const slabel = stock<=0?'Out of stock':(stock<=5?('Low · '+stock+' left'):'In stock');
             const sn = p.store_name||'Agricore Seller';
             return `<div class="pcard">
-                <div class="pimg">${img?`<img src="${img}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="ini" style="display:none">${initials(p.title)}</div>`:`<div class="ini">${initials(p.title)}</div>`}
+                <div class="pimg">${pimgInner(p)}
                     <span class="ptag">${p.category? (p.category.split(' ')[0]):'Deal'}</span>
                     <div class="pquick">
                         <button class="qb chat" title="Message seller" onclick="openChat(${p.id})"><i class="fas fa-comment-dots"></i></button>
+                        <button class="qb rate" title="Rate & review" onclick="openDetail(${p.id})"><i class="fas fa-star"></i></button>
                         <button class="qb share" title="Share product" onclick="openShare(${p.id})"><i class="fas fa-share-nodes"></i></button>
                         <button class="qb wish" title="Wishlist" onclick="toast('Saved to wishlist')"><i class="fas fa-heart"></i></button>
                         <button class="qb drop" title="Dropship to my store" onclick="openDropship(${p.id})"><i class="fas fa-truck"></i></button>
                     </div></div>
                 <div class="pbody">
                     <div class="store-badge"><i class="fas fa-store"></i> ${escHtml(sn)} ${p.store_verified?'<i class="fas fa-circle-check vf" title="Verified store"></i>':''}</div>
-                    <h3>${p.title||''}</h3>
-                    <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem">${stars(rating)}<span class="muted">${rating.toFixed(1)} • ${rc} review${rc===1?'':'s'}</span></div>
+                    <h3 onclick="openDetail(${p.id})" style="cursor:pointer">${p.title||''}</h3>
+                    <div onclick="openDetail(${p.id})" title="See reviews" style="display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem;cursor:pointer">${stars(rating)}<span class="muted">${rating.toFixed(1)} • ${rc} review${rc===1?'':'s'}</span></div>
                     <p class="pdesc">${p.description||'Quality farm product'}</p>
                     <div style="display:flex;align-items:center;justify-content:space-between;margin:.55rem 0 .15rem">
                         <div class="prc">${money(p.price)}</div>
@@ -311,12 +438,19 @@
         $('filter-rating-select').addEventListener('change', e=>{ filters.rating=e.target.value?parseFloat(e.target.value):null; page=1; render(); });
         $('sort-select').addEventListener('change', e=>{ filters.sort=e.target.value; page=1; render(); });
 
+        function skelCard(){ return '<div class="skel-card"><div class="skel skel-img"></div><div style="padding:1.1rem"><div class="skel skel-line" style="width:42%"></div><div class="skel skel-line" style="width:82%;height:18px"></div><div class="skel skel-line" style="width:100%"></div><div class="skel skel-line" style="width:64%"></div><div class="skel skel-line" style="width:55%;height:34px;margin-top:1rem"></div></div></div>'; }
+        function showSkeletons(n){ const g=$('product-grid-all'); if(g) g.innerHTML=Array.from({length:n||per}).map(skelCard).join(''); }
         async function load(){
+            let painted=false;
+            try{ const c=sessionStorage.getItem('agricore_products'); if(c){ const cached=JSON.parse(c); if(Array.isArray(cached)&&cached.length){ products=cached; render(); painted=true; } } }catch(e){}
+            if(!painted) showSkeletons(per);
             try{
                 const res=await fetch(`${API}/products/`,{ headers:{'Authorization':'Bearer '+token} });
                 if(res.status===401){ window.location.href='authentication.html'; return; }
-                const data=await res.json(); products=Array.isArray(data)?data:(data.results||[]); render();
-            }catch(e){ $('product-grid-all').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:4rem;color:#dc2626">Failed to load products</div>'; }
+                const data=await res.json(); const fresh=Array.isArray(data)?data:(data.results||[]);
+                products=fresh; render();
+                try{ sessionStorage.setItem('agricore_products', JSON.stringify(fresh)); }catch(e){}
+            }catch(e){ if(!painted) $('product-grid-all').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:4rem;color:#dc2626">Failed to load products</div>'; }
         }
 
         /* cart (localStorage-backed) */
@@ -348,6 +482,124 @@
             }catch(e){ $('dropship-error').textContent='Network error.'; $('dropship-error').style.display='block'; }
         });
         $('dropship-modal').addEventListener('click', e=>{ if(e.target===$('dropship-modal')) $('dropship-modal').classList.remove('show'); });
+
+        /* ============ Sponsored advertisements ============ */
+        // Reads /api/advertisements/ (same endpoint sellers publish to from digitalstores.html),
+        // keeps only active, non-expired ads, and renders them as an auto-rotating carousel.
+        let __ads=[], __adIdx=0, __adTimer=null;
+        function adActive(a){ if(a.is_active===false) return false; if(!a.end_date) return true; const d=new Date(a.end_date); return isNaN(d.getTime())?true:(d>new Date()); }
+        async function loadAds(){
+            try{
+                const r=await fetch(`${API}/advertisements/`,{headers:{'Authorization':'Bearer '+token}});
+                if(!r.ok) return;
+                const d=await r.json(); let list=Array.isArray(d)?d:(d.results||[]);
+                list=list.filter(adActive);
+                for(let i=list.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=list[i]; list[i]=list[j]; list[j]=t; }
+                __ads=list.slice(0,8);
+                renderAds();
+            }catch(e){}
+        }
+        function adSlide(a){
+            const bg=a.background_color||'#10b981', tx=a.text_color||'#ffffff';
+            const font=a.font_family||'Inter, sans-serif';
+            const ts=Number(a.title_font_size||30), ds=Number(a.description_font_size||18);
+            const img=a.image_display||a.image||a.image_url||'';
+            const fit=a.image_fit||'cover', pos=a.image_position||'center', br=Number(a.image_brightness||100);
+            const cta=escHtml(a.cta_text||'Shop Now');
+            const link=a.link_url||'';
+            const onclick = link ? `onclick="adClick('${encodeURIComponent(link)}')"` : '';
+            return `<div class="ad-slide" style="background:${escHtml(bg)};color:${escHtml(tx)}">
+                ${img?`<div class="ad-img"><img src="${escHtml(img)}" style="object-fit:${escHtml(fit)};object-position:${escHtml(pos)};filter:brightness(${br}%)" onerror="this.parentElement.style.display='none'"></div>`:''}
+                <div class="ad-copy">
+                    <span class="ad-spon">Sponsored</span>
+                    <h3 style="font-family:${escHtml(font)};font-size:${ts}px">${escHtml(a.title||'')}</h3>
+                    <p style="font-family:${escHtml(font)};font-size:${ds}px;margin:0 0 1rem;opacity:.92">${escHtml(a.description||'')}</p>
+                    <button class="ad-cta" type="button" style="color:${escHtml(bg)}" ${onclick}>${cta} <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>`;
+        }
+        function renderAds(){
+            const band=$('ad-band'); if(!band) return;
+            if(!__ads.length){ band.style.display='none'; return; }
+            band.style.display='block';
+            $('ad-track').innerHTML=__ads.map(adSlide).join('');
+            $('ad-dots').innerHTML=__ads.map((_,i)=>`<button class="ad-dot${i===0?' on':''}" onclick="adGo(${i})" aria-label="Ad ${i+1}"></button>`).join('');
+            __adIdx=0; adShow(0); adAuto();
+        }
+        function adShow(i){
+            const track=$('ad-track'); if(!track||!__ads.length) return;
+            __adIdx=((i%__ads.length)+__ads.length)%__ads.length;
+            track.style.transform=`translateX(-${__adIdx*100}%)`;
+            const dots=$('ad-dots'); if(dots) [...dots.children].forEach((d,k)=>d.classList.toggle('on',k===__adIdx));
+        }
+        function adAuto(){ if(__adTimer) clearInterval(__adTimer); if(__ads.length<2) return; __adTimer=setInterval(()=>adShow(__adIdx+1),5500); }
+        window.adGo=function(i){ adShow(i); adAuto(); };
+        window.adNext=function(){ adShow(__adIdx+1); adAuto(); };
+        window.adPrev=function(){ adShow(__adIdx-1); adAuto(); };
+        window.adClick=function(link){ try{ const url=decodeURIComponent(link); if(url) window.open(url,'_blank','noopener'); }catch(e){} };
+
+        /* ============ Product detail + reviews ============ */
+        // Buyer-facing: view a product, read reviews (GET /api/product-reviews/?product=<id>)
+        // and submit your own rating + comment (POST /api/product-reviews/).
+        let detailProduct=null, detailRating=0;
+        window.openDetail=function(id){
+            const p=prodById(id); if(!p){ toast('Product unavailable'); return; }
+            detailProduct=p; detailRating=0;
+            const img=p.image_display||p.image||p.image_url||'';
+            $('detail-hero').innerHTML = pimgInner(p, true);
+            $('detail-title').textContent=p.title||'Product';
+            $('detail-store').innerHTML=`<i class="fas fa-store"></i> ${escHtml(p.store_name||'Agricore Seller')} ${p.store_verified?'<i class="fas fa-circle-check vf"></i>':''}`;
+            $('detail-price').textContent=money(p.price);
+            $('detail-unit').textContent='per '+(p.unit||'unit');
+            $('detail-desc').textContent=p.description||'Quality farm product';
+            detailSetStars(0); $('review-comment').value=''; $('review-error').style.display='none';
+            $('detail-reviews').innerHTML='<div class="muted" style="padding:1rem">Loading reviews…</div>';
+            $('detail-modal').classList.add('show');
+            loadDetailReviews(id);
+        };
+        async function loadDetailReviews(id){
+            try{
+                const r=await fetch(`${API}/product-reviews/?product=${id}`,{headers:{'Authorization':'Bearer '+token}});
+                const d=await r.json(); const list=Array.isArray(d)?d:(d.results||[]);
+                renderDetailReviews(list);
+            }catch(e){ $('detail-reviews').innerHTML='<div style="color:#dc2626;padding:1rem">Could not load reviews.</div>'; }
+        }
+        function renderDetailReviews(list){
+            const n=list.length;
+            const avg=n?list.reduce((s,r)=>s+(Number(r.rating)||0),0)/n:0;
+            $('detail-avg').textContent=avg.toFixed(1);
+            $('detail-avgstars').innerHTML=stars(avg);
+            $('detail-count').textContent=n+' review'+(n!==1?'s':'');
+            const counts=[0,0,0,0,0]; list.forEach(r=>{ const k=Math.round(Number(r.rating)||0); if(k>=1&&k<=5) counts[k-1]++; });
+            $('detail-bars').innerHTML=[5,4,3,2,1].map(st=>{ const c=counts[st-1]; const pct=n?Math.round(c/n*100):0; return `<div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem"><span style="width:30px;color:#64748b">${st}★</span><div style="flex:1;height:7px;background:#eef0ec;border-radius:999px;overflow:hidden"><div style="height:7px;width:${pct}%;background:linear-gradient(90deg,var(--g500),var(--g700))"></div></div><span style="width:22px;text-align:right;color:#94a3b8">${c}</span></div>`; }).join('');
+            const box=$('detail-reviews');
+            if(!n){ box.innerHTML='<div class="muted" style="text-align:center;padding:1.5rem"><i class="fas fa-comment-dots" style="font-size:2rem;display:block;margin-bottom:.5rem;color:#cbd5c5"></i>No reviews yet — be the first to review this product.</div>'; return; }
+            box.innerHTML=list.slice().sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0)).map(r=>{
+                const name=escHtml(r.user_name||'Buyer'); const ini=(String(r.user_name||'B').trim()[0]||'B').toUpperCase();
+                let when=''; try{ when=new Date(r.created_at).toLocaleDateString(); }catch(e){}
+                return `<div class="rev-card"><div class="rev-av">${escHtml(ini)}</div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;gap:.5rem"><strong style="font-size:.9rem">${name}</strong><span class="muted" style="font-size:.72rem">${when}</span></div><div>${stars(r.rating)}</div><p style="margin:.3rem 0 0;font-size:.86rem;color:#475569">${escHtml(r.comment||'')}</p></div></div>`;
+            }).join('');
+        }
+        window.detailSetStars=function(n){ detailRating=n; const wrap=$('review-stars'); if(!wrap) return; [...wrap.children].forEach((el,i)=>{ el.style.color=(i<n)?'#fbbf24':'#e2e8f0'; }); };
+        (function(){ const w=$('review-stars'); if(!w) return; [...w.children].forEach((el,i)=>{ el.addEventListener('mouseenter',()=>{ [...w.children].forEach((s,k)=>s.style.color=(k<=i)?'#fbbf24':'#e2e8f0'); }); }); w.addEventListener('mouseleave',()=>detailSetStars(detailRating)); })();
+        $('detail-close').addEventListener('click', ()=> $('detail-modal').classList.remove('show'));
+        $('detail-modal').addEventListener('click', e=>{ if(e.target===$('detail-modal')) $('detail-modal').classList.remove('show'); });
+        $('review-submit').addEventListener('click', async ()=>{
+            const err=$('review-error'); err.style.display='none';
+            if(!detailProduct) return;
+            if(!detailRating){ err.textContent='Please tap a star rating first.'; err.style.display='block'; return; }
+            const comment=$('review-comment').value.trim();
+            const btn=$('review-submit'), orig=btn.innerHTML; btn.disabled=true; btn.innerHTML='Posting…';
+            try{
+                await apiPost('/product-reviews/', { product:detailProduct.id, rating:detailRating, comment:comment });
+                const p=prodById(detailProduct.id);
+                if(p){ const oldN=Number(p.reviews_count||0); const oldAvg=Number(p.average_rating||0); const newN=oldN+1; p.average_rating=((oldAvg*oldN)+detailRating)/newN; p.reviews_count=newN; render(); }
+                toast('Thanks for your review!');
+                $('review-comment').value=''; detailSetStars(0);
+                loadDetailReviews(detailProduct.id);
+            }catch(e){ err.textContent=e.message||'Could not post your review.'; err.style.display='block'; }
+            finally{ btn.disabled=false; btn.innerHTML=orig; }
+        });
 
         /* ============ Checkout -> Orders -> Escrow purchase flow ============ */
         // Each cart item carries its store id, and an Order belongs to ONE store,
@@ -420,6 +672,48 @@
                 else { toast('Could not start payment.'); }
             }catch(e){ toast(e.message||'Payment could not start.'); }
         };
+        function proofModal(opts){
+            opts = opts || {};
+            return new Promise(function(resolve){
+                var ov = document.createElement('div');
+                ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:99999;padding:1rem';
+                var box = document.createElement('div');
+                box.style.cssText = 'background:#fff;border-radius:14px;max-width:380px;width:100%;padding:1.1rem 1.2rem;box-shadow:0 10px 40px rgba(0,0,0,.25);font-family:inherit';
+                var html = '<div style="font-weight:800;font-size:1.05rem;margin-bottom:.3rem">' + (opts.title || 'Details') + '</div>';
+                if (opts.intro) html += '<div style="font-size:.8rem;color:#6b7280;margin-bottom:.7rem">' + opts.intro + '</div>';
+                if (opts.reasonLabel) html += '<label style="font-size:.78rem;font-weight:600;color:#374151">' + opts.reasonLabel + '</label><textarea id="pm_reason" rows="2" style="width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:8px;padding:.45rem;margin:.2rem 0 .6rem;font-size:.85rem"></textarea>';
+                html += '<label style="font-size:.78rem;font-weight:600;color:#374151">' + (opts.quantityLabel || 'Quantity / weight') + '</label><input id="pm_qty" type="text" placeholder="e.g. 10 sacks (~500kg)" style="width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:8px;padding:.45rem;margin:.2rem 0 .6rem;font-size:.85rem">';
+                html += '<label style="font-size:.78rem;font-weight:600;color:#374151">Photo (optional)</label><input id="pm_photo" type="file" accept="image/*" style="width:100%;margin:.2rem 0 .9rem;font-size:.8rem">';
+                html += '<div style="display:flex;gap:.5rem;justify-content:flex-end"><button id="pm_cancel" type="button" style="padding:.45rem .8rem;border:1px solid #d1d5db;background:#fff;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer">Cancel</button><button id="pm_ok" type="button" style="padding:.45rem .9rem;border:none;background:#10b981;color:#fff;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer">' + (opts.submitLabel || 'Submit') + '</button></div>';
+                box.innerHTML = html;
+                ov.appendChild(box);
+                document.body.appendChild(ov);
+                function close(v){ try { document.body.removeChild(ov); } catch (e) {} resolve(v); }
+                box.querySelector('#pm_cancel').onclick = function(){ close(null); };
+                ov.onclick = function(e){ if (e.target === ov) close(null); };
+                box.querySelector('#pm_ok').onclick = function(){
+                    var qEl = box.querySelector('#pm_qty');
+                    var rEl = box.querySelector('#pm_reason');
+                    var fEl = box.querySelector('#pm_photo');
+                    var file = (fEl && fEl.files && fEl.files[0]) ? fEl.files[0] : null;
+                    close({ qty: (qEl ? qEl.value : '').trim(), reason: (rEl ? rEl.value : '').trim(), file: file });
+                };
+            });
+        }
+        window.disputeEscrow=async function(escrowId){
+            const res = await proofModal({ title: 'Report a problem', intro: 'Tell us what went wrong. A photo and the amount you actually received help us resolve it fairly.', reasonLabel: 'What went wrong?', quantityLabel: 'Amount you received (optional)', submitLabel: 'Submit report' });
+            if (res === null) return;
+            const fd = new FormData();
+            fd.append('reason', res.reason || '');
+            if (res.qty) fd.append('dispute_quantity', res.qty);
+            if (res.file) fd.append('dispute_photo', res.file);
+            try {
+                const r = await fetch(API_BASE + '/escrows/' + escrowId + '/dispute/', { method: 'POST', headers: { 'Authorization': 'Bearer ' + (token || '') }, body: fd });
+                if (!r.ok) { let msg = 'Could not open dispute.'; try { const j = await r.json(); msg = j.detail || msg; } catch (e) {} throw new Error(msg); }
+                toast('Reported. Your payment stays frozen while we review.');
+                loadMyOrders();
+            } catch (e) { toast(e.message || 'Could not open dispute.'); }
+        };
         window.releaseEscrow=async function(escrowId){
             if(!confirm('Confirm you received this order? This releases the held funds to the seller and cannot be undone.')) return;
             try{ await apiPost('/escrows/'+escrowId+'/release/', {}); toast('Funds released to the seller.'); loadMyOrders(); }
@@ -455,8 +749,10 @@
                 const es=String(esc.status||'').toLowerCase();
                 pill='<span class="esc-pill esc-'+(es||'none')+'">Escrow: '+(es||'\u2014')+'</span>';
                 if(es==='pending') action='<button class="addbtn" onclick="payEscrow('+esc.id+')"><i class="fas fa-credit-card"></i> Pay now</button>';
-                else if(es==='held') action='<button class="addbtn" onclick="releaseEscrow('+esc.id+')"><i class="fas fa-box-open"></i> Confirm delivery &amp; release</button>';
+                else if(es==='held') action='<button class="buybtn" onclick="releaseEscrow('+esc.id+')"><i class="fas fa-box-open"></i> Confirm &amp; release</button> <button class="buybtn" style="border-color:#fca5a5;color:#dc2626" onclick="disputeEscrow('+esc.id+')"><i class="fas fa-flag"></i> Report a problem</button>';
                 else if(es==='released') action='<span class="muted"><i class="fas fa-circle-check" style="color:#047857"></i> Completed</span>';
+                else if(es==='disputed') action='<span class="muted" style="color:#dc2626"><i class="fas fa-flag"></i> Reported \u2014 under review</span>';
+                if(es==='held' && esc.delivery_otp){ action = '<div style="margin-bottom:.5rem;padding:.55rem .75rem;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px"><div style="font-size:.7rem;font-weight:700;color:#065f46;text-transform:uppercase;letter-spacing:.04em">Delivery code</div><div style="font-family:Fraunces,serif;font-size:1.5rem;font-weight:900;letter-spacing:.18em;color:#047857">'+escHtml(esc.delivery_otp)+'</div><div class="muted" style="font-size:.7rem">Give this to the courier only when your order arrives \u2014 it confirms delivery.</div></div>' + action; }
             }
             const stLabel=(st.charAt(0).toUpperCase()+st.slice(1)).replace(/_/g,' ');
             return '<div class="ord-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem">'
@@ -557,11 +853,17 @@
         if($('share-modal')) $('share-modal').addEventListener('click', function(e){ if(e.target===$('share-modal')) $('share-modal').classList.remove('show'); });
 
         /* Dale context for this page */
-        window.__daleCtx = function(){ const v=(window.__mkView||products).slice(0,15).map(p=>({title:p.title,price:p.price,category:p.category,rating:p.average_rating,stock:p.stock_quantity})); return { page:'Marketplace', type:'marketplace', extras:{ filters:filters, visible_count:(window.__mkView||products).length, products:v } }; };
+        const MARKETPLACE_FEATURES = "Agricore Marketplace features: search and browse farm products; filter by category, price range and minimum rating, and sort by price or rating; open a product to read and write star reviews; add to cart and check out with escrow-protected payment (money is held safely and only released to the seller after the buyer confirms delivery, paid via Flutterwave); track purchases and release escrow under 'My Orders'; message a product's seller directly from its card; dropship any product into your own store to resell it; share a product into any chat; and view sponsored ads. All payments are escrow-protected.";
+        window.__daleCtx = function(){
+            const all=(window.__mkView||products);
+            const list=all.slice(0,80).map(p=>({ title:p.title, price:p.price, category:p.category, rating:p.average_rating, reviews:p.reviews_count, stock:p.stock_quantity, unit:p.unit, store:p.store_name }));
+            let cart=[]; try{ cart=Object.values(getCart()).map(i=>({ title:i.title, price:i.price, qty:i.qty })); }catch(e){}
+            return { page:'Marketplace', type:'marketplace', features:MARKETPLACE_FEATURES, extras:{ filters:filters, total_products:products.length, visible_count:all.length, products:list, cart:cart } };
+        };
         window.__daleIntro = "Hi, I'm Dale. Ask me to find the best deal, compare products, or recommend what to buy for your farm.";
         window.__daleChips = ["Find me the cheapest fertilizer","What's top-rated here?","Compare these products","What should I buy for cattle?"];
 
-        loadMe(); updateCart(); load();
+        loadMe(); updateCart(); load(); loadAds();
         if(new URLSearchParams(location.search).get('checkout')==='1'){ setTimeout(()=>{ try{ openCheckout(); }catch(e){} }, 300); }
 
         /* i18n title (safe if i18n absent) */

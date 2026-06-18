@@ -346,7 +346,7 @@
       if(!res.ok){ const err=new Error('http '+res.status); err.status=res.status; err.data=data; throw err; }
       return data;
     }
-    const GOOGLE_CLIENT_ID = '971117362434-eip5e1hqarqhsed65ne29qcsbjjkcth4.apps.googleusercontent.com';
+    const GOOGLE_CLIENT_ID = '971117362434-mhtjj726gf1r9cagcsvm65nqc95htj3s.apps.googleusercontent.com';
 
     /* ---- procedural farmland mosaic ---- */
     function buildFarmland(){
@@ -416,7 +416,7 @@
         initGoogle(tries=0){
           if(window.google && window.google.accounts && window.google.accounts.id){
             try{
-              window.google.accounts.id.initialize({ client_id:GOOGLE_CLIENT_ID, callback:this.onGoogle });
+              window.google.accounts.id.initialize({ client_id:GOOGLE_CLIENT_ID, callback:this.onGoogle, use_fedcm_for_button:true });
               const host=this.$refs.gbtn;
               const w=host ? Math.min(400, Math.max(240, host.clientWidth||320)) : 320;
               window.google.accounts.id.renderButton(host, { type:'standard', theme:'outline', size:'large', shape:'pill', text:'continue_with', logo_alignment:'center', width:w });

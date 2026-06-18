@@ -104,7 +104,7 @@ TEMPLATES = [
 DATABASES = {
     'default': dj_database_url.config(
         default=env('DATABASE_URL', default='postgres://postgres:password@localhost:5432/agricore'),
-        conn_max_age=60,  # Reduce idle connection time to help avoid max clients error
+        conn_max_age=0,  # Reduce idle connection time to help avoid max clients error
         ssl_require=not DEBUG
     )
 }
@@ -223,3 +223,5 @@ SPECTACULAR_SETTINGS = {
 
 # --- Weather (Open-Meteo) snapshot cache TTL in minutes ---
 WEATHER_CACHE_MINUTES = env.int('WEATHER_CACHE_MINUTES', default=60)
+
+DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True

@@ -18,6 +18,7 @@ class CustomUser(AbstractUser):
         ('farmer', 'Farmer'),
         ('retailer', 'Retailer / Buyer'),
         ('specialized', 'Specialized Professional'),
+        ('transporter', 'Transporter'),
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, blank=True, null=True)
 

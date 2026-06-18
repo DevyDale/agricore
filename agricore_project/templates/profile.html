@@ -3,266 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Profile - Agricore</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Professional Profile · Agricore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
-            font-family: 'Inter', sans-serif;
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-        }
-        .profile-input:focus {
-            border-color: #10b981;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-        }
-    </style>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* ===== Agricore farmland brand override ===== */
-        :root{ --ag-cream:#faf6ee; --ag-line:#ece4d6; --ag-green:#10b981; --ag-green-d:#047857; }
-        *{ font-family:'Inter',system-ui,sans-serif !important; }
-        h1,h2,h3,h4,.brand-display{ font-family:'Fraunces',serif !important; letter-spacing:-.01em; }
-        body{ background:radial-gradient(130% 100% at 50% -8%, #fffdf8 0%, #f4efe3 60%) !important; color:#16271c; }
-        body::before{ background:radial-gradient(circle, rgba(16,185,129,.07) 0%, transparent 70%) !important; }
-        body::after{ background:radial-gradient(circle, rgba(201,154,72,.06) 0%, transparent 70%) !important; }
-        .glass-card,.glass{ background:#fff !important; border:1px solid var(--ag-line) !important; box-shadow:0 14px 36px -26px rgba(20,40,25,.5) !important; }
-        .gradient-header{ background:linear-gradient(135deg,#10b981 0%,#047857 100%) !important; }
-        .btn-primary{ background:linear-gradient(135deg,#10b981,#047857) !important; }
-        .btn-secondary{ color:#047857 !important; border-color:#10b981 !important; }
-        .gradient-text{ background:linear-gradient(135deg,#0f7a4b,#065f3c) !important; -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; }
-        .review-card{ background:#fbf7ee !important; border:1px solid var(--ag-line) !important; }
-        .tab-btn.active{ background:linear-gradient(135deg,#10b981,#047857) !important; }
-        .fab{ background:linear-gradient(135deg,#10b981,#047857) !important; }
-        .stat-card{ background:linear-gradient(135deg, rgba(16,185,129,.06), rgba(201,154,72,.06)) !important; border:1px solid rgba(16,185,129,.16) !important; }
-        .stat-value{ background:linear-gradient(135deg,#0f7a4b,#065f3c) !important; -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; }
-        .price-badge{ background:linear-gradient(135deg,#eafaf1,#d6f0e0) !important; border-color:#9fe0bb !important; }
-        .contact-icon{ background:linear-gradient(135deg,#10b981,#047857) !important; }
-        a[href="marketplace.html"], .text-emerald-700{ color:#047857 !important; }
+        :root{ --g500:#10b981; --g600:#059669; --g700:#047857; --line:#ece4d6; --ink:#16271c; --cream:#faf6ee; --parch:#f4efe3; }
+        *{ font-family:'Inter', system-ui, sans-serif; }
+        h1,h2,h3,.font-display{ font-family:'Fraunces', serif; letter-spacing:-.01em; }
+        body{
+            color:var(--ink);
+            background:
+                radial-gradient(1200px 600px at 82% -12%, #fff6e2 0%, transparent 58%),
+                radial-gradient(900px 520px at -12% 112%, #edf2e0 0%, transparent 55%),
+                var(--cream);
+            min-height:100vh;
+        }
+
+        .hero{ position:relative; overflow:hidden; }
+        #pf-farmland{ position:absolute; inset:0; }
+        #pf-farmland svg{ display:block; width:100%; height:100%; }
+        .hero-scrim{ position:absolute; inset:0; background:linear-gradient(100deg, rgba(8,30,18,.84), rgba(8,30,18,.5)); }
+        .wordmark{ font-family:'Fraunces', serif; font-weight:900; color:#fff; font-size:1.5rem; display:inline-flex; align-items:center; gap:.55rem; }
+        .nav-pill{ background:rgba(255,255,255,.14); backdrop-filter:blur(8px); color:#fff; border:1px solid rgba(255,255,255,.28); padding:.55rem 1rem; border-radius:999px; font-weight:600; font-size:.875rem; transition:.25s; display:inline-flex; align-items:center; gap:.5rem; }
+        .nav-pill:hover{ background:rgba(255,255,255,.26); border-color:rgba(255,255,255,.45); transform:translateY(-2px); }
+
+        .card{ background:#fff; border:1px solid var(--line); border-radius:1.5rem; box-shadow:0 18px 44px rgba(20,39,28,.08); }
+        .section{ border-top:1px solid var(--line); padding-top:1.75rem; margin-top:1.75rem; }
+        .section.first{ border-top:0; padding-top:0; margin-top:0; }
+        .sec-head{ display:flex; align-items:center; gap:.7rem; margin-bottom:1.15rem; }
+        .sec-icon{ width:40px; height:40px; border-radius:.75rem; display:grid; place-items:center; background:linear-gradient(135deg,#eafaf1,#d6f0e0); color:var(--g700); border:1px solid #bfe6cf; font-size:1rem; flex:none; }
+        .sec-head h3{ font-size:1.2rem; font-weight:700; color:var(--ink); }
+
+        .field-label{ display:block; font-size:.8rem; font-weight:600; color:#5b6b5f; margin-bottom:.4rem; }
+        .field-label i{ color:var(--g600); margin-right:.35rem; }
+        .field-wrap{ position:relative; }
+        .field-ic{ position:absolute; left:.95rem; top:50%; transform:translateY(-50%); color:#9aa39a; pointer-events:none; font-size:.9rem; }
+        .input-field{ width:100%; background:#fffdf8; border:1px solid var(--line); border-radius:.75rem; padding:.7rem .95rem; font-size:.9375rem; color:var(--ink); transition:.2s; }
+        .input-field.with-ic{ padding-left:2.5rem; }
+        .input-field:focus{ outline:none; border-color:var(--g500); background:#fff; box-shadow:0 0 0 4px rgba(16,185,129,.12); }
+        textarea.input-field{ resize:vertical; }
+        .hint{ font-size:.75rem; color:#9aa39a; margin-top:.35rem; }
+
+        .btn-primary{ background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; font-weight:700; padding:.95rem 1.75rem; border-radius:999px; border:none; cursor:pointer; transition:all .3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 8px 20px rgba(16,185,129,.28); display:inline-flex; align-items:center; justify-content:center; gap:.5rem; }
+        .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(16,185,129,.4); }
+        .btn-secondary{ background:var(--parch); color:var(--ink); font-weight:700; padding:.95rem 1.75rem; border-radius:999px; border:1px solid var(--line); cursor:pointer; transition:.2s; display:inline-flex; align-items:center; justify-content:center; gap:.5rem; text-decoration:none; }
+        .btn-secondary:hover{ background:#ece2cf; }
+
+        .avatar-ring{ width:8rem; height:8rem; border-radius:50%; object-fit:cover; border:4px solid var(--g500); box-shadow:0 10px 26px rgba(16,185,129,.25); background:#eafaf1; }
+        .cam-btn{ position:absolute; bottom:.25rem; right:0; background:linear-gradient(135deg,var(--g500),var(--g700)); color:#fff; width:2.4rem; height:2.4rem; border-radius:50%; display:grid; place-items:center; cursor:pointer; border:3px solid #fff; box-shadow:0 4px 12px rgba(16,185,129,.35); }
     </style>
 </head>
 <body class="min-h-screen">
-    <!-- Header -->
-    <header class="glass shadow-lg sticky top-0 z-40">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <a href="marketplace.html" class="text-2xl font-black text-emerald-700">
-                        <i class="fas fa-leaf mr-2"></i>Agricore
-                    </a>
-                </div>
-                <a href="workforce.html" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 font-semibold">
-                    <i class="fas fa-arrow-left mr-2"></i> Back to Network
-                </a>
+    <!-- Hero -->
+    <header class="hero">
+        <div id="pf-farmland"></div>
+        <div class="hero-scrim"></div>
+        <div class="relative container mx-auto px-6 pt-6 pb-12">
+            <div class="flex items-center justify-between mb-10">
+                <a href="marketplace.html" class="wordmark"><i class="fas fa-leaf"></i> Agricore</a>
+                <a href="workforce.html" class="nav-pill"><i class="fas fa-arrow-left"></i><span class="hidden sm:inline">Back to Network</span></a>
             </div>
+            <h1 class="font-display text-4xl md:text-5xl font-black text-white mb-2 flex items-center gap-3">
+                <i class="fas fa-user-tie"></i> Professional Profile
+            </h1>
+            <p class="text-white/80 text-lg">Build your professional presence in the agricultural network</p>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="container mx-auto px-6 py-12 max-w-4xl">
-        <div class="glass rounded-3xl p-8 shadow-2xl">
-            <div class="mb-8">
-                <h1 class="text-4xl font-black text-gray-800 mb-2">
-                    <i class="fas fa-user-circle text-emerald-600 mr-3"></i>
-                    Professional Profile
-                </h1>
-                <p class="text-gray-600">Build your professional presence in the agricultural network</p>
-            </div>
+    <!-- Main -->
+    <main class="container mx-auto px-6 py-10 max-w-4xl">
+        <div class="card p-8 md:p-10">
+            <form id="profile-form" class="space-y-2">
 
-            <form id="profile-form" class="space-y-8">
                 <!-- Profile Image -->
-                <div class="text-center">
+                <div class="text-center pb-2">
                     <div class="inline-block relative">
-                        <img id="profile-preview" src="https://via.placeholder.com/150/10b981/ffffff?text=Photo" 
-                             class="w-32 h-32 rounded-full object-cover border-4 border-emerald-500 mb-4">
-                        <label for="profile-image-input" class="absolute bottom-4 right-0 bg-emerald-600 text-white p-2 rounded-full cursor-pointer hover:bg-emerald-700">
-                            <i class="fas fa-camera"></i>
-                        </label>
+                        <img id="profile-preview" alt="Profile photo" class="avatar-ring"
+                             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect width='150' height='150' fill='%2310b981'/%3E%3Ccircle cx='75' cy='60' r='27' fill='%23ffffff'/%3E%3Cpath d='M33 132c0-24 19-39 42-39s42 15 42 39' fill='%23ffffff'/%3E%3C/svg%3E">
+                        <label for="profile-image-input" class="cam-btn" title="Upload photo"><i class="fas fa-camera"></i></label>
                         <input type="file" id="profile-image-input" accept="image/*" class="hidden">
                     </div>
+                    <p class="hint">Click the camera to upload a photo</p>
                 </div>
 
                 <!-- Basic Information -->
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <i class="fas fa-info-circle text-emerald-600"></i>
-                        Basic Information
-                    </h3>
+                <div class="section first">
+                    <div class="sec-head">
+                        <span class="sec-icon"><i class="fas fa-circle-info"></i></span>
+                        <h3>Basic Information</h3>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
-                            <input type="tel" id="phone-input" placeholder="+1 234 567 8900" 
-                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                            <label class="field-label" for="phone-input"><i class="fas fa-phone"></i>Phone Number</label>
+                            <div class="field-wrap">
+                                <i class="fas fa-phone field-ic"></i>
+                                <input type="tel" id="phone-input" placeholder="+1 234 567 8900" class="input-field with-ic">
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Location *</label>
-                            <input type="text" id="location-input" placeholder="City, Country" required
-                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                            <label class="field-label" for="location-input"><i class="fas fa-location-dot"></i>Location *</label>
+                            <div class="field-wrap">
+                                <i class="fas fa-location-dot field-ic"></i>
+                                <input type="text" id="location-input" placeholder="City, Country" required class="input-field with-ic">
+                            </div>
                         </div>
                     </div>
                     <div class="mt-4">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Bio/Summary</label>
-                        <textarea id="bio-input" rows="3" maxlength="500" placeholder="Brief introduction about yourself and your expertise..."
-                                  class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl"></textarea>
-                        <p class="text-sm text-gray-500 mt-1">Max 500 characters</p>
+                        <label class="field-label" for="bio-input"><i class="fas fa-align-left"></i>Bio / Summary</label>
+                        <textarea id="bio-input" rows="3" maxlength="500" placeholder="Brief introduction about yourself and your expertise..." class="input-field"></textarea>
+                        <p class="hint">Max 500 characters</p>
                     </div>
                 </div>
 
                 <!-- Professional Details -->
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <i class="fas fa-briefcase text-emerald-600"></i>
-                        Professional Details
-                    </h3>
+                <div class="section">
+                    <div class="sec-head">
+                        <span class="sec-icon"><i class="fas fa-briefcase"></i></span>
+                        <h3>Professional Details</h3>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Specialty *</label>
-                            <select id="specialty-input" required class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
-                                <option value="">Select Specialty</option>
-                                <option value="agronomist">Agronomist</option>
-                                <option value="veterinarian">Veterinarian</option>
-                                <option value="mechanic">Mechanic</option>
-                                <option value="chemist">Agricultural Chemist</option>
-                                <option value="farm_manager">Farm Manager</option>
-                                <option value="agricultural_engineer">Agricultural Engineer</option>
-                                <option value="soil_scientist">Soil Scientist</option>
-                                <option value="crop_consultant">Crop Consultant</option>
-                                <option value="pest_control">Pest Control Specialist</option>
-                                <option value="livestock_handler">Livestock Handler</option>
-                                <option value="irrigation_specialist">Irrigation Specialist</option>
-                                <option value="agricultural_economist">Agricultural Economist</option>
-                                <option value="horticulturist">Horticulturist</option>
-                                <option value="agricultural_technician">Agricultural Technician</option>
-                                <option value="food_safety">Food Safety Specialist</option>
-                                <option value="data_analyst">Agricultural Data Analyst</option>
-                                <option value="farm_laborer">Farm Laborer</option>
-                                <option value="equipment_operator">Equipment Operator</option>
-                                <option value="harvester">Harvester</option>
-                                <option value="planting_specialist">Planting Specialist</option>
-                            </select>
+                            <label class="field-label" for="specialty-input"><i class="fas fa-user-tag"></i>Specialty *</label>
+                            <div class="field-wrap">
+                                <i class="fas fa-user-tag field-ic"></i>
+                                <select id="specialty-input" required class="input-field with-ic">
+                                    <option value="">Select Specialty</option>
+                                    <option value="agronomist">Agronomist</option>
+                                    <option value="veterinarian">Veterinarian</option>
+                                    <option value="mechanic">Mechanic</option>
+                                    <option value="chemist">Agricultural Chemist</option>
+                                    <option value="farm_manager">Farm Manager</option>
+                                    <option value="agricultural_engineer">Agricultural Engineer</option>
+                                    <option value="soil_scientist">Soil Scientist</option>
+                                    <option value="crop_consultant">Crop Consultant</option>
+                                    <option value="pest_control">Pest Control Specialist</option>
+                                    <option value="livestock_handler">Livestock Handler</option>
+                                    <option value="irrigation_specialist">Irrigation Specialist</option>
+                                    <option value="agricultural_economist">Agricultural Economist</option>
+                                    <option value="horticulturist">Horticulturist</option>
+                                    <option value="agricultural_technician">Agricultural Technician</option>
+                                    <option value="food_safety">Food Safety Specialist</option>
+                                    <option value="data_analyst">Agricultural Data Analyst</option>
+                                    <option value="farm_laborer">Farm Laborer</option>
+                                    <option value="equipment_operator">Equipment Operator</option>
+                                    <option value="harvester">Harvester</option>
+                                    <option value="planting_specialist">Planting Specialist</option>
+                                </select>
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Years of Experience *</label>
-                            <input type="number" id="experience-input" min="0" required placeholder="e.g., 5"
-                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                            <label class="field-label" for="experience-input"><i class="fas fa-calendar-check"></i>Years of Experience *</label>
+                            <div class="field-wrap">
+                                <i class="fas fa-calendar-check field-ic"></i>
+                                <input type="number" id="experience-input" min="0" required placeholder="e.g., 5" class="input-field with-ic">
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Hourly Rate ($) *</label>
-                            <input type="number" id="rate-input" min="0" step="0.01" required placeholder="e.g., 25.00"
-                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                            <label class="field-label" for="rate-input"><i class="fas fa-dollar-sign"></i>Hourly Rate ($) *</label>
+                            <div class="field-wrap">
+                                <i class="fas fa-dollar-sign field-ic"></i>
+                                <input type="number" id="rate-input" min="0" step="0.01" required placeholder="e.g., 25.00" class="input-field with-ic">
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Availability *</label>
-                            <select id="availability-input" required class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
-                                <option value="available">Available Now</option>
-                                <option value="full_time">Full-Time</option>
-                                <option value="part_time">Part-Time</option>
-                                <option value="contract">Contract</option>
-                                <option value="seasonal">Seasonal</option>
-                                <option value="not_available">Not Available</option>
-                            </select>
+                            <label class="field-label" for="availability-input"><i class="fas fa-clock"></i>Availability *</label>
+                            <div class="field-wrap">
+                                <i class="fas fa-clock field-ic"></i>
+                                <select id="availability-input" required class="input-field with-ic">
+                                    <option value="available">Available Now</option>
+                                    <option value="full_time">Full-Time</option>
+                                    <option value="part_time">Part-Time</option>
+                                    <option value="contract">Contract</option>
+                                    <option value="seasonal">Seasonal</option>
+                                    <option value="not_available">Not Available</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Education & Experience -->
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <i class="fas fa-graduation-cap text-emerald-600"></i>
-                        Education & Experience
-                    </h3>
+                <div class="section">
+                    <div class="sec-head">
+                        <span class="sec-icon"><i class="fas fa-graduation-cap"></i></span>
+                        <h3>Education &amp; Experience</h3>
+                    </div>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Education</label>
-                            <textarea id="education-input" rows="4" placeholder="e.g., Bachelor's in Agriculture, XYZ University, 2015"
-                                      class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl"></textarea>
+                            <label class="field-label" for="education-input"><i class="fas fa-school"></i>Education</label>
+                            <textarea id="education-input" rows="3" placeholder="e.g., Bachelor's in Agriculture, XYZ University, 2015" class="input-field"></textarea>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Work Experience</label>
-                            <textarea id="work-experience-input" rows="4" placeholder="Describe your relevant work experience, roles, and responsibilities..."
-                                      class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl"></textarea>
+                            <label class="field-label" for="work-experience-input"><i class="fas fa-briefcase"></i>Work Experience</label>
+                            <textarea id="work-experience-input" rows="4" placeholder="Describe your relevant work experience, roles, and responsibilities..." class="input-field"></textarea>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Notable Projects</label>
-                            <textarea id="projects-input" rows="4" placeholder="Describe significant projects you've worked on..."
-                                      class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl"></textarea>
+                            <label class="field-label" for="projects-input"><i class="fas fa-diagram-project"></i>Notable Projects</label>
+                            <textarea id="projects-input" rows="4" placeholder="Describe significant projects you've worked on..." class="input-field"></textarea>
                         </div>
                     </div>
                 </div>
 
                 <!-- Skills & Certifications -->
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <i class="fas fa-certificate text-emerald-600"></i>
-                        Skills & Certifications
-                    </h3>
+                <div class="section">
+                    <div class="sec-head">
+                        <span class="sec-icon"><i class="fas fa-certificate"></i></span>
+                        <h3>Skills &amp; Certifications</h3>
+                    </div>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Skills (comma-separated)</label>
-                            <input type="text" id="skills-input" placeholder="e.g., Crop rotation, Soil testing, Pest management"
-                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
-                            <p class="text-sm text-gray-500 mt-1">Separate skills with commas</p>
+                            <label class="field-label" for="skills-input"><i class="fas fa-screwdriver-wrench"></i>Skills (comma-separated)</label>
+                            <div class="field-wrap">
+                                <i class="fas fa-screwdriver-wrench field-ic"></i>
+                                <input type="text" id="skills-input" placeholder="e.g., Crop rotation, Soil testing, Pest management" class="input-field with-ic">
+                            </div>
+                            <p class="hint">Separate skills with commas</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Certifications (comma-separated)</label>
-                            <input type="text" id="certifications-input" placeholder="e.g., Certified Crop Advisor, Organic Farming Certificate"
-                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                            <label class="field-label" for="certifications-input"><i class="fas fa-award"></i>Certifications (comma-separated)</label>
+                            <div class="field-wrap">
+                                <i class="fas fa-award field-ic"></i>
+                                <input type="text" id="certifications-input" placeholder="e.g., Certified Crop Advisor, Organic Farming Certificate" class="input-field with-ic">
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Languages (comma-separated)</label>
-                            <input type="text" id="languages-input" placeholder="e.g., English, Spanish, French"
-                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                            <label class="field-label" for="languages-input"><i class="fas fa-language"></i>Languages (comma-separated)</label>
+                            <div class="field-wrap">
+                                <i class="fas fa-language field-ic"></i>
+                                <input type="text" id="languages-input" placeholder="e.g., English, Spanish, French" class="input-field with-ic">
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Additional Information -->
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <i class="fas fa-link text-emerald-600"></i>
-                        Additional Information
-                    </h3>
+                <div class="section">
+                    <div class="sec-head">
+                        <span class="sec-icon"><i class="fas fa-link"></i></span>
+                        <h3>Additional Information</h3>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">LinkedIn Profile</label>
-                            <input type="url" id="linkedin-input" placeholder="https://linkedin.com/in/yourprofile"
-                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                            <label class="field-label" for="linkedin-input"><i class="fab fa-linkedin"></i>LinkedIn Profile</label>
+                            <div class="field-wrap">
+                                <i class="fab fa-linkedin field-ic"></i>
+                                <input type="url" id="linkedin-input" placeholder="https://linkedin.com/in/yourprofile" class="input-field with-ic">
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Portfolio URL</label>
-                            <input type="url" id="portfolio-input" placeholder="https://yourportfolio.com"
-                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                            <label class="field-label" for="portfolio-input"><i class="fas fa-globe"></i>Portfolio URL</label>
+                            <div class="field-wrap">
+                                <i class="fas fa-globe field-ic"></i>
+                                <input type="url" id="portfolio-input" placeholder="https://yourportfolio.com" class="input-field with-ic">
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Response Time</label>
-                            <input type="text" id="response-time-input" placeholder="e.g., Within 24 hours"
-                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                            <label class="field-label" for="response-time-input"><i class="fas fa-reply"></i>Response Time</label>
+                            <div class="field-wrap">
+                                <i class="fas fa-reply field-ic"></i>
+                                <input type="text" id="response-time-input" placeholder="e.g., Within 24 hours" class="input-field with-ic">
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Resume (PDF/DOC)</label>
-                            <input type="file" id="resume-input" accept=".pdf,.doc,.docx"
-                                   class="profile-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl">
+                            <label class="field-label" for="resume-input"><i class="fas fa-file-arrow-up"></i>Resume (PDF/DOC)</label>
+                            <input type="file" id="resume-input" accept=".pdf,.doc,.docx" class="input-field">
                         </div>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="flex gap-4 pt-6">
-                    <button type="submit" class="flex-1 px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-lg rounded-xl hover:shadow-lg">
-                        <i class="fas fa-save mr-2"></i>Save Profile
-                    </button>
-                    <a href="workforce.html" class="px-8 py-4 bg-gray-200 text-gray-800 font-bold text-lg rounded-xl hover:bg-gray-300">
-                        Cancel
-                    </a>
+                <div class="section">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button type="submit" class="btn-primary flex-1 text-lg"><i class="fas fa-floppy-disk"></i> Save Profile</button>
+                        <a href="workforce.html" class="btn-secondary text-lg"><i class="fas fa-xmark"></i> Cancel</a>
+                    </div>
                 </div>
             </form>
         </div>
-    </div>
+    </main>
 
     <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-6 right-6 bg-emerald-600 text-white px-6 py-4 rounded-xl shadow-2xl transform translate-x-full transition-transform z-50">
@@ -289,7 +308,6 @@
                     const profile = await response.json();
                     populateForm(profile);
                 } else if (response.status === 404) {
-                    // No profile yet, that's okay
                     console.log('No existing profile found');
                 } else {
                     showToast('Failed to load profile', 'error');
@@ -349,11 +367,10 @@
             e.preventDefault();
 
             const formData = new FormData();
-            
-            // Basic info
+
             const phone = document.getElementById('phone-input').value;
             if (phone) formData.append('phone', phone);
-            
+
             formData.append('location', document.getElementById('location-input').value);
             formData.append('bio', document.getElementById('bio-input').value);
             formData.append('specialty', document.getElementById('specialty-input').value);
@@ -363,43 +380,30 @@
             formData.append('education', document.getElementById('education-input').value);
             formData.append('work_experience', document.getElementById('work-experience-input').value);
             formData.append('notable_projects', document.getElementById('projects-input').value);
-            
-            // Skills & certifications (convert comma-separated strings to JSON arrays)
+
             const skills = document.getElementById('skills-input').value
-                .split(',')
-                .map(s => s.trim())
-                .filter(s => s);
+                .split(',').map(s => s.trim()).filter(s => s);
             formData.append('skills', JSON.stringify(skills));
-            
+
             const certifications = document.getElementById('certifications-input').value
-                .split(',')
-                .map(c => c.trim())
-                .filter(c => c);
+                .split(',').map(c => c.trim()).filter(c => c);
             formData.append('certifications', JSON.stringify(certifications));
-            
+
             const languages = document.getElementById('languages-input').value
-                .split(',')
-                .map(l => l.trim())
-                .filter(l => l);
+                .split(',').map(l => l.trim()).filter(l => l);
             formData.append('languages', JSON.stringify(languages));
-            
-            // URLs
+
             const linkedin = document.getElementById('linkedin-input').value;
             if (linkedin) formData.append('linkedin_url', linkedin);
-            
+
             const portfolio = document.getElementById('portfolio-input').value;
             if (portfolio) formData.append('portfolio_url', portfolio);
-            
+
             const responseTime = document.getElementById('response-time-input').value;
             if (responseTime) formData.append('response_time', responseTime);
-            
-            // Files
-            if (profileImageFile) {
-                formData.append('profile_image', profileImageFile);
-            }
-            if (resumeFile) {
-                formData.append('resume', resumeFile);
-            }
+
+            if (profileImageFile) formData.append('profile_image', profileImageFile);
+            if (resumeFile) formData.append('resume', resumeFile);
 
             try {
                 const response = await fetch('/api/professional-profiles/update_me/', {
@@ -412,9 +416,7 @@
 
                 if (response.ok) {
                     showToast('Profile saved successfully!');
-                    setTimeout(() => {
-                        window.location.href = 'workforce.html';
-                    }, 1500);
+                    setTimeout(() => { window.location.href = 'workforce.html'; }, 1500);
                 } else {
                     const error = await response.json();
                     showToast('Failed to save profile: ' + JSON.stringify(error), 'error');
@@ -429,22 +431,37 @@
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toast-message');
-            
+
             toast.className = `fixed bottom-6 right-6 px-6 py-4 rounded-xl shadow-2xl transform transition-transform z-50 ${
                 type === 'error' ? 'bg-red-600' : 'bg-emerald-600'
             } text-white`;
-            
+
             toastMessage.textContent = message;
             toast.classList.remove('translate-x-full');
-            
-            setTimeout(() => {
-                toast.classList.add('translate-x-full');
-            }, 3000);
+
+            setTimeout(() => { toast.classList.add('translate-x-full'); }, 3000);
         }
 
         // Initialize
         loadProfile();
     </script>
+
+    <!-- Farmland golden-hour mosaic for the hero -->
+    <script>
+    (function(){
+        function bf(){
+            var W=1200,H=320,cols=8,rows=2,jx=(W/cols)*.32,jy=(H/rows)*.32,P=[];
+            for(var r=0;r<=rows;r++){P[r]=[];for(var c=0;c<=cols;c++){var e=(r===0||r===rows||c===0||c===cols);P[r][c]={x:(c/cols)*W+(e?0:(Math.random()*2-1)*jx),y:(r/rows)*H+(e?0:(Math.random()*2-1)*jy)};}}
+            var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']],ang=[0,16,90,74,16,0,90,30,16],defs='';
+            pal.forEach(function(c,i){defs+='<pattern id="pf'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>';});
+            var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8],cells='';
+            for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e2=P[r2+1][c2],fi=bag[Math.floor(Math.random()*bag.length)];cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e2.x.toFixed(1)+','+e2.y.toFixed(1)+'" fill="url(#pf'+fi+')" stroke="rgba(22,15,7,.16)" stroke-width="1.1"/>';}
+            return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';
+        }
+        var el=document.getElementById('pf-farmland'); if(el) el.innerHTML=bf();
+    })();
+    </script>
+
     <!-- Dale AI context for this page -->
     <script>
       function __v(id){ var el=document.getElementById(id); return el?el.value:''; }

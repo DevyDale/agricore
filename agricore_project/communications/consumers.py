@@ -1,74 +1,87 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.db import database_sync_to_async
-from .models import Message, Conversation
-from accounts.models import CustomUser
-from django.contrib.auth.models import AnonymousUser
-from rest_framework_simplejwt.tokens import AccessToken
 import json
 
-# Your original is fine; added @database_sync_to_async for safety if needed
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+from django.utils import timezone
+from django.contrib.auth.models import AnonymousUser
+
+from .models import Message, Conversation, UserPresence
+from accounts.models import CustomUser
+
+
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.conversation_id = self.scope['url_route']['kwargs']['conversation_id']
         self.group_name = f'conversation_{self.conversation_id}'
+        self.user = self.scope.get('user')  # set by JwtAuthMiddleware
 
-        # JWT authentication via query param token
-        token = None
-        try:
-            query = self.scope.get('query_string', b'').decode()
-            params = dict([part.split('=') for part in query.split('&') if '=' in part])
-            token = params.get('token')
-        except Exception:
-            token = None
-
-        if token:
-            try:
-                access = AccessToken(token)
-                user_id = access.get('user_id')
-                if user_id:
-                    self.scope['user'] = await self.get_user(user_id)
-            except Exception:
-                pass
-
-        # Check if user is participant
-        if await self.is_participant():
-            await self.channel_layer.group_add(self.group_name, self.channel_name)
-            await self.accept()
-        else:
+        if not self.user or isinstance(self.user, AnonymousUser) or not await self.is_participant():
             await self.close()
+            return
+
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
+        await self.accept()
+        await self.set_presence(True)
+        await self.channel_layer.group_send(self.group_name, {
+            'type': 'presence.event',
+            'presence': {'user_id': self.user.id, 'username': self.user.username,
+                         'online': True, 'last_seen': timezone.now().isoformat()},
+        })
 
     async def disconnect(self, close_code):
+        try:
+            if getattr(self, 'user', None) and not isinstance(self.user, AnonymousUser):
+                await self.set_presence(False)
+                await self.channel_layer.group_send(self.group_name, {
+                    'type': 'presence.event',
+                    'presence': {'user_id': self.user.id, 'username': self.user.username,
+                                 'online': False, 'last_seen': timezone.now().isoformat()},
+                })
+        except Exception:
+            pass
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        message = await self.save_message(data['content'])
+        # Frontend posts messages over REST; this stays for plain-text WS sends.
+        try:
+            data = json.loads(text_data)
+        except Exception:
+            return
+        content = data.get('content')
+        if not content:
+            return
+        message = await self.save_message(content)
         await self.channel_layer.group_send(
-            self.group_name,
-            {'type': 'chat.message', 'message': message}
-        )
+            self.group_name, {'type': 'chat.message', 'message': message})
 
+    # ---- group event handlers --------------------------------------------------
     async def chat_message(self, event):
-        await self.send(text_data=json.dumps(event['message']))
+        payload = event['message']
+        if event.get('update'):
+            payload = dict(payload, _update=True)
+        await self.send(text_data=json.dumps(payload))
 
+    async def presence_event(self, event):
+        await self.send(text_data=json.dumps({'_presence': event['presence']}))
+
+    # ---- db helpers ------------------------------------------------------------
     @database_sync_to_async
     def is_participant(self):
-        conversation = Conversation.objects.get(id=self.conversation_id)
-        return conversation.participants.filter(user=self.scope['user']).exists()
+        try:
+            convo = Conversation.objects.get(id=self.conversation_id)
+        except Conversation.DoesNotExist:
+            return False
+        return convo.participants.filter(user=self.user).exists()
 
     @database_sync_to_async
-    def get_user(self, user_id):
-        try:
-            return CustomUser.objects.get(id=user_id)
-        except CustomUser.DoesNotExist:
-            from django.contrib.auth.models import AnonymousUser
-            return AnonymousUser()
+    def set_presence(self, online):
+        UserPresence.objects.update_or_create(
+            user=self.user, defaults={'is_online': online, 'last_seen': timezone.now()})
 
     @database_sync_to_async
     def save_message(self, content):
         message = Message.objects.create(
-            conversation_id=self.conversation_id,
-            sender=self.scope['user'],
-            content=content
-        )
-        return {'id': message.id, 'content': message.content, 'sender': message.sender.username, 'created_at': str(message.created_at)}
+            conversation_id=self.conversation_id, sender=self.user, content=content)
+        return {'id': message.id, 'content': message.content, 'message_type': 'text',
+                'sender': message.sender.username, 'sender_id': message.sender_id,
+                'sender_name': message.sender.username, 'created_at': str(message.created_at)}

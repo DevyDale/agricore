@@ -113,6 +113,7 @@ from logistics.api.views import (
     TransportBidViewSet,
 )
 from escrow.api.views import EscrowViewSet, FlutterwaveWebhookView, PayoutAccountViewSet
+from logistics.api.views import TransporterViewSet, DeliveryJobViewSet, TransporterReviewViewSet, RiderLinkView, RiderLinkPickupView, RiderLinkDeliverView, ussd_callback
 from notifications.api.views import NotificationViewSet
 from expenses.api.views import (
     ExpenseCategoryViewSet,
@@ -197,6 +198,9 @@ router.register(r'vehicles', VehicleViewSet, basename='vehicle')
 router.register(r'transport-requests', TransportRequestViewSet, basename='transportrequest')
 router.register(r'transport-bids', TransportBidViewSet, basename='transportbid')
 router.register(r'escrows', EscrowViewSet, basename='escrow')
+router.register(r'transporters', TransporterViewSet, basename='transporter')
+router.register(r'delivery-jobs', DeliveryJobViewSet, basename='deliveryjob')
+router.register(r'transporter-reviews', TransporterReviewViewSet, basename='transporterreview')
 router.register(r'payout-accounts', PayoutAccountViewSet, basename='payoutaccount')
 
 # Expenses
@@ -262,6 +266,10 @@ urlpatterns = [
 
     # API routes
     path('api/', include(router.urls)),
+    path('api/rider-link/<str:token>/', RiderLinkView.as_view()),
+    path('api/rider-link/<str:token>/pickup/', RiderLinkPickupView.as_view()),
+    path('api/rider-link/<str:token>/deliver/', RiderLinkDeliverView.as_view()),
+    path('api/ussd/', ussd_callback),
     path('api/payments/flutterwave/webhook/', FlutterwaveWebhookView.as_view(), name='flw_webhook'),
     path('api/', include(farms_router.urls)),
 

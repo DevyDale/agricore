@@ -84,27 +84,71 @@
     .alloc-fig .k{ font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin-top:.35rem; }
     .alloc-fig .dot{ display:inline-block; width:9px; height:9px; border-radius:3px; margin-right:.4rem; vertical-align:middle; }
 
-    /* ===== Land portion plot tiles ===== */
-    .plot-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:1.1rem; }
-    .plot-tile{ position:relative; border:1px solid var(--line); border-radius:1rem; overflow:hidden; background:#fff; box-shadow:0 10px 26px -22px rgba(20,40,25,.5); transition:transform .25s, box-shadow .25s; }
-    .plot-tile:hover{ transform:translateY(-4px); box-shadow:0 20px 38px -22px rgba(5,120,80,.42); }
-    .plot-tile .field{ height:88px; position:relative; }
-    .plot-tile .field::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(0,0,0,.12)); }
-    .plot-tile .field .sz{ position:absolute; right:.6rem; bottom:.55rem; z-index:2; background:rgba(8,30,18,.62); color:#fff; font-weight:700; font-size:.78rem; padding:.18rem .6rem; border-radius:999px; }
-    .plot-tile .meta{ padding:.9rem 1rem 1.05rem; }
-    .plot-tile .nm{ font-family:'Fraunces',serif; font-weight:700; font-size:1.05rem; color:var(--ink); }
-    .plot-tile .sub{ font-size:.8rem; color:var(--muted); margin-top:.15rem; }
-    .plot-tile .tags{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.7rem; }
+    .plot-empty{ border:2px dashed #e3d9c6; border-radius:1rem; padding:3rem 2rem; text-align:center; background:#fbf7ee; }
     .lp-badge{ font-size:.68rem; font-weight:700; padding:.22rem .6rem; border-radius:999px; letter-spacing:.02em; }
+
+    /* ===== Section head actions + search ===== */
+    .lm-head-actions{ display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; }
+    .lm-search{ position:relative; display:flex; align-items:center; }
+    .lm-search > i{ position:absolute; left:.7rem; color:#9aa39a; font-size:.85rem; pointer-events:none; }
+    .lm-search input{ width:220px; max-width:48vw; background:#fffdf8; border:1.5px solid var(--line); border-radius:.8rem; padding:.62rem .9rem .62rem 2rem; font-size:.9rem; color:var(--ink); transition:.18s; }
+    .lm-search input:focus{ outline:none; border-color:var(--g500); box-shadow:0 0 0 4px rgba(16,185,129,.12); }
+    .lm-search button{ position:absolute; right:.4rem; border:0; background:none; color:#9aa39a; cursor:pointer; font-size:1.15rem; line-height:1; display:none; padding:.1rem .25rem; }
+    .lm-search button:hover{ color:var(--g700); }
+    .lm-search-count{ font-size:.78rem; color:var(--muted); font-weight:600; margin:-.4rem 0 1rem; min-height:1rem; }
+
+    /* ===== Land table (spreadsheet) ===== */
+    .lm-tablewrap{ background:#fff; border:1px solid var(--line); border-radius:1.1rem; overflow:hidden; box-shadow:0 14px 34px -26px rgba(20,40,25,.5); }
+    .lm-tablescroll{ overflow-x:auto; }
+    .lm-table{ width:100%; border-collapse:separate; border-spacing:0; min-width:720px; }
+    .lm-table thead th{ background:linear-gradient(135deg,#0c6b46,#065f3c); color:#fff; font-size:.72rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; padding:.9rem 1rem; white-space:nowrap; position:sticky; top:0; }
+    .lm-table thead th:first-child{ padding-left:1.25rem; }
+    .lm-table thead th.r{ text-align:right; padding-right:1.25rem; }
+    .lm-table tbody td{ padding:.85rem 1rem; border-bottom:1px solid #f1ece1; color:#3f4a42; font-size:.9rem; vertical-align:middle; }
+    .lm-table tbody td:first-child{ padding-left:1.25rem; }
+    .lm-table tbody tr{ transition:background .15s; }
+    .lm-table tbody tr:nth-child(even){ background:#fcfaf4; }
+    .lm-table tbody tr:hover{ background:linear-gradient(135deg,rgba(231,244,236,.75),rgba(236,253,245,.55)); }
+    .lm-table tbody tr:last-child td{ border-bottom:none; }
+    .lm-cell-name{ display:flex; align-items:center; gap:.7rem; }
+    .lm-swatch{ flex:none; width:32px; height:32px; border-radius:9px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.14); }
+    .lm-nm{ font-family:'Fraunces',serif; font-weight:700; color:var(--ink); font-size:1rem; line-height:1.1; }
+    .lm-sub{ font-size:.74rem; color:var(--muted); margin-top:.12rem; max-width:30ch; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .lm-size-val{ font-weight:800; color:var(--g700); font-family:'Fraunces',serif; font-size:1rem; }
+    .lm-sharebar{ height:5px; width:96px; max-width:30vw; border-radius:999px; background:#eee4d2; overflow:hidden; margin-top:.32rem; }
+    .lm-sharebar > i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,var(--g500),var(--g700)); }
+    .lm-share-pct{ font-size:.7rem; color:var(--muted); font-weight:600; margin-top:.2rem; }
+    .lp-badge{ font-size:.7rem; font-weight:700; padding:.26rem .68rem; border-radius:999px; display:inline-block; text-transform:capitalize; }
     .lp-badge.use{ background:#e7f4ec; color:#0f7a4b; border:1px solid #cdead8; }
     .lp-badge.soil{ background:#f6efe1; color:#8a6d2f; border:1px solid #e8d8b8; }
     .lp-badge.status{ background:#eef2f7; color:#475569; border:1px solid #dde4ec; }
-    .plot-empty{ border:2px dashed #e3d9c6; border-radius:1rem; padding:3rem 2rem; text-align:center; background:#fbf7ee; }
+    .lp-badge.empty{ background:#f5f2ea; color:#a3aaa0; border:1px solid var(--line); font-weight:600; }
+    .lm-rowacts{ display:flex; gap:.4rem; justify-content:flex-end; }
+    .lm-rowacts button{ width:34px; height:34px; border:1px solid var(--line); background:#fff; border-radius:9px; cursor:pointer; color:#5b6b60; font-size:.8rem; display:grid; place-items:center; transition:.16s; }
+    .lm-rowacts button:hover{ background:#f1ece1; color:var(--ink); }
+    .lm-rowacts button.xfer:hover{ background:#e7f4ec; color:#0f7a4b; border-color:#cdead8; }
+    .lm-rowacts button.del:hover{ background:#fee2e2; color:#dc2626; border-color:#fca5a5; }
+    .lm-rowacts button:disabled{ opacity:.4; cursor:not-allowed; }
+    .lm-table tfoot td{ padding:.8rem 1.25rem; background:#fbf7ee; font-size:.8rem; color:var(--muted); font-weight:600; border-top:1px solid var(--line); }
+    .lm-noresults{ text-align:center; padding:2.5rem 1rem; color:var(--muted); font-weight:600; }
+
+    /* ===== Transfer dialog field ===== */
+
+    /* ===== Busy overlay ===== */
+    #busy-overlay{ position:fixed; inset:0; z-index:60; background:rgba(15,23,42,.45); backdrop-filter:blur(4px); align-items:center; justify-content:center; }
+    .busy-card{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:1.7rem 2.1rem; display:flex; flex-direction:column; align-items:center; gap:.95rem; box-shadow:0 24px 60px -20px rgba(6,28,15,.5); }
+    .lm-spinner{ width:2.6rem; height:2.6rem; border:3px solid var(--line); border-top-color:var(--g500); border-radius:50%; animation:lmspin 1s linear infinite; }
+    @keyframes lmspin{ to{ transform:rotate(360deg); } }
 
     @media (max-width:768px){
         .lm-hero{ padding:1.6rem 1.25rem; }
         .lm-title{ font-size:1.6rem; }
         .lm-ghost-btn{ width:100%; justify-content:center; }
+    }
+    @media (max-width:560px){
+        .lm-head-actions{ width:100%; }
+        .lm-search{ flex:1; }
+        .lm-search input{ width:100%; max-width:none; }
     }
 </style>
 
@@ -147,10 +191,18 @@
                 <div class="lm-eyebrow dark">Your land</div>
                 <h2 class="lm-h2"><i class="fas fa-seedling"></i> Land portions</h2>
             </div>
-            <button class="btn-primary" id="add-portion-btn"><i class="fas fa-plus"></i> Add Portion</button>
+            <div class="lm-head-actions">
+                <div class="lm-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="portion-search" placeholder="Search portions&hellip;" autocomplete="off">
+                    <button type="button" id="portion-search-clear" aria-label="Clear search">&times;</button>
+                </div>
+                <button class="btn-primary" id="add-portion-btn"><i class="fas fa-plus"></i> Add Portion</button>
+            </div>
         </div>
-        <div id="portions-grid" class="plot-grid">
-            <div class="plot-empty" style="grid-column:1/-1">
+        <div id="portion-search-count" class="lm-search-count"></div>
+        <div id="portions-grid">
+            <div class="plot-empty">
                 <i class="fas fa-seedling text-5xl mb-3 block" style="color:#cbb994"></i>
                 <p class="text-lg font-semibold text-gray-700 mb-1">No land portions yet</p>
                 <p class="text-gray-500">Click "Add Portion" to divide your farm into plots.</p>
@@ -264,6 +316,40 @@
     </div>
 </div>
 
+<!-- ===== Transfer Land Dialog ===== -->
+<div id="transfer-dialog" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden" style="padding:1rem;">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md relative" style="padding:1.6rem;">
+        <button id="close-transfer-dialog" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+        <h3 class="text-2xl font-extrabold text-emerald-700 mb-1 flex items-center gap-2"><i class="fas fa-right-left"></i> Transfer Land</h3>
+        <p class="text-sm text-gray-500 mb-4">Move area from one portion into another.</p>
+        <div class="space-y-4">
+            <div>
+                <label class="form-label"><i class="fas fa-circle-dot"></i> From</label>
+                <div id="xfer-from" class="input-field" style="background:#f6f1e6;font-weight:700"></div>
+            </div>
+            <div>
+                <label class="form-label" for="xfer-to"><i class="fas fa-arrow-right-to-bracket"></i> To</label>
+                <select id="xfer-to" class="input-field"></select>
+            </div>
+            <div>
+                <label class="form-label" for="xfer-amount"><i class="fas fa-ruler-combined"></i> Amount <span id="xfer-unit" class="text-gray-400"></span></label>
+                <input type="number" step="0.01" min="0.01" id="xfer-amount" class="input-field" placeholder="e.g., 1.5">
+                <div id="xfer-hint" class="text-xs text-gray-500 mt-1"></div>
+            </div>
+        </div>
+        <div id="xfer-error" class="hidden text-sm text-red-600 mt-3"></div>
+        <div class="flex justify-end mt-6 gap-2">
+            <button type="button" id="xfer-cancel" class="lm-ghost-btn" style="background:#f6f1e6;color:#5b6b60;border-color:var(--line)">Cancel</button>
+            <button type="button" id="xfer-confirm" class="btn-primary"><i class="fas fa-right-left"></i> Transfer</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Busy overlay ===== -->
+<div id="busy-overlay" class="hidden">
+    <div class="busy-card"><div class="lm-spinner"></div><span id="busy-text" style="font-weight:600;color:#475569;font-size:.95rem">Working…</span></div>
+</div>
+
 <script>
 
 // Land Portions State and Logic (now persistent)
@@ -273,6 +359,10 @@ const closeAddPortionDialogBtn = document.getElementById('close-add-portion-dial
 const addPortionDialog = document.getElementById('add-portion-dialog');
 const addPortionForm = document.getElementById('add-portion-form');
 const portionsGrid = document.getElementById('portions-grid');
+
+// ----- Busy overlay helpers -----
+function showBusy(msg){ var b=document.getElementById('busy-overlay'); var t=document.getElementById('busy-text'); if(t) t.textContent = msg || 'Working…'; if(b){ b.classList.remove('hidden'); b.style.display='flex'; } }
+function hideBusy(){ var b=document.getElementById('busy-overlay'); if(b){ b.style.display='none'; b.classList.add('hidden'); } }
 
 // Fetch land portions from backend on page load
 async function fetchLandPortions() {
@@ -313,6 +403,7 @@ function getTotalPortionSize() {
 function renderPortions() {
     if (!portionsGrid) return;
     var unit = getFarmUnit();
+    var max = getFarmMaxSize();
     function esc(v){ return String(v==null?'':v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
     function plotStyle(use){
         use=(use||'').toLowerCase();
@@ -322,26 +413,111 @@ function renderPortions() {
         return 'background-color:#549040;background-image:repeating-linear-gradient(118deg,rgba(0,0,0,.13) 0 3px,rgba(255,255,255,.06) 3px 8px)';
     }
     if (!landPortions.length) {
-        portionsGrid.innerHTML = '<div class="plot-empty" style="grid-column:1/-1"><i class="fas fa-seedling text-5xl mb-3 block" style="color:#cbb994"></i><p class="text-lg font-semibold text-gray-700 mb-1">No land portions yet</p><p class="text-gray-500">Click \'Add Portion\' to divide your farm into plots.</p></div>';
-        updateAddPortionButtonState(); updateAnalytics(); return;
+        portionsGrid.className = '';
+        portionsGrid.innerHTML = '<div class="plot-empty"><i class="fas fa-seedling text-5xl mb-3 block" style="color:#cbb994"></i><p class="text-lg font-semibold text-gray-700 mb-1">No land portions yet</p><p class="text-gray-500">Click \'Add Portion\' to divide your farm into plots.</p></div>';
+        updateAddPortionButtonState(); updateAnalytics(); applyPortionSearch(); return;
     }
-    portionsGrid.innerHTML = landPortions.map(function(p, idx){
+    portionsGrid.className = '';
+    var used = getTotalPortionSize();
+    var remaining = max>0 ? Math.max(0, max - used) : 0;
+    var canXfer = landPortions.length >= 2;
+
+    var rowsHtml = landPortions.map(function(p, idx){
         var nm = esc(p.name || ('Portion ' + (idx+1)));
-        var sz = (p.total_size!=null && p.total_size!=='') ? (p.total_size + ' ' + (p.size_unit || unit || '')) : '';
+        var size = parseFloat(p.total_size || p.size) || 0;
+        var unitL = esc(p.size_unit || unit || '');
         var use = p.purpose ? esc(p.purpose) : '';
         var soil = p.soil_type ? esc(p.soil_type) : '';
         var status = p.status ? esc(p.status) : '';
-        var tags = '';
-        if (use) tags += '<span class="lp-badge use">'+use+'</span>';
-        if (soil) tags += '<span class="lp-badge soil">'+soil+'</span>';
-        if (status) tags += '<span class="lp-badge status">'+status+'</span>';
-        return '<div class="plot-tile"><div class="field" style="'+plotStyle(p.purpose)+'">'+(sz?'<span class="sz">'+esc(sz)+'</span>':'')+'</div>'
-            + '<div class="meta"><div class="nm">'+nm+'</div>'+(p.additional_notes?'<div class="sub">'+esc(p.additional_notes)+'</div>':'')
-            + '<div class="tags">'+(tags||'<span class="lp-badge status">No details</span>')+'</div></div></div>';
+        var share = max>0 ? Math.min(100, size/max*100) : 0;
+        var pid = (p.id!=null ? p.id : '');
+        var sd = esc((String(p.name||'') + ' ' + (p.purpose||'') + ' ' + (p.soil_type||'') + ' ' + (p.status||'')).toLowerCase());
+        var shareHtml = max>0
+            ? '<div class="lm-sharebar"><i style="width:'+share.toFixed(1)+'%"></i></div><div class="lm-share-pct">'+share.toFixed(1)+'% of farm</div>'
+            : '';
+        return '<tr class="lm-row" data-id="'+pid+'" data-search="'+sd+'">'
+            + '<td><div class="lm-cell-name"><span class="lm-swatch" style="'+plotStyle(p.purpose)+'"></span>'
+            +   '<div><div class="lm-nm">'+nm+'</div>'+(p.additional_notes?'<div class="lm-sub">'+esc(p.additional_notes)+'</div>':'')+'</div></div></td>'
+            + '<td><div class="lm-size-val">'+size+' '+unitL+'</div>'+shareHtml+'</td>'
+            + '<td>'+(use?'<span class="lp-badge use">'+use+'</span>':'<span class="lp-badge empty">—</span>')+'</td>'
+            + '<td>'+(soil?'<span class="lp-badge soil">'+soil+'</span>':'<span class="lp-badge empty">—</span>')+'</td>'
+            + '<td>'+(status?'<span class="lp-badge status">'+status+'</span>':'<span class="lp-badge empty">—</span>')+'</td>'
+            + '<td><div class="lm-rowacts">'
+            +   '<button class="xfer" title="Transfer land" onclick="openTransfer('+pid+')"'+(canXfer?'':' disabled')+'><i class="fas fa-right-left"></i></button>'
+            +   '<button class="del" title="Delete portion" onclick="deletePortion('+pid+')"><i class="fas fa-trash"></i></button>'
+            + '</div></td>'
+            + '</tr>';
     }).join('');
+
+    var foot = landPortions.length + ' portion' + (landPortions.length===1?'':'s')
+        + (max>0 ? ' &middot; ' + (Math.round(used*100)/100) + ' ' + esc(unit) + ' used &middot; ' + (Math.round(remaining*100)/100) + ' ' + esc(unit) + ' available' : '');
+
+    portionsGrid.innerHTML = '<div class="lm-tablewrap"><div class="lm-tablescroll"><table class="lm-table">'
+        + '<thead><tr><th>Portion</th><th>Size</th><th>Use</th><th>Soil</th><th>Status</th><th class="r">Actions</th></tr></thead>'
+        + '<tbody id="lm-tbody">' + rowsHtml + '</tbody>'
+        + '<tfoot><tr><td colspan="6">' + foot + '</td></tr></tfoot>'
+        + '</table></div>'
+        + '<div id="lm-noresults" class="lm-noresults" style="display:none">No portions match your search.</div>'
+        + '</div>';
     updateAddPortionButtonState();
     updateAnalytics();
+    applyPortionSearch();
 }
+
+// Filter the table by the search term (hides non-matching rows)
+function applyPortionSearch(){
+    if(!portionsGrid) return;
+    var inp = document.getElementById('portion-search');
+    var term = ((inp && inp.value) || '').trim().toLowerCase();
+    var clearBtn = document.getElementById('portion-search-clear');
+    if(clearBtn) clearBtn.style.display = term ? 'block' : 'none';
+    var cnt = document.getElementById('portion-search-count');
+    var rows = portionsGrid.querySelectorAll('.lm-row');
+    var hits=0, total=rows.length;
+    rows.forEach(function(r){
+        if(!term){ r.style.display=''; return; }
+        var match = (r.getAttribute('data-search')||'').indexOf(term) > -1;
+        r.style.display = match ? '' : 'none';
+        if(match) hits++;
+    });
+    var nores = document.getElementById('lm-noresults');
+    if(nores) nores.style.display = (term && hits===0) ? 'block' : 'none';
+    if(cnt) cnt.textContent = term ? (hits + ' of ' + total + ' portion' + (total===1?'':'s') + ' match') : '';
+}
+
+// Delete a land portion (persisted to backend)
+window.deletePortion = async function(id){
+    var p = landPortions.find(function(x){ return x.id===id; });
+    if (!confirm('Delete ' + ((p && p.name) || 'this portion') + '? This cannot be undone.')) return;
+    var token = localStorage.getItem('access_token');
+    showBusy('Deleting portion…');
+    try {
+        var res = await fetch('/api/fields/'+id+'/', { method:'DELETE', headers: token ? { 'Authorization': 'Bearer '+token } : {} });
+        if (!res.ok && res.status !== 204) { alert('Failed to delete portion.'); return; }
+        await fetchLandPortions();
+    } catch (e) { alert('Network error while deleting.'); }
+    finally { hideBusy(); }
+};
+
+// Transfer land between portions
+var xferFromId = null;
+window.openTransfer = function(id){
+    if (landPortions.length < 2) { alert('You need at least two portions to transfer land.'); return; }
+    var from = landPortions.find(function(p){ return p.id===id; });
+    if (!from) return;
+    xferFromId = id;
+    var unit = getFarmUnit();
+    var fromSize = parseFloat(from.total_size || from.size) || 0;
+    document.getElementById('xfer-from').textContent = (from.name || 'Portion') + ' — ' + fromSize + ' ' + unit;
+    var sel = document.getElementById('xfer-to'); sel.innerHTML = '';
+    landPortions.forEach(function(p){ if (p.id===id) return; var o=document.createElement('option'); o.value=p.id; o.textContent=(p.name||'Portion')+' ('+(parseFloat(p.total_size||p.size)||0)+' '+unit+')'; sel.appendChild(o); });
+    document.getElementById('xfer-unit').textContent = unit ? ('('+unit+')') : '';
+    var amt = document.getElementById('xfer-amount'); amt.value=''; amt.max = fromSize;
+    document.getElementById('xfer-hint').textContent = 'Up to ' + fromSize + ' ' + unit + ' available to move.';
+    document.getElementById('xfer-error').classList.add('hidden');
+    document.getElementById('transfer-dialog').classList.remove('hidden');
+};
+
 function removePortion(idx) {
     landPortions.splice(idx, 1);
     renderPortions();
@@ -397,13 +573,14 @@ if (addPortionForm) {
         e.preventDefault();
         const max = getFarmMaxSize();
         const total = getTotalPortionSize();
+        const available = Math.max(0, max - total);
         const size = parseFloat(document.getElementById('portion-size').value);
         if (isNaN(size) || size <= 0) {
             alert('Please enter a valid portion size.');
             return;
         }
-        if (total + size > max) {
-            alert('Cannot add: total land portions would exceed farm size.');
+        if (max > 0 && size > available) {
+            alert('You only have ' + available + ' ' + (getFarmUnit() || '') + ' available. Please enter a smaller size.');
             return;
         }
         const farmId = new URLSearchParams(window.location.search).get('id');
@@ -422,6 +599,7 @@ if (addPortionForm) {
             additional_notes: document.getElementById('portion-actions').value,
             farm: farmId
         };
+        showBusy('Adding portion…');
         try {
             const res = await fetch('/api/fields/', {
                 method: 'POST',
@@ -440,9 +618,53 @@ if (addPortionForm) {
             addPortionForm.reset();
         } catch (err) {
             alert('Network error.');
-        }
+        } finally { hideBusy(); }
     });
 }
+
+// Transfer confirm
+(function(){
+    var closeBtn = document.getElementById('close-transfer-dialog');
+    var cancelBtn = document.getElementById('xfer-cancel');
+    var confirmBtn = document.getElementById('xfer-confirm');
+    function closeXfer(){ document.getElementById('transfer-dialog').classList.add('hidden'); }
+    if (closeBtn) closeBtn.addEventListener('click', closeXfer);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeXfer);
+    if (confirmBtn) confirmBtn.addEventListener('click', async function(){
+        var err = document.getElementById('xfer-error');
+        function showErr(m){ err.textContent=m; err.classList.remove('hidden'); }
+        var from = landPortions.find(function(p){ return p.id===xferFromId; });
+        var toId = parseInt(document.getElementById('xfer-to').value, 10);
+        var to = landPortions.find(function(p){ return p.id===toId; });
+        var amt = parseFloat(document.getElementById('xfer-amount').value);
+        var fromSize = parseFloat(from && (from.total_size||from.size)) || 0;
+        var unit = getFarmUnit();
+        if (!from || !to) { showErr('Choose a portion to transfer to.'); return; }
+        if (isNaN(amt) || amt <= 0) { showErr('Enter an amount greater than zero.'); return; }
+        if (amt > fromSize) { showErr('You can only move up to ' + fromSize + ' ' + unit + '.'); return; }
+        var token = localStorage.getItem('access_token');
+        var h = Object.assign({ 'Content-Type':'application/json' }, token ? { 'Authorization':'Bearer '+token } : {});
+        var newFrom = Math.round((fromSize - amt) * 100) / 100;
+        var newTo = Math.round(((parseFloat(to.total_size||to.size)||0) + amt) * 100) / 100;
+        showBusy('Transferring land…');
+        try {
+            var r1 = await fetch('/api/fields/'+from.id+'/', { method:'PATCH', headers:h, body: JSON.stringify({ total_size:newFrom }) });
+            var r2 = await fetch('/api/fields/'+to.id+'/', { method:'PATCH', headers:h, body: JSON.stringify({ total_size:newTo }) });
+            if (!r1.ok || !r2.ok) { showErr('Transfer failed. Please try again.'); return; }
+            closeXfer();
+            await fetchLandPortions();
+        } catch(e) { showErr('Network error during transfer.'); }
+        finally { hideBusy(); }
+    });
+})();
+
+// Search through land portions
+(function(){
+    var inp = document.getElementById('portion-search');
+    var clr = document.getElementById('portion-search-clear');
+    if (inp) inp.addEventListener('input', applyPortionSearch);
+    if (clr) clr.addEventListener('click', function(){ if(inp){ inp.value=''; inp.focus(); } applyPortionSearch(); });
+})();
 
 // Re-render table and update button state on farm size change
 function onFarmDetailsChange() {
@@ -555,6 +777,10 @@ if (addPortionBtn) {
         populateCurrentUserDropdown();
         populateCurrentUseDropdown();
         populateStatusDropdown();
+        // Cap the input to the land that is still available, and show it
+        var availNow = Math.max(0, getFarmMaxSize() - getTotalPortionSize());
+        var psize = document.getElementById('portion-size'); if (psize) psize.max = availNow;
+        var topMax = document.getElementById('portion-size-max-top'); if (topMax) topMax.textContent = availNow + ' ' + (getFarmUnit() || '') + ' available';
     });
 }
 if (closeAddPortionDialogBtn) {
@@ -604,9 +830,10 @@ async function fetchAndDisplayFarmDetails() {
             var sz = farm.total_size ? (farm.total_size + (farm.size_unit ? ' ' + farm.size_unit : '')) : '';
             ftb.textContent = nm && sz ? `(${nm}, ${sz})` : (nm ? `(${nm})` : (sz ? `(${sz})` : ''));
         }
-        // Farm size is now known -> refresh limits + analytics
+        // Farm size is now known -> refresh limits + analytics + re-pack the map
         setPortionSizeLimits();
         updateAnalytics();
+        if (landPortions.length) renderPortions();
     } catch (e) {
         document.getElementById('farm-details-bar').classList.add('hidden');
     }
@@ -626,4 +853,135 @@ document.getElementById('close-farm-details-dialog').addEventListener('click', f
 <script>
 (function(){ function bf(){var W=1200,H=300,cols=8,rows=2,jx=(W/cols)*.3,jy=(H/rows)*.3,P=[];for(var r=0;r<=rows;r++){P[r]=[];for(var c=0;c<=cols;c++){var e=(r===0||r===rows||c===0||c===cols);P[r][c]={x:(c/cols)*W+(e?0:(Math.random()*2-1)*jx),y:(r/rows)*H+(e?0:(Math.random()*2-1)*jy)};}}var pal=[['#2f5a34','#27502c'],['#3c7a3c','#336a33'],['#4f8438','#447730'],['#6f8d3f','#637f37'],['#8a9a4e','#7c8c42'],['#c39a48','#b58b3c'],['#d3ab57','#c59b48'],['#b15a36','#9f4e2e'],['#cdb878','#bda863']],ang=[0,16,90,74,16,0,90,30,16],defs='';pal.forEach(function(c,i){defs+='<pattern id="lmp'+i+'" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate('+ang[i]+')"><rect width="9" height="9" fill="'+c[0]+'"/><rect width="9" height="3.4" fill="'+c[1]+'"/></pattern>';});var bag=[0,0,1,1,1,2,2,2,3,3,4,4,5,5,6,7,8],cells='';for(var r2=0;r2<rows;r2++)for(var c2=0;c2<cols;c2++){var a=P[r2][c2],b=P[r2][c2+1],d=P[r2+1][c2+1],e2=P[r2+1][c2],fi=bag[Math.floor(Math.random()*bag.length)];cells+='<polygon points="'+a.x.toFixed(1)+','+a.y.toFixed(1)+' '+b.x.toFixed(1)+','+b.y.toFixed(1)+' '+d.x.toFixed(1)+','+d.y.toFixed(1)+' '+e2.x.toFixed(1)+','+e2.y.toFixed(1)+'" fill="url(#lmp'+fi+')" stroke="rgba(22,15,7,.16)" stroke-width="1.1"/>';}return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs>'+cells+'</svg>';}var el=document.getElementById('lm-farmland'); if(el){ el.innerHTML=bf(); var sc=document.createElement('div'); sc.className='lm-scrim'; el.after(sc); } })();
 </script>
+
+<!-- Dale AI context for this page -->
+<script>
+  window.__daleCtx = function(){
+    var farmId = new URLSearchParams(window.location.search).get('id');
+    var rows = Array.prototype.slice.call(document.querySelectorAll('.lm-row'));
+    function num(id){ var el=document.getElementById(id); return el?el.textContent.trim():null; }
+    return { page:'Land Management', type:'land', farm_id:farmId, extras:{
+      portions: rows.length,
+      total_area: num('total-area'),
+      used_area: num('used-area'),
+      available_area: num('available-area'),
+      utilization: num('utilization')
+    } };
+  };
+  window.__daleIntro = "Hi, I'm Dale. Ask me how to divide this farm into plots, what to do with unused land, or how your acreage is allocated.";
+  window.__daleChips = ["How is my land allocated?","What should I do with unused land?","Suggest a plot layout","Explain soil types"];
+</script>
+
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
+<!-- ===== Dale AI assistant (context-aware, brand) ===== -->
+<script>
+(function(){
+  if (window.__daleInit) return; window.__daleInit = true;
+  var ENDPOINT = '/api/ai/dale/ask/';
+  var history = [];
+
+  var css = ''
+    + '#daleFab{position:fixed;right:1.4rem;bottom:1.4rem;width:66px;height:66px;border:0;border-radius:50%;cursor:pointer;z-index:1000;'
+    + 'background:linear-gradient(135deg,#10b981,#047857);color:#fff;box-shadow:0 12px 30px -8px rgba(5,120,80,.6);'
+    + 'display:grid;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;overflow:hidden}'
+    + '#daleFab:hover{transform:scale(1.08) rotate(-6deg);box-shadow:0 18px 40px -8px rgba(5,120,80,.7)}'
+    + '#daleFab svg{width:28px;height:28px}'
+    + '#daleFab dotlottie-wc{width:54px;height:54px;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}'
+    + '#daleFab .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:#fde047;box-shadow:0 0 0 2px #047857;z-index:2}'
+    + '#dalePanel{position:fixed;right:1.4rem;bottom:6.4rem;width:380px;max-width:calc(100vw - 2rem);height:560px;max-height:calc(100vh - 8rem);z-index:1000;'
+    + 'background:#fffdf8;border:1px solid #ece4d6;border-radius:22px;box-shadow:0 30px 70px -20px rgba(6,28,15,.5);'
+    + 'display:none;flex-direction:column;overflow:hidden;font-family:Inter,system-ui,sans-serif}'
+    + '#dalePanel.open{display:flex;animation:daleUp .28s cubic-bezier(.2,.8,.2,1)}'
+    + '@keyframes daleUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}'
+    + '.dale-head{display:flex;align-items:center;gap:.7rem;padding:1rem 1.1rem;color:#fff;background:linear-gradient(135deg,#0c6b46,#065f3c)}'
+    + '.dale-head .mk{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28)}'
+    + '.dale-head .mk svg{width:20px;height:20px}'
+    + '.dale-head h4{margin:0;font-family:Fraunces,serif;font-weight:700;font-size:1.1rem;line-height:1.1}'
+    + '.dale-head p{margin:0;font-size:.74rem;color:rgba(255,255,255,.8)}'
+    + '.dale-head .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.85);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}'
+    + '.dale-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;background:#fbf7ee}'
+    + '.dale-b{max-width:84%;padding:.7rem .85rem;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}'
+    + '.dale-b.ai{align-self:flex-start;background:#fff;border:1px solid #ece4d6;color:#16271c;border-bottom-left-radius:4px}'
+    + '.dale-b.me{align-self:flex-end;background:linear-gradient(135deg,#10b981,#047857);color:#fff;border-bottom-right-radius:4px}'
+    + '.dale-b.err{align-self:flex-start;background:#fdeaea;border:1px solid #f6c9c9;color:#b0322c}'
+    + '.dale-typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.8rem .9rem;background:#fff;border:1px solid #ece4d6;border-radius:14px}'
+    + '.dale-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3a6;animation:daleBlink 1.2s infinite}'
+    + '.dale-typing i:nth-child(2){animation-delay:.2s}.dale-typing i:nth-child(3){animation-delay:.4s}'
+    + '@keyframes daleBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}'
+    + '.dale-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem 0}'
+    + '.dale-chip{font-size:.78rem;font-weight:600;color:#0f7a4b;background:#e7f4ec;border:1px solid #cdead8;border-radius:999px;padding:.35rem .7rem;cursor:pointer;transition:background .15s}'
+    + '.dale-chip:hover{background:#d6efdf}'
+    + '.dale-input{display:flex;gap:.5rem;padding:.8rem 1rem 1rem;border-top:1px solid #ece4d6;background:#fffdf8}'
+    + '.dale-input textarea{flex:1;resize:none;border:1.5px solid #e2ddd0;border-radius:12px;padding:.6rem .8rem;font:inherit;font-size:.9rem;max-height:90px;outline:none}'
+    + '.dale-input textarea:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}'
+    + '.dale-input button{flex:none;width:44px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#fff;display:grid;place-items:center}'
+    + '.dale-input button svg{width:18px;height:18px}'
+    + '@media(max-width:480px){#dalePanel{right:.6rem;left:.6rem;width:auto;bottom:5.6rem;height:70vh}}';
+  var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+  var leaf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+  var fab = document.createElement('button'); fab.id='daleFab'; fab.title='Ask Dale AI';
+  fab.innerHTML = '<span class="dot"></span><dotlottie-wc src="https://lottie.host/ac187fae-55ac-4ce4-93a9-fe037e3e2e57/jSdcU6a1Ig.lottie" autoplay loop></dotlottie-wc>';
+  document.body.appendChild(fab);
+
+  var panel = document.createElement('div'); panel.id='dalePanel';
+  panel.innerHTML =
+    '<div class="dale-head"><div class="mk">'+leaf+'</div><div><h4>Dale</h4><p>Your Agricore assistant</p></div><button class="x" aria-label="Close">&times;</button></div>'
+    + '<div class="dale-msgs" id="daleMsgs"></div>'
+    + '<div class="dale-chips" id="daleChips"></div>'
+    + '<div class="dale-input"><textarea id="daleText" rows="1" placeholder="Ask Dale anything..."></textarea>'
+    + '<button id="daleSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>';
+  document.body.appendChild(panel);
+
+  var msgs = panel.querySelector('#daleMsgs');
+  var text = panel.querySelector('#daleText');
+  var greeted = false;
+
+  function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+  function bubble(content, cls){ var d=document.createElement('div'); d.className='dale-b '+cls; d.innerHTML=esc(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+  function typing(){ var d=document.createElement('div'); d.className='dale-typing'; d.innerHTML='<i></i><i></i><i></i>'; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+
+  function ctx(){ try { return (typeof window.__daleCtx==='function' ? (window.__daleCtx()||{}) : {}); } catch(e){ return {}; } }
+
+  function renderChips(){
+    var chips = (window.__daleChips || []);
+    var box = panel.querySelector('#daleChips'); box.innerHTML='';
+    chips.forEach(function(c){ var b=document.createElement('button'); b.className='dale-chip'; b.textContent=c; b.onclick=function(){ send(c); }; box.appendChild(b); });
+  }
+
+  async function send(q){
+    q = (q!==undefined ? q : text.value).trim();
+    if(!q) return;
+    text.value=''; bubble(q,'me'); history.push({role:'user',content:q});
+    var t = typing();
+    try{
+      var token = localStorage.getItem('access_token');
+      var res = await fetch(ENDPOINT, {
+        method:'POST',
+        headers: Object.assign({'Content-Type':'application/json'}, token ? {'Authorization':'Bearer '+token} : {}),
+        body: JSON.stringify({ prompt:q, context: ctx(), history: history.slice(-8) })
+      });
+      t.remove();
+      if(!res.ok){ bubble(res.status===401 ? 'Please log in again to use Dale.' : 'Dale had trouble answering. Try again.', 'err'); return; }
+      var data = await res.json();
+      var reply = data.reply || data.detail || 'No response.';
+      bubble(reply,'ai'); history.push({role:'assistant',content:reply});
+    }catch(e){ t.remove(); bubble('Network error reaching Dale. Check your connection.', 'err'); }
+  }
+
+  function open(){
+    panel.classList.add('open');
+    if(!greeted){ greeted=true; bubble(window.__daleIntro || "Hi, I'm Dale. How can I help with this page?", 'ai'); renderChips(); }
+    setTimeout(function(){ text.focus(); }, 50);
+  }
+  function close(){ panel.classList.remove('open'); }
+
+  fab.addEventListener('click', function(){ panel.classList.contains('open') ? close() : open(); });
+  panel.querySelector('.x').addEventListener('click', close);
+  panel.querySelector('#daleSend').addEventListener('click', function(){ send(); });
+  text.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+  text.addEventListener('input', function(){ text.style.height='auto'; text.style.height=Math.min(text.scrollHeight,90)+'px'; });
+})();
+</script>
+
 {% endblock %}

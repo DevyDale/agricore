@@ -28,6 +28,18 @@ class Escrow(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     funded_at = models.DateTimeField(blank=True, null=True)
     released_at = models.DateTimeField(blank=True, null=True)
+    # ---- Verified Trade Chain v1: delivery verification + dispute window ----
+    delivery_otp = models.CharField(max_length=8, blank=True, default="")
+    otp_issued_at = models.DateTimeField(blank=True, null=True)
+    delivered_confirmed_at = models.DateTimeField(blank=True, null=True)
+    dispute_deadline = models.DateTimeField(blank=True, null=True)
+    dispute_reason = models.TextField(blank=True, default="")
+    # ---- Proof of condition: photos + recorded quantity at dispatch and dispute ----
+    dispatch_quantity = models.CharField(max_length=120, blank=True, default="")
+    dispatch_note = models.TextField(blank=True, default="")
+    dispatch_photo = models.ImageField(upload_to="trade_proof/", blank=True, null=True)
+    dispute_quantity = models.CharField(max_length=120, blank=True, default="")
+    dispute_photo = models.ImageField(upload_to="trade_proof/", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
