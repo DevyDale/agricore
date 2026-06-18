@@ -225,3 +225,9 @@ SPECTACULAR_SETTINGS = {
 WEATHER_CACHE_MINUTES = env.int('WEATHER_CACHE_MINUTES', default=60)
 
 DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
+
+# --- Agricore SMS env (idempotent) ---
+SMS_PROVIDER = os.environ.get('SMS_PROVIDER', 'console')
+AT_USERNAME  = os.environ.get('AT_USERNAME', 'sandbox')
+AT_API_KEY   = os.environ.get('AT_API_KEY', '')
+AT_SENDER_ID = os.environ.get('AT_SENDER_ID', '')

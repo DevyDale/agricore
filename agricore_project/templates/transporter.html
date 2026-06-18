@@ -105,7 +105,7 @@
       + '<input id="po_num" class="inp2" placeholder="0772\u2026 (MoMo) or account no.">'
       + '<input id="po_name" class="inp2" placeholder="Account holder name">'
       + '<input id="po_net" class="inp2" placeholder="Network (MTN / AIRTEL)">'
-      + '<input id="po_bank" class="inp2" placeholder="Bank code (bank only)">'
+      + '<select id="po_bank" class="inp2"><option value="">Bank (select if paying to a bank)</option></select>'
       + '</div>'
       + '<button onclick="savePayout()" class="mt-2 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700">Save payout details</button>';
     document.querySelectorAll('.inp2').forEach(function (x) { x.className = 'inp2 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none'; });
@@ -115,6 +115,18 @@
       document.getElementById('po_name').value = myPayout.account_name || '';
       document.getElementById('po_net').value = myPayout.network || '';
     }
+    (async function () {
+      var sel = document.getElementById('po_bank'); if (!sel) return;
+      var toText = function () { var i = document.createElement('input'); i.id = 'po_bank'; i.className = sel.className; i.placeholder = 'Bank code (bank only)'; sel.replaceWith(i); };
+      try {
+        var bd = await api('/payout-accounts/banks/');
+        var banks = (bd && bd.banks) || [];
+        if (!banks.length) { toText(); return; }
+        sel.innerHTML = '<option value="">Bank (select if paying to a bank)</option>'
+          + banks.map(function (b) { return '<option value="' + esc(b.code) + '">' + esc(b.name) + '</option>'; }).join('');
+        if (myPayout && myPayout.account_bank && myPayout.account_bank !== 'MPS') sel.value = myPayout.account_bank;
+      } catch (e) { toText(); }
+    })();
   }
   window.savePayout = async function () {
     const payload = {

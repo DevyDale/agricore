@@ -143,6 +143,12 @@ class DeliveryJobViewSet(viewsets.ModelViewSet):
             return qs.filter(status="open")
         if scope == "mine_transporter":
             return qs.filter(transporter__user=user)
+        # Detail actions must resolve an open job a rider does not yet own (so a
+        # rider can view/accept it); list stays scoped to own + assigned jobs.
+        if getattr(self, "action", None) in ("retrieve", "accept", "pickup", "cancel", "send_link"):
+            return qs.filter(
+                Q(created_by=user) | Q(transporter__user=user) | Q(status="open")
+            ).distinct()
         return qs.filter(Q(created_by=user) | Q(transporter__user=user)).distinct()
 
     def perform_create(self, serializer):

@@ -71,8 +71,19 @@ class PayoutAccountSerializer(serializers.ModelSerializer):
         else:
             if not number:
                 raise serializers.ValidationError({"account_number": "Bank account number is required."})
-            if not (cur("account_bank", "") or "").strip():
+            code = (cur("account_bank", "") or "").strip()
+            if not code:
                 raise serializers.ValidationError({"account_bank": "Bank code is required for bank payouts."})
+            from utils import flutterwave
+            try:
+                valid_codes = {b["code"] for b in flutterwave.list_banks("UG")}
+            except flutterwave.FlutterwaveError:
+                valid_codes = set()
+            if valid_codes and code not in valid_codes:
+                raise serializers.ValidationError(
+                    {"account_bank": "Select a valid bank from the list."}
+                )
+            attrs["account_bank"] = code
         return attrs
 
     class Meta:

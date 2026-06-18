@@ -471,6 +471,15 @@ class PayoutAccountViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return PayoutAccount.objects.filter(user=self.request.user)
 
+    @action(detail=False, methods=["get"])
+    def banks(self, request):
+        """Flutterwave-supported banks for the payout bank picker."""
+        country = request.query_params.get("country", "UG")
+        try:
+            return Response({"banks": flutterwave.list_banks(country)})
+        except flutterwave.FlutterwaveError as e:
+            return Response({"banks": [], "detail": str(e)})
+
     def perform_create(self, serializer):
         if PayoutAccount.objects.filter(user=self.request.user).exists():
             from rest_framework.exceptions import ValidationError

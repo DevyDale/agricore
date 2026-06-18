@@ -114,3 +114,30 @@ def verify_transfer(transfer_id):
     except requests.RequestException as e:
         raise FlutterwaveError(str(e))
     return _handle(resp)
+
+
+_BANKS_CACHE = {}
+
+
+def list_banks(country="UG"):
+    """Flutterwave's supported banks for a country as
+    [{"code": str, "name": str}, ...], sorted by name. Cached per process
+    (the list rarely changes). Raises FlutterwaveError on a gateway failure."""
+    country = (country or "UG").upper()
+    cached = _BANKS_CACHE.get(country)
+    if cached is not None:
+        return cached
+    try:
+        resp = requests.get(f"{FLW_BASE}/banks/{country}", headers=_headers(), timeout=30)
+    except requests.RequestException as e:
+        raise FlutterwaveError(str(e))
+    data = _handle(resp)
+    banks = [
+        {"code": str(b.get("code") or ""), "name": b.get("name") or ""}
+        for b in (data.get("data") or [])
+        if b.get("code")
+    ]
+    banks.sort(key=lambda b: b["name"])
+    if banks:
+        _BANKS_CACHE[country] = banks
+    return banks
