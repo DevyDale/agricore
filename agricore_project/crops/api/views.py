@@ -16,11 +16,3 @@ class CropCycleViewSet(viewsets.ModelViewSet):
 		return self.queryset.filter(
 			Q(crop_unit__field__farm__owner=user) | Q(crop_unit__field__isnull=True)
 		)
-
-
-
-
-
-
-
-

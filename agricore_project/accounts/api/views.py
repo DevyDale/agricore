@@ -230,3 +230,46 @@ class SPAView(TemplateView):
 
         # Just render whatever was requested — nothing else
         return render(request, template_name)
+
+# === Google sign-in (added for Flutter mobile) ==========================
+from rest_framework.decorators import api_view, permission_classes as _perm
+from rest_framework_simplejwt.tokens import RefreshToken as _RefreshToken
+
+GOOGLE_WEB_CLIENT_ID = "971117362434-mhtjj726gf1r9cagcsvm65nqc95htj3s.apps.googleusercontent.com"
+
+
+@api_view(["POST"])
+@_perm([AllowAny])
+def google_auth(request):
+    """Verify a Google ID token and return SimpleJWT access/refresh tokens."""
+    token = request.data.get("id_token")
+    if not token:
+        return Response({"detail": "id_token required"}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        from google.oauth2 import id_token as _gid
+        from google.auth.transport import requests as _greq
+    except ImportError:
+        return Response(
+            {"detail": "Server missing google-auth. Run: pip install google-auth"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+    try:
+        info = _gid.verify_oauth2_token(token, _greq.Request(), GOOGLE_WEB_CLIENT_ID)
+    except ValueError:
+        return Response({"detail": "Invalid Google token"}, status=status.HTTP_400_BAD_REQUEST)
+    email = info.get("email")
+    if not email:
+        return Response({"detail": "No email in Google token"}, status=status.HTTP_400_BAD_REQUEST)
+    user = CustomUser.objects.filter(email=email).first()
+    if user is None:
+        base = (email.split("@")[0] or "user")[:140]
+        username = base
+        i = 1
+        while CustomUser.objects.filter(username=username).exists():
+            username = "%s%d" % (base, i)
+            i += 1
+        user = CustomUser.objects.create(email=email, username=username, is_verified=True)
+        user.set_unusable_password()
+        user.save()
+    refresh = _RefreshToken.for_user(user)
+    return Response({"access": str(refresh.access_token), "refresh": str(refresh)})

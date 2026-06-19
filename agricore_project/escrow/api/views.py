@@ -381,46 +381,54 @@ class EscrowViewSet(viewsets.ModelViewSet):
 
 
 class FlutterwaveWebhookView(APIView):
-    """Receives Flutterwave payment events. Verifies the signature, re-verifies
-    the transaction with Flutterwave, then marks the matching escrow as held.
-    Unauthenticated by design (Flutterwave calls it), but signature-protected."""
+    """IntaSend webhook (challenge-verified).  [adapter-revision: 2]
+
+    Receives IntaSend collection and Send-Money events. Verifies the IntaSend
+    `challenge` against settings.INTASEND_WEBHOOK_CHALLENGE, re-verifies the
+    transaction with IntaSend, then advances the matching escrow (collection ->
+    held, payout -> released). Unauthenticated by design (IntaSend calls it),
+    but challenge-protected. Kept at the existing /api/payments/flutterwave/
+    webhook/ URL so nothing else has to change."""
 
     permission_classes = [AllowAny]
     authentication_classes = []
 
     def post(self, request):
-        # 1) Signature check: the header must equal our configured secret hash.
-        signature = request.headers.get("verif-hash")
-        expected = getattr(settings, "FLW_SECRET_HASH", "")
-        if not expected or not signature or signature != expected:
-            return Response({"detail": "invalid signature"}, status=status.HTTP_401_UNAUTHORIZED)
-
         payload = request.data or {}
-        data = payload.get("data") or payload
-        tx_ref = data.get("tx_ref") or data.get("txRef") or data.get("reference")
-        flw_id = data.get("id")
+
+        # 1) Challenge check: IntaSend echoes the secret you set in the dashboard.
+        expected = getattr(settings, "INTASEND_WEBHOOK_CHALLENGE", "")
+        challenge = payload.get("challenge")
+        if not expected or challenge != expected:
+            return Response({"detail": "invalid challenge"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # 2) Our reference travels as api_ref (collection) or batch_reference (payout).
+        tx_ref = payload.get("api_ref") or payload.get("batch_reference")
+        invoice_id = payload.get("invoice_id")
+        tracking_id = payload.get("tracking_id")
         if not tx_ref:
-            return Response({"detail": "no tx_ref"}, status=status.HTTP_200_OK)
+            return Response({"detail": "no api_ref"}, status=status.HTTP_200_OK)
 
         try:
             txn = PaymentTransaction.objects.get(tx_ref=tx_ref)
         except PaymentTransaction.DoesNotExist:
-            return Response({"detail": "unknown tx_ref"}, status=status.HTTP_200_OK)
+            return Response({"detail": "unknown ref"}, status=status.HTTP_200_OK)
 
         # Idempotent: ignore repeat deliveries of an already-settled payment.
         if txn.status == "successful":
             return Response({"detail": "already processed"}, status=status.HTTP_200_OK)
 
-        # Payout (transfer) events finalize a release.
+        # Payout (Send Money) events finalize a release.
         if txn.kind == "payout":
+            gid = tracking_id or txn.flw_id
             try:
-                vt = flutterwave.verify_transfer(flw_id)
+                vt = flutterwave.verify_transfer(gid)
             except flutterwave.FlutterwaveError as e:
                 return Response({"detail": f"verify failed: {e}"}, status=status.HTTP_200_OK)
             tstatus = ((vt.get("data") or {}).get("status") or "").upper()
             if tstatus == "SUCCESSFUL":
                 txn.status = "successful"
-                txn.flw_id = str(flw_id or "")
+                txn.flw_id = str(gid or "")
                 txn.raw = vt
                 txn.save()
                 escrow = txn.escrow
@@ -435,18 +443,22 @@ class FlutterwaveWebhookView(APIView):
                 txn.save()
             return Response({"detail": f"payout {tstatus.lower() or 'pending'}"}, status=status.HTTP_200_OK)
 
-        # 2) Never trust the webhook body alone — verify with Flutterwave directly.
+        # Collection: never trust the webhook body alone -- verify with IntaSend directly.
+        gid = invoice_id or txn.flw_id
         try:
-            verified = flutterwave.verify_transaction(flw_id)
+            verified = flutterwave.verify_transaction(gid)
         except flutterwave.FlutterwaveError as e:
             return Response({"detail": f"verify failed: {e}"}, status=status.HTTP_200_OK)
 
         vdata = verified.get("data") or {}
-        amount_ok = abs(float(vdata.get("amount", 0)) - float(txn.amount)) < 0.01
-        currency_ok = vdata.get("currency") == txn.currency
+        try:
+            amount_ok = abs(float(vdata.get("amount") or 0) - float(txn.amount)) < 0.01
+        except (TypeError, ValueError):
+            amount_ok = False
+        currency_ok = (vdata.get("currency") or txn.currency) == txn.currency
         if vdata.get("status") == "successful" and amount_ok and currency_ok:
             txn.status = "successful"
-            txn.flw_id = str(flw_id or "")
+            txn.flw_id = str(gid or "")
             txn.raw = verified
             txn.save()
             escrow = txn.escrow
@@ -456,7 +468,8 @@ class FlutterwaveWebhookView(APIView):
                 escrow.save()
             return Response({"detail": "ok"}, status=status.HTTP_200_OK)
 
-        txn.status = "failed"
+        if vdata.get("status") == "failed":
+            txn.status = "failed"
         txn.raw = verified
         txn.save()
         return Response({"detail": "not successful"}, status=status.HTTP_200_OK)

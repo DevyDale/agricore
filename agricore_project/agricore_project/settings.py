@@ -18,7 +18,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env('SECRET_KEY', default='django-insecure-change-me-in-production')
 DEBUG = env.bool('DEBUG', default=True)
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '.ngrok-free.dev', '.ngrok-free.app']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '10.0.2.2', '.ngrok-free.dev', '.ngrok-free.app']
 
 # ==================== SECURITY (Safe for local dev) ====================
 SECURE_SSL_REDIRECT = False
@@ -231,3 +231,14 @@ SMS_PROVIDER = os.environ.get('SMS_PROVIDER', 'console')
 AT_USERNAME  = os.environ.get('AT_USERNAME', 'sandbox')
 AT_API_KEY   = os.environ.get('AT_API_KEY', '')
 AT_SENDER_ID = os.environ.get('AT_SENDER_ID', '')
+
+
+# --- Agricore IntaSend env (idempotent) ---
+PAYMENT_PROVIDER = os.environ.get("PAYMENT_PROVIDER", "intasend")
+INTASEND_SECRET_KEY = os.environ.get("INTASEND_SECRET_KEY", "")
+INTASEND_PUBLISHABLE_KEY = os.environ.get("INTASEND_PUBLISHABLE_KEY", "")
+INTASEND_TEST = os.environ.get("INTASEND_TEST", "True").strip().lower() not in ("0", "false", "no", "")
+
+
+# --- Agricore IntaSend webhook (idempotent) ---
+INTASEND_WEBHOOK_CHALLENGE = os.environ.get("INTASEND_WEBHOOK_CHALLENGE", "")
