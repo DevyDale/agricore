@@ -11,6 +11,7 @@ class CartLine {
   final String image;
   final int stock;
   final String storeName;
+  final String storeId;
   int qty;
   CartLine({
     required this.id,
@@ -20,6 +21,7 @@ class CartLine {
     this.image = '',
     this.stock = 0,
     this.storeName = '',
+    this.storeId = '',
     this.qty = 1,
   });
 
@@ -31,6 +33,7 @@ class CartLine {
         'image': image,
         'stock': stock,
         'store_name': storeName,
+        'store_id': storeId,
         'qty': qty,
       };
 
@@ -42,6 +45,7 @@ class CartLine {
         image: (j['image'] ?? '').toString(),
         stock: (j['stock'] is num) ? (j['stock'] as num).toInt() : int.tryParse('${j['stock']}') ?? 0,
         storeName: (j['store_name'] ?? '').toString(),
+        storeId: (j['store_id'] ?? j['store'] ?? '').toString(),
         qty: (j['qty'] is num) ? (j['qty'] as num).toInt() : 1,
       );
 }
@@ -104,6 +108,7 @@ class CartModel extends ChangeNotifier {
         image: (product['image_display'] ?? product['image'] ?? product['image_url'] ?? '').toString(),
         stock: stock,
         storeName: (product['store_name'] ?? 'Agricore Seller').toString(),
+        storeId: (product['store'] ?? '').toString(),
         qty: 1,
       );
     }
