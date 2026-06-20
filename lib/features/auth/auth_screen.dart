@@ -121,7 +121,10 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.fromLTRB(22, 24, 22, 28),
-                    child: Form(
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 460),
+                        child: Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -229,6 +232,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         ],
                       ),
                     ),
+                        ),
+                      ),
                   ),
                 ),
               ),

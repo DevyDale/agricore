@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/responsive/responsive.dart';
 import '../../core/security/secure_screen.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
@@ -756,8 +757,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     final value = pickNum(_store, ['total_value']);
     return Scaffold(
       backgroundColor: AppColors.cream,
-      body: CustomScrollView(
-        slivers: [
+      body: MaxWidthBody(
+        child: CustomScrollView(
+          slivers: [
           SliverAppBar(
             pinned: true,
             expandedHeight: 168,
@@ -828,6 +830,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
           SliverToBoxAdapter(child: _section()),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
+        ),
       ),
     );
   }
@@ -1377,8 +1380,12 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
               const SizedBox(width: 12),
               const Icon(Icons.inventory_2_outlined, size: 13, color: AppColors.slate500),
               const SizedBox(width: 4),
-              Text('${stock % 1 == 0 ? stock.toInt() : stock} $unit',
-                  style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate600)),
+              Flexible(
+                child: Text('${stock % 1 == 0 ? stock.toInt() : stock} $unit',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate600)),
+              ),
               if (stock <= _lowStock) ...[
                 const SizedBox(width: 8),
                 Container(

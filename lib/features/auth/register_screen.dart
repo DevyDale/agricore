@@ -58,6 +58,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       extendBodyBehindAppBar: true,
       body: SafeArea(
         child: ResponsiveBody(
+          maxWidth: 460,
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Form(
