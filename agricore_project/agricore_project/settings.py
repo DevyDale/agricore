@@ -139,6 +139,18 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
+    # Rate limiting: blunt brute-force / scraping / abuse of the API, including
+    # the unauthenticated login and app-less rider-link endpoints. The payment
+    # webhook opts out (see FlutterwaveWebhookView) so provider callbacks are
+    # never dropped.
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '2000/hour',
+        'anon': '60/hour',
+    },
 }
 
 SIMPLE_JWT = {

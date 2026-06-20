@@ -201,11 +201,24 @@ class EscrowViewSet(viewsets.ModelViewSet):
         ).distinct()
 
     def perform_create(self, serializer):
+        from decimal import Decimal
+        from rest_framework.exceptions import PermissionDenied, ValidationError
         order = serializer.validated_data.get("order")
-        if order is not None and getattr(order, "buyer_id", None) != self.request.user.id:
-            from rest_framework.exceptions import PermissionDenied
+        if order is None or getattr(order, "buyer_id", None) != self.request.user.id:
             raise PermissionDenied("You can only open escrow for your own order.")
-        serializer.save(buyer=self.request.user)
+        # Authoritative amount: recompute from the order's items priced at the
+        # real product price. The client never sets the sum that moves money.
+        total = Decimal("0")
+        for it in order.orderitem_set.select_related("product").all():
+            unit = it.product.price if it.product_id else Decimal("0")
+            total += Decimal(it.quantity or 0) * Decimal(unit)
+        if total <= 0:
+            raise ValidationError("This order has no priced items to place in escrow.")
+        serializer.save(
+            buyer=self.request.user,
+            amount=total,
+            currency=(order.currency or "UGX"),
+        )
 
     @extend_schema(request=None, responses=inline_serializer(name="EscrowPayResponse", fields={"checkout_link": serializers.URLField(), "tx_ref": serializers.CharField(), "amount": serializers.CharField(), "service_fee": serializers.CharField(), "currency": serializers.CharField()}))
     @action(detail=True, methods=["post"])
@@ -392,6 +405,8 @@ class FlutterwaveWebhookView(APIView):
 
     permission_classes = [AllowAny]
     authentication_classes = []
+    # Provider callbacks must never be rate-limited away.
+    throttle_classes = []
 
     def post(self, request):
         payload = request.data or {}

@@ -233,6 +233,12 @@ class OrderViewSet(viewsets.ModelViewSet):
         # Buyers see orders they placed; sellers see orders to stores they own.
         return self.queryset.filter(Q(buyer=user) | Q(store__owner=user)).distinct()
 
+    def perform_create(self, serializer):
+        from decimal import Decimal
+        # The buyer is always the authenticated user; the total starts at zero and
+        # is recomputed server-side as priced items are added.
+        serializer.save(buyer=self.request.user, total_amount=Decimal("0"))
+
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
@@ -245,10 +251,18 @@ class OrderItemViewSet(viewsets.ModelViewSet):
         ).distinct()
 
     def perform_create(self, serializer):
+        from decimal import Decimal
         order = serializer.validated_data.get('order')
         if order is None or order.buyer_id != self.request.user.id:
             raise PermissionDenied("You can only add items to your own orders.")
-        serializer.save()
+        # Price the line from the real product price, not a client-supplied figure,
+        # then keep the order total authoritative.
+        product = serializer.validated_data.get('product')
+        qty = serializer.validated_data.get('quantity') or 0
+        unit = product.price if product is not None else Decimal("0")
+        serializer.save(price_per_unit=unit, subtotal=Decimal(qty) * Decimal(unit))
+        agg = order.orderitem_set.aggregate(t=models.Sum('subtotal'))['t'] or Decimal("0")
+        Order.objects.filter(pk=order.pk).update(total_amount=agg)
 
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()

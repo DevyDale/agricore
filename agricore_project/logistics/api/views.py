@@ -311,12 +311,23 @@ class TransporterReviewViewSet(viewsets.ModelViewSet):
 def _job_for_token(token):
     if not token:
         return None
-    return (
+    from datetime import timedelta
+    job = (
         DeliveryJob.objects
         .select_related("order", "order__store", "escrow")
         .filter(access_token=token)
         .first()
     )
+    if job is None:
+        return None
+    # Single-use: the link stops resolving once the job reaches a terminal state
+    # (delivery also clears the token below).
+    if job.status in ("delivered", "cancelled"):
+        return None
+    # Expiry: a delivery link is only valid for a few days after the job was made.
+    if job.created_at and (timezone.now() - job.created_at) > timedelta(days=7):
+        return None
+    return job
 
 
 def _do_pickup(job, code):
@@ -376,7 +387,9 @@ def _do_deliver(job, otp):
     order.save()
     job.status = "delivered"
     job.delivered_at = timezone.now()
-    job.save(update_fields=["status", "delivered_at", "updated_at"])
+    # Burn the app-less access token so the link cannot be replayed.
+    job.access_token = ""
+    job.save(update_fields=["status", "delivered_at", "access_token", "updated_at"])
     return True, "Delivery confirmed. Thank you!"
 
 

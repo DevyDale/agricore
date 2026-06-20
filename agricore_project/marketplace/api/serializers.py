@@ -86,11 +86,15 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
+        # buyer and the order total are set by the server, not the client.
+        read_only_fields = ['buyer', 'total_amount']
 
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = '__all__'
+        # Item price + subtotal are derived from the real product price server-side.
+        read_only_fields = ['price_per_unit', 'subtotal']
 
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
