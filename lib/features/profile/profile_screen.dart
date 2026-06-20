@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/i18n/locale_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/responsive_body.dart';
 import '../finances/finances_screen.dart';
@@ -53,10 +54,10 @@ class ProfileScreen extends StatelessWidget {
               label: 'Verified',
               value: (u?.isVerified ?? false) ? 'Yes' : 'No'),
           const SizedBox(height: 24),
-          const Padding(
-            padding: EdgeInsets.only(left: 4, bottom: 10),
-            child: Text('More',
-                style: TextStyle(
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 10),
+            child: Text(context.tr('More'),
+                style: const TextStyle(
                     fontFamily: 'Fraunces',
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
@@ -64,14 +65,14 @@ class ProfileScreen extends StatelessWidget {
           ),
           _NavTile(
             icon: Icons.insights_rounded,
-            title: 'Finances',
+            title: context.tr('Finances'),
             subtitle: 'Revenue, expenses & profit',
             onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const FinancesScreen())),
           ),
           _NavTile(
             icon: Icons.local_shipping_rounded,
-            title: 'Transporter',
+            title: context.tr('Transporter'),
             subtitle: 'Deliver orders and earn',
             onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const TransporterScreen())),

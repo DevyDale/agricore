@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/responsive/responsive.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/i18n/locale_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../marketplace/marketplace_screen.dart';
 import '../farms/farms_screen.dart';
@@ -80,7 +81,7 @@ class _DashboardShellState extends State<DashboardShell> {
 
     return Scaffold(
       appBar: _index <= 3 ? null : AppBar(
-        title: Text(_sections[_index].label),
+        title: Text(context.tr(_sections[_index].label)),
         actions: [
           IconButton(
             tooltip: 'Profile',
@@ -109,8 +110,8 @@ class _DashboardShellState extends State<DashboardShell> {
                       ? NavigationRailLabelType.none
                       : NavigationRailLabelType.all,
                   destinations: _sections
-                      .map((s) =>
-                          NavigationRailDestination(icon: Icon(s.icon), label: Text(s.label)))
+                      .map((s) => NavigationRailDestination(
+                          icon: Icon(s.icon), label: Text(context.tr(s.label))))
                       .toList(),
                 ),
                 const VerticalDivider(width: 1),
@@ -121,7 +122,10 @@ class _DashboardShellState extends State<DashboardShell> {
       bottomNavigationBar: wide
           ? null
           : AnimatedBottomNav(
-              items: _sections.take(4).map((s) => AnimatedNavItem(s.icon, s.label)).toList(),
+              items: _sections
+                  .take(4)
+                  .map((s) => AnimatedNavItem(s.icon, context.tr(s.label)))
+                  .toList(),
               index: _index < 4 ? _index : 0,
               onTap: (i) => setState(() => _index = i),
             ),
@@ -177,7 +181,7 @@ class _Drawer extends StatelessWidget {
                     ListTile(
                       leading: Icon(sections[i].icon,
                           color: current == i ? AppColors.g700 : AppColors.slate500),
-                      title: Text(sections[i].label,
+                      title: Text(context.tr(sections[i].label),
                           style: TextStyle(
                               fontFamily: 'Inter',
                               fontWeight: current == i ? FontWeight.w700 : FontWeight.w500,
@@ -192,7 +196,7 @@ class _Drawer extends StatelessWidget {
             const Divider(height: 1),
             ListTile(
               leading: const Icon(Icons.logout_rounded, color: Colors.redAccent),
-              title: const Text('Log out', style: TextStyle(fontFamily: 'Inter')),
+              title: Text(context.tr('Log out'), style: const TextStyle(fontFamily: 'Inter')),
               onTap: () => context.read<AuthProvider>().logout(),
             ),
           ],

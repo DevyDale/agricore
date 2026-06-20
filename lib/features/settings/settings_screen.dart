@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/i18n/app_translations.dart';
+import '../../core/i18n/locale_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/app_toast.dart';
 
@@ -18,14 +20,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final u = context.watch<AuthProvider>().user;
+    final loc = context.watch<LocaleProvider>();
+    final langName =
+        kLanguages.firstWhere((l) => l.code == loc.language, orElse: () => kLanguages.first).name;
+    final curr = currencyFor(loc.currency);
     return Scaffold(
       backgroundColor: AppColors.cream,
       appBar: AppBar(
         backgroundColor: AppColors.cream,
         foregroundColor: AppColors.inkWarm,
         elevation: 0,
-        title: const Text('Settings',
-            style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 22)),
+        title: Text(context.tr('Settings'),
+            style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 22)),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
@@ -90,9 +96,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           _sectionLabel('Preferences'),
           _group([
-            _navTile(Icons.language_rounded, 'sky', 'Language', 'English'),
+            _navTile(Icons.language_rounded, 'sky', context.tr('Language'), langName,
+                onTap: _pickLanguage),
             _divider(),
-            _navTile(Icons.payments_rounded, 'green', 'Currency', 'UGX — Ugandan Shilling'),
+            _navTile(Icons.payments_rounded, 'green', context.tr('Currency'),
+                '${curr.code} — ${curr.name}',
+                onTap: _pickCurrency),
             _divider(),
             _navTile(Icons.dark_mode_rounded, 'plum', 'Appearance', 'Light'),
           ]),
@@ -146,6 +155,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     fontFamily: 'Inter', fontSize: 11.5, letterSpacing: 1.2, color: AppColors.slate500)),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _pickLanguage() async {
+    final loc = context.read<LocaleProvider>();
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _ChoiceSheet(
+        title: context.tr('Language'),
+        options: [
+          for (final l in kLanguages) (value: l.code, label: l.name, trailing: l.code.toUpperCase()),
+        ],
+        selected: loc.language,
+        onSelect: (code) => loc.setLanguage(code),
+      ),
+    );
+  }
+
+  Future<void> _pickCurrency() async {
+    final loc = context.read<LocaleProvider>();
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _ChoiceSheet(
+        title: context.tr('Currency'),
+        options: [
+          for (final c in kCurrencies) (value: c.code, label: '${c.code} — ${c.name}', trailing: c.symbol),
+        ],
+        selected: loc.currency,
+        onSelect: (code) => loc.setCurrency(code),
       ),
     );
   }
@@ -213,9 +254,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _navTile(IconData icon, String tone, String title, String sub) {
+  Widget _navTile(IconData icon, String tone, String title, String sub, {VoidCallback? onTap}) {
     return InkWell(
-      onTap: () => showToast(context, '$title settings are coming soon.'),
+      onTap: onTap ?? () => showToast(context, '$title settings are coming soon.'),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 12, 14, 12),
         child: Row(
@@ -235,6 +276,89 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             const Icon(Icons.chevron_right_rounded, color: AppColors.slate500),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+typedef _Choice = ({String value, String label, String trailing});
+
+class _ChoiceSheet extends StatelessWidget {
+  final String title;
+  final List<_Choice> options;
+  final String selected;
+  final ValueChanged<String> onSelect;
+  const _ChoiceSheet(
+      {required this.title,
+      required this.options,
+      required this.selected,
+      required this.onSelect});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+          color: AppColors.cream,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+                child: Container(
+                    width: 42,
+                    height: 4,
+                    decoration: BoxDecoration(
+                        color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+            const SizedBox(height: 14),
+            Text(title,
+                style: const TextStyle(
+                    fontFamily: 'Fraunces',
+                    fontWeight: FontWeight.w800,
+                    fontSize: 19,
+                    color: AppColors.inkWarm)),
+            const SizedBox(height: 12),
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: options.length,
+                separatorBuilder: (_, __) => const Divider(height: 1, color: AppColors.line),
+                itemBuilder: (_, i) {
+                  final o = options[i];
+                  final on = o.value == selected;
+                  return ListTile(
+                    onTap: () {
+                      onSelect(o.value);
+                      Navigator.pop(context);
+                    },
+                    leading: Container(
+                      width: 40,
+                      alignment: Alignment.center,
+                      child: Text(o.trailing,
+                          style: const TextStyle(
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                              color: AppColors.g700)),
+                    ),
+                    title: Text(o.label,
+                        style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+                            fontSize: 14.5,
+                            color: AppColors.inkWarm)),
+                    trailing: on
+                        ? const Icon(Icons.check_circle_rounded, color: AppColors.green)
+                        : null,
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
