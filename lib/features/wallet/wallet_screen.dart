@@ -10,9 +10,11 @@ import '../../widgets/fresh_kit.dart';
 import '../../widgets/state_views.dart';
 import '../../core/i18n/locale_provider.dart';
 import '../../core/responsive/responsive.dart';
+import '../../providers/auth_provider.dart';
 
 const _walletsPath = '/digital-wallets/';
 const _payoutPath = '/payout-accounts/';
+const _escrowsPath = '/escrows/';
 
 /// Wallet hub: shows the digital-wallet balance and the seller payout
 /// destination (mobile money or bank). Mirrors the web "Manage Wallet" flow
@@ -28,6 +30,8 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
   String? _error;
   Map<String, dynamic>? _wallet;
   Map<String, dynamic>? _payout;
+  List<Map<String, dynamic>> _escrows = [];
+  int? _myId;
 
   @override
   void initState() {
@@ -40,11 +44,13 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
       _loading = true;
       _error = null;
     });
+    _myId = context.read<AuthProvider>().user?.id;
     try {
       final dio = context.read<DioClient>().dio;
       final res = await Future.wait([
         dio.get(_walletsPath),
         dio.get(_payoutPath),
+        dio.get(_escrowsPath),
       ]);
       if (!mounted) return;
       final wallets = asList(res[0].data);
@@ -52,6 +58,7 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
       setState(() {
         _wallet = wallets.isNotEmpty ? wallets.first : null;
         _payout = payouts.isNotEmpty ? payouts.first : null;
+        _escrows = asList(res[2].data);
         _loading = false;
       });
     } catch (e) {
@@ -62,6 +69,31 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
       });
     }
   }
+
+  bool _isBuyer(Map<String, dynamic> e) => _myId != null && (pickNum(e, ['buyer'])?.toInt()) == _myId;
+  String _status(Map<String, dynamic> e) => (pickString(e, ['status']) ?? '').toLowerCase();
+  double _amt(Map<String, dynamic> e) => (pickNum(e, ['amount']) ?? 0).toDouble();
+
+  /// Money I've committed as a buyer that's still locked in escrow.
+  double get _heldByMe =>
+      _escrows.where((e) => _isBuyer(e) && _status(e) == 'held').fold(0.0, (s, e) => s + _amt(e));
+
+  /// Money released to me as a seller (lifetime earned through escrow).
+  double get _earned =>
+      _escrows.where((e) => !_isBuyer(e) && _status(e) == 'released').fold(0.0, (s, e) => s + _amt(e));
+
+  String _date(Map<String, dynamic> e) =>
+      (pickString(e, ['released_at']) ?? pickString(e, ['updated_at']) ?? pickString(e, ['created_at']) ?? '');
+
+  List<Map<String, dynamic>> get _activity {
+    final list = [..._escrows];
+    list.sort((a, b) => _date(b).compareTo(_date(a)));
+    return list.take(20).toList();
+  }
+
+  String get _curr => _escrows.isNotEmpty
+      ? (pickString(_escrows.first, ['currency']) ?? 'UGX')
+      : (pickString(_wallet ?? {}, ['currency']) ?? 'UGX');
 
   Future<void> _editPayout() async {
     final result = await showModalBottomSheet<Map<String, dynamic>>(
@@ -105,7 +137,7 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
             children: [
               GradientHero(
                 title: context.tr('Wallet'),
-              subtitle: context.tr('Balance & payouts'),
+              subtitle: context.tr('Balance, payouts & activity'),
               icon: Icons.account_balance_wallet_rounded,
               bigLabel: context.tr('Available balance'),
               bigValue: _loading ? '—' : _balanceText,
@@ -127,7 +159,27 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
                   child: ErrorView(message: _error!, onRetry: _load))
             else ...[
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 18, 16, 8),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+                child: Row(children: [
+                  Expanded(
+                    child: MetricCard(
+                        icon: Icons.lock_clock_rounded,
+                        value: money(_heldByMe, code: _curr, decimals: 0),
+                        label: context.tr('Held in escrow'),
+                        color: const Color(0xFF0EA5E9)),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: MetricCard(
+                        icon: Icons.south_west_rounded,
+                        value: money(_earned, code: _curr, decimals: 0),
+                        label: context.tr('Earned'),
+                        color: AppColors.g600),
+                  ),
+                ]),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
                 child: FreshSectionHeader(
                   title: context.tr('Payout destination'),
                   action: _payout == null
@@ -144,17 +196,137 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
                     : _PayoutCard(payout: _payout!),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 6, 16, 28),
+                padding: const EdgeInsets.fromLTRB(16, 6, 16, 16),
                 child: _InfoNote(
                   text: context.tr(
                       'Payouts from completed escrow sales are sent to this account. '
                       'Mobile money releases are instant; bank transfers may take 1–2 business days.'),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                child: FreshSectionHeader(title: context.tr('Activity')),
+              ),
+              if (_activity.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 28),
+                  child: EmptyView(
+                      text: context.tr('No wallet activity yet.'),
+                      icon: Icons.receipt_long_outlined),
+                )
+              else
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
+                  child: Column(children: [for (final e in _activity) _activityTile(e)]),
+                ),
             ],
           ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _activityTile(Map<String, dynamic> e) {
+    final buyer = _isBuyer(e);
+    final st = _status(e);
+    final incoming = !buyer; // money to me only when I'm the seller
+    final curr = pickString(e, ['currency']) ?? _curr;
+    final amountText = '${incoming ? '+' : '−'} ${money(_amt(e), code: curr, decimals: 0)}';
+
+    String title;
+    if (buyer) {
+      title = st == 'held'
+          ? 'Payment held in escrow'
+          : st == 'released'
+              ? 'Purchase completed'
+              : st == 'refunded'
+                  ? 'Refunded to you'
+                  : st == 'disputed'
+                      ? 'Disputed purchase'
+                      : 'Purchase';
+    } else {
+      title = st == 'released'
+          ? 'Sale paid out'
+          : st == 'held'
+              ? 'Sale — awaiting delivery'
+              : st == 'refunded'
+                  ? 'Refunded to buyer'
+                  : st == 'disputed'
+                      ? 'Disputed sale'
+                      : 'Sale';
+    }
+
+    final ({Color bg, Color fg}) badge = switch (st) {
+      'released' => (bg: const Color(0xFFDCFCE7), fg: const Color(0xFF166534)),
+      'held' => (bg: const Color(0xFFE0F2FE), fg: const Color(0xFF075985)),
+      'refunded' => (bg: const Color(0xFFF1F5F9), fg: AppColors.slate600),
+      'disputed' => (bg: const Color(0xFFFEE2E2), fg: const Color(0xFFB91C1C)),
+      _ => (bg: const Color(0xFFFEF3C7), fg: const Color(0xFF92400E)),
+    };
+    final amtColor = st == 'refunded'
+        ? AppColors.slate600
+        : (incoming ? const Color(0xFF0F7A4B) : const Color(0xFFB45309));
+    final date = _date(e).split('T').first;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(13),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.line),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: badge.bg, borderRadius: BorderRadius.circular(11)),
+            child: Icon(incoming ? Icons.south_west_rounded : Icons.north_east_rounded,
+                size: 18, color: badge.fg),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13.5,
+                        color: AppColors.inkWarm)),
+                const SizedBox(height: 3),
+                Row(children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    decoration: BoxDecoration(color: badge.bg, borderRadius: BorderRadius.circular(999)),
+                    child: Text(st.isEmpty ? 'pending' : st,
+                        style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w800,
+                            color: badge.fg)),
+                  ),
+                  if (date.isNotEmpty) ...[
+                    const SizedBox(width: 8),
+                    Text(date,
+                        style: const TextStyle(
+                            fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500)),
+                  ],
+                ]),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(amountText,
+              style: TextStyle(
+                  fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 14, color: amtColor)),
+        ],
       ),
     );
   }

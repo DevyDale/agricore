@@ -12,7 +12,7 @@ import '../../providers/cart_model.dart';
 import '../../widgets/app_toast.dart';
 import '../../widgets/farmland_background.dart';
 import '../../widgets/state_views.dart';
-import '../settings/settings_screen.dart';
+import '../wallet/wallet_screen.dart';
 import 'product_bits.dart';
 import 'product_detail_sheet.dart';
 import 'cart_sheet.dart';
@@ -128,8 +128,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         ok ? '${pickString(p, ['title']) ?? 'Item'} added to cart' : (stock <= 0 ? 'Out of stock' : 'Stock limit reached'));
   }
 
-  void _openSettings() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
+  void _openWallet() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const WalletScreen()));
   }
 
   Future<void> _openFilters() async {
@@ -173,9 +173,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   automaticallyImplyLeading: false,
                   systemOverlayStyle: SystemUiOverlayStyle.light,
                   leading: IconButton(
-                    tooltip: context.tr('Settings'),
-                    icon: const Icon(Icons.settings_rounded, color: Colors.white),
-                    onPressed: _openSettings,
+                    tooltip: context.tr('Wallet'),
+                    icon: const Icon(Icons.account_balance_wallet_rounded, color: Colors.white),
+                    onPressed: _openWallet,
                   ),
                   // Always-visible title in the bar's toolbar.
                   flexibleSpace: FlexibleSpaceBar(

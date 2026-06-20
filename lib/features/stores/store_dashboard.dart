@@ -15,6 +15,7 @@ import '../../widgets/farmland_background.dart';
 import '../../widgets/state_views.dart';
 import 'store_bits.dart';
 import 'store_repository.dart';
+import '../wallet/wallet_screen.dart';
 
 const Color _heroDark = Color(0xFF22432C);
 const Color _green = Color(0xFF2E7D46);
@@ -1662,6 +1663,30 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          GestureDetector(
+            onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const WalletScreen())),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+              decoration: BoxDecoration(
+                  gradient: AppColors.emeraldGrad, borderRadius: BorderRadius.circular(14)),
+              child: Row(children: const [
+                Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 20),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text('Open my wallet',
+                      style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14,
+                          color: Colors.white)),
+                ),
+                Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
+              ]),
+            ),
+          ),
+          const SizedBox(height: 14),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(12),

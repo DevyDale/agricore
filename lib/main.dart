@@ -5,6 +5,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'core/network/dio_client.dart';
 import 'core/storage/token_storage.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_controller.dart';
 import 'core/router/app_router.dart';
 import 'core/i18n/locale_provider.dart';
 import 'core/i18n/app_translations.dart';
@@ -51,6 +52,9 @@ class AgricoreApp extends StatelessWidget {
         ChangeNotifierProvider<LocaleProvider>(
           create: (_) => LocaleProvider()..load(),
         ),
+        ChangeNotifierProvider<ThemeController>(
+          create: (_) => ThemeController()..load(),
+        ),
         ChangeNotifierProvider<DaleController>(
           create: (_) => DaleController(),
         ),
@@ -64,6 +68,8 @@ class AgricoreApp extends StatelessWidget {
             title: 'Agricore Dynamics',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.light(),
+            darkTheme: AppTheme.dark(),
+            themeMode: context.watch<ThemeController>().mode,
             routerConfig: router,
             locale: loc.locale,
             supportedLocales: kLanguages.map((l) => Locale(l.code)),
