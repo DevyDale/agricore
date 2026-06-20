@@ -11,6 +11,7 @@ import '../../core/utils/json_utils.dart';
 import '../../providers/cart_model.dart';
 import '../../widgets/app_toast.dart';
 import '../../widgets/farmland_background.dart';
+import '../../widgets/reveal.dart';
 import '../../widgets/state_views.dart';
 import '../wallet/wallet_screen.dart';
 import 'product_bits.dart';
@@ -261,10 +262,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                         mainAxisExtent: 350,
                       ),
                       delegate: SliverChildBuilderDelegate(
-                        (_, i) => _ProductCard(
-                          product: view[i],
-                          onOpen: () => showProductDetail(context, view[i], onChanged: () => setState(() {})),
-                          onAdd: () => _add(view[i]),
+                        (_, i) => Reveal(
+                          index: i,
+                          child: _ProductCard(
+                            product: view[i],
+                            onOpen: () => showProductDetail(context, view[i], onChanged: () => setState(() {})),
+                            onAdd: () => _add(view[i]),
+                          ),
                         ),
                         childCount: view.length,
                       ),
@@ -516,7 +520,7 @@ class _ProductCard extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    ProductImage(p),
+                    Hero(tag: 'product-image-${p['id']}', child: ProductImage(p)),
                     if (tag.isNotEmpty)
                       Positioned(
                         top: 8,

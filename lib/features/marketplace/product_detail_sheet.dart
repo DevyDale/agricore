@@ -130,7 +130,12 @@ class _DetailSheetState extends State<_DetailSheet> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(18),
-                    child: SizedBox(height: 200, child: ProductImage(p, big: true)),
+                    child: SizedBox(
+                      height: 200,
+                      child: Hero(
+                          tag: 'product-image-${p['id']}',
+                          child: ProductImage(p, big: true)),
+                    ),
                   ),
                   const SizedBox(height: 14),
                   Row(

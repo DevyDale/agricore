@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../core/theme/app_colors.dart';
 
+/// App-wide loading indicator — a lively three-bounce spinner in the brand
+/// green, optionally with a label underneath.
 class LoadingView extends StatelessWidget {
-  const LoadingView({super.key});
+  final String? label;
+  final double size;
+  const LoadingView({super.key, this.label, this.size = 30});
+
   @override
-  Widget build(BuildContext context) => const Center(
-        child: SizedBox(
-            width: 30,
-            height: 30,
-            child: CircularProgressIndicator(strokeWidth: 2.6, color: AppColors.g600)),
-      );
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SpinKitThreeBounce(color: AppColors.g600, size: size),
+          if (label != null) ...[
+            const SizedBox(height: 14),
+            Text(label!,
+                style: const TextStyle(
+                    fontFamily: 'Inter', fontSize: 13, color: AppColors.slate500)),
+          ],
+        ],
+      ),
+    );
+  }
 }
 
 class ErrorView extends StatelessWidget {
