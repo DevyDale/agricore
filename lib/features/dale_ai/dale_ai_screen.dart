@@ -216,10 +216,32 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
   @override
   Widget build(BuildContext context) {
     final maxW = Responsive.contentMaxWidth(context);
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxW),
-        child: Column(
+    return Scaffold(
+      backgroundColor: AppColors.cream,
+      appBar: AppBar(
+        backgroundColor: AppColors.cream,
+        foregroundColor: AppColors.inkWarm,
+        elevation: 0,
+        titleSpacing: 0,
+        title: Row(
+          children: [
+            Container(
+              width: 34,
+              height: 34,
+              decoration: const BoxDecoration(shape: BoxShape.circle, gradient: AppColors.emeraldGrad),
+              child: const Icon(Icons.smart_toy_rounded, color: Colors.white, size: 19),
+            ),
+            const SizedBox(width: 10),
+            const Text('Dale AI',
+                style: TextStyle(
+                    fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19)),
+          ],
+        ),
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxW),
+          child: Column(
           children: [
             Expanded(
               child: ListView.builder(
@@ -282,6 +304,7 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
               ),
             ),
           ],
+          ),
         ),
       ),
     );

@@ -10,6 +10,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
 import '../../core/utils/log.dart';
 import '../../widgets/app_toast.dart';
+import 'dale_ai_screen.dart';
 import 'dale_models.dart';
 import 'dale_service.dart';
 import 'dale_widgets.dart';
@@ -379,6 +380,15 @@ class _DalePanelState extends State<_DalePanel> {
             onPressed: _toggleSpeak,
             icon: Icon(_speakReplies ? Icons.volume_up_rounded : Icons.volume_off_rounded,
                 color: _speakReplies ? AppColors.g600 : AppColors.slate500),
+          ),
+          IconButton(
+            tooltip: 'Open full screen',
+            onPressed: () {
+              final nav = Navigator.of(context);
+              nav.pop();
+              nav.push(MaterialPageRoute(builder: (_) => const DaleAiScreen()));
+            },
+            icon: const Icon(Icons.open_in_full_rounded, color: AppColors.slate600, size: 20),
           ),
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
