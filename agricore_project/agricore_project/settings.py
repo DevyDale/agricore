@@ -10,13 +10,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ==================== ENV SETUP ====================
 env = environ.Env(
-    DEBUG=(bool, True),
+    # Secure by default: production must opt IN to DEBUG via the environment.
+    DEBUG=(bool, False),
 )
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # ==================== SECURITY & HOSTS ====================
 SECRET_KEY = env('SECRET_KEY', default='django-insecure-change-me-in-production')
-DEBUG = env.bool('DEBUG', default=True)
+DEBUG = env.bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = env.list(
     'ALLOWED_HOSTS',
@@ -33,6 +34,21 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', default=0 if DEBUG else 31536000)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 SECURE_HSTS_PRELOAD = not DEBUG
+
+# ==================== ERROR MONITORING (Sentry) ====================
+# No-op unless SENTRY_DSN is set, so local/dev/CI are unaffected.
+SENTRY_DSN = env('SENTRY_DSN', default='')
+if SENTRY_DSN:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=env.float('SENTRY_TRACES_SAMPLE_RATE', default=0.2),
+        send_default_pii=False,  # never ship user PII to the error tracker
+        environment='development' if DEBUG else 'production',
+    )
 
 # ==================== APPLICATION DEFINITION ====================
 INSTALLED_APPS = [

@@ -214,3 +214,60 @@ class EscrowAmountIntegrityTests(TestCase):
             {"order": self.order.id, "amount": "1", "currency": "UGX"}, format="json",
         )
         self.assertIn(r.status_code, (400, 403), r.content)
+
+
+class DisputeResolutionTests(TestCase):
+    """Admin adjudication of a disputed escrow."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.buyer = make_user("buyer4", "buyer4@example.com")
+        self.seller = make_user("seller4", "seller4@example.com")
+        self.admin = User.objects.create_user(
+            username="admin4", email="admin4@example.com", password="pw12345!",
+            phone="0772999999", is_staff=True,
+        )
+        self.store = Store.objects.create(
+            owner=self.seller, name="Dispute Store",
+            owner_name="Seller Four", owner_phone="0772444499",
+        )
+        self.order = Order.objects.create(
+            buyer=self.buyer, store=self.store,
+            total_amount=Decimal("50000"), status="paid",
+        )
+        self.escrow = Escrow.objects.create(
+            order=self.order, buyer=self.buyer,
+            amount=Decimal("50000"), currency="UGX", status="disputed",
+            dispute_reason="Short weight",
+        )
+
+    def test_non_admin_cannot_resolve(self):
+        self.client.force_authenticate(self.buyer)
+        r = self.client.post(
+            f"/api/escrows/{self.escrow.id}/resolve_dispute/",
+            {"decision": "refund"}, format="json",
+        )
+        self.assertEqual(r.status_code, 403, r.content)
+        self.escrow.refresh_from_db()
+        self.assertEqual(self.escrow.status, "disputed")
+
+    def test_admin_refund_marks_refunded(self):
+        self.client.force_authenticate(self.admin)
+        r = self.client.post(
+            f"/api/escrows/{self.escrow.id}/resolve_dispute/",
+            {"decision": "refund", "resolution_note": "Buyer was right"}, format="json",
+        )
+        self.assertEqual(r.status_code, 200, r.content)
+        self.escrow.refresh_from_db()
+        self.assertEqual(self.escrow.status, "refunded")
+        self.assertIn("refunded to buyer", self.escrow.dispute_reason)
+
+    def test_resolve_requires_disputed_state(self):
+        self.escrow.status = "held"
+        self.escrow.save()
+        self.client.force_authenticate(self.admin)
+        r = self.client.post(
+            f"/api/escrows/{self.escrow.id}/resolve_dispute/",
+            {"decision": "refund"}, format="json",
+        )
+        self.assertEqual(r.status_code, 400, r.content)

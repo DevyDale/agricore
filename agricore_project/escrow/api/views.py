@@ -194,8 +194,11 @@ class EscrowViewSet(viewsets.ModelViewSet):
     http_method_names = ["get", "post", "head", "options"]
 
     def get_queryset(self):
-        # Visible to the buyer and to the seller (store owner) on the order.
+        # Visible to the buyer and to the seller (store owner) on the order;
+        # staff see all escrows so they can adjudicate disputes.
         user = self.request.user
+        if user.is_staff:
+            return Escrow.objects.all()
         return Escrow.objects.filter(
             Q(buyer=user) | Q(order__store__owner=user)
         ).distinct()
@@ -391,6 +394,54 @@ class EscrowViewSet(viewsets.ModelViewSet):
             escrow.dispute_photo = _dphoto
         escrow.save()
         return Response(self.get_serializer(escrow).data)
+
+    @action(detail=True, methods=["post"])
+    def resolve_dispute(self, request, pk=None):
+        """Admin adjudicates a disputed escrow. `decision` = 'release' pays the
+        seller through the normal payout path; 'refund' marks the escrow refunded
+        to the buyer. Staff only; the resolution note is appended for the record.
+        """
+        escrow = self.get_object()
+        if not request.user.is_staff:
+            return Response(
+                {"detail": "Only an administrator can resolve a dispute."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        if escrow.status != "disputed":
+            return Response(
+                {"detail": f"Escrow is not disputed (status: {escrow.status})."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        decision = str(request.data.get("decision", "")).strip().lower()
+        note = str(request.data.get("resolution_note", "") or "").strip()[:2000]
+
+        def _append_note(label):
+            base = (escrow.dispute_reason or "").strip()
+            escrow.dispute_reason = (f"{base}\n[resolved: {label}] {note}").strip()
+
+        if decision in ("release", "seller", "release_to_seller"):
+            # Side with the seller: return to 'held' so the standard payout path
+            # (fee split, transporter cut) runs, then initiate the payout.
+            escrow.status = "held"
+            _append_note("released to seller")
+            escrow.save()
+            code, body = initiate_seller_payout(escrow)
+            return Response(body, status=code)
+
+        if decision in ("refund", "buyer", "refund_buyer"):
+            escrow.status = "refunded"
+            escrow.released_at = timezone.now()
+            _append_note("refunded to buyer")
+            escrow.save()
+            # State + audit are recorded here (audit signal fires on save). The
+            # actual money-back disbursement to the buyer should be issued via the
+            # payment provider's refund/transfer API.
+            return Response(self.get_serializer(escrow).data)
+
+        return Response(
+            {"detail": "decision must be 'release' or 'refund'."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class FlutterwaveWebhookView(APIView):
