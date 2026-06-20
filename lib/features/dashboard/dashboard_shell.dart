@@ -9,7 +9,7 @@ import '../stores/stores_screen.dart';
 import '../chats/conversations_screen.dart';
 import '../workforce/workforce_screen.dart';
 import '../profile/profile_screen.dart';
-import '../common/placeholder_screen.dart';
+import '../wallet/wallet_screen.dart';
 import '../dale_ai/dale_chat.dart';
 import '../../widgets/animated_bottom_nav.dart';
 
@@ -59,11 +59,7 @@ class _DashboardShellState extends State<DashboardShell> {
       case 4:
         return const WorkforceScreen();
       case 5:
-        return const PlaceholderScreen(
-          title: 'Wallet',
-          icon: Icons.account_balance_wallet_rounded,
-          message: 'Wallet, cards and Flutterwave payouts arrive in the payments phase.',
-        );
+        return const WalletScreen();
       case 6:
         return const ProfileScreen();
       default:
