@@ -159,6 +159,23 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         qs = qs.exclude(pk=request.user.pk).order_by('username')[:20]
         return Response([{'id': u.id, 'username': u.username} for u in qs])
 
+    @action(detail=False, methods=['post'], url_path='change-password', permission_classes=[IsAuthenticated])
+    def change_password(self, request):
+        """Authenticated user changes their own password after verifying the current one."""
+        from rest_framework import status as drf_status
+        user = request.user
+        current = str(request.data.get('current_password') or '')
+        new = str(request.data.get('new_password') or '')
+        if not user.check_password(current):
+            return Response({'detail': 'Your current password is incorrect.'},
+                            status=drf_status.HTTP_400_BAD_REQUEST)
+        if len(new) < 8:
+            return Response({'detail': 'New password must be at least 8 characters.'},
+                            status=drf_status.HTTP_400_BAD_REQUEST)
+        user.set_password(new)
+        user.save(update_fields=['password'])
+        return Response({'detail': 'Password updated successfully.'})
+
 
 class AttachmentViewSet(viewsets.ModelViewSet):
     queryset = Attachment.objects.all()
