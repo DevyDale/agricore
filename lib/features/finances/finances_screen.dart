@@ -6,6 +6,7 @@ import '../../core/utils/json_utils.dart';
 import '../../widgets/fresh_kit.dart';
 import '../../widgets/state_views.dart';
 import '../../core/i18n/locale_provider.dart';
+import '../../core/responsive/responsive.dart';
 
 const _farmsPath = '/farms/';
 const _financesPath = '/farm-finances/';
@@ -112,13 +113,14 @@ class _FinancesScreenState extends State<FinancesScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.cream,
-      body: RefreshIndicator(
-        onRefresh: _load,
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            GradientHero(
-              title: context.tr('Finances'),
+      body: MaxWidthBody(
+        child: RefreshIndicator(
+          onRefresh: _load,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              GradientHero(
+                title: context.tr('Finances'),
               subtitle: context.tr('Profit & loss'),
               icon: Icons.insights_rounded,
               bigLabel: context.tr('Net profit'),
@@ -225,6 +227,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                 ),
             ],
           ],
+          ),
         ),
       ),
     );

@@ -5,6 +5,7 @@ import '../../core/i18n/app_translations.dart';
 import '../../core/i18n/locale_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/app_toast.dart';
+import '../../core/responsive/responsive.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -33,7 +34,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: Text(context.tr('Settings'),
             style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 22)),
       ),
-      body: ListView(
+      body: MaxWidthBody(
+        child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
         children: [
           // ---- account card ----
@@ -155,6 +157,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     fontFamily: 'Inter', fontSize: 11.5, letterSpacing: 1.2, color: AppColors.slate500)),
           ),
         ],
+        ),
       ),
     );
   }

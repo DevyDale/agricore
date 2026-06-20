@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/responsive/responsive.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
 import '../../widgets/app_toast.dart';
@@ -188,7 +189,8 @@ class _ExpensesManagementScreenState extends State<ExpensesManagementScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.cream,
-      body: RefreshIndicator(
+      body: MaxWidthBody(
+        child: RefreshIndicator(
         onRefresh: _load,
         child: CustomScrollView(
           slivers: [
@@ -261,6 +263,7 @@ class _ExpensesManagementScreenState extends State<ExpensesManagementScreen> {
             ],
           ],
         ),
+      ),
       ),
     );
   }

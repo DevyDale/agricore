@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/network/chat_api.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/responsive/responsive.dart';
 import '../../core/storage/token_storage.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
@@ -363,7 +364,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       ),
       body: Column(
         children: [
-          Expanded(child: _body()),
+          Expanded(child: MaxWidthBody(child: _body())),
           if (_replyTo != null) _replyBar(),
           if (_pendingPath != null) _attachmentBar(),
           _composer(),

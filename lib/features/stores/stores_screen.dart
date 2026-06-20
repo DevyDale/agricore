@@ -6,6 +6,7 @@ import '../../core/network/api_endpoints.dart';
 import '../../core/network/api_service.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/i18n/locale_provider.dart';
+import '../../core/responsive/responsive.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
 import '../../widgets/farmland_background.dart';
@@ -120,7 +121,8 @@ class _StoresScreenState extends State<StoresScreen> {
     final total = _all.length;
     final verified = _all.where((s) => s['is_verified'] == true).length;
 
-    return RefreshIndicator(
+    return MaxWidthBody(
+      child: RefreshIndicator(
       onRefresh: _load,
       child: CustomScrollView(
         slivers: [
@@ -233,6 +235,7 @@ class _StoresScreenState extends State<StoresScreen> {
           ],
         ],
       ),
+      ),
     );
   }
 
@@ -258,15 +261,23 @@ class _StoresScreenState extends State<StoresScreen> {
           children: [
             Icon(Icons.storefront_rounded, size: 15, color: Colors.white.withValues(alpha: 0.82)),
             const SizedBox(width: 6),
-            Text('$total stall${total == 1 ? '' : 's'}',
-                style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.82))),
+            Flexible(
+              child: Text('$total stall${total == 1 ? '' : 's'}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.82))),
+            ),
             const SizedBox(width: 8),
             Text('·', style: TextStyle(fontSize: 12.5, color: Colors.white.withValues(alpha: 0.5))),
             const SizedBox(width: 8),
             const Icon(Icons.verified_rounded, size: 15, color: Color(0xFF9FE1CB)),
             const SizedBox(width: 6),
-            Text('$verified verified',
-                style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.82))),
+            Flexible(
+              child: Text('$verified verified',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.82))),
+            ),
           ],
         ),
       ],

@@ -9,6 +9,7 @@ import '../../widgets/app_toast.dart';
 import '../../widgets/fresh_kit.dart';
 import '../../widgets/state_views.dart';
 import '../../core/i18n/locale_provider.dart';
+import '../../core/responsive/responsive.dart';
 
 const _profilePath = '/professional-profiles/me/';
 const _updatePath = '/professional-profiles/update_me/';
@@ -242,16 +243,18 @@ class _ProfessionalProfileScreenState extends State<ProfessionalProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.cream,
-      body: Column(
-        children: [
-          GradientHero(
-            title: context.tr('My professional profile'),
-            subtitle: context.tr('Get hired on AgriCore'),
-            icon: Icons.badge_rounded,
-            onBack: () => Navigator.of(context).maybePop(),
-          ),
-          Expanded(child: _body()),
-        ],
+      body: MaxWidthBody(
+        child: Column(
+          children: [
+            GradientHero(
+              title: context.tr('My professional profile'),
+              subtitle: context.tr('Get hired on AgriCore'),
+              icon: Icons.badge_rounded,
+              onBack: () => Navigator.of(context).maybePop(),
+            ),
+            Expanded(child: _body()),
+          ],
+        ),
       ),
     );
   }

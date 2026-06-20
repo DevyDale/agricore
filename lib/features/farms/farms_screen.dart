@@ -5,6 +5,7 @@ import '../../core/network/api_endpoints.dart';
 import '../../core/network/api_service.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/i18n/locale_provider.dart';
+import '../../core/responsive/responsive.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
 import '../../providers/auth_provider.dart';
@@ -135,7 +136,8 @@ class _FarmsScreenState extends State<FarmsScreen> {
     final name = context.watch<AuthProvider>().user?.username ?? 'farmer';
     final view = _view;
 
-    return RefreshIndicator(
+    return MaxWidthBody(
+      child: RefreshIndicator(
       onRefresh: _load,
       child: CustomScrollView(
         slivers: [
@@ -246,6 +248,7 @@ class _FarmsScreenState extends State<FarmsScreen> {
             ],
           ],
         ),
+    ),
     );
   }
 

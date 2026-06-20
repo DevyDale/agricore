@@ -8,6 +8,7 @@ import '../../widgets/app_toast.dart';
 import '../../widgets/fresh_kit.dart';
 import '../../widgets/state_views.dart';
 import '../../core/i18n/locale_provider.dart';
+import '../../core/responsive/responsive.dart';
 
 const _mePath = '/transporters/me/';
 const _transportersPath = '/transporters/';
@@ -201,7 +202,8 @@ class _TransporterScreenState extends State<TransporterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.cream,
-      body: _loading
+      body: MaxWidthBody(
+        child: _loading
           ? Column(
               children: [
                 GradientHero(
@@ -228,6 +230,7 @@ class _TransporterScreenState extends State<TransporterScreen> {
               : _registered
                   ? _buildRegistered()
                   : _buildUnregistered(),
+      ),
     );
   }
 

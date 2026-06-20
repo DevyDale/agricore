@@ -186,20 +186,24 @@ class _InfoTile extends StatelessWidget {
         children: [
           Icon(icon, color: AppColors.g700),
           const SizedBox(width: 14),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label,
-                  style: const TextStyle(
-                      fontFamily: 'Inter', color: AppColors.slate500, fontSize: 12.5)),
-              const SizedBox(height: 2),
-              Text(value,
-                  style: const TextStyle(
-                      fontFamily: 'Inter',
-                      color: AppColors.inkWarm,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600)),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: const TextStyle(
+                        fontFamily: 'Inter', color: AppColors.slate500, fontSize: 12.5)),
+                const SizedBox(height: 2),
+                Text(value,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontFamily: 'Inter',
+                        color: AppColors.inkWarm,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600)),
+              ],
+            ),
           ),
         ],
       ),

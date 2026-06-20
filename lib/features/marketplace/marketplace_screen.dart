@@ -158,7 +158,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     return Stack(
       children: [
         Positioned.fill(
-          child: RefreshIndicator(
+          child: MaxWidthBody(
+            child: RefreshIndicator(
             onRefresh: _load,
             child: CustomScrollView(
               slivers: [
@@ -271,6 +272,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   ),
               ],
             ),
+          ),
           ),
         ),
         if (cart.count > 0)
@@ -418,8 +420,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 2),
       child: Row(
         children: [
-          Text('$total product${total == 1 ? '' : 's'} · $sellers seller${sellers == 1 ? '' : 's'}',
-              style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+          Flexible(
+            child: Text('$total product${total == 1 ? '' : 's'} · $sellers seller${sellers == 1 ? '' : 's'}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+          ),
           if (filtered) ...[
             const Spacer(),
             Text('showing $shown',

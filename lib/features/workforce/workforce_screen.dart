@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../core/network/api_endpoints.dart';
 import '../../core/network/api_service.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/responsive/responsive.dart';
 import '../../core/utils/json_utils.dart';
 import '../../widgets/data_list.dart';
 import '../../widgets/entity_tile.dart';
@@ -14,7 +15,8 @@ class WorkforceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final api = ApiService(context.read<DioClient>().dio);
-    return DataList(
+    return MaxWidthBody(
+      child: DataList(
       loader: () => api.list(Api.jobPostings),
       emptyText: context.tr('No job postings available.'),
       itemBuilder: (context, j) {
@@ -27,6 +29,7 @@ class WorkforceScreen extends StatelessWidget {
           subtitle: desc,
         );
       },
+    ),
     );
   }
 }

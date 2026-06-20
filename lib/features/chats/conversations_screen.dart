@@ -16,6 +16,7 @@ import 'chat_room_screen.dart';
 import '../settings/settings_screen.dart';
 import '../../providers/auth_provider.dart';
 import '../../core/i18n/locale_provider.dart';
+import '../../core/responsive/responsive.dart';
 
 const Color _heroDark = Color(0xFF22432C);
 
@@ -161,7 +162,8 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   Widget build(BuildContext context) {
     final name = context.watch<AuthProvider>().user?.username ?? 'there';
     final view = _view;
-    return RefreshIndicator(
+    return MaxWidthBody(
+      child: RefreshIndicator(
       onRefresh: _load,
       child: CustomScrollView(
         slivers: [
@@ -250,6 +252,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
               ),
             ),
         ],
+      ),
       ),
     );
   }

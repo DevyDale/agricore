@@ -165,12 +165,16 @@ class _DetailSheetState extends State<_DetailSheet> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(money(price),
-                          style: const TextStyle(
-                              fontFamily: 'Fraunces',
-                              fontWeight: FontWeight.w900,
-                              fontSize: 26,
-                              color: AppColors.g600)),
+                      Flexible(
+                        child: Text(money(price),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontFamily: 'Fraunces',
+                                fontWeight: FontWeight.w900,
+                                fontSize: 26,
+                                color: AppColors.g600)),
+                      ),
                       const SizedBox(width: 8),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 4),

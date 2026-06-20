@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../core/network/api_endpoints.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/responsive/responsive.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
 import '../../core/utils/log.dart';
@@ -291,7 +292,8 @@ class _FarmDashboardScreenState extends State<FarmDashboardScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.cream,
-      body: RefreshIndicator(
+      body: MaxWidthBody(
+        child: RefreshIndicator(
         onRefresh: _load,
         child: CustomScrollView(
           slivers: [
@@ -404,6 +406,7 @@ class _FarmDashboardScreenState extends State<FarmDashboardScreen> {
               ),
           ],
         ),
+      ),
       ),
     );
   }

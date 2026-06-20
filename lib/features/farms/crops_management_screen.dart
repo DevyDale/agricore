@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/responsive/responsive.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
 import '../../widgets/app_toast.dart';
@@ -177,7 +178,8 @@ class _CropsManagementScreenState extends State<CropsManagementScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.cream,
-      body: RefreshIndicator(
+      body: MaxWidthBody(
+        child: RefreshIndicator(
         onRefresh: _load,
         child: CustomScrollView(
           slivers: [
@@ -231,6 +233,7 @@ class _CropsManagementScreenState extends State<CropsManagementScreen> {
             ],
           ],
         ),
+      ),
       ),
     );
   }
@@ -394,8 +397,12 @@ class _CropCard extends StatelessWidget {
                   children: [
                     const Icon(Icons.spa_rounded, size: 13, color: AppColors.slate500),
                     const SizedBox(width: 4),
-                    Text(planted.isEmpty ? 'Planted —' : 'Planted $planted',
-                        style: const TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate600)),
+                    Flexible(
+                      child: Text(planted.isEmpty ? 'Planted —' : 'Planted $planted',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate600)),
+                    ),
                     if (harvest.isNotEmpty) ...[
                       const SizedBox(width: 12),
                       const Icon(Icons.event_available_rounded, size: 13, color: AppColors.slate500),

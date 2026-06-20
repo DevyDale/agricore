@@ -9,6 +9,7 @@ import '../../widgets/app_toast.dart';
 import '../../widgets/fresh_kit.dart';
 import '../../widgets/state_views.dart';
 import '../../core/i18n/locale_provider.dart';
+import '../../core/responsive/responsive.dart';
 
 const _walletsPath = '/digital-wallets/';
 const _payoutPath = '/payout-accounts/';
@@ -96,13 +97,14 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.cream,
-      body: RefreshIndicator(
-        onRefresh: _load,
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            GradientHero(
-              title: context.tr('Wallet'),
+      body: MaxWidthBody(
+        child: RefreshIndicator(
+          onRefresh: _load,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              GradientHero(
+                title: context.tr('Wallet'),
               subtitle: context.tr('Balance & payouts'),
               icon: Icons.account_balance_wallet_rounded,
               bigLabel: context.tr('Available balance'),
@@ -151,6 +153,7 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
               ),
             ],
           ],
+          ),
         ),
       ),
     );
