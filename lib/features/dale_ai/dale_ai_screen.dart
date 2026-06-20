@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../core/i18n/locale_provider.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/responsive/responsive.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
-import '../../core/utils/log.dart';
 import '../../widgets/app_toast.dart';
 import 'dale_models.dart';
 import 'dale_service.dart';
+import 'dale_voice.dart';
 import 'dale_widgets.dart';
 
 enum _Kind { user, bot, system }
@@ -40,11 +38,11 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
   ];
   bool _sending = false;
 
-  final stt.SpeechToText _speech = stt.SpeechToText();
-  final FlutterTts _tts = FlutterTts();
+  final DaleVoice _voice = DaleVoice();
   bool _voiceAvailable = false;
   bool _listening = false;
   bool _speakReplies = false;
+  bool _spokenInput = false; // the last message came from the mic
 
   DaleService get _dale => DaleService(context.read<DioClient>().dio);
 
@@ -55,38 +53,17 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
   }
 
   Future<void> _initVoice() async {
-    try {
-      final ok = await _speech.initialize(
-        onStatus: (s) {
-          if ((s == 'done' || s == 'notListening') && mounted) {
-            setState(() => _listening = false);
-          }
-        },
-        onError: (_) {
-          if (mounted) setState(() => _listening = false);
-        },
-      );
-      if (mounted) setState(() => _voiceAvailable = ok);
-    } catch (e) {
-      logSwallowed('DaleScreen.initVoice', e);
-    }
-  }
-
-  String _bcp47(String lang) {
-    switch (lang) {
-      case 'fr':
-        return 'fr-FR';
-      case 'es':
-        return 'es-ES';
-      case 'pt':
-        return 'pt-PT';
-      case 'sw':
-        return 'sw-KE';
-      case 'ar':
-        return 'ar-SA';
-      default:
-        return 'en-US';
-    }
+    await _voice.init(
+      onStatus: (s) {
+        if ((s == 'done' || s == 'notListening') && mounted) {
+          setState(() => _listening = false);
+        }
+      },
+      onError: (_) {
+        if (mounted) setState(() => _listening = false);
+      },
+    );
+    if (mounted) setState(() => _voiceAvailable = _voice.available);
   }
 
   List<Map<String, String>> _history() {
@@ -120,7 +97,10 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
       if (!mounted) return;
       final reply = res.reply.isEmpty ? 'No response received.' : res.reply;
       setState(() => _messages.add(_Msg(reply, _Kind.bot)));
-      _speakIfOn(reply);
+      // Hands-free: speak the reply back in the user's language when they spoke
+      // (or when the speaker toggle is on).
+      if (_speakReplies || _spokenInput) _voice.speak(reply, loc.language);
+      _spokenInput = false;
       _runAction(res.action, dale);
     } catch (e) {
       if (mounted) setState(() => _messages.add(_Msg(friendlyError(e), _Kind.bot)));
@@ -143,40 +123,26 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
     }
   }
 
-  Future<void> _speakIfOn(String text) async {
-    if (!_speakReplies) return;
-    try {
-      final loc = context.read<LocaleProvider>();
-      await _tts.setLanguage(_bcp47(loc.language));
-      await _tts.stop();
-      await _tts.speak(_plain(text));
-    } catch (e) {
-      logSwallowed('DaleScreen.speak', e);
-    }
-  }
-
-  String _plain(String md) => md
-      .replaceAll(RegExp(r'\*\*(.+?)\*\*'), r'$1')
-      .replaceAll(RegExp(r'^[\-\*•]\s+', multiLine: true), '')
-      .trim();
-
   Future<void> _toggleListen() async {
     if (!_voiceAvailable) return;
     if (_listening) {
-      await _speech.stop();
+      await _voice.stopListening();
       if (mounted) setState(() => _listening = false);
       return;
     }
     final loc = context.read<LocaleProvider>();
     setState(() => _listening = true);
-    await _speech.listen(
-      listenOptions: stt.SpeechListenOptions(cancelOnError: true, localeId: _bcp47(loc.language)),
-      onResult: (r) {
+    await _voice.listen(
+      lang: loc.language,
+      onResult: (text, isFinal) {
         if (!mounted) return;
-        setState(() => _controller.text = r.recognizedWords);
-        if (r.finalResult && r.recognizedWords.trim().isNotEmpty) {
-          setState(() => _listening = false);
-          _send(r.recognizedWords);
+        setState(() => _controller.text = text);
+        if (isFinal && text.trim().isNotEmpty) {
+          setState(() {
+            _listening = false;
+            _spokenInput = true; // speak Dale's reply back in the same language
+          });
+          _send(text);
         }
       },
     );
@@ -184,13 +150,7 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
 
   Future<void> _toggleSpeak() async {
     setState(() => _speakReplies = !_speakReplies);
-    if (!_speakReplies) {
-      try {
-        await _tts.stop();
-      } catch (e) {
-        logSwallowed('DaleScreen.ttsStop', e);
-      }
-    }
+    if (!_speakReplies) await _voice.stopSpeaking();
   }
 
   void _scrollDown() {
@@ -206,10 +166,7 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
   void dispose() {
     _controller.dispose();
     _scroll.dispose();
-    try {
-      _speech.cancel();
-      _tts.stop();
-    } catch (_) {/* best-effort */}
+    _voice.dispose();
     super.dispose();
   }
 
