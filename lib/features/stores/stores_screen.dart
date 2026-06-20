@@ -1,20 +1,22 @@
+import 'package:agricore/features/stores/store_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../core/network/api_endpoints.dart';
 import '../../core/network/api_service.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/i18n/locale_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
-import '../../providers/auth_provider.dart';
 import '../../widgets/farmland_background.dart';
 import '../../widgets/state_views.dart';
 import 'store_bits.dart';
-import 'store_detail_sheet.dart';
 import 'store_form_sheet.dart';
 import '../settings/settings_screen.dart';
 
 const Color _heroDark = Color(0xFF22432C);
+const Color _stallGreen = Color(0xFF2E7D46);
+const Color _stallGold = Color(0xFFC49A2E);
 
 class StoresScreen extends StatefulWidget {
   const StoresScreen({super.key});
@@ -48,26 +50,46 @@ class _StoresScreenState extends State<StoresScreen> {
     super.dispose();
   }
 
+  static List<Map<String, dynamic>>? _cache;
+
   Future<void> _load() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
+    final cached = _cache;
+    if (cached != null) {
+      setState(() {
+        _all = cached;
+        _loading = false;
+        _error = null;
+      });
+    } else {
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
+    }
     try {
       final api = ApiService(context.read<DioClient>().dio);
       final data = await api.list(Api.stores);
       if (!mounted) return;
+      _cache = data;
       setState(() {
         _all = data;
         _loading = false;
+        _error = null;
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() {
-        _error = friendlyError(e);
-        _loading = false;
-      });
+      if (cached == null) {
+        setState(() {
+          _error = friendlyError(e);
+          _loading = false;
+        });
+      }
     }
+  }
+
+  Future<void> _openStore(Map<String, dynamic> s) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => StoreDashboardScreen(store: s)));
+    if (mounted) _load();
   }
 
   List<Map<String, dynamic>> get _view {
@@ -88,10 +110,15 @@ class _StoresScreenState extends State<StoresScreen> {
     if (saved == true) _load();
   }
 
+  void _openSettings() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
-    final name = context.watch<AuthProvider>().user?.username ?? 'there';
     final view = _view;
+    final total = _all.length;
+    final verified = _all.where((s) => s['is_verified'] == true).length;
 
     return RefreshIndicator(
       onRefresh: _load,
@@ -99,7 +126,7 @@ class _StoresScreenState extends State<StoresScreen> {
         slivers: [
           SliverAppBar(
             pinned: true,
-            expandedHeight: 190,
+            expandedHeight: 196,
             toolbarHeight: 56,
             backgroundColor: _heroDark,
             foregroundColor: Colors.white,
@@ -107,51 +134,66 @@ class _StoresScreenState extends State<StoresScreen> {
             automaticallyImplyLeading: false,
             systemOverlayStyle: SystemUiOverlayStyle.light,
             leading: IconButton(
-              tooltip: 'Settings',
+              tooltip: context.tr('Settings'),
               icon: const Icon(Icons.settings_rounded, color: Colors.white),
               onPressed: _openSettings,
             ),
-            flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  FarmlandBackground(showPins: false, child: const SizedBox.expand()),
-                  const DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xCC0E2018), Color(0x800E2018)]),
-                    ),
+            flexibleSpace: Stack(
+              fit: StackFit.expand,
+              children: [
+                // farmland texture pattern — consistent with the app's other top bars
+                RepaintBoundary(child: FarmlandBackground(showPins: false, child: const SizedBox.expand())),
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x330E2018), Color(0xE60E2018)]),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 56, bottom: 56),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text.rich(
-                            const TextSpan(
-                              style: TextStyle(
-                                  fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 28, height: 1.05, color: Colors.white),
-                              children: [
-                                TextSpan(text: 'Your '),
-                                TextSpan(
-                                    text: 'Stores',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600, fontStyle: FontStyle.italic, color: AppColors.gold)),
-                              ],
+                ),
+                LayoutBuilder(
+                  builder: (context, c) {
+                    final top = MediaQuery.of(context).padding.top;
+                    final maxH = 196.0 + top;
+                    final minH = kToolbarHeight + 56.0 + top; // collapsed = toolbar + pinned search row
+                    final t = ((c.maxHeight - minH) / (maxH - minH)).clamp(0.0, 1.0);
+                    final titleOpacity = ((0.4 - t) / 0.4).clamp(0.0, 1.0);
+                    return Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // clean solid bar fades in on collapse so the pinned title stays readable
+                        Positioned.fill(
+                          child: IgnorePointer(child: Opacity(opacity: titleOpacity, child: const ColoredBox(color: _heroDark))),
+                        ),
+                        // expanded hero title + stats, fades out on collapse (sits above the pinned search)
+                        Positioned(
+                          left: 18,
+                          right: 18,
+                          bottom: 64,
+                          child: Opacity(opacity: t, child: _heroTitle(total, verified)),
+                        ),
+                        // compact title pinned next to the settings icon when collapsed
+                        Positioned(
+                          top: top,
+                          left: 56,
+                          right: 16,
+                          height: kToolbarHeight,
+                          child: IgnorePointer(
+                            child: Opacity(
+                              opacity: titleOpacity,
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(context.tr('Your stores'),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 18, color: Colors.white)),
+                              ),
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 4),
-                          Text('Welcome back, $name',
-                              style: TextStyle(
-                                  fontFamily: 'Inter', fontSize: 12.5, letterSpacing: 0.3, color: Colors.white.withValues(alpha: 0.9))),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
             ),
             bottom: PreferredSize(preferredSize: const Size.fromHeight(56), child: _searchRow()),
           ),
@@ -161,13 +203,13 @@ class _StoresScreenState extends State<StoresScreen> {
           else if (_error != null)
             SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.only(top: 40), child: ErrorView(message: _error!, onRetry: _load)))
           else if (_all.isEmpty)
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
                 child: Padding(
-                    padding: EdgeInsets.only(top: 30),
-                    child: EmptyView(text: 'No stalls yet. Tap "Create" to set up your first stall.', icon: Icons.storefront_outlined)))
+                    padding: const EdgeInsets.only(top: 30),
+                    child: EmptyView(text: context.tr('No stalls yet. Tap "Create" to set up your first stall.'), icon: Icons.storefront_outlined)))
           else if (view.isEmpty)
-            const SliverToBoxAdapter(
-                child: Padding(padding: EdgeInsets.only(top: 30), child: EmptyView(text: 'No stores match your search.', icon: Icons.search_off_rounded)))
+            SliverToBoxAdapter(
+                child: Padding(padding: const EdgeInsets.only(top: 30), child: EmptyView(text: context.tr('No stores match your search.'), icon: Icons.search_off_rounded)))
           else ...[
             SliverToBoxAdapter(
               child: Padding(
@@ -182,7 +224,7 @@ class _StoresScreenState extends State<StoresScreen> {
                 delegate: SliverChildBuilderDelegate(
                   (_, i) => Padding(
                     padding: const EdgeInsets.only(bottom: 14),
-                    child: _StallCard(store: view[i], onVisit: () => showStoreDetail(context, view[i])),
+                    child: _StallCard(store: view[i], onVisit: () => _openStore(view[i])),
                   ),
                   childCount: view.length,
                 ),
@@ -194,8 +236,41 @@ class _StoresScreenState extends State<StoresScreen> {
     );
   }
 
-  void _openSettings() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
+  // ---- expanded hero content: "Your stores" + stat line ----
+  Widget _heroTitle(int total, int verified) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text.rich(
+          TextSpan(
+            style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 27, height: 1.04, color: Colors.white),
+            children: [
+              TextSpan(text: '${context.tr('Your')} '),
+              TextSpan(
+                  text: context.tr('stores'),
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontStyle: FontStyle.italic, color: Color(0xFFE3C56B))),
+            ],
+          ),
+        ),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Icon(Icons.storefront_rounded, size: 15, color: Colors.white.withValues(alpha: 0.82)),
+            const SizedBox(width: 6),
+            Text('$total stall${total == 1 ? '' : 's'}',
+                style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.82))),
+            const SizedBox(width: 8),
+            Text('·', style: TextStyle(fontSize: 12.5, color: Colors.white.withValues(alpha: 0.5))),
+            const SizedBox(width: 8),
+            const Icon(Icons.verified_rounded, size: 15, color: Color(0xFF9FE1CB)),
+            const SizedBox(width: 6),
+            Text('$verified verified',
+                style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.82))),
+          ],
+        ),
+      ],
+    );
   }
 
   // ---- Create (leading) + search, inside the dark bar ----
@@ -231,7 +306,7 @@ class _StoresScreenState extends State<StoresScreen> {
                   isDense: true,
                   filled: true,
                   fillColor: Colors.white,
-                  hintText: 'Search by store name or country…',
+                  hintText: context.tr('Search by store name or country…'),
                   prefixIcon: const Icon(Icons.search, size: 20),
                   suffixIcon: _query.isEmpty
                       ? null
@@ -276,7 +351,7 @@ class _StoresScreenState extends State<StoresScreen> {
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(color: on ? AppColors.g600 : AppColors.line),
                   ),
-                  child: Text(t[1],
+                  child: Text(context.tr(t[1]),
                       style: TextStyle(
                           fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : AppColors.slate700)),
                 ),
@@ -294,6 +369,57 @@ class _StallCard extends StatelessWidget {
   final VoidCallback onVisit;
   const _StallCard({required this.store, required this.onVisit});
 
+  String _initials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) return 'ST';
+    if (parts.length == 1) return parts.first.characters.first.toUpperCase();
+    return (parts[0].characters.first + parts[1].characters.first).toUpperCase();
+  }
+
+  Widget _awning(bool verified) {
+    final a = verified ? _stallGold : const Color(0xFFC9C4B6);
+    final b = verified ? const Color(0xFFF0DBA0) : const Color(0xFFE7E2D5);
+    return SizedBox(
+      height: 22,
+      width: double.infinity,
+      child: ClipPath(
+        clipper: const _AwningClipper(8),
+        child: Row(children: List.generate(10, (i) => Expanded(child: ColoredBox(color: i.isEven ? a : b)))),
+      ),
+    );
+  }
+
+  Widget _statusPill(BuildContext context, bool verified) {
+    final bg = verified ? const Color(0xFFDCFCE7) : const Color(0xFFFAEEDA);
+    final fg = verified ? const Color(0xFF166534) : const Color(0xFF854F0B);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(999)),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Icon(verified ? Icons.check_circle_rounded : Icons.schedule_rounded, size: 13, color: fg),
+        const SizedBox(width: 4),
+        Text(verified ? context.tr('Verified') : context.tr('Pending'),
+            style: TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w700, color: fg)),
+      ]),
+    );
+  }
+
+  Widget _srow(IconData icon, String v) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(children: [
+        Icon(icon, size: 14, color: _stallGreen),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(v,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)),
+        ),
+      ]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = store;
@@ -309,61 +435,69 @@ class _StallCard extends StatelessWidget {
         onTap: onVisit,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.green, width: 1.5)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: verified ? _stallGreen : AppColors.line, width: verified ? 1.5 : 1),
+          ),
           clipBehavior: Clip.antiAlias,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              StallAwning(verified: verified),
-              // signboard
-              Container(
-                margin: const EdgeInsets.fromLTRB(14, 12, 14, 4),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFBF7EE),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.line),
-                ),
-                child: Row(
-                  children: [
-                    Container(width: 4, height: 38, color: kStallGold),
-                    const SizedBox(width: 10),
-                    const StallAvatar(),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: AppColors.inkWarm)),
-                    ),
-                  ],
-                ),
-              ),
+              _awning(verified),
               Padding(
-                padding: const EdgeInsets.fromLTRB(14, 6, 14, 14),
+                padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 38,
+                          height: 38,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: verified ? const Color(0xFFE3F0E7) : const Color(0xFFF0EEE6),
+                          ),
+                          child: Text(_initials(name),
+                              style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 13,
+                                  color: verified ? const Color(0xFF25613A) : AppColors.slate600)),
+                        ),
+                        const SizedBox(width: 11),
+                        Expanded(
+                          child: Text(name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: AppColors.inkWarm)),
+                        ),
+                        const SizedBox(width: 8),
+                        _statusPill(context, verified),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
                     _srow(Icons.person_rounded, pickString(s, ['owner_name']) ?? '—'),
                     _srow(Icons.email_rounded, pickString(s, ['owner_email']) ?? '—'),
                     _srow(Icons.phone_rounded, pickString(s, ['owner_phone']) ?? '—'),
-                    _srow(Icons.public_rounded, countries.isEmpty ? 'Not specified' : countries.join(', ')),
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFDF6E3),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: kStallGold, style: BorderStyle.solid),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.sell_rounded, size: 14, color: kStallGold),
+                    _srow(Icons.public_rounded, countries.isEmpty ? context.tr('Not specified') : countries.join(', ')),
+                    const SizedBox(height: 11),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFDF6E3),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: _stallGold),
+                        ),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                          const Icon(Icons.sell_rounded, size: 14, color: _stallGold),
                           const SizedBox(width: 6),
                           Text(storeValue(value),
-                              style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: Color(0xFF7A5A16))),
-                        ],
+                              style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 14, color: Color(0xFF7A5A16))),
+                        ]),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -372,16 +506,12 @@ class _StallCard extends StatelessWidget {
                       child: Container(
                         height: 44,
                         alignment: Alignment.center,
-                        decoration: BoxDecoration(gradient: AppColors.emeraldGrad, borderRadius: BorderRadius.circular(12)),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.storefront_rounded, color: Colors.white, size: 17),
-                            SizedBox(width: 8),
-                            Text('Visit Stall',
-                                style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 14, color: Colors.white)),
-                          ],
-                        ),
+                        decoration: BoxDecoration(color: _stallGreen, borderRadius: BorderRadius.circular(12)),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                          const Icon(Icons.storefront_rounded, color: Colors.white, size: 17),
+                          const SizedBox(width: 8),
+                          Text(context.tr('Visit stall'), style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 14, color: Colors.white)),
+                        ]),
                       ),
                     ),
                   ],
@@ -393,21 +523,29 @@ class _StallCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _srow(IconData icon, String v) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        children: [
-          Icon(icon, size: 14, color: AppColors.g600),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(v,
-                maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)),
-          ),
-        ],
-      ),
-    );
+// Scalloped market-awning bottom edge (rounded drapes) for the store tile header.
+class _AwningClipper extends CustomClipper<Path> {
+  final int scallops;
+  const _AwningClipper(this.scallops);
+  @override
+  Path getClip(Size size) {
+    final p = Path();
+    final flat = size.height * 0.5;
+    final w = size.width / scallops;
+    p.moveTo(0, 0);
+    p.lineTo(size.width, 0);
+    p.lineTo(size.width, flat);
+    for (int i = scallops - 1; i >= 0; i--) {
+      final cx = w * i + w / 2;
+      final endX = w * i;
+      p.quadraticBezierTo(cx, size.height, endX, flat);
+    }
+    p.lineTo(0, 0);
+    p.close();
+    return p;
   }
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }

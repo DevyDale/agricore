@@ -15,6 +15,7 @@ import 'chat_models.dart';
 import 'chat_room_screen.dart';
 import '../settings/settings_screen.dart';
 import '../../providers/auth_provider.dart';
+import '../../core/i18n/locale_provider.dart';
 
 const Color _heroDark = Color(0xFF22432C);
 
@@ -174,7 +175,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
             automaticallyImplyLeading: false,
             systemOverlayStyle: SystemUiOverlayStyle.light,
             leading: IconButton(
-              tooltip: 'Settings',
+              tooltip: context.tr('Settings'),
               icon: const Icon(Icons.settings_rounded, color: Colors.white),
               onPressed: _openSettings,
             ),
@@ -196,14 +197,14 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text.rich(
-                            const TextSpan(
-                              style: TextStyle(
+                            TextSpan(
+                              style: const TextStyle(
                                   fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 28, height: 1.05, color: Colors.white),
                               children: [
-                                TextSpan(text: 'Your '),
+                                TextSpan(text: '${context.tr('Your')} '),
                                 TextSpan(
-                                    text: 'Chats',
-                                    style: TextStyle(
+                                    text: context.tr('Chats'),
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.w600, fontStyle: FontStyle.italic, color: AppColors.gold)),
                               ],
                             ),
@@ -233,7 +234,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 30),
                 child: EmptyView(
-                  text: _discover ? 'No public channels found.' : 'No conversations here yet.',
+                  text: _discover ? context.tr('No public channels found.') : context.tr('No conversations here yet.'),
                   icon: Icons.forum_outlined,
                 ),
               ),
@@ -290,7 +291,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                   isDense: true,
                   filled: true,
                   fillColor: Colors.white,
-                  hintText: 'Search chats, channels & people…',
+                  hintText: context.tr('Search chats, channels & people…'),
                   prefixIcon: const Icon(Icons.search, size: 20),
                   suffixIcon: _query.isEmpty
                       ? null
@@ -339,7 +340,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(color: on ? AppColors.g600 : AppColors.line),
                     ),
-                    child: Text(t[1],
+                    child: Text(context.tr(t[1]),
                         style: TextStyle(
                             fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : AppColors.slate700)),
                   ),
@@ -367,7 +368,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                       Icon(_discover ? Icons.inbox_rounded : Icons.explore_rounded,
                           size: 14, color: _discover ? Colors.white : AppColors.slate700),
                       const SizedBox(width: 5),
-                      Text(_discover ? 'My chats' : 'Discover',
+                      Text(_discover ? context.tr('My chats') : context.tr('Discover'),
                           style: TextStyle(
                               fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: _discover ? Colors.white : AppColors.slate700)),
                     ],
@@ -383,11 +384,11 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
 
   List<Widget> _peopleSlivers() {
     return [
-      const SliverToBoxAdapter(
+      SliverToBoxAdapter(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
-          child: Text('PEOPLE',
-              style: TextStyle(fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w800, letterSpacing: 0.6, color: AppColors.slate500)),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          child: Text(context.tr('PEOPLE'),
+              style: const TextStyle(fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w800, letterSpacing: 0.6, color: AppColors.slate500)),
         ),
       ),
       SliverPadding(
@@ -400,7 +401,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
               return ListTile(
                 leading: ConvAvatar(name: name, size: 38),
                 title: Text(name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                trailing: TextButton(onPressed: () => _startDirect(u), child: const Text('Chat')),
+                trailing: TextButton(onPressed: () => _startDirect(u), child: Text(context.tr('Chat'))),
                 onTap: () => _startDirect(u),
               );
             },
@@ -417,7 +418,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
     bool online = false;
     if (c.type == 'direct') {
       online = c.otherOnline;
-      sub = online ? 'Active now' : (c.otherLastSeen != null ? 'last seen ${timeAgo(c.otherLastSeen)}' : 'offline');
+      sub = online ? context.tr('Active now') : (c.otherLastSeen != null ? 'last seen ${timeAgo(c.otherLastSeen)}' : context.tr('offline'));
     } else {
       sub = '${c.type == 'channel' ? 'Channel' : 'Group'} · ${c.participantCount} members';
     }
@@ -502,11 +503,11 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                 ),
               ),
               joined
-                  ? OutlinedButton(onPressed: () => _openRoom(c.id, c.displayName), child: const Text('Open'))
+                  ? OutlinedButton(onPressed: () => _openRoom(c.id, c.displayName), child: Text(context.tr('Open')))
                   : ElevatedButton(
                       onPressed: () => _join(c),
                       style: ElevatedButton.styleFrom(backgroundColor: AppColors.g600, foregroundColor: Colors.white),
-                      child: const Text('Join'),
+                      child: Text(context.tr('Join')),
                     ),
             ],
           ),
@@ -546,13 +547,13 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
           children: [
             Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
             const SizedBox(height: 14),
-            const Text('Create group / channel',
-                style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+            Text(context.tr('Create group / channel'),
+                style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
             const SizedBox(height: 14),
             TextField(
               controller: _title,
               decoration: InputDecoration(
-                hintText: 'Name',
+                hintText: context.tr('Name'),
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
@@ -563,9 +564,9 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
             const SizedBox(height: 12),
             Row(
               children: [
-                _typeChip('group', 'Group — private'),
+                _typeChip('group', context.tr('Group — private')),
                 const SizedBox(width: 10),
-                _typeChip('channel', 'Channel — public'),
+                _typeChip('channel', context.tr('Channel — public')),
               ],
             ),
             const SizedBox(height: 18),
@@ -582,7 +583,7 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
                 height: 50,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(gradient: AppColors.emeraldGrad, borderRadius: BorderRadius.circular(13)),
-                child: const Text('Create', style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w800, color: Colors.white, fontSize: 15)),
+                child: Text(context.tr('Create'), style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w800, color: Colors.white, fontSize: 15)),
               ),
             ),
           ],

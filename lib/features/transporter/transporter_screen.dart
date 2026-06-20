@@ -7,6 +7,7 @@ import '../../core/utils/json_utils.dart';
 import '../../widgets/app_toast.dart';
 import '../../widgets/fresh_kit.dart';
 import '../../widgets/state_views.dart';
+import '../../core/i18n/locale_provider.dart';
 
 const _mePath = '/transporters/me/';
 const _transportersPath = '/transporters/';
@@ -204,8 +205,8 @@ class _TransporterScreenState extends State<TransporterScreen> {
           ? Column(
               children: [
                 GradientHero(
-                  title: 'Transporter',
-                  subtitle: 'Deliver & earn',
+                  title: context.tr('Transporter'),
+                  subtitle: context.tr('Deliver & earn'),
                   icon: Icons.local_shipping_rounded,
                   onBack: () => Navigator.of(context).maybePop(),
                 ),
@@ -216,8 +217,8 @@ class _TransporterScreenState extends State<TransporterScreen> {
               ? Column(
                   children: [
                     GradientHero(
-                      title: 'Transporter',
-                      subtitle: 'Deliver & earn',
+                      title: context.tr('Transporter'),
+                      subtitle: context.tr('Deliver & earn'),
                       icon: Icons.local_shipping_rounded,
                       onBack: () => Navigator.of(context).maybePop(),
                     ),
@@ -236,8 +237,8 @@ class _TransporterScreenState extends State<TransporterScreen> {
       padding: EdgeInsets.zero,
       children: [
         GradientHero(
-          title: 'Transporter',
-          subtitle: 'Deliver & earn',
+          title: context.tr('Transporter'),
+          subtitle: context.tr('Deliver & earn'),
           icon: Icons.local_shipping_rounded,
           onBack: () => Navigator.of(context).maybePop(),
         ),
@@ -264,18 +265,19 @@ class _TransporterScreenState extends State<TransporterScreen> {
                       color: Color(0xFF0F7A4B), size: 30),
                 ),
                 const SizedBox(height: 14),
-                const Text('Become a transporter',
-                    style: TextStyle(
+                Text(context.tr('Become a transporter'),
+                    style: const TextStyle(
                         fontFamily: 'Fraunces',
                         fontWeight: FontWeight.w800,
                         fontSize: 17,
                         color: AppColors.inkWarm)),
                 const SizedBox(height: 6),
-                const Text(
-                  'Register your vehicle to pick up delivery jobs from sellers, '
-                  'move produce across the chain, and earn on every completed run.',
+                Text(
+                  context.tr(
+                      'Register your vehicle to pick up delivery jobs from sellers, '
+                      'move produce across the chain, and earn on every completed run.'),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 12.5,
                       height: 1.5,
@@ -284,7 +286,7 @@ class _TransporterScreenState extends State<TransporterScreen> {
                 const SizedBox(height: 18),
                 FreshPillButton(
                   icon: Icons.add_road_rounded,
-                  label: 'Register as transporter',
+                  label: context.tr('Register as transporter'),
                   onTap: _register,
                 ),
               ],
@@ -302,7 +304,7 @@ class _TransporterScreenState extends State<TransporterScreen> {
     final plate = pickString(p, ['vehicle_plate']) ?? '';
     final verified = p['is_verified'] == true;
     final rating = pickNum(p, ['rating_avg']);
-    final ratingText = rating == null ? 'New' : rating.toStringAsFixed(1);
+    final ratingText = rating == null ? context.tr('New') : rating.toStringAsFixed(1);
 
     return RefreshIndicator(
       onRefresh: _load,
@@ -332,14 +334,14 @@ class _TransporterScreenState extends State<TransporterScreen> {
                   icon: verified
                       ? Icons.verified_rounded
                       : Icons.hourglass_bottom_rounded,
-                  label: verified ? 'Verified' : 'Unverified'),
+                  label: verified ? context.tr('Verified') : context.tr('Unverified')),
               HeroChip(icon: Icons.star_rounded, label: ratingText),
             ],
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 18, 16, 8),
             child: SegTabs(
-              tabs: const ['Open jobs', 'My jobs'],
+              tabs: [context.tr('Open jobs'), context.tr('My jobs')],
               index: _tab,
               onTap: (i) => setState(() => _tab = i),
             ),
@@ -366,8 +368,8 @@ class _TransporterScreenState extends State<TransporterScreen> {
           padding: const EdgeInsets.only(top: 28),
           child: EmptyView(
             text: _tab == 0
-                ? 'No open delivery jobs right now.\nPull to refresh.'
-                : 'You haven\'t accepted any jobs yet.',
+                ? context.tr('No open delivery jobs right now.\nPull to refresh.')
+                : context.tr('You haven\'t accepted any jobs yet.'),
             icon: Icons.local_shipping_outlined,
           ),
         ),
@@ -485,11 +487,11 @@ class _JobCard extends StatelessWidget {
           if (!mine) ...[
             const SizedBox(height: 14),
             _GradientButton(
-                icon: Icons.check_circle_rounded, label: 'Accept', onTap: onAccept),
+                icon: Icons.check_circle_rounded, label: context.tr('Accept'), onTap: onAccept),
           ] else if (status == 'accepted') ...[
             const SizedBox(height: 14),
             _GradientButton(
-                icon: Icons.inventory_2_rounded, label: 'Mark pickup', onTap: onPickup),
+                icon: Icons.inventory_2_rounded, label: context.tr('Mark pickup'), onTap: onPickup),
           ],
         ],
       ),
@@ -566,27 +568,27 @@ class _StatusBadge extends StatelessWidget {
       case 'accepted':
         bg = const Color(0xFFDBEAFE);
         fg = const Color(0xFF1D4ED8);
-        label = 'Accepted';
+        label = context.tr('Accepted');
         break;
       case 'picked_up':
         bg = const Color(0xFFFEF3C7);
         fg = const Color(0xFFB45309);
-        label = 'Picked up';
+        label = context.tr('Picked up');
         break;
       case 'delivered':
         bg = const Color(0xFFDCFCE7);
         fg = const Color(0xFF166534);
-        label = 'Delivered';
+        label = context.tr('Delivered');
         break;
       case 'cancelled':
         bg = const Color(0xFFFEE2E2);
         fg = const Color(0xFFDC2626);
-        label = 'Cancelled';
+        label = context.tr('Cancelled');
         break;
       default:
         bg = const Color(0xFFE2E8F0);
         fg = AppColors.slate600;
-        label = 'Open';
+        label = context.tr('Open');
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -683,16 +685,16 @@ class _ProfileSheetState extends State<_ProfileSheet> {
   Widget build(BuildContext context) {
     return FreshSheet(
       title: widget.existing != null
-          ? 'Edit transporter profile'
-          : 'Register as transporter',
+          ? context.tr('Edit transporter profile')
+          : context.tr('Register as transporter'),
       error: _err,
       onSubmit: _submit,
-      submitLabel: widget.existing != null ? 'Save changes' : 'Register',
+      submitLabel: widget.existing != null ? context.tr('Save changes') : context.tr('Register'),
       children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 2, bottom: 8),
-          child: Text('Vehicle type',
-              style: TextStyle(
+        Padding(
+          padding: const EdgeInsets.only(left: 2, bottom: 8),
+          child: Text(context.tr('Vehicle type'),
+              style: const TextStyle(
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w700,
                   fontSize: 12.5,
@@ -738,23 +740,23 @@ class _ProfileSheetState extends State<_ProfileSheet> {
         ),
         const SizedBox(height: 14),
         FreshField(
-            controller: _plate, label: 'Vehicle plate', hint: 'e.g. UBA 123A'),
+            controller: _plate, label: context.tr('Vehicle plate'), hint: context.tr('e.g. UBA 123A')),
         const SizedBox(height: 12),
         FreshField(
             controller: _nationalId,
-            label: 'National ID',
-            hint: 'National ID number'),
+            label: context.tr('National ID'),
+            hint: context.tr('National ID number')),
         const SizedBox(height: 12),
         FreshField(
             controller: _phone,
-            label: 'Phone',
-            hint: 'e.g. 0772123456',
+            label: context.tr('Phone'),
+            hint: context.tr('e.g. 0772123456'),
             number: true),
         const SizedBox(height: 12),
         FreshField(
             controller: _serviceArea,
-            label: 'Service area',
-            hint: 'e.g. Kampala Central',
+            label: context.tr('Service area'),
+            hint: context.tr('e.g. Kampala Central'),
             lines: 2),
       ],
     );
@@ -790,22 +792,23 @@ class _PickupSheetState extends State<_PickupSheet> {
   @override
   Widget build(BuildContext context) {
     return FreshSheet(
-      title: 'Mark pickup',
+      title: context.tr('Mark pickup'),
       error: _err,
       onSubmit: _submit,
-      submitLabel: 'Confirm pickup',
+      submitLabel: context.tr('Confirm pickup'),
       children: [
-        const Text(
-          'Ask the seller for the pickup code shown on their job, then enter it '
-          'here to confirm you collected the goods.',
-          style: TextStyle(
+        Text(
+          context.tr(
+              'Ask the seller for the pickup code shown on their job, then enter it '
+              'here to confirm you collected the goods.'),
+          style: const TextStyle(
               fontFamily: 'Inter',
               fontSize: 12.5,
               height: 1.45,
               color: AppColors.slate500),
         ),
         const SizedBox(height: 14),
-        FreshField(controller: _code, label: 'Pickup code', hint: 'e.g. 4821'),
+        FreshField(controller: _code, label: context.tr('Pickup code'), hint: context.tr('e.g. 4821')),
       ],
     );
   }

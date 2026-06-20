@@ -7,6 +7,7 @@ import '../../core/utils/log.dart';
 import '../../widgets/app_toast.dart';
 import '../../widgets/fresh_kit.dart';
 import '../../widgets/state_views.dart';
+import '../../core/i18n/locale_provider.dart';
 
 const _walletsPath = '/digital-wallets/';
 const _payoutPath = '/payout-accounts/';
@@ -100,17 +101,19 @@ class _WalletScreenState extends State<WalletScreen> {
           padding: EdgeInsets.zero,
           children: [
             GradientHero(
-              title: 'Wallet',
-              subtitle: 'Balance & payouts',
+              title: context.tr('Wallet'),
+              subtitle: context.tr('Balance & payouts'),
               icon: Icons.account_balance_wallet_rounded,
-              bigLabel: 'Available balance',
+              bigLabel: context.tr('Available balance'),
               bigValue: _loading ? '—' : _balanceText,
               chips: [
                 HeroChip(
                     icon: _payout == null
                         ? Icons.error_outline_rounded
                         : Icons.verified_rounded,
-                    label: _payout == null ? 'No payout set' : 'Payout ready'),
+                    label: _payout == null
+                        ? context.tr('No payout set')
+                        : context.tr('Payout ready')),
               ],
             ),
             if (_loading)
@@ -123,12 +126,12 @@ class _WalletScreenState extends State<WalletScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 18, 16, 8),
                 child: FreshSectionHeader(
-                  title: 'Payout destination',
+                  title: context.tr('Payout destination'),
                   action: _payout == null
                       ? FreshPillButton(
-                          icon: Icons.add_rounded, label: 'Add', onTap: _editPayout)
+                          icon: Icons.add_rounded, label: context.tr('Add'), onTap: _editPayout)
                       : FreshPillButton(
-                          icon: Icons.edit_rounded, label: 'Edit', onTap: _editPayout),
+                          icon: Icons.edit_rounded, label: context.tr('Edit'), onTap: _editPayout),
                 ),
               ),
               Padding(
@@ -137,12 +140,12 @@ class _WalletScreenState extends State<WalletScreen> {
                     ? _EmptyPayout(onAdd: _editPayout)
                     : _PayoutCard(payout: _payout!),
               ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(16, 6, 16, 28),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 6, 16, 28),
                 child: _InfoNote(
-                  text:
+                  text: context.tr(
                       'Payouts from completed escrow sales are sent to this account. '
-                      'Mobile money releases are instant; bank transfers may take 1–2 business days.',
+                      'Mobile money releases are instant; bank transfers may take 1–2 business days.'),
                 ),
               ),
             ],
@@ -226,7 +229,7 @@ class _PayoutCard extends StatelessWidget {
             decoration: BoxDecoration(
                 color: const Color(0xFFDCFCE7),
                 borderRadius: BorderRadius.circular(999)),
-            child: Text(isBank ? 'Bank' : 'MoMo',
+            child: Text(isBank ? context.tr('Bank') : context.tr('MoMo'),
                 style: const TextStyle(
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w800,
@@ -267,16 +270,16 @@ class _EmptyPayout extends StatelessWidget {
                   color: Color(0xFF0F7A4B), size: 26),
             ),
             const SizedBox(height: 12),
-            const Text('Add a payout account',
-                style: TextStyle(
+            Text(context.tr('Add a payout account'),
+                style: const TextStyle(
                     fontFamily: 'Fraunces',
                     fontWeight: FontWeight.w800,
                     fontSize: 15,
                     color: AppColors.inkWarm)),
             const SizedBox(height: 4),
-            const Text('Mobile money or bank — so sale proceeds reach you.',
+            Text(context.tr('Mobile money or bank — so sale proceeds reach you.'),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                     fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
           ],
         ),
@@ -380,24 +383,26 @@ class _PayoutSheetState extends State<_PayoutSheet> {
   Widget build(BuildContext context) {
     final isBank = _method == 'bank';
     return FreshSheet(
-      title: widget.existing != null ? 'Edit payout account' : 'Add payout account',
+      title: widget.existing != null
+          ? context.tr('Edit payout account')
+          : context.tr('Add payout account'),
       error: _err,
       onSubmit: _submit,
-      submitLabel: 'Save payout account',
+      submitLabel: context.tr('Save payout account'),
       children: [
         SegTabs(
-          tabs: const ['Mobile money', 'Bank'],
+          tabs: [context.tr('Mobile money'), context.tr('Bank')],
           index: isBank ? 1 : 0,
           onTap: (i) => setState(() => _method = i == 1 ? 'bank' : 'momo'),
         ),
         const SizedBox(height: 14),
-        FreshField(controller: _name, label: 'Account holder name', hint: 'e.g. Jane Doe'),
+        FreshField(controller: _name, label: context.tr('Account holder name'), hint: context.tr('e.g. Jane Doe')),
         const SizedBox(height: 12),
         if (isBank) ...[
-          const Padding(
-            padding: EdgeInsets.only(left: 2, bottom: 6),
-            child: Text('Bank',
-                style: TextStyle(
+          Padding(
+            padding: const EdgeInsets.only(left: 2, bottom: 6),
+            child: Text(context.tr('Bank'),
+                style: const TextStyle(
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w700,
                     fontSize: 12.5,
@@ -415,7 +420,7 @@ class _PayoutSheetState extends State<_PayoutSheet> {
                 const Icon(Icons.account_balance_rounded, size: 18, color: AppColors.slate600),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Text(_bankName ?? 'Choose a bank',
+                  child: Text(_bankName ?? context.tr('Choose a bank'),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -429,12 +434,12 @@ class _PayoutSheetState extends State<_PayoutSheet> {
           ),
           const SizedBox(height: 12),
           FreshField(
-              controller: _number, label: 'Account number', hint: 'Bank account number', number: true),
+              controller: _number, label: context.tr('Account number'), hint: context.tr('Bank account number'), number: true),
         ] else
           FreshField(
               controller: _number,
-              label: 'Mobile money number',
-              hint: 'e.g. 0772123456',
+              label: context.tr('Mobile money number'),
+              hint: context.tr('e.g. 0772123456'),
               number: true),
       ],
     );
@@ -515,10 +520,10 @@ class _BankPickerSheetState extends State<_BankPickerSheet> {
                     decoration: BoxDecoration(
                         color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
             const SizedBox(height: 14),
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
-              child: Text('Choose a bank',
-                  style: TextStyle(
+              child: Text(context.tr('Choose a bank'),
+                  style: const TextStyle(
                       fontFamily: 'Fraunces',
                       fontWeight: FontWeight.w800,
                       fontSize: 19,
@@ -531,7 +536,7 @@ class _BankPickerSheetState extends State<_BankPickerSheet> {
                 isDense: true,
                 filled: true,
                 fillColor: Colors.white,
-                hintText: 'Search banks…',
+                hintText: context.tr('Search banks…'),
                 prefixIcon: const Icon(Icons.search, size: 20),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -551,7 +556,7 @@ class _BankPickerSheetState extends State<_BankPickerSheet> {
                   : _error != null
                       ? ErrorView(message: _error!, onRetry: _load)
                       : _view.isEmpty
-                          ? const EmptyView(text: 'No banks found.', icon: Icons.account_balance_outlined)
+                          ? EmptyView(text: context.tr('No banks found.'), icon: Icons.account_balance_outlined)
                           : ListView.separated(
                               itemCount: _view.length,
                               separatorBuilder: (_, __) =>

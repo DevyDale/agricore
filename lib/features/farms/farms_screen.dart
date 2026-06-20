@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/network/api_endpoints.dart';
 import '../../core/network/api_service.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/i18n/locale_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
 import '../../providers/auth_provider.dart';
@@ -107,13 +108,13 @@ class _FarmsScreenState extends State<FarmsScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Delete farm?'),
+        title: Text(context.tr('Delete farm?')),
         content: Text('Delete "$name"? This cannot be undone.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.tr('Cancel'))),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Delete', style: TextStyle(color: Color(0xFFDC2626)))),
+              child: Text(context.tr('Delete'), style: const TextStyle(color: Color(0xFFDC2626)))),
         ],
       ),
     );
@@ -148,7 +149,7 @@ class _FarmsScreenState extends State<FarmsScreen> {
               automaticallyImplyLeading: false,
               systemOverlayStyle: SystemUiOverlayStyle.light,
               leading: IconButton(
-                tooltip: 'Settings',
+                tooltip: context.tr('Settings'),
                 icon: const Icon(Icons.settings_rounded, color: Colors.white),
                 onPressed: _openSettings,
               ),
@@ -170,14 +171,14 @@ class _FarmsScreenState extends State<FarmsScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text.rich(
-                              const TextSpan(
-                                style: TextStyle(
+                              TextSpan(
+                                style: const TextStyle(
                                     fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 28, height: 1.05, color: Colors.white),
                                 children: [
-                                  TextSpan(text: 'Your '),
+                                  TextSpan(text: '${context.tr('Your')} '),
                                   TextSpan(
-                                      text: 'Farms',
-                                      style: TextStyle(
+                                      text: context.tr('Farms'),
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.w600, fontStyle: FontStyle.italic, color: AppColors.gold)),
                                 ],
                               ),
@@ -202,10 +203,10 @@ class _FarmsScreenState extends State<FarmsScreen> {
             else if (_error != null)
               SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.only(top: 40), child: ErrorView(message: _error!, onRetry: _load)))
             else if (_all.isEmpty)
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                   child: Padding(
-                      padding: EdgeInsets.only(top: 30),
-                      child: EmptyView(text: 'No farms yet. Tap "Add farm" to create your first one.', icon: Icons.agriculture_outlined)))
+                      padding: const EdgeInsets.only(top: 30),
+                      child: EmptyView(text: context.tr('No farms yet. Tap "Add farm" to create your first one.'), icon: Icons.agriculture_outlined)))
             else ...[
               SliverToBoxAdapter(
                 child: Padding(
@@ -216,10 +217,10 @@ class _FarmsScreenState extends State<FarmsScreen> {
               ),
               SliverToBoxAdapter(child: _chipsRow()),
               if (view.isEmpty)
-                const SliverToBoxAdapter(
+                SliverToBoxAdapter(
                     child: Padding(
-                        padding: EdgeInsets.only(top: 30),
-                        child: EmptyView(text: 'No farms match your search.', icon: Icons.search_off_rounded)))
+                        padding: const EdgeInsets.only(top: 30),
+                        child: EmptyView(text: context.tr('No farms match your search.'), icon: Icons.search_off_rounded)))
               else
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 6, 16, 96),
@@ -285,7 +286,7 @@ class _FarmsScreenState extends State<FarmsScreen> {
                   isDense: true,
                   filled: true,
                   fillColor: Colors.white,
-                  hintText: 'Search farms by name or place…',
+                  hintText: context.tr('Search farms by name or place…'),
                   prefixIcon: const Icon(Icons.search, size: 20),
                   suffixIcon: _query.isEmpty
                       ? null
@@ -330,7 +331,7 @@ class _FarmsScreenState extends State<FarmsScreen> {
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(color: on ? AppColors.g600 : AppColors.line),
                   ),
-                  child: Text(t[1],
+                  child: Text(context.tr(t[1]),
                       style: TextStyle(
                           fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : AppColors.slate700)),
                 ),
@@ -344,9 +345,9 @@ class _FarmsScreenState extends State<FarmsScreen> {
 
   Widget _metrics() {
     final m = [
-      [Icons.agriculture_rounded, _all.length.toDouble(), 'Total farms', const Color(0xFF10B981), const Color(0xFF047857), 0],
-      [Icons.straighten_rounded, _totalHa, 'Total land (ha)', const Color(0xFFC39A48), const Color(0xFFA9772E), (_totalHa > 0 && _totalHa < 100) ? 1 : 0],
-      [Icons.eco_rounded, _activeTypes.toDouble(), 'Active types', const Color(0xFF7C8C42), const Color(0xFF5C6B1F), 0],
+      [Icons.agriculture_rounded, _all.length.toDouble(), context.tr('Total farms'), const Color(0xFF10B981), const Color(0xFF047857), 0],
+      [Icons.straighten_rounded, _totalHa, context.tr('Total land (ha)'), const Color(0xFFC39A48), const Color(0xFFA9772E), (_totalHa > 0 && _totalHa < 100) ? 1 : 0],
+      [Icons.eco_rounded, _activeTypes.toDouble(), context.tr('Active types'), const Color(0xFF7C8C42), const Color(0xFF5C6B1F), 0],
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 2),
@@ -462,22 +463,22 @@ class _FarmCard extends StatelessWidget {
                           const Icon(Icons.location_on_rounded, size: 13, color: AppColors.g600),
                           const SizedBox(width: 4),
                           Expanded(
-                              child: Text(loc.isEmpty ? 'Location not set' : loc,
+                              child: Text(loc.isEmpty ? context.tr('Location not set') : loc,
                                   maxLines: 1, overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.slate500))),
                         ]),
                         const SizedBox(height: 12),
                         Row(children: [
-                          Expanded(child: _stat(Icons.straighten_rounded, 'Area', farmAreaText(farm))),
+                          Expanded(child: _stat(Icons.straighten_rounded, context.tr('Area'), farmAreaText(farm))),
                           const SizedBox(width: 10),
-                          Expanded(child: _stat(Icons.pie_chart_rounded, 'Share', totalHa > 0 ? '${(share * 100).round()}%' : '—')),
+                          Expanded(child: _stat(Icons.pie_chart_rounded, context.tr('Share'), totalHa > 0 ? '${(share * 100).round()}%' : '—')),
                         ]),
                         const SizedBox(height: 12),
                         ShareBar(pct: share, typeKey: key),
                         const SizedBox(height: 6),
                         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          const Text('Share of your land',
-                              style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500)),
+                          Text(context.tr('Share of your land'),
+                              style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500)),
                           Text(farmAreaText(farm),
                               style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500)),
                         ]),
@@ -490,11 +491,11 @@ class _FarmCard extends StatelessWidget {
                                 height: 40,
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(gradient: AppColors.emeraldGrad, borderRadius: BorderRadius.circular(12)),
-                                child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                                  Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 16),
-                                  SizedBox(width: 6),
-                                  Text('Manage',
-                                      style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 13.5, color: Colors.white)),
+                                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                  const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 16),
+                                  const SizedBox(width: 6),
+                                  Text(context.tr('Manage'),
+                                      style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 13.5, color: Colors.white)),
                                 ]),
                               ),
                             ),

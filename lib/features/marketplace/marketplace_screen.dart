@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/network/api_endpoints.dart';
 import '../../core/network/api_service.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/i18n/locale_provider.dart';
 import '../../core/responsive/responsive.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
@@ -171,7 +172,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   automaticallyImplyLeading: false,
                   systemOverlayStyle: SystemUiOverlayStyle.light,
                   leading: IconButton(
-                    tooltip: 'Settings',
+                    tooltip: context.tr('Settings'),
                     icon: const Icon(Icons.settings_rounded, color: Colors.white),
                     onPressed: _openSettings,
                   ),
@@ -196,18 +197,18 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text.rich(
-                                  const TextSpan(
-                                    style: TextStyle(
+                                  TextSpan(
+                                    style: const TextStyle(
                                         fontFamily: 'Fraunces',
                                         fontWeight: FontWeight.w900,
                                         fontSize: 28,
                                         height: 1.05,
                                         color: Colors.white),
                                     children: [
-                                      TextSpan(text: 'Agricore '),
+                                      const TextSpan(text: 'Agricore '),
                                       TextSpan(
-                                        text: 'Marketplace',
-                                        style: TextStyle(
+                                        text: context.tr('Marketplace'),
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontStyle: FontStyle.italic,
                                             color: AppColors.gold),
@@ -217,7 +218,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 4),
-                                Text('Where Farmers and Markets Meet',
+                                Text(context.tr('Where Farmers and Markets Meet'),
                                     style: TextStyle(
                                         fontFamily: 'Inter',
                                         fontSize: 12.5,
@@ -244,10 +245,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                       child: Padding(
                           padding: const EdgeInsets.only(top: 40), child: ErrorView(message: _error!, onRetry: _load)))
                 else if (view.isEmpty)
-                  const SliverToBoxAdapter(
+                  SliverToBoxAdapter(
                       child: Padding(
-                          padding: EdgeInsets.only(top: 40),
-                          child: EmptyView(text: 'No products match your filters.', icon: Icons.storefront_outlined)))
+                          padding: const EdgeInsets.only(top: 40),
+                          child: EmptyView(text: context.tr('No products match your filters.'), icon: Icons.storefront_outlined)))
                 else
                   SliverPadding(
                     padding: EdgeInsets.fromLTRB(16, 4, 16, cart.count > 0 ? 88 : 24),
@@ -343,7 +344,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   isDense: true,
                   filled: true,
                   fillColor: Colors.white,
-                  hintText: 'Search seeds, livestock, tractors…',
+                  hintText: context.tr('Search seeds, livestock, tractors…'),
                   prefixIcon: const Icon(Icons.search, size: 20),
                   suffixIcon: _query.isEmpty
                       ? null
@@ -394,7 +395,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(color: on ? AppColors.g600 : AppColors.line),
                   ),
-                  child: Text(c.label,
+                  child: Text(context.tr(c.label),
                       style: TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w600,
@@ -446,8 +447,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           children: [
             const Icon(Icons.shopping_cart_rounded, color: Colors.white, size: 20),
             const SizedBox(width: 10),
-            const Text('View cart',
-                style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w800, color: Colors.white, fontSize: 15)),
+            Text(context.tr('View cart'),
+                style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w800, color: Colors.white, fontSize: 15)),
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
@@ -600,13 +601,13 @@ class _ProductCard extends StatelessWidget {
                             alignment: Alignment.center,
                             decoration:
                                 BoxDecoration(gradient: AppColors.emeraldGrad, borderRadius: BorderRadius.circular(11)),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.add_shopping_cart_rounded, color: Colors.white, size: 15),
-                                SizedBox(width: 6),
-                                Text('Add to cart',
-                                    style: TextStyle(
+                                const Icon(Icons.add_shopping_cart_rounded, color: Colors.white, size: 15),
+                                const SizedBox(width: 6),
+                                Text(context.tr('Add to cart'),
+                                    style: const TextStyle(
                                         fontFamily: 'Inter', fontWeight: FontWeight.w800, fontSize: 12.5, color: Colors.white)),
                               ],
                             ),
@@ -711,37 +712,37 @@ class _FilterSheetState extends State<_FilterSheet> {
                       decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99))),
                 ),
                 const SizedBox(height: 14),
-                const Text('Sort & filter',
-                    style: TextStyle(
+                Text(context.tr('Sort & filter'),
+                    style: const TextStyle(
                         fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 20, color: AppColors.inkWarm)),
                 const SizedBox(height: 16),
-                _label('Sort by'),
+                _label(context.tr('Sort by')),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
                   children: _sorts.entries
-                      .map((e) => _chip(e.value, _sort == e.key, () => setState(() => _sort = e.key)))
+                      .map((e) => _chip(context.tr(e.value), _sort == e.key, () => setState(() => _sort = e.key)))
                       .toList(),
                 ),
                 const SizedBox(height: 18),
-                _label('Minimum rating'),
+                _label(context.tr('Minimum rating')),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
                   children: _ratings.entries
-                      .map((e) => _chip(e.value, _rating == e.key, () => setState(() => _rating = e.key)))
+                      .map((e) => _chip(context.tr(e.value), _rating == e.key, () => setState(() => _rating = e.key)))
                       .toList(),
                 ),
                 const SizedBox(height: 18),
-                _label('Price range (UGX)'),
+                _label(context.tr('Price range (UGX)')),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Expanded(child: _numField(_minCtrl, 'Min')),
+                    Expanded(child: _numField(_minCtrl, context.tr('Min'))),
                     const Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: Text('–')),
-                    Expanded(child: _numField(_maxCtrl, 'Max')),
+                    Expanded(child: _numField(_maxCtrl, context.tr('Max'))),
                   ],
                 ),
                 const SizedBox(height: 22),
@@ -755,7 +756,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                             side: const BorderSide(color: AppColors.line),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13))),
-                        child: const Text('Reset'),
+                        child: Text(context.tr('Reset')),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -768,8 +769,8 @@ class _FilterSheetState extends State<_FilterSheet> {
                           alignment: Alignment.center,
                           decoration:
                               BoxDecoration(gradient: AppColors.emeraldGrad, borderRadius: BorderRadius.circular(13)),
-                          child: const Text('Apply',
-                              style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w800, color: Colors.white)),
+                          child: Text(context.tr('Apply'),
+                              style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w800, color: Colors.white)),
                         ),
                       ),
                     ),

@@ -6,6 +6,7 @@ import '../../core/network/dio_client.dart';
 import '../../core/utils/json_utils.dart';
 import '../../widgets/data_list.dart';
 import '../../widgets/entity_tile.dart';
+import '../../core/i18n/locale_provider.dart';
 
 class WorkforceScreen extends StatelessWidget {
   const WorkforceScreen({super.key});
@@ -15,7 +16,7 @@ class WorkforceScreen extends StatelessWidget {
     final api = ApiService(context.read<DioClient>().dio);
     return DataList(
       loader: () => api.list(Api.jobPostings),
-      emptyText: 'No job postings available.',
+      emptyText: context.tr('No job postings available.'),
       itemBuilder: (context, j) {
         final title = pickString(j, ['title', 'role', 'name']) ?? 'Job posting';
         final desc = pickString(j, ['description', 'summary', 'details']);

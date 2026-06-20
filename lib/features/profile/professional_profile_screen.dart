@@ -8,6 +8,7 @@ import '../../core/utils/json_utils.dart';
 import '../../widgets/app_toast.dart';
 import '../../widgets/fresh_kit.dart';
 import '../../widgets/state_views.dart';
+import '../../core/i18n/locale_provider.dart';
 
 const _profilePath = '/professional-profiles/me/';
 const _updatePath = '/professional-profiles/update_me/';
@@ -244,8 +245,8 @@ class _ProfessionalProfileScreenState extends State<ProfessionalProfileScreen> {
       body: Column(
         children: [
           GradientHero(
-            title: 'My professional profile',
-            subtitle: 'Get hired on AgriCore',
+            title: context.tr('My professional profile'),
+            subtitle: context.tr('Get hired on AgriCore'),
             icon: Icons.badge_rounded,
             onBack: () => Navigator.of(context).maybePop(),
           ),
@@ -264,29 +265,29 @@ class _ProfessionalProfileScreenState extends State<ProfessionalProfileScreen> {
         ListView(
           padding: const EdgeInsets.fromLTRB(16, 18, 16, 110),
           children: [
-            const FreshSectionHeader(title: 'About you'),
+            FreshSectionHeader(title: context.tr('About you')),
             const SizedBox(height: 12),
             FreshField(
               controller: _bio,
-              label: 'Bio',
-              hint: 'A short summary of what you do',
+              label: context.tr('Bio'),
+              hint: context.tr('A short summary of what you do'),
               lines: 4,
             ),
             const SizedBox(height: 12),
             FreshField(
               controller: _location,
-              label: 'Location',
-              hint: 'e.g. Kampala, Uganda',
+              label: context.tr('Location'),
+              hint: context.tr('e.g. Kampala, Uganda'),
             ),
             const SizedBox(height: 12),
             FreshField(
               controller: _phone,
-              label: 'Phone',
-              hint: 'e.g. +256772123456',
+              label: context.tr('Phone'),
+              hint: context.tr('e.g. +256772123456'),
             ),
             const SizedBox(height: 22),
 
-            const FreshSectionHeader(title: 'Specialty'),
+            FreshSectionHeader(title: context.tr('Specialty')),
             const SizedBox(height: 12),
             _ChipWrap(
               options: _specialties,
@@ -296,7 +297,7 @@ class _ProfessionalProfileScreenState extends State<ProfessionalProfileScreen> {
             ),
             const SizedBox(height: 22),
 
-            const FreshSectionHeader(title: 'Rate & experience'),
+            FreshSectionHeader(title: context.tr('Rate & experience')),
             const SizedBox(height: 12),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,8 +305,8 @@ class _ProfessionalProfileScreenState extends State<ProfessionalProfileScreen> {
                 Expanded(
                   child: FreshField(
                     controller: _yearsExperience,
-                    label: 'Years of experience',
-                    hint: 'e.g. 5',
+                    label: context.tr('Years of experience'),
+                    hint: context.tr('e.g. 5'),
                     number: true,
                   ),
                 ),
@@ -313,8 +314,8 @@ class _ProfessionalProfileScreenState extends State<ProfessionalProfileScreen> {
                 Expanded(
                   child: FreshField(
                     controller: _hourlyRate,
-                    label: 'Hourly rate',
-                    hint: 'e.g. 25',
+                    label: context.tr('Hourly rate'),
+                    hint: context.tr('e.g. 25'),
                     number: true,
                   ),
                 ),
@@ -323,12 +324,12 @@ class _ProfessionalProfileScreenState extends State<ProfessionalProfileScreen> {
             const SizedBox(height: 12),
             FreshField(
               controller: _responseTime,
-              label: 'Typical response time',
-              hint: 'e.g. Within 24 hours',
+              label: context.tr('Typical response time'),
+              hint: context.tr('e.g. Within 24 hours'),
             ),
             const SizedBox(height: 22),
 
-            const FreshSectionHeader(title: 'Availability'),
+            FreshSectionHeader(title: context.tr('Availability')),
             const SizedBox(height: 12),
             _ChipWrap(
               options: _availabilities,
@@ -337,66 +338,66 @@ class _ProfessionalProfileScreenState extends State<ProfessionalProfileScreen> {
             ),
             const SizedBox(height: 22),
 
-            const FreshSectionHeader(title: 'Skills & credentials'),
+            FreshSectionHeader(title: context.tr('Skills & credentials')),
             const SizedBox(height: 12),
             FreshField(
               controller: _skills,
-              label: 'Skills (comma separated)',
-              hint: 'e.g. Soil testing, Irrigation, Pest control',
+              label: context.tr('Skills (comma separated)'),
+              hint: context.tr('e.g. Soil testing, Irrigation, Pest control'),
               lines: 2,
             ),
             const SizedBox(height: 12),
             FreshField(
               controller: _certifications,
-              label: 'Certifications (comma separated)',
-              hint: 'e.g. Certified Agronomist, FAO Cert',
+              label: context.tr('Certifications (comma separated)'),
+              hint: context.tr('e.g. Certified Agronomist, FAO Cert'),
               lines: 2,
             ),
             const SizedBox(height: 12),
             FreshField(
               controller: _languages,
-              label: 'Languages (comma separated)',
-              hint: 'e.g. English, Swahili, Luganda',
+              label: context.tr('Languages (comma separated)'),
+              hint: context.tr('e.g. English, Swahili, Luganda'),
               lines: 2,
             ),
             const SizedBox(height: 22),
 
-            const FreshSectionHeader(title: 'Background'),
+            FreshSectionHeader(title: context.tr('Background')),
             const SizedBox(height: 12),
             FreshField(
               controller: _education,
-              label: 'Education',
-              hint: 'Your educational background',
+              label: context.tr('Education'),
+              hint: context.tr('Your educational background'),
               lines: 3,
             ),
             const SizedBox(height: 12),
             FreshField(
               controller: _workExperience,
-              label: 'Work experience',
-              hint: 'Detailed work experience',
+              label: context.tr('Work experience'),
+              hint: context.tr('Detailed work experience'),
               lines: 3,
             ),
             const SizedBox(height: 12),
             FreshField(
               controller: _notableProjects,
-              label: 'Notable projects',
-              hint: 'Projects you are proud of',
+              label: context.tr('Notable projects'),
+              hint: context.tr('Projects you are proud of'),
               lines: 3,
             ),
             const SizedBox(height: 22),
 
-            const FreshSectionHeader(title: 'Links'),
+            FreshSectionHeader(title: context.tr('Links')),
             const SizedBox(height: 12),
             FreshField(
               controller: _linkedinUrl,
-              label: 'LinkedIn URL',
-              hint: 'https://linkedin.com/in/you',
+              label: context.tr('LinkedIn URL'),
+              hint: context.tr('https://linkedin.com/in/you'),
             ),
             const SizedBox(height: 12),
             FreshField(
               controller: _portfolioUrl,
-              label: 'Portfolio URL',
-              hint: 'https://your-portfolio.com',
+              label: context.tr('Portfolio URL'),
+              hint: context.tr('https://your-portfolio.com'),
             ),
           ],
         ),
@@ -443,7 +444,7 @@ class _ChipWrap extends StatelessWidget {
                 ),
               ),
               child: Text(
-                label,
+                context.tr(label),
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w700,
@@ -489,9 +490,9 @@ class _SaveBar extends StatelessWidget {
                   child: CircularProgressIndicator(
                       strokeWidth: 2.4, color: Colors.white),
                 )
-              : const Text(
-                  'Save profile',
-                  style: TextStyle(
+              : Text(
+                  context.tr('Save profile'),
+                  style: const TextStyle(
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w800,
                     color: Colors.white,

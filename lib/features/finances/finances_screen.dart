@@ -5,6 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
 import '../../widgets/fresh_kit.dart';
 import '../../widgets/state_views.dart';
+import '../../core/i18n/locale_provider.dart';
 
 const _farmsPath = '/farms/';
 const _financesPath = '/farm-finances/';
@@ -117,10 +118,10 @@ class _FinancesScreenState extends State<FinancesScreen> {
           padding: EdgeInsets.zero,
           children: [
             GradientHero(
-              title: 'Finances',
-              subtitle: 'Profit & loss',
+              title: context.tr('Finances'),
+              subtitle: context.tr('Profit & loss'),
               icon: Icons.insights_rounded,
-              bigLabel: 'Net profit',
+              bigLabel: context.tr('Net profit'),
               bigValue: _loading ? '—' : money(_netProfit, decimals: 0),
               onBack: () => Navigator.of(context).maybePop(),
               chips: [
@@ -144,7 +145,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                       child: MetricCard(
                         icon: Icons.trending_up_rounded,
                         value: money(revenue, decimals: 0),
-                        label: 'Revenue',
+                        label: context.tr('Revenue'),
                         color: AppColors.green,
                       ),
                     ),
@@ -153,7 +154,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                       child: MetricCard(
                         icon: Icons.trending_down_rounded,
                         value: money(expenses, decimals: 0),
-                        label: 'Expenses',
+                        label: context.tr('Expenses'),
                         color: const Color(0xFFE11D48),
                       ),
                     ),
@@ -162,7 +163,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                       child: MetricCard(
                         icon: Icons.percent_rounded,
                         value: marginLabel,
-                        label: 'Margin',
+                        label: context.tr('Margin'),
                         color: const Color(0xFF6366F1),
                       ),
                     ),
@@ -178,7 +179,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     children: [
                       _FilterChip(
-                        label: 'All',
+                        label: context.tr('All'),
                         selected: _farmFilter == null,
                         onTap: () => setState(() => _farmFilter = null),
                       ),
@@ -198,15 +199,15 @@ class _FinancesScreenState extends State<FinancesScreen> {
                 child: _IncomeExpenseCard(revenue: revenue, expenses: expenses),
               ),
               // ----- records -----
-              const Padding(
-                padding: EdgeInsets.fromLTRB(16, 14, 16, 8),
-                child: FreshSectionHeader(title: 'Records'),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+                child: FreshSectionHeader(title: context.tr('Records')),
               ),
               if (_sortedRecords.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.only(top: 16, bottom: 28),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16, bottom: 28),
                   child: EmptyView(
-                      text: 'No finance records yet.',
+                      text: context.tr('No finance records yet.'),
                       icon: Icons.receipt_long_rounded),
                 )
               else
@@ -293,22 +294,22 @@ class _IncomeExpenseCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Income vs expense',
-              style: TextStyle(
+          Text(context.tr('Income vs expense'),
+              style: const TextStyle(
                   fontFamily: 'Fraunces',
                   fontWeight: FontWeight.w800,
                   fontSize: 15,
                   color: AppColors.inkWarm)),
           const SizedBox(height: 14),
           _ProportionBar(
-            label: 'Income',
+            label: context.tr('Income'),
             value: money(revenue, decimals: 0),
             fraction: revFrac.toDouble(),
             color: AppColors.green,
           ),
           const SizedBox(height: 12),
           _ProportionBar(
-            label: 'Expense',
+            label: context.tr('Expense'),
             value: money(expenses, decimals: 0),
             fraction: expFrac.toDouble(),
             color: const Color(0xFFE11D48),
