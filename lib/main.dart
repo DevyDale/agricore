@@ -7,6 +7,7 @@ import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'core/i18n/locale_provider.dart';
 import 'core/i18n/app_translations.dart';
+import 'features/dale_ai/dale_models.dart';
 import 'providers/auth_provider.dart';
 import 'providers/cart_model.dart';
 
@@ -36,6 +37,9 @@ class AgricoreApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<LocaleProvider>(
           create: (_) => LocaleProvider()..load(),
+        ),
+        ChangeNotifierProvider<DaleController>(
+          create: (_) => DaleController(),
         ),
       ],
       child: Builder(

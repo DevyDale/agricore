@@ -57,7 +57,12 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Agricore uses the microphone to record voice notes in chats.</string>
+	<string>Agricore uses the microphone to record voice notes in chats and to talk to the Dale assistant.</string>
 
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Agricore uses speech recognition so you can ask the Dale assistant questions by voice.</string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Agricore needs photo access to add product and advertisement images.</string>
 </dict>
 </plist>

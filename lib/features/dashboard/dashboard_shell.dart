@@ -12,6 +12,7 @@ import '../workforce/workforce_screen.dart';
 import '../profile/profile_screen.dart';
 import '../wallet/wallet_screen.dart';
 import '../dale_ai/dale_chat.dart';
+import '../dale_ai/dale_models.dart';
 import '../../widgets/animated_bottom_nav.dart';
 
 class _Section {
@@ -28,6 +29,32 @@ class DashboardShell extends StatefulWidget {
 
 class _DashboardShellState extends State<DashboardShell> {
   int _index = 0;
+
+  // Web-style page keys Dale uses to tailor its answers per section.
+  static const _pageKeys = [
+    'marketplace',
+    'farms',
+    'digital_store',
+    'chats',
+    'workforce',
+    'wallet',
+    'profile',
+  ];
+
+  String _pageKeyAt(int i) => (i >= 0 && i < _pageKeys.length) ? _pageKeys[i] : 'dashboard';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final dale = context.read<DaleController>();
+      dale.onSelectTab = (i) {
+        if (mounted) setState(() => _index = i);
+      };
+      dale.setPage(_pageKeyAt(_index));
+    });
+  }
 
   // First 4 also appear in the phone bottom bar. Dale is the floating orb.
   static const _sections = <_Section>[
@@ -78,6 +105,7 @@ class _DashboardShellState extends State<DashboardShell> {
   Widget build(BuildContext context) {
     final wide = Responsive.isWide(context);
     final auth = context.watch<AuthProvider>();
+    context.read<DaleController>().setPage(_pageKeyAt(_index));
 
     return Scaffold(
       appBar: _index <= 3 ? null : AppBar(
