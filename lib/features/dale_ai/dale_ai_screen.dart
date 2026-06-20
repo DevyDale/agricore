@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
-import '../../core/network/api_service.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../../core/i18n/locale_provider.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/responsive/responsive.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
+import '../../core/utils/log.dart';
+import '../../widgets/app_toast.dart';
+import 'dale_models.dart';
+import 'dale_service.dart';
+import 'dale_widgets.dart';
+
+enum _Kind { user, bot, system }
 
 class _Msg {
   final String text;
-  final bool fromUser;
-  _Msg(this.text, this.fromUser);
+  final _Kind kind;
+  _Msg(this.text, this.kind);
+  bool get fromUser => kind == _Kind.user;
 }
 
+/// Full-screen Dale assistant. Shares the same brain as the floating Dale panel
+/// (rich page/language/currency context, conversation history, UI actions and
+/// voice I/O).
 class DaleAiScreen extends StatefulWidget {
   const DaleAiScreen({super.key});
   @override
@@ -22,30 +36,160 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
   final _controller = TextEditingController();
   final _scroll = ScrollController();
   final List<_Msg> _messages = [
-    _Msg("Hi, I'm Dale. Ask me about pricing, tasks, or your farm.", false),
+    _Msg("Hi, I'm Dale. Ask me about pricing, tasks, or your farm — or tell me where to go.", _Kind.bot),
   ];
   bool _sending = false;
 
-  ApiService get _api => ApiService(context.read<DioClient>().dio);
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  final FlutterTts _tts = FlutterTts();
+  bool _voiceAvailable = false;
+  bool _listening = false;
+  bool _speakReplies = false;
 
-  Future<void> _send() async {
-    final text = _controller.text.trim();
+  DaleService get _dale => DaleService(context.read<DioClient>().dio);
+
+  @override
+  void initState() {
+    super.initState();
+    _initVoice();
+  }
+
+  Future<void> _initVoice() async {
+    try {
+      final ok = await _speech.initialize(
+        onStatus: (s) {
+          if ((s == 'done' || s == 'notListening') && mounted) {
+            setState(() => _listening = false);
+          }
+        },
+        onError: (_) {
+          if (mounted) setState(() => _listening = false);
+        },
+      );
+      if (mounted) setState(() => _voiceAvailable = ok);
+    } catch (e) {
+      logSwallowed('DaleScreen.initVoice', e);
+    }
+  }
+
+  String _bcp47(String lang) {
+    switch (lang) {
+      case 'fr':
+        return 'fr-FR';
+      case 'es':
+        return 'es-ES';
+      case 'pt':
+        return 'pt-PT';
+      case 'sw':
+        return 'sw-KE';
+      case 'ar':
+        return 'ar-SA';
+      default:
+        return 'en-US';
+    }
+  }
+
+  List<Map<String, String>> _history() {
+    final turns = _messages.where((m) => m.kind != _Kind.system).toList();
+    final recent = turns.length > 6 ? turns.sublist(turns.length - 6) : turns;
+    return recent
+        .map((m) => {'role': m.fromUser ? 'user' : 'assistant', 'content': m.text})
+        .toList();
+  }
+
+  Future<void> _send([String? voiceText]) async {
+    final text = (voiceText ?? _controller.text).trim();
     if (text.isEmpty || _sending) return;
+    final loc = context.read<LocaleProvider>();
+    final dale = context.read<DaleController>();
+    final history = _history();
     setState(() {
-      _messages.add(_Msg(text, true));
+      _messages.add(_Msg(text, _Kind.user));
       _sending = true;
       _controller.clear();
     });
     _scrollDown();
     try {
-      final reply = await _api.askDale(text);
-      setState(() => _messages.add(_Msg(
-          reply.isEmpty ? 'No response received.' : reply, false)));
+      final res = await _dale.ask(
+        prompt: text,
+        page: dale.currentPage,
+        language: loc.language,
+        currency: loc.currency,
+        history: history,
+      );
+      if (!mounted) return;
+      final reply = res.reply.isEmpty ? 'No response received.' : res.reply;
+      setState(() => _messages.add(_Msg(reply, _Kind.bot)));
+      _speakIfOn(reply);
+      _runAction(res.action, dale);
     } catch (e) {
-      setState(() => _messages.add(_Msg(friendlyError(e), false)));
+      if (mounted) setState(() => _messages.add(_Msg(friendlyError(e), _Kind.bot)));
     } finally {
-      setState(() => _sending = false);
+      if (mounted) setState(() => _sending = false);
       _scrollDown();
+    }
+  }
+
+  void _runAction(DaleAction? action, DaleController dale) {
+    if (action == null) return;
+    if (action.type == 'show_message' && (action.message ?? '').isNotEmpty) {
+      setState(() => _messages.add(_Msg(action.message!, _Kind.bot)));
+      return;
+    }
+    final confirmation = dale.handle(action);
+    if (confirmation != null) {
+      setState(() => _messages.add(_Msg(confirmation, _Kind.system)));
+      _scrollDown();
+    }
+  }
+
+  Future<void> _speakIfOn(String text) async {
+    if (!_speakReplies) return;
+    try {
+      final loc = context.read<LocaleProvider>();
+      await _tts.setLanguage(_bcp47(loc.language));
+      await _tts.stop();
+      await _tts.speak(_plain(text));
+    } catch (e) {
+      logSwallowed('DaleScreen.speak', e);
+    }
+  }
+
+  String _plain(String md) => md
+      .replaceAll(RegExp(r'\*\*(.+?)\*\*'), r'$1')
+      .replaceAll(RegExp(r'^[\-\*•]\s+', multiLine: true), '')
+      .trim();
+
+  Future<void> _toggleListen() async {
+    if (!_voiceAvailable) return;
+    if (_listening) {
+      await _speech.stop();
+      if (mounted) setState(() => _listening = false);
+      return;
+    }
+    final loc = context.read<LocaleProvider>();
+    setState(() => _listening = true);
+    await _speech.listen(
+      listenOptions: stt.SpeechListenOptions(cancelOnError: true, localeId: _bcp47(loc.language)),
+      onResult: (r) {
+        if (!mounted) return;
+        setState(() => _controller.text = r.recognizedWords);
+        if (r.finalResult && r.recognizedWords.trim().isNotEmpty) {
+          setState(() => _listening = false);
+          _send(r.recognizedWords);
+        }
+      },
+    );
+  }
+
+  Future<void> _toggleSpeak() async {
+    setState(() => _speakReplies = !_speakReplies);
+    if (!_speakReplies) {
+      try {
+        await _tts.stop();
+      } catch (e) {
+        logSwallowed('DaleScreen.ttsStop', e);
+      }
     }
   }
 
@@ -62,6 +206,10 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
   void dispose() {
     _controller.dispose();
     _scroll.dispose();
+    try {
+      _speech.cancel();
+      _tts.stop();
+    } catch (_) {/* best-effort */}
     super.dispose();
   }
 
@@ -77,22 +225,39 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
               child: ListView.builder(
                 controller: _scroll,
                 padding: const EdgeInsets.all(16),
-                itemCount: _messages.length,
-                itemBuilder: (_, i) => _Bubble(_messages[i]),
+                itemCount: _messages.length + (_sending ? 1 : 0),
+                itemBuilder: (_, i) {
+                  if (i >= _messages.length) return const _TypingRow();
+                  return _Bubble(
+                    _messages[i],
+                    onCopy: () {
+                      Clipboard.setData(ClipboardData(text: _messages[i].text));
+                      showToast(context, 'Copied');
+                    },
+                  );
+                },
               ),
             ),
-            if (_sending)
-              const Padding(
-                padding: EdgeInsets.only(bottom: 6),
-                child: Text('Dale is thinking...',
-                    style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
-              ),
             SafeArea(
               top: false,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
                 child: Row(
                   children: [
+                    if (_voiceAvailable) ...[
+                      _CircleButton(
+                        icon: _listening ? Icons.mic_rounded : Icons.mic_none_rounded,
+                        active: _listening,
+                        onTap: _toggleListen,
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    _CircleButton(
+                      icon: _speakReplies ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+                      active: _speakReplies,
+                      onTap: _toggleSpeak,
+                    ),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: TextField(
                         controller: _controller,
@@ -100,14 +265,14 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
                         maxLines: 4,
                         textInputAction: TextInputAction.send,
                         onSubmitted: (_) => _send(),
-                        decoration: const InputDecoration(
-                          hintText: 'Message Dale...',
+                        decoration: InputDecoration(
+                          hintText: _listening ? 'Listening…' : 'Message Dale…',
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     FloatingActionButton(
-                      onPressed: _sending ? null : _send,
+                      onPressed: _sending ? null : () => _send(),
                       backgroundColor: AppColors.primary,
                       elevation: 0,
                       child: const Icon(Icons.send_rounded, color: Colors.white),
@@ -123,34 +288,102 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
   }
 }
 
+class _CircleButton extends StatelessWidget {
+  final IconData icon;
+  final bool active;
+  final VoidCallback onTap;
+  const _CircleButton({required this.icon, required this.active, required this.onTap});
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: active ? AppColors.green : const Color(0xFFEFF5F1),
+          border: Border.all(color: active ? AppColors.green : AppColors.line),
+        ),
+        child: Icon(icon, color: active ? Colors.white : AppColors.g700),
+      ),
+    );
+  }
+}
+
+class _TypingRow extends StatelessWidget {
+  const _TypingRow();
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.line),
+        ),
+        child: const DaleTypingDots(),
+      ),
+    );
+  }
+}
+
 class _Bubble extends StatelessWidget {
   final _Msg msg;
-  const _Bubble(this.msg);
+  final VoidCallback onCopy;
+  const _Bubble(this.msg, {required this.onCopy});
 
   @override
   Widget build(BuildContext context) {
+    if (msg.kind == _Kind.system) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+                color: const Color(0xFFE7F4EC), borderRadius: BorderRadius.circular(999)),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.auto_awesome_rounded, size: 13, color: Color(0xFF0F7A4B)),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(msg.text,
+                      style: const TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF0F7A4B))),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
     final fromUser = msg.fromUser;
     return Align(
       alignment: fromUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        constraints: BoxConstraints(
-            maxWidth: MediaQuery.sizeOf(context).width * 0.78),
-        decoration: BoxDecoration(
-          color: fromUser ? AppColors.primary : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 6,
-                offset: const Offset(0, 2)),
-          ],
-        ),
-        child: Text(
-          msg.text,
-          style: TextStyle(
-              color: fromUser ? Colors.white : AppColors.textDark, height: 1.35),
+      child: GestureDetector(
+        onLongPress: onCopy,
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.78),
+          decoration: BoxDecoration(
+            gradient: fromUser ? AppColors.emeraldGrad : null,
+            color: fromUser ? null : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: fromUser ? null : Border.all(color: AppColors.line),
+          ),
+          child: DaleRichReply(
+            text: msg.text,
+            color: fromUser ? Colors.white : AppColors.inkWarm,
+          ),
         ),
       ),
     );
