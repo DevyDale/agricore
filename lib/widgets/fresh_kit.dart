@@ -206,9 +206,9 @@ class MetricCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.palette.card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.line),
+        border: Border.all(color: context.palette.line),
         boxShadow: [
           BoxShadow(
               color: Colors.black.withValues(alpha: 0.03),
@@ -234,18 +234,18 @@ class MetricCard extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text(value,
                 maxLines: 1,
-                style: const TextStyle(
+                style: TextStyle(
                     fontFamily: 'Fraunces',
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
-                    color: AppColors.inkWarm)),
+                    color: context.palette.ink)),
           ),
           const SizedBox(height: 2),
           Text(label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500)),
+              style: TextStyle(
+                  fontFamily: 'Inter', fontSize: 11, color: context.palette.muted)),
         ],
       ),
     );
@@ -263,9 +263,9 @@ class SegTabs extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.palette.card,
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: AppColors.line)),
+          border: Border.all(color: context.palette.line)),
       child: Row(
         children: [
           for (var i = 0; i < tabs.length; i++)
@@ -285,7 +285,7 @@ class SegTabs extends StatelessWidget {
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w700,
                           fontSize: 12.5,
-                          color: i == index ? Colors.white : AppColors.slate600)),
+                          color: i == index ? Colors.white : context.palette.muted2)),
                 ),
               ),
             ),
@@ -320,9 +320,9 @@ class FreshSheet extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(
-            color: AppColors.cream,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(
+            color: context.palette.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: SingleChildScrollView(
           child: Column(
@@ -334,15 +334,15 @@ class FreshSheet extends StatelessWidget {
                       width: 42,
                       height: 4,
                       decoration: BoxDecoration(
-                          color: AppColors.line,
+                          color: context.palette.line,
                           borderRadius: BorderRadius.circular(99)))),
               const SizedBox(height: 14),
               Text(title,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontFamily: 'Fraunces',
                       fontWeight: FontWeight.w800,
                       fontSize: 19,
-                      color: AppColors.inkWarm)),
+                      color: context.palette.ink)),
               const SizedBox(height: 14),
               if (error != null) ...[
                 Container(
@@ -416,14 +416,14 @@ class FreshField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: context.palette.card,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(11),
-            borderSide: const BorderSide(color: AppColors.line)),
+            borderSide: BorderSide(color: context.palette.line)),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(11),
-            borderSide: const BorderSide(color: AppColors.line)),
+            borderSide: BorderSide(color: context.palette.line)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(11),
             borderSide: const BorderSide(color: AppColors.green)),
@@ -436,11 +436,11 @@ class FreshField extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 2, bottom: 6),
           child: Text(label!,
-              style: const TextStyle(
+              style: TextStyle(
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w700,
                   fontSize: 12.5,
-                  color: AppColors.slate700)),
+                  color: context.palette.muted3)),
         ),
         field,
       ],
@@ -459,11 +459,11 @@ class FreshSectionHeader extends StatelessWidget {
       children: [
         Expanded(
           child: Text(title,
-              style: const TextStyle(
+              style: TextStyle(
                   fontFamily: 'Fraunces',
                   fontWeight: FontWeight.w800,
                   fontSize: 17,
-                  color: AppColors.inkWarm)),
+                  color: context.palette.ink)),
         ),
         if (action != null) action!,
       ],

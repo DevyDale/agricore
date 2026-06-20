@@ -171,7 +171,7 @@ class _Drawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     return Drawer(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       child: SafeArea(
         child: Column(
           children: [
@@ -208,14 +208,14 @@ class _Drawer extends StatelessWidget {
                   for (var i = 0; i < sections.length; i++)
                     ListTile(
                       leading: Icon(sections[i].icon,
-                          color: current == i ? AppColors.g700 : AppColors.slate500),
+                          color: current == i ? AppColors.g700 : context.palette.muted),
                       title: Text(context.tr(sections[i].label),
                           style: TextStyle(
                               fontFamily: 'Inter',
                               fontWeight: current == i ? FontWeight.w700 : FontWeight.w500,
-                              color: current == i ? AppColors.g700 : AppColors.inkWarm)),
+                              color: current == i ? AppColors.g700 : context.palette.ink)),
                       selected: current == i,
-                      selectedTileColor: const Color(0xFFE7F4EC),
+                      selectedTileColor: context.palette.chipBg,
                       onTap: () => onTap(i),
                     ),
                 ],

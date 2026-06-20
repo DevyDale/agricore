@@ -92,19 +92,19 @@ class _StoreFormState extends State<_StoreForm> {
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
         height: h * 0.9,
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(28))),
         child: Column(
           children: [
             const SizedBox(height: 10),
-            Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99))),
+            Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99))),
             Padding(
               padding: const EdgeInsets.fromLTRB(18, 14, 18, 6),
               child: Row(
                 children: [
-                  const Text('Create a store',
-                      style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 21, color: AppColors.inkWarm)),
+                  Text('Create a store',
+                      style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 21, color: context.palette.ink)),
                   const Spacer(),
-                  IconButton(onPressed: () => Navigator.pop(context, false), icon: const Icon(Icons.close, color: AppColors.slate600)),
+                  IconButton(onPressed: () => Navigator.pop(context, false), icon: Icon(Icons.close, color: context.palette.muted2)),
                 ],
               ),
             ),
@@ -135,9 +135,9 @@ class _StoreFormState extends State<_StoreForm> {
                   const SizedBox(height: 14),
                   _label('Countries of operation'),
                   _field(_countries, 'e.g. Uganda, Kenya, Nigeria'),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 4, left: 2),
-                    child: Text('Separate with commas', style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500)),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4, left: 2),
+                    child: Text('Separate with commas', style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: context.palette.muted)),
                   ),
                   const SizedBox(height: 14),
                   _label('Description'),
@@ -147,15 +147,15 @@ class _StoreFormState extends State<_StoreForm> {
                     onTap: () => setState(() => _requestVerify = !_requestVerify),
                     child: Container(
                       padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.line)),
+                      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(12), border: Border.all(color: context.palette.line)),
                       child: Row(
                         children: [
                           Icon(_requestVerify ? Icons.check_box_rounded : Icons.check_box_outline_blank_rounded,
-                              color: _requestVerify ? AppColors.g600 : AppColors.slate500),
+                              color: _requestVerify ? AppColors.g600 : context.palette.muted),
                           const SizedBox(width: 10),
-                          const Expanded(
+                          Expanded(
                             child: Text('Request verification',
-                                style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, color: AppColors.inkWarm)),
+                                style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, color: context.palette.ink)),
                           ),
                         ],
                       ),
@@ -185,7 +185,7 @@ class _StoreFormState extends State<_StoreForm> {
 
   Widget _label(String t) => Padding(
         padding: const EdgeInsets.only(bottom: 6),
-        child: Text(t, style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: AppColors.slate600)),
+        child: Text(t, style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: context.palette.muted2)),
       );
 
   Widget _field(TextEditingController c, String hint, {bool email = false, bool phone = false, int lines = 1}) {
@@ -197,11 +197,11 @@ class _StoreFormState extends State<_StoreForm> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: context.palette.card,
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.green)),
       ),
     );

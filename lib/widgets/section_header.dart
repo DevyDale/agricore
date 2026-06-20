@@ -26,12 +26,12 @@ class SectionHeader extends StatelessWidget {
         ],
         Text(title,
             textAlign: align,
-            style: const TextStyle(
+            style: TextStyle(
                 fontFamily: 'Fraunces',
                 fontWeight: FontWeight.w800,
                 fontSize: 22,
                 height: 1.12,
-                color: AppColors.inkWarm)),
+                color: context.palette.ink)),
       ],
     );
   }

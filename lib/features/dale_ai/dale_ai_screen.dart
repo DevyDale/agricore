@@ -217,10 +217,10 @@ class _DaleAiScreenState extends State<DaleAiScreen> {
   Widget build(BuildContext context) {
     final maxW = Responsive.contentMaxWidth(context);
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.cream,
-        foregroundColor: AppColors.inkWarm,
+        backgroundColor: context.palette.surface,
+        foregroundColor: context.palette.ink,
         elevation: 0,
         titleSpacing: 0,
         title: Row(
@@ -326,7 +326,7 @@ class _CircleButton extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: active ? AppColors.green : const Color(0xFFEFF5F1),
-          border: Border.all(color: active ? AppColors.green : AppColors.line),
+          border: Border.all(color: active ? AppColors.green : context.palette.line),
         ),
         child: Icon(icon, color: active ? Colors.white : AppColors.g700),
       ),
@@ -344,9 +344,9 @@ class _TypingRow extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 5),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.palette.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.line),
+          border: Border.all(color: context.palette.line),
         ),
         child: const DaleTypingDots(),
       ),
@@ -368,7 +368,7 @@ class _Bubble extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-                color: const Color(0xFFE7F4EC), borderRadius: BorderRadius.circular(999)),
+                color: context.palette.chipBg, borderRadius: BorderRadius.circular(999)),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -399,13 +399,13 @@ class _Bubble extends StatelessWidget {
           constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.78),
           decoration: BoxDecoration(
             gradient: fromUser ? AppColors.emeraldGrad : null,
-            color: fromUser ? null : Colors.white,
+            color: fromUser ? null : context.palette.card,
             borderRadius: BorderRadius.circular(16),
-            border: fromUser ? null : Border.all(color: AppColors.line),
+            border: fromUser ? null : Border.all(color: context.palette.line),
           ),
           child: DaleRichReply(
             text: msg.text,
-            color: fromUser ? Colors.white : AppColors.inkWarm,
+            color: fromUser ? Colors.white : context.palette.ink,
           ),
         ),
       ),

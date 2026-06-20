@@ -311,9 +311,9 @@ class _DalePanelState extends State<_DalePanel> {
       color: Colors.transparent,
       child: Container(
         height: size.height * 0.9,
-        decoration: const BoxDecoration(
-          color: AppColors.cream,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        decoration: BoxDecoration(
+          color: context.palette.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         child: SafeArea(
           top: false,
@@ -324,7 +324,7 @@ class _DalePanelState extends State<_DalePanel> {
                 width: 42,
                 height: 4,
                 decoration: BoxDecoration(
-                    color: AppColors.line, borderRadius: BorderRadius.circular(99)),
+                    color: context.palette.line, borderRadius: BorderRadius.circular(99)),
               ),
               _header(),
               const Divider(height: 1),
@@ -359,7 +359,7 @@ class _DalePanelState extends State<_DalePanel> {
             child: const Icon(Icons.smart_toy_rounded, color: Colors.white, size: 24),
           ),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -369,9 +369,9 @@ class _DalePanelState extends State<_DalePanel> {
                         fontFamily: 'Fraunces',
                         fontWeight: FontWeight.w800,
                         fontSize: 20,
-                        color: AppColors.inkWarm)),
+                        color: context.palette.ink)),
                 Text('Your farming assistant',
-                    style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted)),
               ],
             ),
           ),
@@ -379,7 +379,7 @@ class _DalePanelState extends State<_DalePanel> {
             tooltip: _speakReplies ? 'Mute voice' : 'Speak replies',
             onPressed: _toggleSpeak,
             icon: Icon(_speakReplies ? Icons.volume_up_rounded : Icons.volume_off_rounded,
-                color: _speakReplies ? AppColors.g600 : AppColors.slate500),
+                color: _speakReplies ? AppColors.g600 : context.palette.muted),
           ),
           IconButton(
             tooltip: 'Open full screen',
@@ -388,11 +388,11 @@ class _DalePanelState extends State<_DalePanel> {
               nav.pop();
               nav.push(MaterialPageRoute(builder: (_) => const DaleAiScreen()));
             },
-            icon: const Icon(Icons.open_in_full_rounded, color: AppColors.slate600, size: 20),
+            icon: Icon(Icons.open_in_full_rounded, color: context.palette.muted2, size: 20),
           ),
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.close_rounded, color: AppColors.slate600),
+            icon: Icon(Icons.close_rounded, color: context.palette.muted2),
           ),
         ],
       ),
@@ -414,7 +414,7 @@ class _DalePanelState extends State<_DalePanel> {
                       alignment: Alignment.center,
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE7F4EC),
+                        color: context.palette.chipBg,
                         borderRadius: BorderRadius.circular(999),
                         border: Border.all(color: const Color(0xFFCDE9D8)),
                       ),
@@ -435,9 +435,9 @@ class _DalePanelState extends State<_DalePanel> {
   Widget _composer() {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.line)),
+      decoration: BoxDecoration(
+        color: context.palette.card,
+        border: Border(top: BorderSide(color: context.palette.line)),
       ),
       child: Row(
         children: [
@@ -450,7 +450,7 @@ class _DalePanelState extends State<_DalePanel> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: _listening ? AppColors.green : const Color(0xFFEFF5F1),
-                  border: Border.all(color: _listening ? AppColors.green : AppColors.line),
+                  border: Border.all(color: _listening ? AppColors.green : context.palette.line),
                 ),
                 child: Icon(_listening ? Icons.mic_rounded : Icons.mic_none_rounded,
                     color: _listening ? Colors.white : AppColors.g700),
@@ -469,14 +469,14 @@ class _DalePanelState extends State<_DalePanel> {
                 hintText: _listening ? 'Listening…' : 'Ask Dale…',
                 isDense: true,
                 filled: true,
-                fillColor: AppColors.cream,
+                fillColor: context.palette.surface,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(999),
-                    borderSide: const BorderSide(color: AppColors.line)),
+                    borderSide: BorderSide(color: context.palette.line)),
                 enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(999),
-                    borderSide: const BorderSide(color: AppColors.line)),
+                    borderSide: BorderSide(color: context.palette.line)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(999),
                     borderSide: const BorderSide(color: AppColors.green)),
@@ -510,7 +510,7 @@ class _DalePanelState extends State<_DalePanel> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-                color: const Color(0xFFE7F4EC), borderRadius: BorderRadius.circular(999)),
+                color: context.palette.chipBg, borderRadius: BorderRadius.circular(999)),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -546,13 +546,13 @@ class _DalePanelState extends State<_DalePanel> {
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
                   gradient: m.fromUser ? AppColors.emeraldGrad : null,
-                  color: m.fromUser ? null : Colors.white,
+                  color: m.fromUser ? null : context.palette.card,
                   borderRadius: BorderRadius.circular(16),
-                  border: m.fromUser ? null : Border.all(color: AppColors.line),
+                  border: m.fromUser ? null : Border.all(color: context.palette.line),
                 ),
                 child: DaleRichReply(
                   text: m.text,
-                  color: m.fromUser ? Colors.white : AppColors.inkWarm,
+                  color: m.fromUser ? Colors.white : context.palette.ink,
                 ),
               ),
             ),
@@ -571,9 +571,9 @@ class _DalePanelState extends State<_DalePanel> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.palette.card,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.line),
+              border: Border.all(color: context.palette.line),
             ),
             child: const DaleTypingDots(),
           ),

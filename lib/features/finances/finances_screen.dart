@@ -112,7 +112,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
     final marginLabel = '${_margin.toStringAsFixed(0)}%';
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       body: MaxWidthBody(
         child: RefreshIndicator(
           onRefresh: _load,
@@ -252,9 +252,9 @@ class _FilterChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             gradient: selected ? AppColors.emeraldGrad : null,
-            color: selected ? null : Colors.white,
+            color: selected ? null : context.palette.card,
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: selected ? Colors.transparent : AppColors.line),
+            border: Border.all(color: selected ? Colors.transparent : context.palette.line),
           ),
           child: Text(label,
               maxLines: 1,
@@ -263,7 +263,7 @@ class _FilterChip extends StatelessWidget {
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w700,
                   fontSize: 12.5,
-                  color: selected ? Colors.white : AppColors.slate600)),
+                  color: selected ? Colors.white : context.palette.muted2)),
         ),
       ),
     );
@@ -284,9 +284,9 @@ class _IncomeExpenseCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.palette.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.line),
+        border: Border.all(color: context.palette.line),
         boxShadow: [
           BoxShadow(
               color: Colors.black.withValues(alpha: 0.03),
@@ -298,11 +298,11 @@ class _IncomeExpenseCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(context.tr('Income vs expense'),
-              style: const TextStyle(
+              style: TextStyle(
                   fontFamily: 'Fraunces',
                   fontWeight: FontWeight.w800,
                   fontSize: 15,
-                  color: AppColors.inkWarm)),
+                  color: context.palette.ink)),
           const SizedBox(height: 14),
           _ProportionBar(
             label: context.tr('Income'),
@@ -343,18 +343,18 @@ class _ProportionBar extends StatelessWidget {
           children: [
             Expanded(
               child: Text(label,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w700,
                       fontSize: 12.5,
-                      color: AppColors.slate600)),
+                      color: context.palette.muted2)),
             ),
             Text(value,
-                style: const TextStyle(
+                style: TextStyle(
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w800,
                     fontSize: 13,
-                    color: AppColors.inkWarm)),
+                    color: context.palette.ink)),
           ],
         ),
         const SizedBox(height: 6),
@@ -362,7 +362,7 @@ class _ProportionBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(999),
           child: Container(
             height: 10,
-            color: AppColors.line,
+            color: context.palette.line,
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
               widthFactor: fraction,
@@ -395,9 +395,9 @@ class _RecordTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.palette.card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.line),
+        border: Border.all(color: context.palette.line),
         boxShadow: [
           BoxShadow(
               color: Colors.black.withValues(alpha: 0.03),
@@ -429,20 +429,20 @@ class _RecordTile extends StatelessWidget {
                 Text(type,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
-                        color: AppColors.inkWarm)),
+                        color: context.palette.ink)),
                 if (period.isNotEmpty) ...[
                   const SizedBox(height: 2),
                   Text(period,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 12,
-                          color: AppColors.slate500)),
+                          color: context.palette.muted)),
                 ],
               ],
             ),

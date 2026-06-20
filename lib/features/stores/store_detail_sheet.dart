@@ -27,7 +27,7 @@ class _StoreDetail extends StatelessWidget {
 
     return Container(
       constraints: BoxConstraints(maxHeight: h * 0.9),
-      decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+      decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(28))),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -45,9 +45,9 @@ class _StoreDetail extends StatelessWidget {
                   child: Text(name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 20, color: AppColors.inkWarm)),
+                      style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 20, color: context.palette.ink)),
                 ),
-                IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: AppColors.slate600)),
+                IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.close, color: context.palette.muted2)),
               ],
             ),
           ),
@@ -65,14 +65,14 @@ class _StoreDetail extends StatelessWidget {
                 const SizedBox(height: 16),
                 Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(color: const Color(0xFFFBF7EE), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.line)),
-                  child: const Row(
+                  decoration: BoxDecoration(color: const Color(0xFFFBF7EE), borderRadius: BorderRadius.circular(12), border: Border.all(color: context.palette.line)),
+                  child: Row(
                     children: [
-                      Icon(Icons.dashboard_customize_rounded, size: 16, color: AppColors.slate500),
-                      SizedBox(width: 8),
+                      Icon(Icons.dashboard_customize_rounded, size: 16, color: context.palette.muted),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text('Full store management — products, orders, ads and payouts — arrives in a later update.',
-                            style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.slate600)),
+                            style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: context.palette.muted2)),
                       ),
                     ],
                   ),

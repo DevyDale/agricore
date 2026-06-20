@@ -293,7 +293,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: context.palette.card,
                   hintText: context.tr('Search chats, channels & people…'),
                   prefixIcon: const Icon(Icons.search, size: 20),
                   suffixIcon: _query.isEmpty
@@ -339,13 +339,13 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                     alignment: Alignment.center,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: on ? AppColors.g600 : Colors.white,
+                      color: on ? AppColors.g600 : context.palette.card,
                       borderRadius: BorderRadius.circular(999),
-                      border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+                      border: Border.all(color: on ? AppColors.g600 : context.palette.line),
                     ),
                     child: Text(context.tr(t[1]),
                         style: TextStyle(
-                            fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : AppColors.slate700)),
+                            fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : context.palette.muted3)),
                   ),
                 ),
               );
@@ -361,19 +361,19 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 14),
                   decoration: BoxDecoration(
-                    color: _discover ? AppColors.g600 : Colors.white,
+                    color: _discover ? AppColors.g600 : context.palette.card,
                     borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: _discover ? AppColors.g600 : AppColors.line),
+                    border: Border.all(color: _discover ? AppColors.g600 : context.palette.line),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(_discover ? Icons.inbox_rounded : Icons.explore_rounded,
-                          size: 14, color: _discover ? Colors.white : AppColors.slate700),
+                          size: 14, color: _discover ? Colors.white : context.palette.muted3),
                       const SizedBox(width: 5),
                       Text(_discover ? context.tr('My chats') : context.tr('Discover'),
                           style: TextStyle(
-                              fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: _discover ? Colors.white : AppColors.slate700)),
+                              fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: _discover ? Colors.white : context.palette.muted3)),
                     ],
                   ),
                 ),
@@ -391,7 +391,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
           child: Text(context.tr('PEOPLE'),
-              style: const TextStyle(fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w800, letterSpacing: 0.6, color: AppColors.slate500)),
+              style: TextStyle(fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w800, letterSpacing: 0.6, color: context.palette.muted)),
         ),
       ),
       SliverPadding(
@@ -412,7 +412,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
           ),
         ),
       ),
-      const SliverToBoxAdapter(child: Divider(height: 1, color: AppColors.line)),
+      SliverToBoxAdapter(child: Divider(height: 1, color: context.palette.line)),
     ];
   }
 
@@ -428,7 +428,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
       child: Material(
-        color: Colors.white,
+        color: context.palette.card,
         borderRadius: BorderRadius.circular(16),
         elevation: 1.5,
         shadowColor: Colors.black.withValues(alpha: 0.10),
@@ -438,7 +438,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.line),
+              border: Border.all(color: context.palette.line),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             child: Row(
@@ -454,15 +454,15 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                           Expanded(
                             child: Text(c.displayName,
                                 maxLines: 1, overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 14.5, color: AppColors.inkWarm)),
+                                style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 14.5, color: context.palette.ink)),
                           ),
-                          Text(timeAgo(c.updatedAt), style: const TextStyle(fontSize: 10.5, color: AppColors.slate500)),
+                          Text(timeAgo(c.updatedAt), style: TextStyle(fontSize: 10.5, color: context.palette.muted)),
                         ],
                       ),
                       const SizedBox(height: 2),
                       Text(sub,
                           maxLines: 1, overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 12.5, color: online ? const Color(0xFF16A34A) : AppColors.slate500, fontWeight: online ? FontWeight.w600 : FontWeight.w400)),
+                          style: TextStyle(fontSize: 12.5, color: online ? const Color(0xFF16A34A) : context.palette.muted, fontWeight: online ? FontWeight.w600 : FontWeight.w400)),
                     ],
                   ),
                 ),
@@ -479,14 +479,14 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
       child: Material(
-        color: Colors.white,
+        color: context.palette.card,
         borderRadius: BorderRadius.circular(16),
         elevation: 1.5,
         shadowColor: Colors.black.withValues(alpha: 0.10),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.line),
+            border: Border.all(color: context.palette.line),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(
@@ -499,9 +499,9 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                   children: [
                     Text(c.displayName,
                         maxLines: 1, overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 14, color: AppColors.inkWarm)),
+                        style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 14, color: context.palette.ink)),
                     Text('${c.description ?? 'Public channel'} · ${c.participantCount}',
-                        maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, color: AppColors.slate500)),
+                        maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: context.palette.muted)),
                   ],
                 ),
               ),
@@ -542,25 +542,25 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         padding: const EdgeInsets.fromLTRB(18, 14, 18, 22),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+            Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
             const SizedBox(height: 14),
             Text(context.tr('Create group / channel'),
-                style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+                style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
             const SizedBox(height: 14),
             TextField(
               controller: _title,
               decoration: InputDecoration(
                 hintText: context.tr('Name'),
                 filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+                fillColor: context.palette.card,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
                 focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.green)),
               ),
             ),
@@ -604,13 +604,13 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
           padding: const EdgeInsets.symmetric(vertical: 12),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: on ? const Color(0xFFEAF7EC) : Colors.white,
+            color: on ? const Color(0xFFEAF7EC) : context.palette.card,
             borderRadius: BorderRadius.circular(11),
-            border: Border.all(color: on ? AppColors.g600 : AppColors.line, width: on ? 1.5 : 1),
+            border: Border.all(color: on ? AppColors.g600 : context.palette.line, width: on ? 1.5 : 1),
           ),
           child: Text(label,
               textAlign: TextAlign.center,
-              style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? AppColors.g700 : AppColors.slate600)),
+              style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? AppColors.g700 : context.palette.muted2)),
         ),
       ),
     );

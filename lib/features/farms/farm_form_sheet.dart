@@ -124,21 +124,21 @@ class _FarmFormState extends State<_FarmForm> {
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
         height: h * 0.92,
-        decoration: const BoxDecoration(
-            color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+        decoration: BoxDecoration(
+            color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(28))),
         child: Column(
           children: [
             const SizedBox(height: 10),
-            Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99))),
+            Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99))),
             Padding(
               padding: const EdgeInsets.fromLTRB(18, 14, 18, 6),
               child: Row(
                 children: [
                   Text(_editing ? 'Edit farm' : 'Add a farm',
-                      style: const TextStyle(
-                          fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 21, color: AppColors.inkWarm)),
+                      style: TextStyle(
+                          fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 21, color: context.palette.ink)),
                   const Spacer(),
-                  IconButton(onPressed: () => Navigator.pop(context, false), icon: const Icon(Icons.close, color: AppColors.slate600)),
+                  IconButton(onPressed: () => Navigator.pop(context, false), icon: Icon(Icons.close, color: context.palette.muted2)),
                 ],
               ),
             ),
@@ -213,7 +213,7 @@ class _FarmFormState extends State<_FarmForm> {
   Widget _label(String t) => Padding(
         padding: const EdgeInsets.only(bottom: 6),
         child: Text(t,
-            style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: AppColors.slate600)),
+            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: context.palette.muted2)),
       );
 
   Widget _field(TextEditingController c, String hint, {bool number = false, int lines = 1}) {
@@ -225,11 +225,11 @@ class _FarmFormState extends State<_FarmForm> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: context.palette.card,
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.green)),
       ),
     );
@@ -239,13 +239,13 @@ class _FarmFormState extends State<_FarmForm> {
     const items = {'acres': 'acres', 'hectares': 'hectares', 'square_meters': 'square meters'};
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.palette.line)),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: _unit,
           isExpanded: true,
           isDense: true,
-          style: const TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.inkWarm),
+          style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: context.palette.ink),
           items: items.entries.map((e) => DropdownMenuItem(value: e.key, child: Text(e.value))).toList(),
           onChanged: (v) => setState(() => _unit = v ?? 'acres'),
         ),
@@ -261,9 +261,9 @@ class _FarmFormState extends State<_FarmForm> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
-          color: on ? c : Colors.white,
+          color: on ? c : context.palette.card,
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: on ? c : AppColors.line),
+          border: Border.all(color: on ? c : context.palette.line),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -272,7 +272,7 @@ class _FarmFormState extends State<_FarmForm> {
             const SizedBox(width: 6),
             Text(farmTypeLabel(key),
                 style: TextStyle(
-                    fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : AppColors.slate700)),
+                    fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : context.palette.muted3)),
           ],
         ),
       ),

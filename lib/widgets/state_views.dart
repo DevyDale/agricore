@@ -35,7 +35,7 @@ class ErrorView extends StatelessWidget {
             const SizedBox(height: 16),
             Text(message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontFamily: 'Inter', color: AppColors.slate600, height: 1.5)),
+                style: TextStyle(fontFamily: 'Inter', color: context.palette.muted2, height: 1.5)),
             if (onRetry != null) ...[
               const SizedBox(height: 18),
               GestureDetector(
@@ -81,13 +81,13 @@ class EmptyView extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                  color: const Color(0xFFE7F4EC), borderRadius: BorderRadius.circular(22)),
+                  color: context.palette.chipBg, borderRadius: BorderRadius.circular(22)),
               child: Icon(icon, size: 34, color: const Color(0xFF0F7A4B)),
             ),
             const SizedBox(height: 16),
             Text(text,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontFamily: 'Inter', color: AppColors.slate600, height: 1.5)),
+                style: TextStyle(fontFamily: 'Inter', color: context.palette.muted2, height: 1.5)),
           ],
         ),
       ),

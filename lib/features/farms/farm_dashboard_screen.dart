@@ -244,11 +244,11 @@ class _FarmDashboardScreenState extends State<FarmDashboardScreen> {
       child: Container(
         height: 44,
         alignment: Alignment.center,
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.line)),
+        decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(12), border: Border.all(color: context.palette.line)),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Icon(icon, size: 17, color: AppColors.g700),
           const SizedBox(width: 7),
-          Text(label, style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.inkWarm)),
+          Text(label, style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 13, color: context.palette.ink)),
         ]),
       ),
     );
@@ -291,7 +291,7 @@ class _FarmDashboardScreenState extends State<FarmDashboardScreen> {
     final sizeTxt = farmAreaText(f);
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       body: MaxWidthBody(
         child: RefreshIndicator(
         onRefresh: _load,
@@ -498,8 +498,8 @@ class _FarmDashboardScreenState extends State<FarmDashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Manage this farm',
-              style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: AppColors.inkWarm)),
+          Text('Manage this farm',
+              style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: context.palette.ink)),
           const SizedBox(height: 10),
           IntrinsicHeight(
             child: Row(
@@ -538,7 +538,7 @@ class _FarmDashboardScreenState extends State<FarmDashboardScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
       child: Container(
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.line)),
+        decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.palette.line)),
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
         child: Row(
           children: [
@@ -562,18 +562,18 @@ class _FarmDashboardScreenState extends State<FarmDashboardScreen> {
           Text(value,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: size, color: AppColors.inkWarm)),
+              style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: size, color: context.palette.ink)),
           const SizedBox(height: 2),
           Text(label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.slate500)),
+              style: TextStyle(fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w600, color: context.palette.muted)),
         ],
       ),
     );
   }
 
-  Widget _statDivider() => Container(width: 0.5, height: 30, color: AppColors.line);
+  Widget _statDivider() => Container(width: 0.5, height: 30, color: context.palette.line);
 
   Widget _produceHeader() {
     return Padding(
@@ -583,9 +583,9 @@ class _FarmDashboardScreenState extends State<FarmDashboardScreen> {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text('Produce history',
-                    style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: AppColors.inkWarm)),
+                    style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: context.palette.ink)),
               ),
               GestureDetector(
                 onTap: _logProduce,
@@ -611,12 +611,12 @@ class _FarmDashboardScreenState extends State<FarmDashboardScreen> {
               decoration: InputDecoration(
                 isDense: true,
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: context.palette.card,
                 hintText: 'Search produce…',
                 prefixIcon: const Icon(Icons.search, size: 20),
                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: const BorderSide(color: AppColors.line)),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: const BorderSide(color: AppColors.line)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: BorderSide(color: context.palette.line)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: BorderSide(color: context.palette.line)),
                 focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: const BorderSide(color: AppColors.green)),
               ),
             ),
@@ -636,13 +636,13 @@ class _FarmDashboardScreenState extends State<FarmDashboardScreen> {
                       alignment: Alignment.center,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        color: on ? AppColors.g600 : Colors.white,
+                        color: on ? AppColors.g600 : context.palette.card,
                         borderRadius: BorderRadius.circular(999),
-                        border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+                        border: Border.all(color: on ? AppColors.g600 : context.palette.line),
                       ),
                       child: Text(t[1],
                           style: TextStyle(
-                              fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : AppColors.slate700)),
+                              fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : context.palette.muted3)),
                     ),
                   ),
                 );
@@ -666,14 +666,14 @@ class _ManageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: context.palette.card,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.all(13),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.line)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), border: Border.all(color: context.palette.line)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -688,12 +688,12 @@ class _ManageCard extends StatelessWidget {
               Text(title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 14.5, color: AppColors.inkWarm)),
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 14.5, color: context.palette.ink)),
               const SizedBox(height: 1),
               Text(sub,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate500)),
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: context.palette.muted)),
             ],
           ),
         ),
@@ -739,9 +739,9 @@ class _ProduceCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.palette.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.line),
+          border: Border.all(color: context.palette.line),
           boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 14, offset: const Offset(0, 6))]),
       padding: const EdgeInsets.fromLTRB(13, 12, 13, 12),
       child: Column(
@@ -759,7 +759,7 @@ class _ProduceCard extends StatelessWidget {
                         fontFamily: 'Inter', fontSize: 9.5, fontWeight: FontWeight.w800, color: isCrop ? const Color(0xFF166534) : const Color(0xFF92400E))),
               ),
               const Spacer(),
-              Text(date, style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500)),
+              Text(date, style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: context.palette.muted)),
             ],
           ),
           const SizedBox(height: 8),
@@ -770,7 +770,7 @@ class _ProduceCard extends StatelessWidget {
                 child: Text(name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.inkWarm)),
+                    style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 16, color: context.palette.ink)),
               ),
               Text('${qty == null ? '—' : (qty % 1 == 0 ? qty.toInt().toString() : qty.toString())} $unit',
                   style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 15, color: AppColors.g600)),
@@ -787,7 +787,7 @@ class _ProduceCard extends StatelessWidget {
                 return Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                      color: const Color(0xFFEAF7EC), borderRadius: BorderRadius.circular(999), border: Border.all(color: const Color(0xFFBFE3CD))),
+                      color: context.palette.chipBg, borderRadius: BorderRadius.circular(999), border: Border.all(color: const Color(0xFFBFE3CD))),
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
                     const Icon(Icons.storefront_rounded, size: 11, color: Color(0xFF0F7A4B)),
                     const SizedBox(width: 4),
@@ -919,16 +919,16 @@ class _LogProduceSheetState extends State<_LogProduceSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+            Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
             const SizedBox(height: 14),
-            const Text('Log produce collection',
-                style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+            Text('Log produce collection',
+                style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
             const SizedBox(height: 14),
             if (_err != null) ...[
               Container(
@@ -981,13 +981,13 @@ class _LogProduceSheetState extends State<_LogProduceSheet> {
         padding: const EdgeInsets.symmetric(vertical: 12),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: on ? const Color(0xFFEAF7EC) : Colors.white,
+          color: on ? context.palette.chipBg : context.palette.card,
           borderRadius: BorderRadius.circular(11),
-          border: Border.all(color: on ? AppColors.g600 : AppColors.line, width: on ? 1.5 : 1),
+          border: Border.all(color: on ? AppColors.g600 : context.palette.line, width: on ? 1.5 : 1),
         ),
         child: Text(label,
             textAlign: TextAlign.center,
-            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? AppColors.g700 : AppColors.slate600)),
+            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? AppColors.g700 : context.palette.muted2)),
       ),
     );
   }
@@ -1000,10 +1000,10 @@ class _LogProduceSheetState extends State<_LogProduceSheet> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: context.palette.card,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.green)),
       ),
     );
@@ -1015,24 +1015,24 @@ class _LogProduceSheetState extends State<_LogProduceSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 2, bottom: 6),
+        Padding(
+          padding: const EdgeInsets.only(left: 2, bottom: 6),
           child: Text('Collection date',
-              style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: AppColors.slate700)),
+              style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: context.palette.muted3)),
         ),
         GestureDetector(
           onTap: _pickDate,
           child: Container(
             height: 48,
             padding: const EdgeInsets.symmetric(horizontal: 14),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11), border: Border.all(color: AppColors.line)),
+            decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.palette.line)),
             child: Row(
               children: [
-                const Icon(Icons.event_rounded, size: 18, color: AppColors.slate500),
+                Icon(Icons.event_rounded, size: 18, color: context.palette.muted),
                 const SizedBox(width: 10),
-                Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.inkWarm)),
+                Text(label, style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: context.palette.ink)),
                 const Spacer(),
-                const Icon(Icons.expand_more_rounded, size: 18, color: AppColors.slate500),
+                Icon(Icons.expand_more_rounded, size: 18, color: context.palette.muted),
               ],
             ),
           ),
@@ -1045,10 +1045,10 @@ class _LogProduceSheetState extends State<_LogProduceSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 2, bottom: 6),
+        Padding(
+          padding: const EdgeInsets.only(left: 2, bottom: 6),
           child: Text('Quality grade (optional)',
-              style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: AppColors.slate700)),
+              style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: context.palette.muted3)),
         ),
         Wrap(
           spacing: 8,
@@ -1060,13 +1060,13 @@ class _LogProduceSheetState extends State<_LogProduceSheet> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: on ? AppColors.g600 : Colors.white,
+                  color: on ? AppColors.g600 : context.palette.card,
                   borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+                  border: Border.all(color: on ? AppColors.g600 : context.palette.line),
                 ),
                 child: Text(g[1],
                     style: TextStyle(
-                        fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : AppColors.slate700)),
+                        fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : context.palette.muted3)),
               ),
             );
           }).toList(),
@@ -1079,10 +1079,10 @@ class _LogProduceSheetState extends State<_LogProduceSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 2, bottom: 6),
+        Padding(
+          padding: const EdgeInsets.only(left: 2, bottom: 6),
           child: Text('Unit',
-              style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: AppColors.slate700)),
+              style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: context.palette.muted3)),
         ),
         Wrap(
           spacing: 8,
@@ -1094,13 +1094,13 @@ class _LogProduceSheetState extends State<_LogProduceSheet> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: on ? AppColors.g600 : Colors.white,
+                  color: on ? AppColors.g600 : context.palette.card,
                   borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+                  border: Border.all(color: on ? AppColors.g600 : context.palette.line),
                 ),
                 child: Text(u,
                     style: TextStyle(
-                        fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : AppColors.slate700)),
+                        fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : context.palette.muted3)),
               ),
             );
           }).toList(),
@@ -1358,7 +1358,7 @@ class _TransferSheetState extends State<_TransferSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: SingleChildScrollView(
@@ -1366,13 +1366,13 @@ class _TransferSheetState extends State<_TransferSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
               const SizedBox(height: 14),
-              const Text('Transfer produce to a store',
-                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+              Text('Transfer produce to a store',
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
               const SizedBox(height: 4),
               Text('Available: ${_qtyStr(_available)} $_unit',
-                  style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted)),
               const SizedBox(height: 14),
               if (_err != null) _sheetError(_err!),
               _sheetLabel('Store'),
@@ -1517,7 +1517,7 @@ class _LinkSheetState extends State<_LinkSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: SingleChildScrollView(
@@ -1525,13 +1525,13 @@ class _LinkSheetState extends State<_LinkSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
               const SizedBox(height: 14),
-              const Text('Link produce to a store',
-                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+              Text('Link produce to a store',
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
               const SizedBox(height: 4),
               Text('Available: ${_qtyStr(_available)} $_unit',
-                  style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted)),
               const SizedBox(height: 14),
               if (_err != null) _sheetError(_err!),
               _sheetLabel('Store'),
@@ -1624,7 +1624,7 @@ class _LinkedStoresSheetState extends State<_LinkedStoresSheet> {
   }
 
   Widget _miniBtn(IconData icon, String label, VoidCallback onTap, {bool primary = false, bool danger = false}) {
-    final fg = danger ? const Color(0xFFDC2626) : (primary ? Colors.white : AppColors.slate600);
+    final fg = danger ? const Color(0xFFDC2626) : (primary ? Colors.white : context.palette.muted2);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -1634,7 +1634,7 @@ class _LinkedStoresSheetState extends State<_LinkedStoresSheet> {
           color: primary ? null : (danger ? const Color(0xFFFEF2F2) : const Color(0xFFFAF7EF)),
           gradient: primary ? AppColors.emeraldGrad : null,
           borderRadius: BorderRadius.circular(10),
-          border: primary ? null : Border.all(color: danger ? const Color(0xFFFCA5A5) : AppColors.line),
+          border: primary ? null : Border.all(color: danger ? const Color(0xFFFCA5A5) : context.palette.line),
         ),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Icon(icon, size: 15, color: fg),
@@ -1653,17 +1653,17 @@ class _LinkedStoresSheetState extends State<_LinkedStoresSheet> {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(14), border: Border.all(color: context.palette.line)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.inkWarm)),
+              style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: context.palette.ink)),
           if (sub.isNotEmpty) ...[
             const SizedBox(height: 2),
-            Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate500)),
+            Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: context.palette.muted)),
           ],
           const SizedBox(height: 10),
           Row(children: [
@@ -1682,26 +1682,26 @@ class _LinkedStoresSheetState extends State<_LinkedStoresSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+            Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
             const SizedBox(height: 14),
-            const Text('Linked stores', style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+            Text('Linked stores', style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
             const SizedBox(height: 4),
-            const Text('Digital stores tied to this farm.', style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+            Text('Digital stores tied to this farm.', style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted)),
             const SizedBox(height: 14),
             if (_loading)
-              const Padding(padding: EdgeInsets.symmetric(vertical: 30), child: Center(child: Text('Loading…', style: TextStyle(fontFamily: 'Inter', color: AppColors.slate500))))
+              Padding(padding: const EdgeInsets.symmetric(vertical: 30), child: Center(child: Text('Loading…', style: TextStyle(fontFamily: 'Inter', color: context.palette.muted))))
             else if (_stores.isEmpty)
-              const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24),
+              Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
                   child: Text('No stores linked to this farm yet. Use "Link a store" to attach one.',
-                      style: TextStyle(fontFamily: 'Inter', fontSize: 13.5, color: AppColors.slate600)))
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 13.5, color: context.palette.muted2)))
             else
               Flexible(child: SingleChildScrollView(child: Column(children: _stores.map(_storeRow).toList()))),
           ],
@@ -1824,7 +1824,7 @@ class _ConnectStoreSheetState extends State<_ConnectStoreSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: SingleChildScrollView(
@@ -1832,10 +1832,10 @@ class _ConnectStoreSheetState extends State<_ConnectStoreSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
               const SizedBox(height: 14),
-              const Text('Link a store to this farm',
-                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+              Text('Link a store to this farm',
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
               const SizedBox(height: 14),
               if (_err != null) _sheetError(_err!),
               if (!_createMode) ...[

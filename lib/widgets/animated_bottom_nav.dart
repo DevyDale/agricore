@@ -18,9 +18,9 @@ class AnimatedBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.line)),
+      decoration: BoxDecoration(
+        color: context.palette.card,
+        border: Border(top: BorderSide(color: context.palette.line)),
       ),
       child: SafeArea(
         top: false,
@@ -39,7 +39,7 @@ class AnimatedBottomNav extends StatelessWidget {
                     height: 48,
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
-                      color: on ? const Color(0xFFE7F4EC) : Colors.transparent,
+                      color: on ? context.palette.chipBg : Colors.transparent,
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Row(
@@ -50,7 +50,7 @@ class AnimatedBottomNav extends StatelessWidget {
                           curve: Curves.easeOutBack,
                           scale: on ? 1.12 : 1.0,
                           child: Icon(items[i].icon,
-                              size: 22, color: on ? AppColors.g700 : AppColors.slate500),
+                              size: 22, color: on ? AppColors.g700 : context.palette.muted),
                         ),
                         AnimatedSize(
                           duration: const Duration(milliseconds: 260),

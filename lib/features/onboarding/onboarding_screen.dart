@@ -39,7 +39,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final h = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       body: SingleChildScrollView(
         controller: _scroll,
         child: Column(

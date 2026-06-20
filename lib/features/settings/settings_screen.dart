@@ -57,10 +57,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         kLanguages.firstWhere((l) => l.code == loc.language, orElse: () => kLanguages.first).name;
     final curr = currencyFor(loc.currency);
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.cream,
-        foregroundColor: AppColors.inkWarm,
+        backgroundColor: context.palette.surface,
+        foregroundColor: context.palette.ink,
         elevation: 0,
         title: Text(context.tr('Settings'),
             style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 22)),
@@ -73,9 +73,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.palette.card,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.line)),
+                border: Border.all(color: context.palette.line)),
             child: Row(
               children: [
                 Container(
@@ -94,16 +94,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Text(u?.username ?? 'Guest',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontFamily: 'Fraunces',
                               fontWeight: FontWeight.w800,
                               fontSize: 18,
-                              color: AppColors.inkWarm)),
+                              color: context.palette.ink)),
                       const SizedBox(height: 2),
                       Text(u?.email ?? u?.roleLabel ?? 'Agricore member',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate500)),
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted)),
                     ],
                   ),
                 ),
@@ -188,7 +188,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               height: 52,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.palette.card,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: Colors.redAccent.withValues(alpha: 0.5))),
               child: const Row(
@@ -204,10 +204,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 18),
-          const Center(
+          Center(
             child: Text('Powered by LUMORA',
                 style: TextStyle(
-                    fontFamily: 'Inter', fontSize: 11.5, letterSpacing: 1.2, color: AppColors.slate500)),
+                    fontFamily: 'Inter', fontSize: 11.5, letterSpacing: 1.2, color: context.palette.muted)),
           ),
         ],
         ),
@@ -320,13 +320,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _group(List<Widget> children) => Container(
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.palette.card,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.line)),
+            border: Border.all(color: context.palette.line)),
         child: Column(children: children),
       );
 
-  Widget _divider() => const Divider(height: 1, indent: 60, color: AppColors.line);
+  Widget _divider() => Divider(height: 1, indent: 60, color: context.palette.line);
 
   Widget _iconChip(IconData icon, String tone) {
     const map = {
@@ -357,10 +357,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title,
-                    style: const TextStyle(
-                        fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 14.5, color: AppColors.inkWarm)),
+                    style: TextStyle(
+                        fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 14.5, color: context.palette.ink)),
                 Text(sub,
-                    style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.slate500)),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: context.palette.muted)),
               ],
             ),
           ),
@@ -384,14 +384,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title,
-                      style: const TextStyle(
-                          fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 14.5, color: AppColors.inkWarm)),
+                      style: TextStyle(
+                          fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 14.5, color: context.palette.ink)),
                   Text(sub,
-                      style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.slate500)),
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: context.palette.muted)),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: AppColors.slate500),
+            Icon(Icons.chevron_right_rounded, color: context.palette.muted),
           ],
         ),
       ),
@@ -465,9 +465,9 @@ class _ChangePasswordSheetState extends State<_ChangePasswordSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
-        decoration: const BoxDecoration(
-            color: AppColors.cream,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(
+            color: context.palette.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: SafeArea(
           top: false,
@@ -480,15 +480,15 @@ class _ChangePasswordSheetState extends State<_ChangePasswordSheet> {
                       width: 42,
                       height: 4,
                       decoration: BoxDecoration(
-                          color: AppColors.line,
+                          color: context.palette.line,
                           borderRadius: BorderRadius.circular(99)))),
               const SizedBox(height: 14),
-              const Text('Change password',
+              Text('Change password',
                   style: TextStyle(
                       fontFamily: 'Fraunces',
                       fontWeight: FontWeight.w800,
                       fontSize: 19,
-                      color: AppColors.inkWarm)),
+                      color: context.palette.ink)),
               const SizedBox(height: 16),
               _field(_current, 'Current password'),
               const SizedBox(height: 12),
@@ -550,9 +550,9 @@ class _ChoiceSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-          color: AppColors.cream,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      decoration: BoxDecoration(
+          color: context.palette.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
       padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
       child: SafeArea(
         top: false,
@@ -565,20 +565,20 @@ class _ChoiceSheet extends StatelessWidget {
                     width: 42,
                     height: 4,
                     decoration: BoxDecoration(
-                        color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+                        color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
             const SizedBox(height: 14),
             Text(title,
-                style: const TextStyle(
+                style: TextStyle(
                     fontFamily: 'Fraunces',
                     fontWeight: FontWeight.w800,
                     fontSize: 19,
-                    color: AppColors.inkWarm)),
+                    color: context.palette.ink)),
             const SizedBox(height: 12),
             Flexible(
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: options.length,
-                separatorBuilder: (_, __) => const Divider(height: 1, color: AppColors.line),
+                separatorBuilder: (_, __) => Divider(height: 1, color: context.palette.line),
                 itemBuilder: (_, i) {
                   final o = options[i];
                   final on = o.value == selected;
@@ -602,7 +602,7 @@ class _ChoiceSheet extends StatelessWidget {
                             fontFamily: 'Inter',
                             fontWeight: on ? FontWeight.w700 : FontWeight.w500,
                             fontSize: 14.5,
-                            color: AppColors.inkWarm)),
+                            color: context.palette.ink)),
                     trailing: on
                         ? const Icon(Icons.check_circle_rounded, color: AppColors.green)
                         : null,

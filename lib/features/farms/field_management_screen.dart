@@ -177,7 +177,7 @@ class _FieldManagementScreenState extends State<FieldManagementScreen> {
     final farmName = pickString(widget.farm, ['name', 'farm_name', 'title']) ?? 'Farm';
     final sizeTxt = _maxSize > 0 ? '${_fmt(_maxSize)} $_unit' : 'Size not set';
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       body: MaxWidthBody(
         child: RefreshIndicator(
         onRefresh: _load,
@@ -287,15 +287,15 @@ class _FieldManagementScreenState extends State<FieldManagementScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.palette.card,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.line),
+            border: Border.all(color: context.palette.line),
             boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 22, offset: const Offset(0, 10))]),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Land allocation',
-                style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: AppColors.inkWarm)),
+            Text('Land allocation',
+                style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: context.palette.ink)),
             const SizedBox(height: 14),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -315,7 +315,7 @@ class _FieldManagementScreenState extends State<FieldManagementScreen> {
                           _fig('Total area', _maxSize > 0 ? _maxSize : null, const Color(0xFF2F6B3C)),
                           _fig('Used', _used, const Color(0xFF10B981)),
                           _fig('Available', _maxSize > 0 ? _available : null, const Color(0xFFE7DCC6)),
-                          _fig('Portions', _portions.length.toDouble(), AppColors.slate500, isCount: true),
+                          _fig('Portions', _portions.length.toDouble(), context.palette.muted, isCount: true),
                         ],
                       ),
                     ],
@@ -336,16 +336,16 @@ class _FieldManagementScreenState extends State<FieldManagementScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           value == null
-              ? const Text('—',
-                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 18, color: AppColors.inkWarm))
+              ? Text('—',
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 18, color: context.palette.ink))
               : TweenAnimationBuilder<double>(
                   tween: Tween(begin: 0, end: value),
                   duration: const Duration(milliseconds: 800),
                   curve: Curves.easeOutCubic,
                   builder: (_, v, __) => Text(
                     isCount ? v.round().toString() : _fmt(v),
-                    style: const TextStyle(
-                        fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 18, color: AppColors.inkWarm),
+                    style: TextStyle(
+                        fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 18, color: context.palette.ink),
                   ),
                 ),
           const SizedBox(height: 3),
@@ -357,8 +357,8 @@ class _FieldManagementScreenState extends State<FieldManagementScreen> {
                 child: Text(label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w700, color: AppColors.slate500)),
+                    style: TextStyle(
+                        fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w700, color: context.palette.muted)),
               ),
             ],
           ),
@@ -375,9 +375,9 @@ class _FieldManagementScreenState extends State<FieldManagementScreen> {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text('Land portions',
-                    style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: AppColors.inkWarm)),
+                    style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: context.palette.ink)),
               ),
               GestureDetector(
                 onTap: _addPortion,
@@ -403,12 +403,12 @@ class _FieldManagementScreenState extends State<FieldManagementScreen> {
               decoration: InputDecoration(
                 isDense: true,
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: context.palette.card,
                 hintText: 'Search portions…',
                 prefixIcon: const Icon(Icons.search, size: 20),
                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: const BorderSide(color: AppColors.line)),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: const BorderSide(color: AppColors.line)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: BorderSide(color: context.palette.line)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: BorderSide(color: context.palette.line)),
                 focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: const BorderSide(color: AppColors.green)),
               ),
             ),
@@ -468,9 +468,9 @@ class _UtilRing extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text('${v.round()}%',
-                    style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 20, color: AppColors.inkWarm)),
-                const Text('used',
-                    style: TextStyle(fontFamily: 'Inter', fontSize: 9.5, fontWeight: FontWeight.w700, color: AppColors.slate500)),
+                    style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 20, color: context.palette.ink)),
+                Text('used',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 9.5, fontWeight: FontWeight.w700, color: context.palette.muted)),
               ],
             ),
           ],
@@ -519,7 +519,7 @@ class _AllocBar extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       child: Container(
         height: 26,
-        decoration: BoxDecoration(border: Border.all(color: AppColors.line), borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(border: Border.all(color: context.palette.line), borderRadius: BorderRadius.circular(8)),
         child: Row(children: segments.isEmpty ? [Expanded(child: Container(color: const Color(0xFFEFE7D6)))] : segments),
       ),
     );
@@ -555,9 +555,9 @@ class _PortionCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.palette.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.line),
+          border: Border.all(color: context.palette.line),
           boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 14, offset: const Offset(0, 6))]),
       padding: const EdgeInsets.fromLTRB(13, 12, 13, 12),
       child: Column(
@@ -578,12 +578,12 @@ class _PortionCard extends StatelessWidget {
                     Text(name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.inkWarm)),
+                        style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 16, color: context.palette.ink)),
                     if (notes != null && notes.isNotEmpty)
                       Text(notes,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate500)),
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: context.palette.muted)),
                   ],
                 ),
               ),
@@ -609,12 +609,12 @@ class _PortionCard extends StatelessWidget {
             ),
             const SizedBox(height: 3),
             Text('${share.toStringAsFixed(1)}% of farm',
-                style: const TextStyle(fontFamily: 'Inter', fontSize: 10.5, color: AppColors.slate500)),
+                style: TextStyle(fontFamily: 'Inter', fontSize: 10.5, color: context.palette.muted)),
           ],
           const SizedBox(height: 10),
           Row(
             children: [
-              if (purpose != null && purpose.isNotEmpty) _tag(purpose, const Color(0xFFE7F4EC), const Color(0xFF0F7A4B)),
+              if (purpose != null && purpose.isNotEmpty) _tag(purpose, context.palette.chipBg, const Color(0xFF0F7A4B)),
               if (soil != null && soil.isNotEmpty) ...[
                 const SizedBox(width: 6),
                 _tag(soil, const Color(0xFFF6EFE1), const Color(0xFF8A6D2F)),
@@ -758,22 +758,22 @@ class _PortionSheetState extends State<_PortionSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
               const SizedBox(height: 14),
-              const Text('Add land portion',
-                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+              Text('Add land portion',
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
               if (widget.maxAvailable != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 2),
                   child: Text('${_fmt(widget.maxAvailable!)} ${widget.unit} available',
-                      style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted)),
                 ),
               const SizedBox(height: 14),
               if (_err != null) ...[
@@ -820,10 +820,10 @@ class _PortionSheetState extends State<_PortionSheet> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: context.palette.card,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.green)),
       ),
     );
@@ -836,7 +836,7 @@ class _PortionSheetState extends State<_PortionSheet> {
         Padding(
           padding: const EdgeInsets.only(left: 2, bottom: 6),
           child: Text(label,
-              style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: AppColors.slate700)),
+              style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: context.palette.muted3)),
         ),
         Wrap(
           spacing: 8,
@@ -848,13 +848,13 @@ class _PortionSheetState extends State<_PortionSheet> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: on ? AppColors.g600 : Colors.white,
+                  color: on ? AppColors.g600 : context.palette.card,
                   borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+                  border: Border.all(color: on ? AppColors.g600 : context.palette.line),
                 ),
                 child: Text(o,
                     style: TextStyle(
-                        fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : AppColors.slate700)),
+                        fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : context.palette.muted3)),
               ),
             );
           }).toList(),
@@ -918,20 +918,20 @@ class _TransferSheetState extends State<_TransferSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
               const SizedBox(height: 14),
-              const Text('Transfer land',
-                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+              Text('Transfer land',
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
               const SizedBox(height: 4),
               Text('Move area from "$fromName" (${_fmt(fromSize)} ${widget.unit}) into another portion.',
-                  style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted)),
               const SizedBox(height: 14),
               if (_err != null) ...[
                 Container(
@@ -942,10 +942,10 @@ class _TransferSheetState extends State<_TransferSheet> {
                 ),
                 const SizedBox(height: 12),
               ],
-              const Padding(
-                padding: EdgeInsets.only(left: 2, bottom: 6),
+              Padding(
+                padding: const EdgeInsets.only(left: 2, bottom: 6),
                 child: Text('Transfer to',
-                    style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: AppColors.slate700)),
+                    style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: context.palette.muted3)),
               ),
               Wrap(
                 spacing: 8,
@@ -959,13 +959,13 @@ class _TransferSheetState extends State<_TransferSheet> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
                       decoration: BoxDecoration(
-                        color: on ? AppColors.g600 : Colors.white,
+                        color: on ? AppColors.g600 : context.palette.card,
                         borderRadius: BorderRadius.circular(999),
-                        border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+                        border: Border.all(color: on ? AppColors.g600 : context.palette.line),
                       ),
                       child: Text(label,
                           style: TextStyle(
-                              fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : AppColors.slate700)),
+                              fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : context.palette.muted3)),
                     ),
                   );
                 }).toList(),
@@ -977,10 +977,10 @@ class _TransferSheetState extends State<_TransferSheet> {
                 decoration: InputDecoration(
                   hintText: 'Amount in ${widget.unit}',
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: context.palette.card,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.green)),
                 ),
               ),

@@ -345,7 +345,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: context.palette.card,
                   hintText: context.tr('Search seeds, livestock, tractors…'),
                   prefixIcon: const Icon(Icons.search, size: 20),
                   suffixIcon: _query.isEmpty
@@ -393,16 +393,16 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: on ? AppColors.g600 : Colors.white,
+                    color: on ? AppColors.g600 : context.palette.card,
                     borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+                    border: Border.all(color: on ? AppColors.g600 : context.palette.line),
                   ),
                   child: Text(context.tr(c.label),
                       style: TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
-                          color: on ? Colors.white : AppColors.slate700)),
+                          color: on ? Colors.white : context.palette.muted3)),
                 ),
               ),
             );
@@ -424,7 +424,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             child: Text('$total product${total == 1 ? '' : 's'} · $sellers seller${sellers == 1 ? '' : 's'}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+                style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted)),
           ),
           if (filtered) ...[
             const Spacer(),
@@ -498,14 +498,14 @@ class _ProductCard extends StatelessWidget {
     final out = stock <= 0;
 
     return Material(
-      color: Colors.white,
+      color: context.palette.card,
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         onTap: onOpen,
         borderRadius: BorderRadius.circular(18),
         child: Container(
           decoration:
-              BoxDecoration(borderRadius: BorderRadius.circular(18), border: Border.all(color: AppColors.line)),
+              BoxDecoration(borderRadius: BorderRadius.circular(18), border: Border.all(color: context.palette.line)),
           clipBehavior: Clip.antiAlias,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -560,19 +560,19 @@ class _ProductCard extends StatelessWidget {
                       Text(pickString(p, ['title', 'name']) ?? 'Product',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontFamily: 'Fraunces',
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
                               height: 1.12,
-                              color: AppColors.inkWarm)),
+                              color: context.palette.ink)),
                       const SizedBox(height: 3),
                       Row(
                         children: [
                           starsRow(rating, size: 12),
                           const SizedBox(width: 4),
                           Text('$rc',
-                              style: const TextStyle(fontFamily: 'Inter', fontSize: 10.5, color: AppColors.slate500)),
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 10.5, color: context.palette.muted)),
                         ],
                       ),
                       const Spacer(),
@@ -596,7 +596,7 @@ class _ProductCard extends StatelessWidget {
                         ],
                       ),
                       Text('per $unit',
-                          style: const TextStyle(fontFamily: 'Inter', fontSize: 9.5, color: AppColors.slate500)),
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 9.5, color: context.palette.muted)),
                       const SizedBox(height: 8),
                       GestureDetector(
                         onTap: out ? null : onAdd,
@@ -701,8 +701,8 @@ class _FilterSheetState extends State<_FilterSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
-        decoration: const BoxDecoration(
-            color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+        decoration: BoxDecoration(
+            color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(28))),
         child: SafeArea(
           top: false,
           child: Padding(
@@ -715,12 +715,12 @@ class _FilterSheetState extends State<_FilterSheet> {
                   child: Container(
                       width: 42,
                       height: 4,
-                      decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99))),
+                      decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99))),
                 ),
                 const SizedBox(height: 14),
                 Text(context.tr('Sort & filter'),
-                    style: const TextStyle(
-                        fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 20, color: AppColors.inkWarm)),
+                    style: TextStyle(
+                        fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 20, color: context.palette.ink)),
                 const SizedBox(height: 16),
                 _label(context.tr('Sort by')),
                 const SizedBox(height: 8),
@@ -758,8 +758,8 @@ class _FilterSheetState extends State<_FilterSheet> {
                       child: OutlinedButton(
                         onPressed: _reset,
                         style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.slate600,
-                            side: const BorderSide(color: AppColors.line),
+                            foregroundColor: context.palette.muted2,
+                            side: BorderSide(color: context.palette.line),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13))),
                         child: Text(context.tr('Reset')),
@@ -791,7 +791,7 @@ class _FilterSheetState extends State<_FilterSheet> {
   }
 
   Widget _label(String t) => Text(t,
-      style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.slate700));
+      style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 13, color: context.palette.muted3));
 
   Widget _chip(String label, bool on, VoidCallback onTap) {
     return GestureDetector(
@@ -799,16 +799,16 @@ class _FilterSheetState extends State<_FilterSheet> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
         decoration: BoxDecoration(
-          color: on ? AppColors.g600 : Colors.white,
+          color: on ? AppColors.g600 : context.palette.card,
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+          border: Border.all(color: on ? AppColors.g600 : context.palette.line),
         ),
         child: Text(label,
             style: TextStyle(
                 fontFamily: 'Inter',
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
-                color: on ? Colors.white : AppColors.slate700)),
+                color: on ? Colors.white : context.palette.muted3)),
       ),
     );
   }
@@ -820,11 +820,11 @@ class _FilterSheetState extends State<_FilterSheet> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: context.palette.card,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
         enabledBorder:
-            OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+            OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
       ),
     );
   }

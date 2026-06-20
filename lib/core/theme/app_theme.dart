@@ -66,6 +66,7 @@ class AppTheme {
             TextStyle(fontFamily: 'Inter', color: AppColors.slate600),
       ),
       dividerTheme: const DividerThemeData(color: AppColors.line, thickness: 1),
+      extensions: const [AppPalette.light],
     );
   }
 
@@ -141,6 +142,7 @@ class AppTheme {
             TextStyle(fontFamily: 'Inter', color: AppColors.slate500),
       ),
       dividerTheme: const DividerThemeData(color: Color(0xFF2A352D), thickness: 1),
+      extensions: const [AppPalette.dark],
     );
   }
 }

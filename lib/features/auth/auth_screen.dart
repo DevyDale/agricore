@@ -67,7 +67,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       body: FarmlandBackground(
         showPins: false,
         child: SafeArea(
@@ -115,9 +115,9 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
               Expanded(
                 child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                  decoration: BoxDecoration(
+                    color: context.palette.card,
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
                   ),
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.fromLTRB(22, 24, 22, 28),
@@ -196,14 +196,14 @@ class _AuthScreenState extends State<AuthScreen> {
                               fullWidth: true,
                               onPressed: _submit),
                           const SizedBox(height: 16),
-                          Row(children: const [
-                            Expanded(child: Divider(color: AppColors.line)),
+                          Row(children: [
+                            Expanded(child: Divider(color: context.palette.line)),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Text('or',
-                                  style: TextStyle(fontFamily: 'Inter', color: AppColors.slate500)),
+                                  style: TextStyle(fontFamily: 'Inter', color: context.palette.muted)),
                             ),
-                            Expanded(child: Divider(color: AppColors.line)),
+                            Expanded(child: Divider(color: context.palette.line)),
                           ]),
                           const SizedBox(height: 16),
                           _googleButton(auth.busy ? null : _google),
@@ -216,8 +216,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                   text: _signUp
                                       ? 'Already have an account? '
                                       : "Don't have an account? ",
-                                  style: const TextStyle(
-                                      fontFamily: 'Inter', color: AppColors.slate600, fontSize: 14),
+                                  style: TextStyle(
+                                      fontFamily: 'Inter', color: context.palette.muted2, fontSize: 14),
                                   children: [
                                     TextSpan(
                                       text: _signUp ? 'Sign in' : 'Sign up',

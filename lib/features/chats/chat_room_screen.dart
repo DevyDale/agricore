@@ -198,7 +198,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       backgroundColor: Colors.transparent,
       builder: (_) => Container(
         margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+        decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(16)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -240,14 +240,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       backgroundColor: Colors.transparent,
       builder: (_) => Container(
         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.6),
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Text('Forward to…',
-                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.inkWarm)),
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 18, color: context.palette.ink)),
             ),
             Flexible(
               child: ListView(
@@ -290,14 +290,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       backgroundColor: Colors.transparent,
       builder: (_) => Container(
         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.7),
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Text('Members',
-                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.inkWarm)),
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 18, color: context.palette.ink)),
             ),
             Flexible(
               child: ListView(
@@ -346,7 +346,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       appBar: AppBar(
         backgroundColor: const Color(0xFF22432C),
         foregroundColor: Colors.white,
@@ -403,8 +403,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 10),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(999), border: Border.all(color: AppColors.line)),
-          child: Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500, fontWeight: FontWeight.w600)),
+          decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(999), border: Border.all(color: context.palette.line)),
+          child: Text(label, style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: context.palette.muted, fontWeight: FontWeight.w600)),
         ),
       );
 
@@ -442,7 +442,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 ),
               if (m.replyPreview != null) _replyQuote(m.replyPreview!, mine),
               if (m.content.isNotEmpty)
-                Text(m.content, style: TextStyle(fontSize: 14, height: 1.35, color: mine ? Colors.white : AppColors.inkWarm)),
+                Text(m.content, style: TextStyle(fontSize: 14, height: 1.35, color: mine ? Colors.white : context.palette.ink)),
               if (m.messageType == 'audio' && m.attachmentUrl != null)
                 AudioAttachment(url: m.attachmentUrl!, mine: mine)
               else
@@ -455,7 +455,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   if (m.like > 0) _pill('👍 ${m.like}', mine),
                   if (m.dislike > 0) _pill('👎 ${m.dislike}', mine),
                   Text(clock(m.createdAt),
-                      style: TextStyle(fontSize: 10, color: mine ? Colors.white.withValues(alpha: 0.85) : AppColors.slate500)),
+                      style: TextStyle(fontSize: 10, color: mine ? Colors.white.withValues(alpha: 0.85) : context.palette.muted)),
                 ],
               ),
             ],
@@ -472,7 +472,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           color: mine ? Colors.white.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(999),
         ),
-        child: Text(t, style: TextStyle(fontSize: 10, color: mine ? Colors.white : AppColors.slate600)),
+        child: Text(t, style: TextStyle(fontSize: 10, color: mine ? Colors.white : context.palette.muted2)),
       );
 
   Widget _replyQuote(ReplyPreview r, bool mine) => Container(
@@ -486,7 +486,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         child: Text('${r.senderName}: ${r.snippet}',
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 11.5, color: mine ? Colors.white : AppColors.slate600)),
+            style: TextStyle(fontSize: 11.5, color: mine ? Colors.white : context.palette.muted2)),
       );
 
   Widget _replyBar() => Container(
@@ -498,7 +498,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             const SizedBox(width: 8),
             Expanded(
               child: Text('Replying to ${_replyTo!.senderName}: ${_replyTo!.content.isEmpty ? '[${_replyTo!.messageType}]' : _replyTo!.content}',
-                  maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12.5, color: AppColors.slate600)),
+                  maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12.5, color: context.palette.muted2)),
             ),
             IconButton(onPressed: () => setState(() => _replyTo = null), icon: const Icon(Icons.close, size: 18)),
           ],
@@ -514,7 +514,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(_pendingName ?? 'Attachment',
-                  maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12.5, color: AppColors.slate600)),
+                  maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12.5, color: context.palette.muted2)),
             ),
             IconButton(
                 onPressed: () => setState(() {
@@ -531,9 +531,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       top: false,
       child: Container(
         padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: AppColors.line)),
+        decoration: BoxDecoration(
+          color: context.palette.card,
+          border: Border(top: BorderSide(color: context.palette.line)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -552,7 +552,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     hintText: 'Type your message…',
                     isDense: true,
                     filled: true,
-                    fillColor: AppColors.cream,
+                    fillColor: context.palette.surface,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(22), borderSide: BorderSide.none),
                   ),
@@ -584,9 +584,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           height: 42,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: AppColors.cream,
+            color: context.palette.surface,
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.line),
+            border: Border.all(color: context.palette.line),
           ),
           child: Icon(icon, size: 20, color: AppColors.g700),
         ),

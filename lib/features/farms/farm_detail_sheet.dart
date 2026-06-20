@@ -30,8 +30,8 @@ class _FarmDetail extends StatelessWidget {
 
     return Container(
       constraints: BoxConstraints(maxHeight: h * 0.9),
-      decoration: const BoxDecoration(
-          color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+      decoration: BoxDecoration(
+          color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(28))),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -56,14 +56,14 @@ class _FarmDetail extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
               children: [
                 Text(name,
-                    style: const TextStyle(
-                        fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 23, color: AppColors.inkWarm)),
+                    style: TextStyle(
+                        fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 23, color: context.palette.ink)),
                 const SizedBox(height: 4),
                 if (loc.isNotEmpty)
                   Row(children: [
                     const Icon(Icons.location_on_rounded, size: 15, color: AppColors.g600),
                     const SizedBox(width: 5),
-                    Expanded(child: Text(loc, style: const TextStyle(fontFamily: 'Inter', color: AppColors.slate600, fontSize: 13.5))),
+                    Expanded(child: Text(loc, style: TextStyle(fontFamily: 'Inter', color: context.palette.muted2, fontSize: 13.5))),
                   ]),
                 const SizedBox(height: 16),
                 _row(Icons.local_offer_rounded, 'Type', farmTypeLabel(key)),

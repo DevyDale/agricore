@@ -93,9 +93,9 @@ class FarmStat extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.palette.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.line),
+          border: Border.all(color: context.palette.line),
           boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 18, offset: const Offset(0, 8))]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,14 +116,14 @@ class FarmStat extends StatelessWidget {
             curve: Curves.easeOutCubic,
             builder: (_, v, __) => Text(
               (decimals > 0 ? v.toStringAsFixed(decimals) : v.round().toString()) + suffix,
-              style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 22, color: AppColors.inkWarm),
+              style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 22, color: context.palette.ink),
             ),
           ),
           const SizedBox(height: 2),
           Text(label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.slate500)),
+              style: TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w600, color: context.palette.muted)),
         ],
       ),
     );

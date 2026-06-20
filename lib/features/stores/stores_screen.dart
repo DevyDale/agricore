@@ -217,7 +217,7 @@ class _StoresScreenState extends State<StoresScreen> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 2),
                 child: Text('Showing ${view.length} of ${_all.length} stall${_all.length == 1 ? '' : 's'}',
-                    style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted)),
               ),
             ),
             SliverPadding(
@@ -316,7 +316,7 @@ class _StoresScreenState extends State<StoresScreen> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: context.palette.card,
                   hintText: context.tr('Search by store name or country…'),
                   prefixIcon: const Icon(Icons.search, size: 20),
                   suffixIcon: _query.isEmpty
@@ -358,13 +358,13 @@ class _StoresScreenState extends State<StoresScreen> {
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: on ? AppColors.g600 : Colors.white,
+                    color: on ? AppColors.g600 : context.palette.card,
                     borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+                    border: Border.all(color: on ? AppColors.g600 : context.palette.line),
                   ),
                   child: Text(context.tr(t[1]),
                       style: TextStyle(
-                          fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : AppColors.slate700)),
+                          fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : context.palette.muted3)),
                 ),
               ),
             );
@@ -440,7 +440,7 @@ class _StallCard extends StatelessWidget {
     final value = pickNum(s, ['total_value']);
 
     return Material(
-      color: Colors.white,
+      color: context.palette.card,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onVisit,
@@ -448,7 +448,7 @@ class _StallCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: verified ? _stallGreen : AppColors.line, width: verified ? 1.5 : 1),
+            border: Border.all(color: verified ? _stallGreen : context.palette.line, width: verified ? 1.5 : 1),
           ),
           clipBehavior: Clip.antiAlias,
           child: Column(
@@ -475,14 +475,14 @@ class _StallCard extends StatelessWidget {
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w700,
                                   fontSize: 13,
-                                  color: verified ? const Color(0xFF25613A) : AppColors.slate600)),
+                                  color: verified ? const Color(0xFF25613A) : context.palette.muted2)),
                         ),
                         const SizedBox(width: 11),
                         Expanded(
                           child: Text(name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: AppColors.inkWarm)),
+                              style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: context.palette.ink)),
                         ),
                         const SizedBox(width: 8),
                         _statusPill(context, verified),

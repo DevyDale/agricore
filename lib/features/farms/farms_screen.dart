@@ -214,7 +214,7 @@ class _FarmsScreenState extends State<FarmsScreen> {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
                   child: Text('Showing ${view.length} of ${_all.length} farm${_all.length == 1 ? '' : 's'}',
-                      style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted)),
                 ),
               ),
               SliverToBoxAdapter(child: _chipsRow()),
@@ -288,7 +288,7 @@ class _FarmsScreenState extends State<FarmsScreen> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: context.palette.card,
                   hintText: context.tr('Search farms by name or place…'),
                   prefixIcon: const Icon(Icons.search, size: 20),
                   suffixIcon: _query.isEmpty
@@ -330,13 +330,13 @@ class _FarmsScreenState extends State<FarmsScreen> {
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: on ? AppColors.g600 : Colors.white,
+                    color: on ? AppColors.g600 : context.palette.card,
                     borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+                    border: Border.all(color: on ? AppColors.g600 : context.palette.line),
                   ),
                   child: Text(context.tr(t[1]),
                       style: TextStyle(
-                          fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : AppColors.slate700)),
+                          fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : context.palette.muted3)),
                 ),
               ),
             );
@@ -388,7 +388,7 @@ class _MetricCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(11),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.palette.line)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -408,12 +408,12 @@ class _MetricCard extends StatelessWidget {
             curve: Curves.easeOutCubic,
             builder: (_, v, __) => Text(
               decimals > 0 ? v.toStringAsFixed(decimals) : v.round().toString(),
-              style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 21, color: AppColors.inkWarm),
+              style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 21, color: context.palette.ink),
             ),
           ),
           Text(label,
               maxLines: 1, overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w600, color: AppColors.slate500)),
+              style: TextStyle(fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w600, color: context.palette.muted)),
         ],
       ),
     );
@@ -435,13 +435,13 @@ class _FarmCard extends StatelessWidget {
     final share = totalHa > 0 ? ha / totalHa : 0.0;
 
     return Material(
-      color: Colors.white,
+      color: context.palette.card,
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         onTap: onManage,
         borderRadius: BorderRadius.circular(18),
         child: Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), border: Border.all(color: AppColors.line)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), border: Border.all(color: context.palette.line)),
           child: Stack(
             clipBehavior: Clip.none,
             children: [
@@ -459,8 +459,8 @@ class _FarmCard extends StatelessWidget {
                       children: [
                         Text(name,
                             maxLines: 1, overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: AppColors.inkWarm)),
+                            style: TextStyle(
+                                fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: context.palette.ink)),
                         const SizedBox(height: 3),
                         Row(children: [
                           const Icon(Icons.location_on_rounded, size: 13, color: AppColors.g600),
@@ -468,7 +468,7 @@ class _FarmCard extends StatelessWidget {
                           Expanded(
                               child: Text(loc.isEmpty ? context.tr('Location not set') : loc,
                                   maxLines: 1, overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.slate500))),
+                                  style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: context.palette.muted))),
                         ]),
                         const SizedBox(height: 12),
                         Row(children: [
@@ -481,9 +481,9 @@ class _FarmCard extends StatelessWidget {
                         const SizedBox(height: 6),
                         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                           Text(context.tr('Share of your land'),
-                              style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500)),
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: context.palette.muted)),
                           Text(farmAreaText(farm),
-                              style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500)),
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: context.palette.muted)),
                         ]),
                         const SizedBox(height: 14),
                         Row(children: [

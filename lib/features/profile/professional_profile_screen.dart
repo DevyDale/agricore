@@ -242,7 +242,7 @@ class _ProfessionalProfileScreenState extends State<ProfessionalProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       body: MaxWidthBody(
         child: Column(
           children: [
@@ -440,10 +440,10 @@ class _ChipWrap extends StatelessWidget {
               duration: const Duration(milliseconds: 160),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
               decoration: BoxDecoration(
-                color: isSelected(value) ? AppColors.g600 : Colors.white,
+                color: isSelected(value) ? AppColors.g600 : context.palette.card,
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: isSelected(value) ? AppColors.g600 : AppColors.line,
+                  color: isSelected(value) ? AppColors.g600 : context.palette.line,
                 ),
               ),
               child: Text(
@@ -452,7 +452,7 @@ class _ChipWrap extends StatelessWidget {
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w700,
                   fontSize: 12.5,
-                  color: isSelected(value) ? Colors.white : AppColors.slate700,
+                  color: isSelected(value) ? Colors.white : context.palette.muted3,
                 ),
               ),
             ),
@@ -473,9 +473,9 @@ class _SaveBar extends StatelessWidget {
     final bottom = MediaQuery.of(context).padding.bottom;
     return Container(
       padding: EdgeInsets.fromLTRB(16, 12, 16, 12 + bottom),
-      decoration: const BoxDecoration(
-        color: AppColors.cream,
-        border: Border(top: BorderSide(color: AppColors.line)),
+      decoration: BoxDecoration(
+        color: context.palette.surface,
+        border: Border(top: BorderSide(color: context.palette.line)),
       ),
       child: GestureDetector(
         onTap: saving ? null : onTap,

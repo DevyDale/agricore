@@ -66,7 +66,7 @@ class PrivacyScreen extends StatelessWidget {
       queryParameters: {'subject': 'Delete my AgriCore account'},
     );
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       appBar: _infoAppBar('Privacy'),
       body: MaxWidthBody(
         child: ListView(
@@ -112,7 +112,7 @@ class PrivacyScreen extends StatelessWidget {
                           color: Color(0xFFC0392B), size: 19),
                     ),
                     const SizedBox(width: 12),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -121,16 +121,16 @@ class PrivacyScreen extends StatelessWidget {
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14.5,
-                                  color: AppColors.inkWarm)),
+                                  color: context.palette.ink)),
                           Text(_supportEmail,
                               style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: 12,
-                                  color: AppColors.slate500)),
+                                  color: context.palette.muted)),
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right_rounded, color: AppColors.slate500),
+                    Icon(Icons.chevron_right_rounded, color: context.palette.muted),
                   ],
                 ),
               ),
@@ -178,7 +178,7 @@ class HelpCenterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final mailto = Uri(scheme: 'mailto', path: _supportEmail);
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       appBar: _infoAppBar('Help center'),
       body: MaxWidthBody(
         child: ListView(
@@ -197,11 +197,11 @@ class HelpCenterScreen extends StatelessWidget {
                         tilePadding: EdgeInsets.zero,
                         childrenPadding: const EdgeInsets.only(bottom: 12),
                         title: Text(f.$1,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14,
-                                color: AppColors.inkWarm)),
+                                color: context.palette.ink)),
                         children: [_para(f.$2)],
                       ),
                     ),
@@ -225,7 +225,7 @@ class HelpCenterScreen extends StatelessWidget {
                           color: Color(0xFF2F6F9E), size: 19),
                     ),
                     const SizedBox(width: 12),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -234,16 +234,16 @@ class HelpCenterScreen extends StatelessWidget {
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14.5,
-                                  color: AppColors.inkWarm)),
+                                  color: context.palette.ink)),
                           Text(_supportEmail,
                               style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: 12,
-                                  color: AppColors.slate500)),
+                                  color: context.palette.muted)),
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right_rounded, color: AppColors.slate500),
+                    Icon(Icons.chevron_right_rounded, color: context.palette.muted),
                   ],
                 ),
               ),
@@ -262,7 +262,7 @@ class TermsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       appBar: _infoAppBar('Terms & policies'),
       body: MaxWidthBody(
         child: ListView(
@@ -294,11 +294,11 @@ class TermsScreen extends StatelessWidget {
                       'These terms may be updated from time to time. Continued use of AgriCore '
                       'after an update means you accept the revised terms.'),
                   const SizedBox(height: 4),
-                  const Text('Last updated: June 2026',
+                  Text('Last updated: June 2026',
                       style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 12,
-                          color: AppColors.slate500)),
+                          color: context.palette.muted)),
                 ],
               ),
             ),

@@ -50,7 +50,7 @@ class PillButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 26),
           decoration: BoxDecoration(
             gradient: ghost ? null : AppColors.emeraldGrad,
-            color: ghost ? Colors.white : null,
+            color: ghost ? context.palette.card : null,
             borderRadius: BorderRadius.circular(999),
             boxShadow: ghost
                 ? [BoxShadow(color: Colors.black.withValues(alpha: 0.16), blurRadius: 20, offset: const Offset(0, 8))]

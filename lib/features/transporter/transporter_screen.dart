@@ -201,7 +201,7 @@ class _TransporterScreenState extends State<TransporterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       body: MaxWidthBody(
         child: _loading
           ? Column(
@@ -251,9 +251,9 @@ class _TransporterScreenState extends State<TransporterScreen> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 18),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.palette.card,
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.line),
+              border: Border.all(color: context.palette.line),
             ),
             child: Column(
               children: [
@@ -262,29 +262,29 @@ class _TransporterScreenState extends State<TransporterScreen> {
                   height: 64,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      color: const Color(0xFFE7F4EC),
+                      color: context.palette.chipBg,
                       borderRadius: BorderRadius.circular(20)),
                   child: const Icon(Icons.local_shipping_rounded,
                       color: Color(0xFF0F7A4B), size: 30),
                 ),
                 const SizedBox(height: 14),
                 Text(context.tr('Become a transporter'),
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontFamily: 'Fraunces',
                         fontWeight: FontWeight.w800,
                         fontSize: 17,
-                        color: AppColors.inkWarm)),
+                        color: context.palette.ink)),
                 const SizedBox(height: 6),
                 Text(
                   context.tr(
                       'Register your vehicle to pick up delivery jobs from sellers, '
                       'move produce across the chain, and earn on every completed run.'),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 12.5,
                       height: 1.5,
-                      color: AppColors.slate500),
+                      color: context.palette.muted),
                 ),
                 const SizedBox(height: 18),
                 FreshPillButton(
@@ -420,9 +420,9 @@ class _JobCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.palette.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.line),
+        border: Border.all(color: context.palette.line),
         boxShadow: [
           BoxShadow(
               color: Colors.black.withValues(alpha: 0.03),
@@ -437,11 +437,11 @@ class _JobCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(money(fee, code: currency),
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontFamily: 'Fraunces',
                         fontWeight: FontWeight.w800,
                         fontSize: 18,
-                        color: AppColors.inkWarm)),
+                        color: context.palette.ink)),
               ),
               if (mine)
                 _StatusBadge(status: status)
@@ -451,11 +451,11 @@ class _JobCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _RouteRow(icon: Icons.trip_origin_rounded, color: AppColors.g600, text: pickup),
-          const Padding(
-            padding: EdgeInsets.only(left: 9, top: 2, bottom: 2),
+          Padding(
+            padding: const EdgeInsets.only(left: 9, top: 2, bottom: 2),
             child: SizedBox(
               height: 14,
-              child: VerticalDivider(width: 2, thickness: 2, color: AppColors.line),
+              child: VerticalDivider(width: 2, thickness: 2, color: context.palette.line),
             ),
           ),
           _RouteRow(icon: Icons.place_rounded, color: const Color(0xFFB15A36), text: drop),
@@ -463,14 +463,14 @@ class _JobCard extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                const Icon(Icons.storefront_rounded, size: 15, color: AppColors.slate500),
+                Icon(Icons.storefront_rounded, size: 15, color: context.palette.muted),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(seller,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate600)),
+                      style: TextStyle(
+                          fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted2)),
                 ),
                 if (mine && vtReq != null) _VehicleChip(vt: vtReq),
               ],
@@ -481,11 +481,11 @@ class _JobCard extends StatelessWidget {
             Text(notes,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 12,
                     height: 1.4,
-                    color: AppColors.slate500)),
+                    color: context.palette.muted)),
           ],
           if (!mine) ...[
             const SizedBox(height: 14),
@@ -521,12 +521,12 @@ class _RouteRow extends StatelessWidget {
           child: Text(text,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 13.5,
                   fontWeight: FontWeight.w600,
                   height: 1.35,
-                  color: AppColors.inkWarm)),
+                  color: context.palette.ink)),
         ),
       ],
     );
@@ -543,7 +543,7 @@ class _VehicleChip extends StatelessWidget {
       decoration: BoxDecoration(
           color: const Color(0xFFEAF7EC),
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: AppColors.line)),
+          border: Border.all(color: context.palette.line)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         Icon(_vehicleIcon(vt), size: 13, color: const Color(0xFF0F7A4B)),
         const SizedBox(width: 5),
@@ -590,7 +590,7 @@ class _StatusBadge extends StatelessWidget {
         break;
       default:
         bg = const Color(0xFFE2E8F0);
-        fg = AppColors.slate600;
+        fg = context.palette.muted2;
         label = context.tr('Open');
     }
     return Container(
@@ -697,11 +697,11 @@ class _ProfileSheetState extends State<_ProfileSheet> {
         Padding(
           padding: const EdgeInsets.only(left: 2, bottom: 8),
           child: Text(context.tr('Vehicle type'),
-              style: const TextStyle(
+              style: TextStyle(
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w700,
                   fontSize: 12.5,
-                  color: AppColors.slate700)),
+                  color: context.palette.muted3)),
         ),
         Wrap(
           spacing: 8,
@@ -714,19 +714,19 @@ class _ProfileSheetState extends State<_ProfileSheet> {
                   padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
                   decoration: BoxDecoration(
                     gradient: _vehicleType == v.value ? AppColors.emeraldGrad : null,
-                    color: _vehicleType == v.value ? null : Colors.white,
+                    color: _vehicleType == v.value ? null : context.palette.card,
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(
                         color: _vehicleType == v.value
                             ? Colors.transparent
-                            : AppColors.line),
+                            : context.palette.line),
                   ),
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
                     Icon(v.icon,
                         size: 15,
                         color: _vehicleType == v.value
                             ? Colors.white
-                            : AppColors.slate600),
+                            : context.palette.muted2),
                     const SizedBox(width: 6),
                     Text(v.label,
                         style: TextStyle(
@@ -735,7 +735,7 @@ class _ProfileSheetState extends State<_ProfileSheet> {
                             fontSize: 12.5,
                             color: _vehicleType == v.value
                                 ? Colors.white
-                                : AppColors.slate600)),
+                                : context.palette.muted2)),
                   ]),
                 ),
               ),
@@ -804,11 +804,11 @@ class _PickupSheetState extends State<_PickupSheet> {
           context.tr(
               'Ask the seller for the pickup code shown on their job, then enter it '
               'here to confirm you collected the goods.'),
-          style: const TextStyle(
+          style: TextStyle(
               fontFamily: 'Inter',
               fontSize: 12.5,
               height: 1.45,
-              color: AppColors.slate500),
+              color: context.palette.muted),
         ),
         const SizedBox(height: 14),
         FreshField(controller: _code, label: context.tr('Pickup code'), hint: context.tr('e.g. 4821')),

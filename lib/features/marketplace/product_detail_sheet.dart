@@ -115,15 +115,15 @@ class _DetailSheetState extends State<_DetailSheet> {
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
         height: size.height * 0.9,
-        decoration: const BoxDecoration(
-            color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+        decoration: BoxDecoration(
+            color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(28))),
         child: Column(
           children: [
             const SizedBox(height: 10),
             Container(
                 width: 42,
                 height: 4,
-                decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99))),
+                decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99))),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(18, 14, 18, 20),
@@ -155,12 +155,12 @@ class _DetailSheetState extends State<_DetailSheet> {
                   ),
                   const SizedBox(height: 6),
                   Text(pickString(p, ['title', 'name']) ?? 'Product',
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontFamily: 'Fraunces',
                           fontWeight: FontWeight.w800,
                           fontSize: 24,
                           height: 1.1,
-                          color: AppColors.inkWarm)),
+                          color: context.palette.ink)),
                   const SizedBox(height: 6),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -179,25 +179,25 @@ class _DetailSheetState extends State<_DetailSheet> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 4),
                         child: Text('per $unit',
-                            style: const TextStyle(fontFamily: 'Inter', color: AppColors.slate500, fontSize: 12.5)),
+                            style: TextStyle(fontFamily: 'Inter', color: context.palette.muted, fontSize: 12.5)),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
                   Text(desc,
-                      style: const TextStyle(
-                          fontFamily: 'Inter', fontSize: 14, height: 1.55, color: AppColors.slate600)),
+                      style: TextStyle(
+                          fontFamily: 'Inter', fontSize: 14, height: 1.55, color: context.palette.muted2)),
                   const SizedBox(height: 18),
                   _ratingSummary(count),
                   const SizedBox(height: 16),
                   _writeReview(),
                   const SizedBox(height: 20),
-                  const Text('Customer reviews',
+                  Text('Customer reviews',
                       style: TextStyle(
                           fontFamily: 'Fraunces',
                           fontWeight: FontWeight.w700,
                           fontSize: 17,
-                          color: AppColors.inkWarm)),
+                          color: context.palette.ink)),
                   const SizedBox(height: 10),
                   if (_loading)
                     const Padding(
@@ -231,7 +231,7 @@ class _DetailSheetState extends State<_DetailSheet> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: AppColors.line)),
+          color: context.palette.card, borderRadius: BorderRadius.circular(18), border: Border.all(color: context.palette.line)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -248,7 +248,7 @@ class _DetailSheetState extends State<_DetailSheet> {
               starsRow(_avg, size: 15),
               const SizedBox(height: 4),
               Text('$count review${count == 1 ? '' : 's'}',
-                  style: const TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate500)),
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: context.palette.muted)),
             ],
           ),
           const SizedBox(width: 18),
@@ -264,7 +264,7 @@ class _DetailSheetState extends State<_DetailSheet> {
                       SizedBox(
                           width: 22,
                           child: Text('$st★',
-                              style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500))),
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: context.palette.muted))),
                       Expanded(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(99),
@@ -280,7 +280,7 @@ class _DetailSheetState extends State<_DetailSheet> {
                           width: 22,
                           child: Text('$c',
                               textAlign: TextAlign.right,
-                              style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500))),
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: context.palette.muted))),
                     ],
                   ),
                 );
@@ -296,13 +296,13 @@ class _DetailSheetState extends State<_DetailSheet> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: AppColors.line)),
+          color: context.palette.card, borderRadius: BorderRadius.circular(18), border: Border.all(color: context.palette.line)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Write a review',
+          Text('Write a review',
               style: TextStyle(
-                  fontFamily: 'Fraunces', fontWeight: FontWeight.w700, fontSize: 16, color: AppColors.inkWarm)),
+                  fontFamily: 'Fraunces', fontWeight: FontWeight.w700, fontSize: 16, color: context.palette.ink)),
           const SizedBox(height: 10),
           Row(
             children: List.generate(5, (i) {
@@ -351,12 +351,12 @@ class _DetailSheetState extends State<_DetailSheet> {
     return Container(
       padding: const EdgeInsets.all(22),
       alignment: Alignment.center,
-      child: const Column(
+      child: Column(
         children: [
-          Icon(Icons.reviews_outlined, size: 34, color: Color(0xFFCBD5C5)),
-          SizedBox(height: 8),
+          const Icon(Icons.reviews_outlined, size: 34, color: Color(0xFFCBD5C5)),
+          const SizedBox(height: 8),
           Text('No reviews yet — be the first.',
-              style: TextStyle(fontFamily: 'Inter', color: AppColors.slate500)),
+              style: TextStyle(fontFamily: 'Inter', color: context.palette.muted)),
         ],
       ),
     );
@@ -376,7 +376,7 @@ class _DetailSheetState extends State<_DetailSheet> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.line)),
+          color: context.palette.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.palette.line)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -399,11 +399,11 @@ class _DetailSheetState extends State<_DetailSheet> {
                       child: Text(name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontFamily: 'Inter', fontWeight: FontWeight.w700, color: AppColors.inkWarm)),
+                          style: TextStyle(
+                              fontFamily: 'Inter', fontWeight: FontWeight.w700, color: context.palette.ink)),
                     ),
                     Text(when,
-                        style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500)),
+                        style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: context.palette.muted)),
                   ],
                 ),
                 const SizedBox(height: 2),
@@ -411,8 +411,8 @@ class _DetailSheetState extends State<_DetailSheet> {
                 if (comment.isNotEmpty) ...[
                   const SizedBox(height: 5),
                   Text(comment,
-                      style: const TextStyle(
-                          fontFamily: 'Inter', fontSize: 13.5, height: 1.45, color: AppColors.slate600)),
+                      style: TextStyle(
+                          fontFamily: 'Inter', fontSize: 13.5, height: 1.45, color: context.palette.muted2)),
                 ],
               ],
             ),
@@ -427,8 +427,8 @@ class _DetailSheetState extends State<_DetailSheet> {
     final out = stock <= 0;
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-      decoration: const BoxDecoration(
-          color: Colors.white, border: Border(top: BorderSide(color: AppColors.line))),
+      decoration: BoxDecoration(
+          color: context.palette.card, border: Border(top: BorderSide(color: context.palette.line))),
       child: SafeArea(
         top: false,
         child: Row(

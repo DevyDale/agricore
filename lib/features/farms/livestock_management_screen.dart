@@ -205,7 +205,7 @@ class _LivestockManagementScreenState extends State<LivestockManagementScreen> {
     final male = _animals.where((a) => (pickString(a, ['sex']) ?? '').toLowerCase() == 'male').length;
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       body: MaxWidthBody(
         child: RefreshIndicator(
         onRefresh: _load,
@@ -278,16 +278,16 @@ class _LivestockManagementScreenState extends State<LivestockManagementScreen> {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text('Livestock units',
-                    style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: AppColors.inkWarm)),
+                    style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: context.palette.ink)),
               ),
               GestureDetector(
                 onTap: () => _unitForm(),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                      color: Colors.white, borderRadius: BorderRadius.circular(11), border: Border.all(color: AppColors.line)),
+                      color: context.palette.card, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.palette.line)),
                   child: const Row(mainAxisSize: MainAxisSize.min, children: [
                     Icon(Icons.add_rounded, color: AppColors.g700, size: 15),
                     SizedBox(width: 4),
@@ -303,9 +303,9 @@ class _LivestockManagementScreenState extends State<LivestockManagementScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.line)),
-              child: const Text('No units yet. A unit is a group (e.g. "Dairy herd"); animals belong to a unit.',
-                  style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+                  color: context.palette.card, borderRadius: BorderRadius.circular(14), border: Border.all(color: context.palette.line)),
+              child: Text('No units yet. A unit is a group (e.g. "Dairy herd"); animals belong to a unit.',
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted)),
             )
           else
             ..._units.asMap().entries.map((e) => Padding(
@@ -330,9 +330,9 @@ class _LivestockManagementScreenState extends State<LivestockManagementScreen> {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text('Animals',
-                    style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: AppColors.inkWarm)),
+                    style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 17, color: context.palette.ink)),
               ),
               GestureDetector(
                 onTap: () => _animalForm(),
@@ -358,12 +358,12 @@ class _LivestockManagementScreenState extends State<LivestockManagementScreen> {
               decoration: InputDecoration(
                 isDense: true,
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: context.palette.card,
                 hintText: 'Search by name, tag or breed…',
                 prefixIcon: const Icon(Icons.search, size: 20),
                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: const BorderSide(color: AppColors.line)),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: const BorderSide(color: AppColors.line)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: BorderSide(color: context.palette.line)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: BorderSide(color: context.palette.line)),
                 focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(13), borderSide: const BorderSide(color: AppColors.green)),
               ),
             ),
@@ -375,7 +375,7 @@ class _LivestockManagementScreenState extends State<LivestockManagementScreen> {
               scrollDirection: Axis.horizontal,
               children: [
                 ..._chipGroup(const [['all', 'All'], ['active', 'Active'], ['sold', 'Sold'], ['deceased', 'Deceased']], _status, (v) => setState(() => _status = v)),
-                Container(width: 1, height: 20, margin: const EdgeInsets.symmetric(horizontal: 6), color: AppColors.line),
+                Container(width: 1, height: 20, margin: const EdgeInsets.symmetric(horizontal: 6), color: context.palette.line),
                 ..._chipGroup(const [['all', 'Any sex'], ['female', 'Female'], ['male', 'Male']], _sex, (v) => setState(() => _sex = v)),
               ],
             ),
@@ -396,12 +396,12 @@ class _LivestockManagementScreenState extends State<LivestockManagementScreen> {
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(horizontal: 14),
             decoration: BoxDecoration(
-              color: on ? AppColors.g600 : Colors.white,
+              color: on ? AppColors.g600 : context.palette.card,
               borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+              border: Border.all(color: on ? AppColors.g600 : context.palette.line),
             ),
             child: Text(t[1],
-                style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : AppColors.slate700)),
+                style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? Colors.white : context.palette.muted3)),
           ),
         ),
       );
@@ -425,15 +425,15 @@ class _UnitCard extends StatelessWidget {
     final sub = [type, breed].where((x) => x.isNotEmpty).join(' · ');
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.palette.card,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.line)),
+          border: Border.all(color: context.palette.line)),
       padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
       child: Row(
         children: [
           Container(
             width: 40, height: 40, alignment: Alignment.center,
-            decoration: BoxDecoration(color: const Color(0xFFEAF7EC), borderRadius: BorderRadius.circular(11)),
+            decoration: BoxDecoration(color: context.palette.chipBg, borderRadius: BorderRadius.circular(11)),
             child: const Icon(Icons.workspaces_outline, color: Color(0xFF0F7A4B), size: 19),
           ),
           const SizedBox(width: 11),
@@ -444,15 +444,15 @@ class _UnitCard extends StatelessWidget {
                 Text(name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.inkWarm)),
+                    style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: context.palette.ink)),
                 Text('${sub.isEmpty ? '' : '$sub · '}$animalCount tracked${qty != null ? ' / $qty' : ''}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate500)),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: context.palette.muted)),
               ],
             ),
           ),
-          IconButton(onPressed: onEdit, icon: const Icon(Icons.edit_outlined, size: 18, color: AppColors.slate600), visualDensity: VisualDensity.compact),
+          IconButton(onPressed: onEdit, icon: Icon(Icons.edit_outlined, size: 18, color: context.palette.muted2), visualDensity: VisualDensity.compact),
           IconButton(onPressed: onDelete, icon: const Icon(Icons.delete_outline_rounded, size: 18, color: Color(0xFFDC2626)), visualDensity: VisualDensity.compact),
         ],
       ),
@@ -490,9 +490,9 @@ class _AnimalCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.palette.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.line),
+          border: Border.all(color: context.palette.line),
           boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 14, offset: const Offset(0, 6))]),
       padding: const EdgeInsets.fromLTRB(13, 12, 13, 12),
       child: Column(
@@ -516,11 +516,11 @@ class _AnimalCard extends StatelessWidget {
                     Text(name != null && name.isNotEmpty ? name : (tag.isNotEmpty ? tag : 'Animal'),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.inkWarm)),
+                        style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: context.palette.ink)),
                     Text([if (tag.isNotEmpty) 'Tag $tag', if (breed != null && breed.isNotEmpty) breed, if (age != null && age.isNotEmpty) age].join(' · '),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate500)),
+                        style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: context.palette.muted)),
                   ],
                 ),
               ),
@@ -536,13 +536,13 @@ class _AnimalCard extends StatelessWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-              Icon(Icons.workspaces_outline, size: 13, color: AppColors.slate500),
+              Icon(Icons.workspaces_outline, size: 13, color: context.palette.muted),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(unitName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate600)),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: context.palette.muted2)),
               ),
               _iconBtn(Icons.edit_outlined, onEdit, 'Edit'),
               const SizedBox(width: 6),
@@ -759,16 +759,16 @@ class _SheetScaffold extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
               const SizedBox(height: 14),
-              Text(title, style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+              Text(title, style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
               const SizedBox(height: 14),
               if (error != null) ...[
                 Container(
@@ -814,10 +814,10 @@ class _SheetField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: context.palette.card,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.green)),
       ),
     );
@@ -838,7 +838,7 @@ class _LabeledChips extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 2, bottom: 6),
-          child: Text(label, style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: AppColors.slate700)),
+          child: Text(label, style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: context.palette.muted3)),
         ),
         Wrap(
           spacing: 8,
@@ -850,11 +850,11 @@ class _LabeledChips extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: on ? AppColors.g600 : Colors.white,
+                  color: on ? AppColors.g600 : context.palette.card,
                   borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+                  border: Border.all(color: on ? AppColors.g600 : context.palette.line),
                 ),
-                child: Text(o[1], style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : AppColors.slate700)),
+                child: Text(o[1], style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : context.palette.muted3)),
               ),
             );
           }).toList(),
@@ -878,7 +878,7 @@ class _PickerChips extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 2, bottom: 6),
-          child: Text(label, style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: AppColors.slate700)),
+          child: Text(label, style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: context.palette.muted3)),
         ),
         Wrap(
           spacing: 8,
@@ -890,11 +890,11 @@ class _PickerChips extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: on ? AppColors.g600 : Colors.white,
+                  color: on ? AppColors.g600 : context.palette.card,
                   borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: on ? AppColors.g600 : AppColors.line),
+                  border: Border.all(color: on ? AppColors.g600 : context.palette.line),
                 ),
-                child: Text(o.value, style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : AppColors.slate700)),
+                child: Text(o.value, style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : context.palette.muted3)),
               ),
             );
           }).toList(),

@@ -33,15 +33,15 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 16),
           Center(
             child: Text(u?.username ?? '-',
-                style: const TextStyle(
+                style: TextStyle(
                     fontFamily: 'Fraunces',
                     fontSize: 24,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.inkWarm)),
+                    color: context.palette.ink)),
           ),
           Center(
             child: Text(u?.roleLabel ?? '',
-                style: const TextStyle(fontFamily: 'Inter', color: AppColors.slate500)),
+                style: TextStyle(fontFamily: 'Inter', color: context.palette.muted)),
           ),
           const SizedBox(height: 28),
           _InfoTile(icon: Icons.mail_outline, label: 'Email', value: u?.email ?? '-'),
@@ -57,11 +57,11 @@ class ProfileScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 4, bottom: 10),
             child: Text(context.tr('More'),
-                style: const TextStyle(
+                style: TextStyle(
                     fontFamily: 'Fraunces',
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
-                    color: AppColors.inkWarm)),
+                    color: context.palette.ink)),
           ),
           _NavTile(
             icon: Icons.insights_rounded,
@@ -127,9 +127,9 @@ class _NavTile extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.palette.card,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.line)),
+            border: Border.all(color: context.palette.line)),
         child: Row(
           children: [
             Container(
@@ -137,7 +137,7 @@ class _NavTile extends StatelessWidget {
               height: 42,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                  color: const Color(0xFFE7F4EC),
+                  color: context.palette.chipBg,
                   borderRadius: BorderRadius.circular(12)),
               child: Icon(icon, color: const Color(0xFF0F7A4B), size: 21),
             ),
@@ -147,19 +147,19 @@ class _NavTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title,
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w700,
                           fontSize: 14.5,
-                          color: AppColors.inkWarm)),
+                          color: context.palette.ink)),
                   const SizedBox(height: 2),
                   Text(subtitle,
-                      style: const TextStyle(
-                          fontFamily: 'Inter', fontSize: 12, color: AppColors.slate500)),
+                      style: TextStyle(
+                          fontFamily: 'Inter', fontSize: 12, color: context.palette.muted)),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: AppColors.slate500),
+            Icon(Icons.chevron_right_rounded, color: context.palette.muted),
           ],
         ),
       ),
@@ -179,9 +179,9 @@ class _InfoTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.palette.card,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppColors.line)),
+          border: Border.all(color: context.palette.line)),
       child: Row(
         children: [
           Icon(icon, color: AppColors.g700),
@@ -191,15 +191,15 @@ class _InfoTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(label,
-                    style: const TextStyle(
-                        fontFamily: 'Inter', color: AppColors.slate500, fontSize: 12.5)),
+                    style: TextStyle(
+                        fontFamily: 'Inter', color: context.palette.muted, fontSize: 12.5)),
                 const SizedBox(height: 2),
                 Text(value,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontFamily: 'Inter',
-                        color: AppColors.inkWarm,
+                        color: context.palette.ink,
                         fontSize: 15,
                         fontWeight: FontWeight.w600)),
               ],

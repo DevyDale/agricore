@@ -78,7 +78,7 @@ class ConvAvatar extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFF22C55E),
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.cream, width: 2.5),
+                  border: Border.all(color: context.palette.surface, width: 2.5),
                 ),
               ),
             ),
@@ -133,7 +133,7 @@ class _AudioAttachmentState extends State<AudioAttachment> {
         margin: const EdgeInsets.only(top: 6),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          color: widget.mine ? Colors.white.withValues(alpha: 0.18) : Colors.white,
+          color: widget.mine ? Colors.white.withValues(alpha: 0.18) : context.palette.card,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(

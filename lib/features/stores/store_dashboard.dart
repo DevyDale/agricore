@@ -757,7 +757,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     final verified = _store['is_verified'] == true;
     final value = pickNum(_store, ['total_value']);
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       body: MaxWidthBody(
         child: CustomScrollView(
           slivers: [
@@ -937,7 +937,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     return Container(
       width: double.infinity,
       padding: padding ?? const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.palette.line)),
       child: child,
     );
   }
@@ -949,7 +949,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
         children: [
           Expanded(
             child: Text(title,
-                style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.inkWarm)),
+                style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 18, color: context.palette.ink)),
           ),
           if (action != null) action,
         ],
@@ -975,7 +975,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
   Widget _statCard(String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.palette.line)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -990,9 +990,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
           Text(value,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 18, color: AppColors.inkWarm)),
+              style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 18, color: context.palette.ink)),
           const SizedBox(height: 2),
-          Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.slate500)),
+          Text(label, style: TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w600, color: context.palette.muted)),
         ],
       ),
     );
@@ -1004,10 +1004,10 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Icon(icon, size: 15, color: _green),
         const SizedBox(width: 10),
-        Text('$label  ', style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.slate500)),
+        Text('$label  ', style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w600, color: context.palette.muted)),
         Expanded(
           child: Text(value,
-              style: const TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate700)),
+              style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted3)),
         ),
       ]),
     );
@@ -1015,7 +1015,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
 
   Widget _statusBadge(String st) {
     final s = st.toLowerCase().replaceAll(' ', '_');
-    Color bg = const Color(0xFFF1EFE8), fg = AppColors.slate600;
+    Color bg = const Color(0xFFF1EFE8), fg = context.palette.muted2;
     if (['delivered', 'completed', 'paid', 'released'].contains(s)) {
       bg = const Color(0xFFDCFCE7);
       fg = const Color(0xFF166534);
@@ -1038,7 +1038,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
   }
 
   Widget _smallBtn(IconData icon, String label, VoidCallback onTap, {Color? color, bool danger = false}) {
-    final fg = danger ? const Color(0xFFDC2626) : (color ?? AppColors.slate600);
+    final fg = danger ? const Color(0xFFDC2626) : (color ?? context.palette.muted2);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -1046,7 +1046,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
         decoration: BoxDecoration(
           color: danger ? const Color(0xFFFEF2F2) : const Color(0xFFFAF7EF),
           borderRadius: BorderRadius.circular(9),
-          border: Border.all(color: danger ? const Color(0xFFFCA5A5) : AppColors.line),
+          border: Border.all(color: danger ? const Color(0xFFFCA5A5) : context.palette.line),
         ),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Icon(icon, size: 13, color: fg),
@@ -1096,14 +1096,14 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                     normCountries(_store['countries_of_operation']).isEmpty ? 'Not specified' : normCountries(_store['countries_of_operation']).join(', ')),
                 const SizedBox(height: 6),
                 Text(pickString(_store, ['description']) ?? 'No description provided',
-                    style: const TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600, height: 1.4)),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2, height: 1.4)),
               ],
             ),
           ),
           const SizedBox(height: 18),
           _sectionHeader('Attached farm'),
           if (_farm == null)
-            _card(child: const Text('No farm attached to this store.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)))
+            _card(child: Text('No farm attached to this store.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2)))
           else
             _card(
               child: Row(children: [
@@ -1119,7 +1119,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                   child: Text(pickString(_farm!, ['name', 'farm_name']) ?? 'Farm',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.inkWarm)),
+                      style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: context.palette.ink)),
                 ),
               ]),
             ),
@@ -1199,13 +1199,13 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
               onChanged: (v) => setState(() => _prodQuery = v),
               decoration: InputDecoration(
                 hintText: 'Search products…',
-                prefixIcon: const Icon(Icons.search_rounded, size: 19, color: AppColors.slate500),
+                prefixIcon: Icon(Icons.search_rounded, size: 19, color: context.palette.muted),
                 isDense: true,
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: context.palette.card,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.line)),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.line)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: context.palette.line)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: context.palette.line)),
                 focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: _green)),
               ),
             ),
@@ -1233,12 +1233,12 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
                   decoration: BoxDecoration(
-                    color: _prodSelect ? _green : Colors.white,
+                    color: _prodSelect ? _green : context.palette.card,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: _prodSelect ? _green : AppColors.line),
+                    border: Border.all(color: _prodSelect ? _green : context.palette.line),
                   ),
                   child: Text(_prodSelect ? 'Done' : 'Select',
-                      style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: _prodSelect ? Colors.white : AppColors.slate600)),
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: _prodSelect ? Colors.white : context.palette.muted2)),
                 ),
               ),
             ]),
@@ -1246,9 +1246,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
             const SizedBox(height: 12),
           ],
           if (_products.isEmpty)
-            _card(child: const Text('No products yet. Tap "Add" to list your first one.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)))
+            _card(child: Text('No products yet. Tap "Add" to list your first one.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2)))
           else if (list.isEmpty)
-            _card(child: const Text('No products match your search or filter.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)))
+            _card(child: Text('No products match your search or filter.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2)))
           else
             ...list.map(_productCard),
         ],
@@ -1265,12 +1265,12 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: on ? _green : Colors.white,
+            color: on ? _green : context.palette.card,
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: on ? _green : AppColors.line),
+            border: Border.all(color: on ? _green : context.palette.line),
           ),
           child: Text(label,
-              style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w600, color: on ? Colors.white : AppColors.slate600)),
+              style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w600, color: on ? Colors.white : context.palette.muted2)),
         ),
       ),
     );
@@ -1291,11 +1291,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
           .toList(),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.line)),
-        child: const Row(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.swap_vert_rounded, size: 15, color: AppColors.slate600),
+        decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(10), border: Border.all(color: context.palette.line)),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Icon(Icons.swap_vert_rounded, size: 15, color: context.palette.muted2),
           SizedBox(width: 4),
-          Text('Sort', style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.slate600)),
+          Text('Sort', style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: context.palette.muted2)),
         ]),
       ),
     );
@@ -1318,7 +1318,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
             const SizedBox(width: 8),
             _smallBtn(Icons.delete_outline_rounded, 'Delete', _bulkDelete, danger: true),
           ] else
-            const Text('Tap products to select', style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate500)),
+            Text('Tap products to select', style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: context.palette.muted)),
         ]),
       ),
     );
@@ -1347,9 +1347,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(13),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.palette.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: selected ? _green : AppColors.line, width: selected ? 1.5 : 1),
+          border: Border.all(color: selected ? _green : context.palette.line, width: selected ? 1.5 : 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1358,14 +1358,14 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
               children: [
                 if (_prodSelect) ...[
                   Icon(selected ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
-                      size: 20, color: selected ? _green : AppColors.slate500),
+                      size: 20, color: selected ? _green : context.palette.muted),
                   const SizedBox(width: 10),
                 ],
                 Expanded(
                   child: Text(title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15.5, color: AppColors.inkWarm)),
+                      style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15.5, color: context.palette.ink)),
                 ),
                 const SizedBox(width: 8),
                 Container(
@@ -1379,13 +1379,13 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
             Row(children: [
               Text(_money(price), style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 14, color: _green)),
               const SizedBox(width: 12),
-              const Icon(Icons.inventory_2_outlined, size: 13, color: AppColors.slate500),
+              Icon(Icons.inventory_2_outlined, size: 13, color: context.palette.muted),
               const SizedBox(width: 4),
               Flexible(
                 child: Text('${stock % 1 == 0 ? stock.toInt() : stock} $unit',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate600)),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted2)),
               ),
               if (stock <= _lowStock) ...[
                 const SizedBox(width: 8),
@@ -1399,14 +1399,14 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
             if (!_prodSelect) ...[
               const SizedBox(height: 10),
               Row(children: [
-                const Text('Stock', style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.slate500)),
+                Text('Stock', style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w600, color: context.palette.muted)),
                 const SizedBox(width: 8),
                 _qtyStepper(p),
               ]),
               const SizedBox(height: 10),
               Row(
                 children: [
-                  const Text('In marketplace', style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.slate600)),
+                  Text('In marketplace', style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w600, color: context.palette.muted2)),
                   const SizedBox(width: 2),
                   Transform.scale(
                     scale: 0.85,
@@ -1434,14 +1434,14 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
   Widget _qtyStepper(Map<String, dynamic> p) {
     final stock = (pickNum(p, ['stock_quantity']) ?? 0);
     return Container(
-      decoration: BoxDecoration(color: const Color(0xFFFAF7EF), borderRadius: BorderRadius.circular(9), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: const Color(0xFFFAF7EF), borderRadius: BorderRadius.circular(9), border: Border.all(color: context.palette.line)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         _qtyBtn(Icons.remove_rounded, () => _saveQty(p, (stock - 1) < 0 ? 0 : (stock - 1))),
         Container(
           constraints: const BoxConstraints(minWidth: 40),
           alignment: Alignment.center,
           child: Text('${stock % 1 == 0 ? stock.toInt() : stock}',
-              style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.inkWarm)),
+              style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: context.palette.ink)),
         ),
         _qtyBtn(Icons.add_rounded, () => _saveQty(p, stock + 1)),
       ]),
@@ -1482,13 +1482,13 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
           const SizedBox(height: 18),
           _sectionHeader('Incoming orders'),
           if (incoming.isEmpty)
-            _card(child: const Text('No incoming orders yet.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)))
+            _card(child: Text('No incoming orders yet.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2)))
           else
             ...incoming.map((o) => _orderCard(o, seller: true)),
           const SizedBox(height: 18),
           _sectionHeader('My purchases'),
           if (purchases.isEmpty)
-            _card(child: const Text('No purchases yet.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)))
+            _card(child: Text('No purchases yet.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2)))
           else
             ...purchases.map((o) => _orderCard(o, seller: false)),
           if (fulfilling.isNotEmpty) ...[
@@ -1511,14 +1511,14 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(13),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.palette.line)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
             Expanded(
               child: Text('Order #$oid',
-                  style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.inkWarm)),
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: context.palette.ink)),
             ),
             _statusBadge(st),
           ]),
@@ -1526,7 +1526,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
           Text(_money(_ordTotal(o)), style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w600, color: _green)),
           if (summary.isNotEmpty) ...[
             const SizedBox(height: 4),
-            Text(summary, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.slate600)),
+            Text(summary, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: context.palette.muted2)),
           ],
           if (seller) ...[
             if (!terminal) ...[
@@ -1547,7 +1547,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
             else if ((pickString(esc, ['status']) ?? '').toLowerCase() == 'held')
               Align(alignment: Alignment.centerLeft, child: _smallBtn(Icons.check_circle_rounded, 'Confirm delivery', () => _releaseEscrow(esc), color: _green))
             else
-              Row(children: [const Text('Escrow: ', style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.slate500)), _statusBadge(pickString(esc, ['status']) ?? '')]),
+              Row(children: [Text('Escrow: ', style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: context.palette.muted)), _statusBadge(pickString(esc, ['status']) ?? '')]),
           ],
         ],
       ),
@@ -1610,14 +1610,14 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(13),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.palette.line)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
             Expanded(
               child: Text('Order #$oid',
-                  style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.inkWarm)),
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: context.palette.ink)),
             ),
             _statusBadge(_ordStatus(o)),
           ]),
@@ -1625,7 +1625,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
           Text(_money(_ordTotal(o)), style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w600, color: _green)),
           if (summary.isNotEmpty) ...[
             const SizedBox(height: 4),
-            Text(summary, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.slate600)),
+            Text(summary, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: context.palette.muted2)),
           ],
           const SizedBox(height: 10),
           Wrap(
@@ -1638,10 +1638,10 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                 decoration: BoxDecoration(
                   color: reached ? const Color(0xFFEAF7EC) : const Color(0xFFF6F4ED),
                   borderRadius: BorderRadius.circular(9),
-                  border: Border.all(color: reached ? const Color(0xFFBBF0CC) : AppColors.line),
+                  border: Border.all(color: reached ? const Color(0xFFBBF0CC) : context.palette.line),
                 ),
                 child: Text(_stageLabel[s] ?? s,
-                    style: TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w700, color: reached ? const Color(0xFF166534) : AppColors.slate500)),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w700, color: reached ? const Color(0xFF166534) : context.palette.muted)),
               );
             }).toList(),
           ),
@@ -1760,7 +1760,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
           const SizedBox(height: 18),
           _sectionHeader('Settlements'),
           if (settlements.isEmpty)
-            _card(child: const Text('No released payouts yet. Funds appear here once delivery is confirmed.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)))
+            _card(child: Text('No released payouts yet. Funds appear here once delivery is confirmed.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2)))
           else
             ...settlements.map((e) {
               final amt = (pickNum(e, ['amount']) ?? 0).toDouble();
@@ -1770,7 +1770,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
               return Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.all(13),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.line)),
+                decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(14), border: Border.all(color: context.palette.line)),
                 child: Row(children: [
                   Container(
                     width: 36, height: 36, alignment: Alignment.center,
@@ -1780,9 +1780,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text('Order #$order', style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.inkWarm)),
+                      Text('Order #$order', style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 13, color: context.palette.ink)),
                       if (day.isNotEmpty)
-                        Text(day, style: const TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate500)),
+                        Text(day, style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: context.palette.muted)),
                     ]),
                   ),
                   Text(_money(amt), style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 14, color: _green)),
@@ -1803,12 +1803,12 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     return Container(
       height: 48,
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.palette.line)),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           isExpanded: true,
           value: current,
-          hint: const Text('Select your bank', style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.slate500)),
+          hint: Text('Select your bank', style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: context.palette.muted)),
           items: items.where((b) => codeOf(b).isNotEmpty).map((b) {
             return DropdownMenuItem(
               value: codeOf(b),
@@ -1829,14 +1829,14 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
         padding: const EdgeInsets.symmetric(vertical: 11),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: on ? const Color(0xFFEAF7EC) : Colors.white,
+          color: on ? const Color(0xFFEAF7EC) : context.palette.card,
           borderRadius: BorderRadius.circular(11),
-          border: Border.all(color: on ? _green : AppColors.line, width: on ? 1.5 : 1),
+          border: Border.all(color: on ? _green : context.palette.line, width: on ? 1.5 : 1),
         ),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Icon(icon, size: 15, color: on ? _green : AppColors.slate600),
+          Icon(icon, size: 15, color: on ? _green : context.palette.muted2),
           const SizedBox(width: 6),
-          Text(label, style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? _green : AppColors.slate600)),
+          Text(label, style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? _green : context.palette.muted2)),
         ]),
       ),
     );
@@ -1846,7 +1846,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     return Container(
       height: 48,
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.palette.line)),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           isExpanded: true,
@@ -1869,10 +1869,10 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: context.palette.card,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: _green)),
       ),
     );
@@ -1966,7 +1966,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                 Row(children: [
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(avg.toStringAsFixed(1),
-                        style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 34, color: AppColors.inkWarm)),
+                        style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 34, color: context.palette.ink)),
                     Row(children: List.generate(5, (i) => Icon(i < avg.round() ? Icons.star_rounded : Icons.star_border_rounded, size: 16, color: _gold))),
                   ]),
                   const SizedBox(width: 16),
@@ -1977,7 +1977,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2),
                           child: Row(children: [
-                            Text('$star', style: const TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.slate500)),
+                            Text('$star', style: TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w700, color: context.palette.muted)),
                             const Icon(Icons.star_rounded, size: 11, color: _gold),
                             const SizedBox(width: 6),
                             Expanded(
@@ -1992,14 +1992,14 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                               ),
                             ),
                             const SizedBox(width: 6),
-                            SizedBox(width: 18, child: Text('$n', textAlign: TextAlign.right, style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500))),
+                            SizedBox(width: 18, child: Text('$n', textAlign: TextAlign.right, style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: context.palette.muted))),
                           ]),
                         );
                       }).toList(),
                     ),
                   ),
                 ]),
-                const Divider(height: 22, color: AppColors.line),
+                Divider(height: 22, color: context.palette.line),
                 Row(children: [
                   _insight('${all.length}', 'Total reviews'),
                   _insight('$positivePct%', 'Positive (4★+)'),
@@ -2030,21 +2030,21 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                 onTap: _exportReviews,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.line)),
-                  child: const Icon(Icons.ios_share_rounded, size: 16, color: AppColors.slate600),
+                  decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(10), border: Border.all(color: context.palette.line)),
+                  child: Icon(Icons.ios_share_rounded, size: 16, color: context.palette.muted2),
                 ),
               ),
           ]),
           const SizedBox(height: 14),
           _sectionHeader('Store reviews'),
           if (sr.isEmpty)
-            _card(child: const Text('No store reviews match.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)))
+            _card(child: Text('No store reviews match.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2)))
           else
             ...sr.map((r) => _reviewCard(r, null)),
           const SizedBox(height: 18),
           _sectionHeader('Product reviews'),
           if (pr.isEmpty)
-            _card(child: const Text('No product reviews match.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)))
+            _card(child: Text('No product reviews match.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2)))
           else
             ...pr.map((r) => _reviewCard(r, pickString(r, ['_product']))),
         ],
@@ -2056,9 +2056,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     return Expanded(
       child: Column(
         children: [
-          Text(value, style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 17, color: AppColors.inkWarm)),
+          Text(value, style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 17, color: context.palette.ink)),
           const SizedBox(height: 2),
-          Text(label, textAlign: TextAlign.center, style: const TextStyle(fontFamily: 'Inter', fontSize: 10.5, color: AppColors.slate500)),
+          Text(label, textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Inter', fontSize: 10.5, color: context.palette.muted)),
         ],
       ),
     );
@@ -2073,12 +2073,12 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: on ? _green : Colors.white,
+            color: on ? _green : context.palette.card,
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: on ? _green : AppColors.line),
+            border: Border.all(color: on ? _green : context.palette.line),
           ),
           child: Text(label,
-              style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w600, color: on ? Colors.white : AppColors.slate600)),
+              style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w600, color: on ? Colors.white : context.palette.muted2)),
         ),
       ),
     );
@@ -2093,11 +2093,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
           .toList(),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.line)),
-        child: const Row(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.swap_vert_rounded, size: 15, color: AppColors.slate600),
+        decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(10), border: Border.all(color: context.palette.line)),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Icon(Icons.swap_vert_rounded, size: 15, color: context.palette.muted2),
           SizedBox(width: 4),
-          Text('Sort', style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.slate600)),
+          Text('Sort', style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: context.palette.muted2)),
         ]),
       ),
     );
@@ -2110,7 +2110,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(13),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(14), border: Border.all(color: context.palette.line)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2118,7 +2118,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
             Expanded(
               child: Text(name,
                   maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 13.5, color: AppColors.inkWarm)),
+                  style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 13.5, color: context.palette.ink)),
             ),
             Row(children: List.generate(5, (i) => Icon(i < rating ? Icons.star_rounded : Icons.star_border_rounded, size: 13, color: _gold))),
           ]),
@@ -2127,7 +2127,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
             Text(product, style: const TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF075985))),
           ],
           const SizedBox(height: 6),
-          Text(comment, style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate600, height: 1.4)),
+          Text(comment, style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted2, height: 1.4)),
         ],
       ),
     );
@@ -2142,7 +2142,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
         children: [
           _sectionHeader('Advertisements', action: _addButton('Create', _openAdSheet)),
           if (_ads.isEmpty)
-            _card(child: const Text('No ads yet. Tap "Create" to launch one.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)))
+            _card(child: Text('No ads yet. Tap "Create" to launch one.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2)))
           else
             ..._ads.map(_adCard),
         ],
@@ -2159,7 +2159,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(13),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.palette.line)),
       child: Row(
         children: [
           Container(
@@ -2178,7 +2178,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                   Flexible(
                     child: Text(title,
                         maxLines: 1, overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 14.5, color: AppColors.inkWarm)),
+                        style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 14.5, color: context.palette.ink)),
                   ),
                   const SizedBox(width: 8),
                   Container(
@@ -2188,16 +2188,16 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(active ? 'Live' : 'Paused',
-                        style: TextStyle(fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w700, color: active ? const Color(0xFF166534) : AppColors.slate600)),
+                        style: TextStyle(fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w700, color: active ? const Color(0xFF166534) : context.palette.muted2)),
                   ),
                 ]),
                 const SizedBox(height: 2),
-                Text('$views views · $clicks clicks', style: const TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate500)),
+                Text('$views views · $clicks clicks', style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: context.palette.muted)),
               ],
             ),
           ),
           IconButton(
-            icon: Icon(active ? Icons.pause_rounded : Icons.play_arrow_rounded, color: AppColors.slate600, size: 20),
+            icon: Icon(active ? Icons.pause_rounded : Icons.play_arrow_rounded, color: context.palette.muted2, size: 20),
             onPressed: () => _toggleAd(a, !active),
           ),
           IconButton(
@@ -2292,7 +2292,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
             child: SizedBox(
               height: 168,
               child: revenue == 0
-                  ? const Center(child: Text('No revenue in this period yet.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate500)))
+                  ? Center(child: Text('No revenue in this period yet.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted)))
                   : Row(crossAxisAlignment: CrossAxisAlignment.end, children: buckets.map((b) => _bar(b[0] as String, b[1] as double, maxV)).toList()),
             ),
           ),
@@ -2308,11 +2308,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
-          color: on ? _green : Colors.white,
+          color: on ? _green : context.palette.card,
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: on ? _green : AppColors.line),
+          border: Border.all(color: on ? _green : context.palette.line),
         ),
-        child: Text(label, style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, fontWeight: FontWeight.w600, color: on ? Colors.white : AppColors.slate600)),
+        child: Text(label, style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, fontWeight: FontWeight.w600, color: on ? Colors.white : context.palette.muted2)),
       ),
     );
   }
@@ -2325,7 +2325,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
         children: [
           Text(value > 0 ? _shortMoney(value) : '',
               maxLines: 1, overflow: TextOverflow.visible,
-              style: const TextStyle(fontFamily: 'Inter', fontSize: 9, fontWeight: FontWeight.w700, color: AppColors.slate600)),
+              style: TextStyle(fontFamily: 'Inter', fontSize: 9, fontWeight: FontWeight.w700, color: context.palette.muted2)),
           const SizedBox(height: 4),
           SizedBox(
             height: 108,
@@ -2341,7 +2341,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
             ),
           ),
           const SizedBox(height: 6),
-          Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontFamily: 'Inter', fontSize: 9.5, color: AppColors.slate500)),
+          Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: 'Inter', fontSize: 9.5, color: context.palette.muted)),
         ],
       ),
     );
@@ -2395,8 +2395,8 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
               const SizedBox(width: 12),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text('Best seller', style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500)),
-                  Text(best, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.inkWarm)),
+                  Text('Best seller', style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: context.palette.muted)),
+                  Text(best, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 15, color: context.palette.ink)),
                 ]),
               ),
             ]),
@@ -2409,7 +2409,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
             _perfChip('units', 'Units'),
           ]),
           if (rows.isEmpty)
-            _card(child: const Text('No sales yet — performance appears once orders come in.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)))
+            _card(child: Text('No sales yet — performance appears once orders come in.', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2)))
           else
             ...rows.map((r) {
               final rev = r['revenue'] as double;
@@ -2418,7 +2418,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
               return Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.all(13),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.line)),
+                decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(14), border: Border.all(color: context.palette.line)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -2426,13 +2426,13 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                       Expanded(
                         child: Text(r['name'] as String,
                             maxLines: 1, overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 14.5, color: AppColors.inkWarm)),
+                            style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 14.5, color: context.palette.ink)),
                       ),
                       Text(_money(rev), style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w800, fontSize: 13, color: _green)),
                     ]),
                     const SizedBox(height: 3),
                     Text('${units % 1 == 0 ? units.toInt() : units} sold',
-                        style: const TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate500)),
+                        style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: context.palette.muted)),
                     const SizedBox(height: 8),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(99),
@@ -2459,11 +2459,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
-          color: on ? _green : Colors.white,
+          color: on ? _green : context.palette.card,
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: on ? _green : AppColors.line),
+          border: Border.all(color: on ? _green : context.palette.line),
         ),
-        child: Text(label, style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, fontWeight: FontWeight.w600, color: on ? Colors.white : AppColors.slate600)),
+        child: Text(label, style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, fontWeight: FontWeight.w600, color: on ? Colors.white : context.palette.muted2)),
       ),
     );
   }
@@ -2554,7 +2554,7 @@ class _ProductSheetState extends State<_ProductSheet> {
         height: 64,
         alignment: Alignment.center,
         color: const Color(0xFFF1EFE8),
-        child: const Icon(Icons.inventory_2_outlined, size: 22, color: AppColors.slate500),
+        child: Icon(Icons.inventory_2_outlined, size: 22, color: context.palette.muted),
       );
 
   Widget _imageRow() {
@@ -2576,7 +2576,7 @@ class _ProductSheetState extends State<_ProductSheet> {
           child: Container(
             height: 44,
             alignment: Alignment.center,
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11), border: Border.all(color: AppColors.line)),
+            decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.palette.line)),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
               const Icon(Icons.image_rounded, size: 16, color: _green),
               const SizedBox(width: 6),
@@ -2588,7 +2588,7 @@ class _ProductSheetState extends State<_ProductSheet> {
       ),
       if (_imagePath != null) ...[
         const SizedBox(width: 8),
-        GestureDetector(onTap: () => setState(() => _imagePath = null), child: const Icon(Icons.close_rounded, size: 20, color: AppColors.slate500)),
+        GestureDetector(onTap: () => setState(() => _imagePath = null), child: Icon(Icons.close_rounded, size: 20, color: context.palette.muted)),
       ],
     ]);
   }
@@ -2599,7 +2599,7 @@ class _ProductSheetState extends State<_ProductSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: SingleChildScrollView(
@@ -2607,10 +2607,10 @@ class _ProductSheetState extends State<_ProductSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
               const SizedBox(height: 14),
               Text(widget.existing == null ? 'Add product' : 'Edit product',
-                  style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
               const SizedBox(height: 14),
               if (_err != null) ...[
                 Container(
@@ -2640,7 +2640,7 @@ class _ProductSheetState extends State<_ProductSheet> {
               _field(_desc, 'Description (optional)', lines: 2),
               const SizedBox(height: 12),
               Row(children: [
-                const Text('Publish to marketplace', style: TextStyle(fontFamily: 'Inter', fontSize: 13.5, fontWeight: FontWeight.w600, color: AppColors.slate700)),
+                Text('Publish to marketplace', style: TextStyle(fontFamily: 'Inter', fontSize: 13.5, fontWeight: FontWeight.w600, color: context.palette.muted3)),
                 const Spacer(),
                 Switch(value: _published, activeThumbColor: _green, onChanged: (v) => setState(() => _published = v)),
               ]),
@@ -2670,10 +2670,10 @@ class _ProductSheetState extends State<_ProductSheet> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: context.palette.card,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: _green)),
       ),
     );
@@ -2683,7 +2683,7 @@ class _ProductSheetState extends State<_ProductSheet> {
     return Container(
       height: 48,
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11), border: Border.all(color: AppColors.line)),
+      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.palette.line)),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           isExpanded: true,
@@ -2807,7 +2807,7 @@ class _AdSheetState extends State<_AdSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.92),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: SingleChildScrollView(
@@ -2815,10 +2815,10 @@ class _AdSheetState extends State<_AdSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
               const SizedBox(height: 14),
-              const Text('Advertisement studio',
-                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+              Text('Advertisement studio',
+                  style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
               const SizedBox(height: 12),
               _preview(),
               const SizedBox(height: 16),
@@ -2844,14 +2844,14 @@ class _AdSheetState extends State<_AdSheet> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: context.palette.card,
                             borderRadius: BorderRadius.circular(999),
-                            border: Border.all(color: AppColors.line),
+                            border: Border.all(color: context.palette.line),
                           ),
                           child: Row(mainAxisSize: MainAxisSize.min, children: [
                             Container(width: 12, height: 12, decoration: BoxDecoration(color: _hex(t[4]), shape: BoxShape.circle)),
                             const SizedBox(width: 7),
-                            Text(t[0], style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.slate700)),
+                            Text(t[0], style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w600, color: context.palette.muted3)),
                           ]),
                         ),
                       ),
@@ -2881,7 +2881,7 @@ class _AdSheetState extends State<_AdSheet> {
                       decoration: BoxDecoration(
                         color: _hex(s),
                         shape: BoxShape.circle,
-                        border: Border.all(color: on ? AppColors.inkWarm : Colors.white, width: on ? 2.5 : 2),
+                        border: Border.all(color: on ? context.palette.ink : Colors.white, width: on ? 2.5 : 2),
                         boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 4, offset: Offset(0, 1))],
                       ),
                       child: on ? const Icon(Icons.check_rounded, size: 16, color: Colors.white) : null,
@@ -2912,12 +2912,12 @@ class _AdSheetState extends State<_AdSheet> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
                       decoration: BoxDecoration(
-                        color: on ? _green : Colors.white,
+                        color: on ? _green : context.palette.card,
                         borderRadius: BorderRadius.circular(999),
-                        border: Border.all(color: on ? _green : AppColors.line),
+                        border: Border.all(color: on ? _green : context.palette.line),
                       ),
                       child: Text(d[1] as String,
-                          style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : AppColors.slate700)),
+                          style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12.5, color: on ? Colors.white : context.palette.muted3)),
                     ),
                   );
                 }).toList(),
@@ -2930,7 +2930,7 @@ class _AdSheetState extends State<_AdSheet> {
                 child: Container(
                   height: 44,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11), border: Border.all(color: AppColors.line)),
+                  decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.palette.line)),
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
                     Icon(_imagePath == null ? Icons.add_photo_alternate_rounded : Icons.check_circle_rounded, size: 16, color: _green),
                     const SizedBox(width: 6),
@@ -2938,7 +2938,7 @@ class _AdSheetState extends State<_AdSheet> {
                         style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: _green)),
                     if (_imagePath != null) ...[
                       const SizedBox(width: 10),
-                      GestureDetector(onTap: () => setState(() => _imagePath = null), child: const Icon(Icons.close_rounded, size: 18, color: AppColors.slate500)),
+                      GestureDetector(onTap: () => setState(() => _imagePath = null), child: Icon(Icons.close_rounded, size: 18, color: context.palette.muted)),
                     ],
                   ]),
                 ),
@@ -3011,17 +3011,17 @@ class _AdSheetState extends State<_AdSheet> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: on ? _green : Colors.white,
+          color: on ? _green : context.palette.card,
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: on ? _green : AppColors.line),
+          border: Border.all(color: on ? _green : context.palette.line),
         ),
         child: Text(label,
-            style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w600, color: on ? Colors.white : AppColors.slate700)),
+            style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w600, color: on ? Colors.white : context.palette.muted3)),
       ),
     );
   }
 
-  Widget _label(String t) => Text(t, style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: AppColors.slate700));
+  Widget _label(String t) => Text(t, style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: context.palette.muted3));
 
   Widget _field(TextEditingController c, String hint, {int lines = 1}) {
     return TextField(
@@ -3031,10 +3031,10 @@ class _AdSheetState extends State<_AdSheet> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: context.palette.card,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: _green)),
       ),
     );
@@ -3155,7 +3155,7 @@ class _TransporterSheetState extends State<_TransporterSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: context.palette.surface, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         child: SingleChildScrollView(
@@ -3163,7 +3163,7 @@ class _TransporterSheetState extends State<_TransporterSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+              Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
               const SizedBox(height: 14),
               _job == null ? _createView() : _jobView(),
             ],
@@ -3178,11 +3178,11 @@ class _TransporterSheetState extends State<_TransporterSheet> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Request a transporter',
-            style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+        Text('Request a transporter',
+            style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
         const SizedBox(height: 4),
-        const Text('A registered rider will pick up and deliver. You will get a pickup code to read at hand-over.',
-            style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate600)),
+        Text('A registered rider will pick up and deliver. You will get a pickup code to read at hand-over.',
+            style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted2)),
         const SizedBox(height: 14),
         _field(_pickup, 'Pickup location'),
         const SizedBox(height: 10),
@@ -3191,7 +3191,7 @@ class _TransporterSheetState extends State<_TransporterSheet> {
         Container(
           height: 48,
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11), border: Border.all(color: AppColors.line)),
+          decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.palette.line)),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               isExpanded: true,
@@ -3228,10 +3228,10 @@ class _TransporterSheetState extends State<_TransporterSheet> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Transporter request',
-            style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.inkWarm)),
+        Text('Transporter request',
+            style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 19, color: context.palette.ink)),
         const SizedBox(height: 4),
-        Text('Status: $status', style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate600)),
+        Text('Status: $status', style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted2)),
         const SizedBox(height: 14),
         if (code != null && code.isNotEmpty)
           Container(
@@ -3250,21 +3250,21 @@ class _TransporterSheetState extends State<_TransporterSheet> {
                 Text(code,
                     style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 30, letterSpacing: 4, color: Color(0xFF166534))),
                 const SizedBox(height: 4),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Text('Read this to the rider at pickup. Do not share it before they collect the goods.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.slate600)),
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: context.palette.muted2)),
                 ),
               ],
             ),
           )
         else
-          const Text('No rider assigned yet, or pickup is already complete.',
-              style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)),
+          Text('No rider assigned yet, or pickup is already complete.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2)),
         const SizedBox(height: 16),
-        const Text('Send a one-time link to a rider by SMS',
-            style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.slate700)),
+        Text('Send a one-time link to a rider by SMS',
+            style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w700, color: context.palette.muted3)),
         const SizedBox(height: 8),
         _field(_phone, 'Rider phone (07xx xxx xxx)', number: true),
         const SizedBox(height: 10),
@@ -3282,7 +3282,7 @@ class _TransporterSheetState extends State<_TransporterSheet> {
         ),
         if (_linkOut.isNotEmpty) ...[
           const SizedBox(height: 8),
-          Text(_linkOut, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.slate600)),
+          Text(_linkOut, style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: context.palette.muted2)),
         ],
         const SizedBox(height: 16),
         Row(
@@ -3330,10 +3330,10 @@ class _TransporterSheetState extends State<_TransporterSheet> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: context.palette.card,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: AppColors.line)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: BorderSide(color: context.palette.line)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(11), borderSide: const BorderSide(color: _green)),
       ),
     );

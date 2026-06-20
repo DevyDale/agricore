@@ -22,7 +22,7 @@ class EntityTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: context.palette.card,
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         onTap: onTap,
@@ -31,7 +31,7 @@ class EntityTile extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.line)),
+              border: Border.all(color: context.palette.line)),
           child: Row(
             children: [
               ChipIcon(icon, tone: tone, size: 48),
@@ -44,26 +44,26 @@ class EntityTile extends StatelessWidget {
                     Text(title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontFamily: 'Fraunces',
                             fontWeight: FontWeight.w700,
                             fontSize: 16.5,
-                            color: AppColors.inkWarm)),
+                            color: context.palette.ink)),
                     if (subtitle != null && subtitle!.isNotEmpty) ...[
                       const SizedBox(height: 3),
                       Text(subtitle!,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontFamily: 'Inter',
                               fontSize: 13.5,
                               height: 1.4,
-                              color: AppColors.slate600)),
+                              color: context.palette.muted2)),
                     ],
                   ],
                 ),
               ),
-              trailing ?? const Icon(Icons.chevron_right_rounded, color: AppColors.slate500),
+              trailing ?? Icon(Icons.chevron_right_rounded, color: context.palette.muted),
             ],
           ),
         ),

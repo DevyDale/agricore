@@ -106,8 +106,8 @@ class _CartSheetState extends State<_CartSheet> {
         final lines = cart.lines;
         return Container(
           constraints: BoxConstraints(maxHeight: size.height * 0.85),
-          decoration: const BoxDecoration(
-              color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+          decoration: BoxDecoration(
+              color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(28))),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -115,7 +115,7 @@ class _CartSheetState extends State<_CartSheet> {
               Container(
                   width: 42,
                   height: 4,
-                  decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99))),
+                  decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99))),
               Padding(
                 padding: const EdgeInsets.fromLTRB(18, 14, 18, 6),
                 child: Row(
@@ -123,29 +123,29 @@ class _CartSheetState extends State<_CartSheet> {
                     const Icon(Icons.shopping_cart_rounded, color: AppColors.g600),
                     const SizedBox(width: 10),
                     Text('Your cart (${cart.count})',
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontFamily: 'Fraunces',
                             fontWeight: FontWeight.w800,
                             fontSize: 20,
-                            color: AppColors.inkWarm)),
+                            color: context.palette.ink)),
                     const Spacer(),
                     if (lines.isNotEmpty)
                       TextButton(
                           onPressed: _busy ? null : () => cart.clear(),
-                          child: const Text('Clear',
-                              style: TextStyle(fontFamily: 'Inter', color: AppColors.slate600))),
+                          child: Text('Clear',
+                              style: TextStyle(fontFamily: 'Inter', color: context.palette.muted2))),
                   ],
                 ),
               ),
               if (lines.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 30, 20, 50),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
                   child: Column(
                     children: [
-                      Icon(Icons.shopping_cart_outlined, size: 44, color: Color(0xFFCBD5C5)),
-                      SizedBox(height: 12),
+                      const Icon(Icons.shopping_cart_outlined, size: 44, color: Color(0xFFCBD5C5)),
+                      const SizedBox(height: 12),
                       Text('Your cart is empty.',
-                          style: TextStyle(fontFamily: 'Inter', color: AppColors.slate500)),
+                          style: TextStyle(fontFamily: 'Inter', color: context.palette.muted)),
                     ],
                   ),
                 )
@@ -171,7 +171,7 @@ class _CartSheetState extends State<_CartSheet> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.line)),
+          color: context.palette.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.palette.line)),
       child: Row(
         children: [
           ClipRRect(
@@ -186,8 +186,8 @@ class _CartSheetState extends State<_CartSheet> {
                 Text(l.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontFamily: 'Inter', fontWeight: FontWeight.w700, color: AppColors.inkWarm)),
+                    style: TextStyle(
+                        fontFamily: 'Inter', fontWeight: FontWeight.w700, color: context.palette.ink)),
                 const SizedBox(height: 2),
                 Text(money(l.price),
                     style: const TextStyle(
@@ -229,7 +229,7 @@ class _CartSheetState extends State<_CartSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Subtotal', style: TextStyle(fontFamily: 'Inter', color: AppColors.slate600)),
+                Text('Subtotal', style: TextStyle(fontFamily: 'Inter', color: context.palette.muted2)),
                 Text(money(cart.subtotal),
                     style: const TextStyle(
                         fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 20, color: AppColors.g600)),
@@ -260,9 +260,9 @@ class _CartSheetState extends State<_CartSheet> {
               ),
             ),
             const SizedBox(height: 6),
-            const Text('Payment is held safely in escrow until you confirm delivery.',
+            Text('Payment is held safely in escrow until you confirm delivery.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: AppColors.slate500)),
+                style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, color: context.palette.muted)),
           ],
         ),
       ),
@@ -295,8 +295,8 @@ class _CheckoutResultSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-          color: AppColors.cream, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+      decoration: BoxDecoration(
+          color: context.palette.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(28))),
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
       child: SafeArea(
         top: false,
@@ -308,7 +308,7 @@ class _CheckoutResultSheet extends StatelessWidget {
                 child: Container(
                     width: 42,
                     height: 4,
-                    decoration: BoxDecoration(color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+                    decoration: BoxDecoration(color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
             const SizedBox(height: 16),
             Center(
               child: Container(
@@ -321,10 +321,10 @@ class _CheckoutResultSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 14),
-            const Center(
+            Center(
               child: Text('Order placed',
                   style: TextStyle(
-                      fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 22, color: AppColors.inkWarm)),
+                      fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 22, color: context.palette.ink)),
             ),
             const SizedBox(height: 6),
             Center(
@@ -333,7 +333,7 @@ class _CheckoutResultSheet extends StatelessWidget {
                     ? 'Complete payment to hold the funds in escrow.'
                     : 'One order per store. Complete each payment to hold the funds in escrow.',
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600),
+                style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2),
               ),
             ),
             const SizedBox(height: 18),
@@ -344,16 +344,16 @@ class _CheckoutResultSheet extends StatelessWidget {
                     ? Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: context.palette.card,
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: AppColors.line)),
+                            border: Border.all(color: context.palette.line)),
                         child: Row(children: [
-                          const Icon(Icons.schedule_rounded, size: 18, color: AppColors.slate500),
+                          Icon(Icons.schedule_rounded, size: 18, color: context.palette.muted),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text('${p.store}: awaiting payment link',
-                                style: const TextStyle(
-                                    fontFamily: 'Inter', fontSize: 13, color: AppColors.slate600)),
+                                style: TextStyle(
+                                    fontFamily: 'Inter', fontSize: 13, color: context.palette.muted2)),
                           ),
                         ]),
                       )
@@ -382,8 +382,8 @@ class _CheckoutResultSheet extends StatelessWidget {
             Center(
               child: TextButton(
                 onPressed: () => Navigator.of(context).maybePop(),
-                child: const Text('Done',
-                    style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, color: AppColors.slate600)),
+                child: Text('Done',
+                    style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, color: context.palette.muted2)),
               ),
             ),
           ],

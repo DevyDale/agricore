@@ -128,7 +128,7 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: context.palette.surface,
       body: MaxWidthBody(
         child: RefreshIndicator(
           onRefresh: _load,
@@ -260,12 +260,12 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
     final ({Color bg, Color fg}) badge = switch (st) {
       'released' => (bg: const Color(0xFFDCFCE7), fg: const Color(0xFF166534)),
       'held' => (bg: const Color(0xFFE0F2FE), fg: const Color(0xFF075985)),
-      'refunded' => (bg: const Color(0xFFF1F5F9), fg: AppColors.slate600),
+      'refunded' => (bg: const Color(0xFFF1F5F9), fg: context.palette.muted2),
       'disputed' => (bg: const Color(0xFFFEE2E2), fg: const Color(0xFFB91C1C)),
       _ => (bg: const Color(0xFFFEF3C7), fg: const Color(0xFF92400E)),
     };
     final amtColor = st == 'refunded'
-        ? AppColors.slate600
+        ? context.palette.muted2
         : (incoming ? const Color(0xFF0F7A4B) : const Color(0xFFB45309));
     final date = _date(e).split('T').first;
 
@@ -273,9 +273,9 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.palette.card,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.line),
+        border: Border.all(color: context.palette.line),
       ),
       child: Row(
         children: [
@@ -295,11 +295,11 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
                 Text(title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w700,
                         fontSize: 13.5,
-                        color: AppColors.inkWarm)),
+                        color: context.palette.ink)),
                 const SizedBox(height: 3),
                 Row(children: [
                   Container(
@@ -315,8 +315,8 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
                   if (date.isNotEmpty) ...[
                     const SizedBox(width: 8),
                     Text(date,
-                        style: const TextStyle(
-                            fontFamily: 'Inter', fontSize: 11, color: AppColors.slate500)),
+                        style: TextStyle(
+                            fontFamily: 'Inter', fontSize: 11, color: context.palette.muted)),
                   ],
                 ]),
               ],
@@ -352,9 +352,9 @@ class _PayoutCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.palette.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.line),
+        border: Border.all(color: context.palette.line),
         boxShadow: [
           BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -384,19 +384,19 @@ class _PayoutCard extends StatelessWidget {
                 Text(name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontFamily: 'Fraunces',
                         fontWeight: FontWeight.w800,
                         fontSize: 16,
-                        color: AppColors.inkWarm)),
+                        color: context.palette.ink)),
                 const SizedBox(height: 2),
                 Text('$extra  ·  $masked',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: 12.5,
-                        color: AppColors.slate600)),
+                        color: context.palette.muted2)),
               ],
             ),
           ),
@@ -429,9 +429,9 @@ class _EmptyPayout extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 26, horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.palette.card,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppColors.line),
+          border: Border.all(color: context.palette.line),
         ),
         child: Column(
           children: [
@@ -440,23 +440,23 @@ class _EmptyPayout extends StatelessWidget {
               height: 54,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                  color: const Color(0xFFE7F4EC),
+                  color: context.palette.chipBg,
                   borderRadius: BorderRadius.circular(16)),
               child: const Icon(Icons.add_card_rounded,
                   color: Color(0xFF0F7A4B), size: 26),
             ),
             const SizedBox(height: 12),
             Text(context.tr('Add a payout account'),
-                style: const TextStyle(
+                style: TextStyle(
                     fontFamily: 'Fraunces',
                     fontWeight: FontWeight.w800,
                     fontSize: 15,
-                    color: AppColors.inkWarm)),
+                    color: context.palette.ink)),
             const SizedBox(height: 4),
             Text(context.tr('Mobile money or bank — so sale proceeds reach you.'),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                    fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
+                style: TextStyle(
+                    fontFamily: 'Inter', fontSize: 12.5, color: context.palette.muted)),
           ],
         ),
       ),
@@ -474,7 +474,7 @@ class _InfoNote extends StatelessWidget {
       decoration: BoxDecoration(
           color: const Color(0xFFEAF7EC),
           borderRadius: BorderRadius.circular(13),
-          border: Border.all(color: AppColors.line)),
+          border: Border.all(color: context.palette.line)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -482,11 +482,11 @@ class _InfoNote extends StatelessWidget {
           const SizedBox(width: 9),
           Expanded(
             child: Text(text,
-                style: const TextStyle(
+                style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 12,
                     height: 1.45,
-                    color: AppColors.slate600)),
+                    color: context.palette.muted2)),
           ),
         ],
       ),
@@ -578,22 +578,22 @@ class _PayoutSheetState extends State<_PayoutSheet> {
           Padding(
             padding: const EdgeInsets.only(left: 2, bottom: 6),
             child: Text(context.tr('Bank'),
-                style: const TextStyle(
+                style: TextStyle(
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w700,
                     fontSize: 12.5,
-                    color: AppColors.slate700)),
+                    color: context.palette.muted3)),
           ),
           GestureDetector(
             onTap: _pickBank,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.palette.card,
                   borderRadius: BorderRadius.circular(11),
-                  border: Border.all(color: AppColors.line)),
+                  border: Border.all(color: context.palette.line)),
               child: Row(children: [
-                const Icon(Icons.account_balance_rounded, size: 18, color: AppColors.slate600),
+                Icon(Icons.account_balance_rounded, size: 18, color: context.palette.muted2),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(_bankName ?? context.tr('Choose a bank'),
@@ -602,9 +602,9 @@ class _PayoutSheetState extends State<_PayoutSheet> {
                       style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 14,
-                          color: _bankName == null ? AppColors.slate500 : AppColors.inkWarm)),
+                          color: _bankName == null ? context.palette.muted : context.palette.ink)),
                 ),
-                const Icon(Icons.expand_more_rounded, size: 18, color: AppColors.slate500),
+                Icon(Icons.expand_more_rounded, size: 18, color: context.palette.muted),
               ]),
             ),
           ),
@@ -683,9 +683,9 @@ class _BankPickerSheetState extends State<_BankPickerSheet> {
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
         height: MediaQuery.sizeOf(context).height * 0.7,
-        decoration: const BoxDecoration(
-            color: AppColors.cream,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(
+            color: context.palette.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 8),
         child: Column(
           children: [
@@ -694,16 +694,16 @@ class _BankPickerSheetState extends State<_BankPickerSheet> {
                     width: 42,
                     height: 4,
                     decoration: BoxDecoration(
-                        color: AppColors.line, borderRadius: BorderRadius.circular(99)))),
+                        color: context.palette.line, borderRadius: BorderRadius.circular(99)))),
             const SizedBox(height: 14),
             Align(
               alignment: Alignment.centerLeft,
               child: Text(context.tr('Choose a bank'),
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontFamily: 'Fraunces',
                       fontWeight: FontWeight.w800,
                       fontSize: 19,
-                      color: AppColors.inkWarm)),
+                      color: context.palette.ink)),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -711,15 +711,15 @@ class _BankPickerSheetState extends State<_BankPickerSheet> {
               decoration: InputDecoration(
                 isDense: true,
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: context.palette.card,
                 hintText: context.tr('Search banks…'),
                 prefixIcon: const Icon(Icons.search, size: 20),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.line)),
+                    borderSide: BorderSide(color: context.palette.line)),
                 enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.line)),
+                    borderSide: BorderSide(color: context.palette.line)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: AppColors.green)),
@@ -736,7 +736,7 @@ class _BankPickerSheetState extends State<_BankPickerSheet> {
                           : ListView.separated(
                               itemCount: _view.length,
                               separatorBuilder: (_, __) =>
-                                  const Divider(height: 1, color: AppColors.line),
+                                  Divider(height: 1, color: context.palette.line),
                               itemBuilder: (_, i) {
                                 final b = _view[i];
                                 final name = pickString(b, ['name']) ?? 'Bank';
@@ -744,13 +744,13 @@ class _BankPickerSheetState extends State<_BankPickerSheet> {
                                 return ListTile(
                                   dense: true,
                                   title: Text(name,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontFamily: 'Inter',
                                           fontWeight: FontWeight.w600,
                                           fontSize: 14,
-                                          color: AppColors.inkWarm)),
-                                  trailing: const Icon(Icons.chevron_right_rounded,
-                                      color: AppColors.slate500),
+                                          color: context.palette.ink)),
+                                  trailing: Icon(Icons.chevron_right_rounded,
+                                      color: context.palette.muted),
                                   onTap: () =>
                                       Navigator.pop(context, {'code': code, 'name': name}),
                                 );
