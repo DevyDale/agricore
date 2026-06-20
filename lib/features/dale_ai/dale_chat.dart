@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import '../../core/i18n/app_translations.dart';
 import '../../core/i18n/locale_provider.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/theme/app_colors.dart';
@@ -118,6 +119,7 @@ class _DalePanelState extends State<_DalePanel> {
   bool _listening = false;
   bool _speakReplies = false;
   bool _spokenInput = false; // the last message came from the mic
+  bool _voiceLangHintShown = false;
 
   final List<_Msg> _msgs = [
     _Msg("Hi, I'm Dale — your Agricore assistant. Ask me about pricing, your farms, the marketplace, or tell me where to take you.",
@@ -212,6 +214,22 @@ class _DalePanelState extends State<_DalePanel> {
     if (mounted) Navigator.of(context).maybePop();
   }
 
+  /// One-time gentle hint if the device has no recogniser for the chosen
+  /// language — we still listen (falling back to the default) so it degrades
+  /// gracefully rather than silently.
+  void _maybeWarnVoiceLanguage(String lang) {
+    if (lang == 'en' || _voiceLangHintShown || _voice.supportsLanguage(lang)) return;
+    _voiceLangHintShown = true;
+    final name = kLanguages
+        .firstWhere((l) => l.code == lang, orElse: () => kLanguages.first)
+        .name;
+    showToast(
+        context,
+        'Voice for $name isn\'t installed on this device — add it in your phone\'s '
+        'language/voice settings. Using the default recogniser for now.',
+        success: false);
+  }
+
   Future<void> _toggleListen() async {
     if (!_voiceAvailable) return;
     if (_listening) {
@@ -220,6 +238,7 @@ class _DalePanelState extends State<_DalePanel> {
       return;
     }
     final loc = context.read<LocaleProvider>();
+    _maybeWarnVoiceLanguage(loc.language);
     setState(() => _listening = true);
     await _voice.listen(
       lang: loc.language,
