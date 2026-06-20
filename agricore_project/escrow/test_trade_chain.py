@@ -11,7 +11,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 
-from marketplace.models import Store, Order
+from marketplace.models import Store, Order, OrderItem, Product
 from escrow.models import Escrow, PaymentTransaction, PayoutAccount
 
 User = get_user_model()
@@ -154,3 +154,63 @@ class PayoutSplitTests(TestCase):
         )
         # rider gets the fee, seller gets the remainder (no commission configured)
         self.assertEqual(amounts, [Decimal("5000.00"), Decimal("95000.00")])
+
+
+class EscrowAmountIntegrityTests(TestCase):
+    """The amount that moves money must come from real product prices, never
+    from a client-supplied figure."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.buyer = make_user("buyer3", "buyer3@example.com")
+        self.seller = make_user("seller3", "seller3@example.com")
+        self.store = Store.objects.create(
+            owner=self.seller, name="Integrity Store",
+            owner_name="Seller Three", owner_phone="0772444444",
+        )
+        self.product = Product.objects.create(
+            store=self.store, title="Maize", category="Crops",
+            price=Decimal("25000"), stock_quantity=Decimal("100"), unit="bag",
+        )
+        self.order = Order.objects.create(
+            buyer=self.buyer, store=self.store,
+            total_amount=Decimal("0"), status="pending",
+        )
+        # The line carries a deliberately tampered price; the server must ignore
+        # it and price from the product instead.
+        OrderItem.objects.create(
+            order=self.order, product=self.product,
+            quantity=Decimal("2"), price_per_unit=Decimal("1"), subtotal=Decimal("2"),
+        )
+
+    def test_escrow_amount_uses_product_price_not_client_value(self):
+        self.client.force_authenticate(self.buyer)
+        r = self.client.post(
+            "/api/escrows/",
+            {"order": self.order.id, "amount": "1", "currency": "UGX"}, format="json",
+        )
+        self.assertEqual(r.status_code, 201, r.content)
+        esc = Escrow.objects.get(order=self.order)
+        # 2 bags x 25,000 = 50,000 — not the client's "1".
+        self.assertEqual(esc.amount, Decimal("50000.00"))
+
+    def test_escrow_rejected_for_order_with_no_items(self):
+        empty = Order.objects.create(
+            buyer=self.buyer, store=self.store,
+            total_amount=Decimal("0"), status="pending",
+        )
+        self.client.force_authenticate(self.buyer)
+        r = self.client.post(
+            "/api/escrows/",
+            {"order": empty.id, "amount": "100000", "currency": "UGX"}, format="json",
+        )
+        self.assertEqual(r.status_code, 400, r.content)
+
+    def test_cannot_open_escrow_for_another_users_order(self):
+        intruder = make_user("intruder3", "intruder3@example.com")
+        self.client.force_authenticate(intruder)
+        r = self.client.post(
+            "/api/escrows/",
+            {"order": self.order.id, "amount": "1", "currency": "UGX"}, format="json",
+        )
+        self.assertIn(r.status_code, (400, 403), r.content)
