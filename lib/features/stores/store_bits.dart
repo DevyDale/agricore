@@ -35,7 +35,7 @@ List<String> normCountries(dynamic c) {
       try {
         final p = jsonDecode(t);
         if (p is List) return p.map((x) => x.toString().trim()).where((s) => s.isNotEmpty).toList();
-      } catch (_) {}
+      } catch (_) {/* not valid JSON; fall back to treating it as a single value */}
       return [t];
     }
     if (t.contains(',')) return t.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();

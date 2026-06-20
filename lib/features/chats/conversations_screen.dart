@@ -6,6 +6,7 @@ import '../../core/network/chat_api.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
+import '../../core/utils/log.dart';
 import '../../widgets/app_toast.dart';
 import '../../widgets/farmland_background.dart';
 import '../../widgets/state_views.dart';
@@ -100,7 +101,9 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
         final res = await _api.searchUsers(v.trim());
         if (!mounted) return;
         setState(() => _people = res);
-      } catch (_) {}
+      } catch (e) {
+        logSwallowed('ConversationsScreen.searchUsers', e);
+      }
     });
   }
 

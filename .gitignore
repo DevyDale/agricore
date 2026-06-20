@@ -85,8 +85,15 @@ agricore_project/.env
 */.env
 myenv/
 *.bak
+*.bak*
 .phase1_backups_*/
 node_modules/
+
+# Private keys / certs (never commit)
+*.key
+*.pem
+*.p12
+*.pfx
 
 .security_backup_*/
 security_fix.py

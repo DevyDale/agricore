@@ -6,6 +6,7 @@ import '../../core/network/dio_client.dart';
 import '../../core/storage/token_storage.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
+import '../../core/utils/log.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/app_toast.dart';
 import '../../widgets/state_views.dart';
@@ -66,6 +67,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       _conv = null;
     }
     await _loadMessages();
+    if (!mounted) return;
     final token = await context.read<TokenStorage>().accessToken;
     if (!mounted) return;
     _socket.connect(widget.conversationId, token);
@@ -184,7 +186,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     try {
       final updated = await _api.react(m.id, reaction);
       _patch(ChatMessage.fromJson(updated));
-    } catch (_) {}
+    } catch (e) {
+      logSwallowed('ChatRoom.react', e);
+    }
   }
 
   void _openMsgMenu(ChatMessage m) {
@@ -311,7 +315,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                               try {
                                 await _api.removeMember(widget.conversationId, p['user']);
                                 if (mounted) Navigator.pop(context);
-                              } catch (_) {}
+                              } catch (e) {
+                                logSwallowed('ChatRoom.removeMember', e);
+                              }
                             },
                             child: const Text('Remove', style: TextStyle(color: Color(0xFFDC2626))),
                           )

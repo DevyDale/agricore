@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../core/utils/log.dart';
 
 class CartLine {
   final String id;
@@ -67,14 +68,18 @@ class CartModel extends ChangeNotifier {
         });
         notifyListeners();
       }
-    } catch (_) {}
+    } catch (e) {
+      logSwallowed('CartModel._load', e);
+    }
   }
 
   Future<void> _save() async {
     try {
       final p = await SharedPreferences.getInstance();
       await p.setString(_key, jsonEncode(_items.map((k, v) => MapEntry(k, v.toJson()))));
-    } catch (_) {}
+    } catch (e) {
+      logSwallowed('CartModel._save', e);
+    }
   }
 
   /// Returns true if added, false if out of stock / at stock limit.

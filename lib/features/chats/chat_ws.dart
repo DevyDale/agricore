@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../core/config/app_config.dart';
+import '../../core/utils/log.dart';
 
 /// Live chat socket. Emits decoded JSON frames (messages + presence/_update).
 /// Reconnects once after a short delay if the socket drops while open.
@@ -31,7 +32,9 @@ class ChatSocket {
           try {
             final decoded = jsonDecode(data as String);
             if (decoded is Map) _controller.add(decoded.cast<String, dynamic>());
-          } catch (_) {}
+          } catch (e) {
+            logSwallowed('ChatWs.onMessage', e);
+          }
         },
         onError: (_) => _scheduleReconnect(),
         onDone: _scheduleReconnect,
@@ -57,10 +60,10 @@ class ChatSocket {
   void _teardownSocket() {
     try {
       _sub?.cancel();
-    } catch (_) {}
+    } catch (_) {/* best-effort cleanup */}
     try {
       _ch?.sink.close();
-    } catch (_) {}
+    } catch (_) {/* best-effort cleanup */}
     _sub = null;
     _ch = null;
   }

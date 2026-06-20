@@ -118,6 +118,7 @@ class _FarmsScreenState extends State<FarmsScreen> {
       ),
     );
     if (ok != true) return;
+    if (!mounted) return;
     try {
       await context.read<DioClient>().dio.delete('${Api.farms}${farm['id']}/');
       if (!mounted) return;
@@ -195,7 +196,6 @@ class _FarmsScreenState extends State<FarmsScreen> {
               ),
               bottom: PreferredSize(preferredSize: const Size.fromHeight(56), child: _searchRow()),
             ),
-            SliverToBoxAdapter(child: _chipsRow()),
             SliverToBoxAdapter(child: _metrics()),
             if (_loading)
               const SliverToBoxAdapter(child: Padding(padding: EdgeInsets.only(top: 50), child: LoadingView()))
@@ -206,11 +206,6 @@ class _FarmsScreenState extends State<FarmsScreen> {
                   child: Padding(
                       padding: EdgeInsets.only(top: 30),
                       child: EmptyView(text: 'No farms yet. Tap "Add farm" to create your first one.', icon: Icons.agriculture_outlined)))
-            else if (view.isEmpty)
-              const SliverToBoxAdapter(
-                  child: Padding(
-                      padding: EdgeInsets.only(top: 30),
-                      child: EmptyView(text: 'No farms match your search.', icon: Icons.search_off_rounded)))
             else ...[
               SliverToBoxAdapter(
                 child: Padding(
@@ -219,27 +214,34 @@ class _FarmsScreenState extends State<FarmsScreen> {
                       style: const TextStyle(fontFamily: 'Inter', fontSize: 12.5, color: AppColors.slate500)),
                 ),
               ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 6, 16, 96),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (_, i) => Padding(
-                      padding: const EdgeInsets.only(bottom: 14),
-                      child: _Rise(
-                        index: i,
-                        child: _FarmCard(
-                          farm: view[i],
-                          totalHa: _totalHa,
-                          onManage: () => _openDetail(view[i]),
-                          onEdit: () => _openForm(farm: view[i]),
-                          onDelete: () => _confirmDelete(view[i]),
+              SliverToBoxAdapter(child: _chipsRow()),
+              if (view.isEmpty)
+                const SliverToBoxAdapter(
+                    child: Padding(
+                        padding: EdgeInsets.only(top: 30),
+                        child: EmptyView(text: 'No farms match your search.', icon: Icons.search_off_rounded)))
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 96),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (_, i) => Padding(
+                        padding: const EdgeInsets.only(bottom: 14),
+                        child: _Rise(
+                          index: i,
+                          child: _FarmCard(
+                            farm: view[i],
+                            totalHa: _totalHa,
+                            onManage: () => _openDetail(view[i]),
+                            onEdit: () => _openForm(farm: view[i]),
+                            onDelete: () => _confirmDelete(view[i]),
+                          ),
                         ),
                       ),
+                      childCount: view.length,
                     ),
-                    childCount: view.length,
                   ),
                 ),
-              ),
             ],
           ],
         ),
@@ -306,10 +308,10 @@ class _FarmsScreenState extends State<FarmsScreen> {
     );
   }
 
-  // ---- type chips, on the page just BELOW the bar (light theme) ----
+  // ---- type chips, now just BELOW the "Showing X of Y" count line ----
   Widget _chipsRow() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 0, 0),
+      padding: const EdgeInsets.fromLTRB(16, 8, 0, 6),
       child: SizedBox(
         height: 36,
         child: ListView(

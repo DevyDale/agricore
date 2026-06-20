@@ -122,6 +122,7 @@ class _LivestockManagementScreenState extends State<LivestockManagementScreen> {
       builder: (_) => _UnitSheet(fields: _fields, existing: existing),
     );
     if (result == null) return;
+    if (!mounted) return;
     try {
       final dio = context.read<DioClient>().dio;
       if (existing != null) {
@@ -149,6 +150,7 @@ class _LivestockManagementScreenState extends State<LivestockManagementScreen> {
       builder: (_) => _AnimalSheet(units: _units, existing: existing),
     );
     if (result == null) return;
+    if (!mounted) return;
     try {
       final dio = context.read<DioClient>().dio;
       if (existing != null) {
@@ -179,6 +181,7 @@ class _LivestockManagementScreenState extends State<LivestockManagementScreen> {
       ),
     );
     if (ok != true) return;
+    if (!mounted) return;
     try {
       final dio = context.read<DioClient>().dio;
       await dio.delete('$path${pickNum(obj, ['id'])?.toInt()}/');

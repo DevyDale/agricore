@@ -8,7 +8,14 @@ import '../storage/token_storage.dart';
 class DioClient {
   final TokenStorage _tokens;
   late final Dio dio;
-  bool _refreshing = false;
+
+  /// Single in-flight refresh shared by all concurrent 401s, so parallel
+  /// requests await one refresh instead of each skipping or refreshing alone.
+  Future<bool>? _refreshFuture;
+
+  /// Marks a request we've already retried once, to avoid an infinite
+  /// refresh/retry loop if the retried call also returns 401.
+  static const _retriedFlag = '__dioclient_retried__';
 
   DioClient(this._tokens) {
     dio = Dio(BaseOptions(
@@ -29,13 +36,16 @@ class DioClient {
       onError: (e, handler) async {
         final isAuthCall = e.requestOptions.path.contains('/auth/token');
         final is401 = e.response?.statusCode == 401;
-        if (is401 && !isAuthCall && !_refreshing) {
-          final ok = await _tryRefresh();
+        final alreadyRetried = e.requestOptions.extra[_retriedFlag] == true;
+        if (is401 && !isAuthCall && !alreadyRetried) {
+          final ok = await _refreshAccess();
           if (ok) {
             try {
               final retried = await _retry(e.requestOptions);
               return handler.resolve(retried);
-            } catch (_) {/* fall through */}
+            } on DioException catch (err) {
+              return handler.next(err);
+            }
           }
         }
         handler.next(e);
@@ -43,10 +53,15 @@ class DioClient {
     ));
   }
 
-  Future<bool> _tryRefresh() async {
+  /// Returns the shared refresh result, starting one if none is in flight.
+  Future<bool> _refreshAccess() {
+    return _refreshFuture ??=
+        _doRefresh().whenComplete(() => _refreshFuture = null);
+  }
+
+  Future<bool> _doRefresh() async {
     final refresh = await _tokens.refreshToken;
     if (refresh == null || refresh.isEmpty) return false;
-    _refreshing = true;
     try {
       final plain = Dio(BaseOptions(baseUrl: AppConfig.apiBaseUrl));
       final res = await plain.post(Api2.tokenRefresh, data: {'refresh': refresh});
@@ -58,8 +73,6 @@ class DioClient {
       return false;
     } catch (_) {
       return false;
-    } finally {
-      _refreshing = false;
     }
   }
 
@@ -68,6 +81,7 @@ class DioClient {
     final options = Options(
       method: ro.method,
       headers: {...ro.headers, 'Authorization': 'Bearer $token'},
+      extra: {...ro.extra, _retriedFlag: true},
     );
     return dio.request(
       ro.path,

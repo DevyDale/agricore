@@ -100,6 +100,7 @@ class _FieldManagementScreenState extends State<FieldManagementScreen> {
       builder: (_) => _PortionSheet(maxAvailable: _maxSize > 0 ? _available : null, unit: _unit),
     );
     if (result == null) return;
+    if (!mounted) return;
     try {
       final dio = context.read<DioClient>().dio;
       await dio.post(_fieldsPath, data: {...result, 'farm': _farmId, 'size_unit': _unit});
@@ -127,6 +128,7 @@ class _FieldManagementScreenState extends State<FieldManagementScreen> {
       ),
     );
     if (ok != true) return;
+    if (!mounted) return;
     try {
       final dio = context.read<DioClient>().dio;
       await dio.delete('$_fieldsPath${pickNum(p, ['id'])?.toInt()}/');
@@ -156,6 +158,7 @@ class _FieldManagementScreenState extends State<FieldManagementScreen> {
     final to = _portions.firstWhere((p) => (pickNum(p, ['id'])?.toInt()) == toId);
     final newFrom = (_portionSize(from) - amt);
     final newTo = (_portionSize(to) + amt);
+    if (!mounted) return;
     try {
       final dio = context.read<DioClient>().dio;
       await dio.patch('$_fieldsPath${pickNum(from, ['id'])?.toInt()}/', data: {'total_size': newFrom});
