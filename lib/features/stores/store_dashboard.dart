@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/security/secure_screen.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
 import '../../core/utils/log.dart';
@@ -49,7 +50,7 @@ class StoreDashboardScreen extends StatefulWidget {
   State<StoreDashboardScreen> createState() => _StoreDashboardScreenState();
 }
 
-class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
+class _StoreDashboardScreenState extends State<StoreDashboardScreen> with SecureScreenMixin {
   late Map<String, dynamic> _store;
   int _tab = 0;
   bool _tabLoading = false;

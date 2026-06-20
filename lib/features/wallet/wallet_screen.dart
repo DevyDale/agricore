@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/security/secure_screen.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
 import '../../core/utils/log.dart';
@@ -21,7 +22,7 @@ class WalletScreen extends StatefulWidget {
   State<WalletScreen> createState() => _WalletScreenState();
 }
 
-class _WalletScreenState extends State<WalletScreen> {
+class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
   bool _loading = true;
   String? _error;
   Map<String, dynamic>? _wallet;
