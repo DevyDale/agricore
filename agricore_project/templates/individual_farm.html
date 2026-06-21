@@ -535,6 +535,13 @@
       }
       #transfer-produce-modal .grid.grid-cols-3 > div > .input-field,
       #link-produce-modal .grid.grid-cols-3 > div > .input-field { margin-top: auto; }
+      /* Phones: stack Price / Quantity / Unit instead of 3 cramped columns. */
+      @media (max-width: 640px) {
+        #transfer-produce-modal .grid.grid-cols-3,
+        #link-produce-modal .grid.grid-cols-3 { grid-template-columns: 1fr; }
+        #transfer-produce-modal .grid.grid-cols-3 > div > label,
+        #link-produce-modal .grid.grid-cols-3 > div > label { min-height: 0; }
+      }
     </style>
 </head>
 <body class="min-h-screen">
