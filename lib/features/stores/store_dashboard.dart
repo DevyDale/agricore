@@ -849,8 +849,8 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                 ),
               ],
             ),
-            bottom: PreferredSize(preferredSize: const Size.fromHeight(50), child: _tabStrip()),
           ),
+          SliverPersistentHeader(pinned: true, delegate: _TabStripDelegate(_tabStrip())),
           SliverToBoxAdapter(child: _section()),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
@@ -3542,3 +3542,22 @@ class _TransporterSheetState extends State<_TransporterSheet> {
   }
 }
 
+
+/// Pinned header that keeps the store-dashboard tab strip visible (and tappable)
+/// under the collapsing hero, for all 8 sections.
+class _TabStripDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+  _TabStripDelegate(this.child);
+
+  @override
+  double get minExtent => 50;
+  @override
+  double get maxExtent => 50;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) =>
+      SizedBox(height: 50, child: child);
+
+  @override
+  bool shouldRebuild(covariant _TabStripDelegate oldDelegate) => true;
+}
