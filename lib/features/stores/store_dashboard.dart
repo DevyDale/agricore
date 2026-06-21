@@ -15,6 +15,7 @@ import '../../widgets/app_toast.dart';
 import '../../widgets/farmland_background.dart';
 import '../../widgets/state_views.dart';
 import 'store_bits.dart';
+import 'store_profile_edit.dart';
 import 'store_repository.dart';
 import '../wallet/wallet_screen.dart';
 import '../dale_ai/dale_chat.dart';
@@ -994,6 +995,27 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     );
   }
 
+  Widget _editProfileButton() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => StoreProfileEditScreen(store: _store, onSaved: _refreshStore),
+        ));
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+        decoration: BoxDecoration(
+            color: context.palette.card, borderRadius: BorderRadius.circular(11), border: Border.all(color: _green)),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          const Icon(Icons.edit_rounded, color: _green, size: 16),
+          const SizedBox(width: 5),
+          const Text('Edit profile',
+              style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 12.5, color: _green)),
+        ]),
+      ),
+    );
+  }
+
   Widget _statCard(String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(14),
@@ -1106,7 +1128,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
             Expanded(child: _statCard('Rating', rating.toStringAsFixed(1), Icons.star_rounded, _gold)),
           ]),
           const SizedBox(height: 18),
-          _sectionHeader('Store details'),
+          _sectionHeader('Store details', action: _editProfileButton()),
           _card(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

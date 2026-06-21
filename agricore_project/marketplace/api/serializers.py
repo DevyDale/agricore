@@ -24,6 +24,11 @@ class StoreSerializer(serializers.ModelSerializer):
             'countries_of_operation',
             'total_value', # Include fields you want to return
             'is_verified', # Renamed from 'verified' in frontend, check below
+            'logo',
+            'banner',
+            'business_hours',
+            'policies',
+            'social_links',
         ]
         read_only_fields = ['owner', 'total_value'] # owner is set by the viewset
 

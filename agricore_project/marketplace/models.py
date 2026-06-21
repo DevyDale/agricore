@@ -13,6 +13,13 @@ class Store(models.Model):
     countries_of_operation = models.CharField(max_length=255, blank=True, default='')
     total_value = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     is_verified = models.BooleanField(default=False)
+    # ---- Storefront profile ----
+    logo = models.ImageField(upload_to='store_logos/', blank=True, null=True)
+    banner = models.ImageField(upload_to='store_banners/', blank=True, null=True)
+    business_hours = models.CharField(max_length=255, blank=True, default='')
+    policies = models.TextField(blank=True, default='')
+    # {"website": ..., "facebook": ..., "instagram": ..., "whatsapp": ..., "x": ...}
+    social_links = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
