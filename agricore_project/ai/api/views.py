@@ -125,6 +125,9 @@ class DaleAIChatView(APIView):
             focus = "Help the user understand and act on the Agricore page they are on, using the context provided."
 
         system_msg = base_prompt + "\n\n" + focus
+        # Conversation seed for the LLM; later blocks append client history,
+        # context extras, and the user's prompt before the model call.
+        messages = [{'role': 'system', 'content': system_msg}]
 
         # --- Only use hardcoded/context answers for strict, data-only queries (e.g. farm count, direct list, etc.) ---
         farms = context.get('farms') if isinstance(context.get('farms'), list) else []
@@ -168,20 +171,8 @@ class DaleAIChatView(APIView):
                 crop = [f.get('name', 'Unnamed') for f in farms if f.get('type') == 'crops']
                 reply = 'Crop farms: ' + ', '.join(crop) if crop else 'You have no crop farms.'
             elif re.search(r'which.*mixed', prompt, re.I):
-                    if 'multi_farm' in page_name or 'farms' in page_name or 'dashboard' in page_name:
-                        system_msg = (
-            "You are Dale, the assistant for Agricore, a farming marketplace and farm-management platform. "
-            "Talk like a sharp, friendly professional speaking to a busy person. Lead with the answer or recommendation in the very first sentence. "
-            "Keep replies short: 2-4 sentences, or at most 3-5 tight bullet points. No walls of text, no filler, no restating the question, no preamble. "
-            "Do NOT use big tables or multi-column breakdowns unless the user explicitly asks to compare items; even then keep it to the few columns that matter. "
-            "When recommending, give 1-3 specific picks, each with a one-line reason grounded in the price/rating/stock numbers in the context 'extras'. "
-            "If the user asks which one to buy, commit to a single clear best pick and say why in one sentence. "
-            "Answer how-to or 'what can I do here' questions using the 'features' text in the context. "
-            "Be warm but efficient; skip sign-offs like 'let me know if you want more' unless it genuinely adds value. Only assist the authenticated user."
-        )  # Dale AI v2 style
-        for item in reversed(list(recent)):
-            messages.append({'role': 'user', 'content': item.prompt[:4000]})
-            messages.append({'role': 'assistant', 'content': item.response[:4000]})
+                mixed = [f.get('name', 'Unnamed') for f in farms if f.get('type') == 'mixed']
+                reply = 'Mixed farms: ' + ', '.join(mixed) if mixed else 'You have no mixed farms.'
 
         for h in history[-6:]:  # include up to last 6 turns from client
             if 'role' in h and 'content' in h:
