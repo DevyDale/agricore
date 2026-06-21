@@ -52,6 +52,8 @@ if SENTRY_DSN:
 
 # ==================== APPLICATION DEFINITION ====================
 INSTALLED_APPS = [
+    # Must be first so `runserver` serves the Channels ASGI app (websockets/chat).
+    'daphne',
     # African Agricultural Commerce Ecosystem - Phase 1
     'marketprices.apps.MarketPricesConfig',
     'logistics.apps.LogisticsConfig',
