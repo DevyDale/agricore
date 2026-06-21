@@ -1,0 +1,63 @@
+# Render Blueprint for Agricore (Django + Channels/ASGI).
+#
+# Deploy: push to GitHub, then in Render -> New + -> Blueprint -> pick this repo.
+# After the first apply, fill the `sync: false` secrets in the service's
+# Environment tab (they are intentionally NOT stored in git).
+#
+# The Django project lives in the agricore_project/ subdirectory, so rootDir
+# points there. Chat/notifications need ASGI, hence daphne (not gunicorn/wsgi).
+services:
+  - type: web
+    name: agricore
+    runtime: python
+    rootDir: agricore_project
+    plan: free
+    healthCheckPath: /auth/
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate --no-input"
+    startCommand: "daphne -b 0.0.0.0 -p $PORT agricore_project.asgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: SECRET_KEY
+        generateValue: true        # Render generates a strong key
+      - key: DEBUG
+        value: "False"
+      - key: REDIS_URL              # auto-wired from the Key Value store below
+        fromService:
+          type: redis
+          name: agricore-redis
+          property: connectionString
+      # ---- Secrets you set in the dashboard (not in git) ----
+      - key: ALLOWED_HOSTS          # e.g. agricore.onrender.com,yourdomain.com
+        sync: false
+      - key: DATABASE_URL           # Supabase Postgres connection string
+        sync: false
+      - key: CEREBRAS_API_KEY       # Dale AI
+        sync: false
+      - key: GEMINI_API_KEY         # crop diagnosis (optional)
+        sync: false
+      - key: GOOGLE_OAUTH_CLIENT_ID
+        sync: false
+      - key: GOOGLE_OAUTH_CLIENT_IDS
+        sync: false
+      # ---- Payments stay in sandbox (Phase 0) ----
+      - key: PESAPAL_ENV
+        value: "sandbox"
+      - key: PESAPAL_CONSUMER_KEY
+        sync: false
+      - key: PESAPAL_CONSUMER_SECRET
+        sync: false
+      # ---- SMS (Africa's Talking) ----
+      - key: SMS_PROVIDER
+        sync: false
+      - key: AT_USERNAME
+        sync: false
+      - key: AT_API_KEY
+        sync: false
+
+  # Channels layer for realtime chat/notifications.
+  - type: redis
+    name: agricore-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []   # internal only — reachable from the web service, not the public internet

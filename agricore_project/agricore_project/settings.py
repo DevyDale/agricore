@@ -24,6 +24,16 @@ ALLOWED_HOSTS = env.list(
     default=['127.0.0.1', 'localhost', '0.0.0.0', '10.0.2.2', '.ngrok-free.dev', '.ngrok-free.app'],
 )
 
+# --- PaaS host/proxy awareness (Render etc.) ---
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+_render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if _render_host:
+    ALLOWED_HOSTS.append(_render_host)
+    CSRF_TRUSTED_ORIGINS.append(f'https://{_render_host}')
+# Render terminates TLS at its edge proxy; trust the forwarded scheme so Django
+# sees the request as HTTPS (otherwise SECURE_SSL_REDIRECT can loop).
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # ==================== SECURITY ====================
 # Relaxed in DEBUG (local dev), hardened automatically when DEBUG is off (prod).
 SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=not DEBUG)
