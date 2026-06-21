@@ -184,17 +184,24 @@ CORS_ALLOW_ALL_ORIGINS = env.bool('CORS_ALLOW_ALL_ORIGINS', default=DEBUG)
 CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
 CORS_ALLOW_CREDENTIALS = env.bool('CORS_ALLOW_CREDENTIALS', default=True)
 
-# ==================== CHANNELS + REDIS ====================
-REDIS_URL = env('REDIS_URL', default='redis://localhost:6379/0')
+# ==================== CHANNELS (chat / presence websockets) ====================
+# Redis is used when REDIS_URL is set — REQUIRED in multi-process production so
+# websocket messages fan out across workers. With no REDIS_URL we fall back to an
+# in-memory layer so local dev and single-process demos need no external Redis.
+# In-memory does NOT share state across processes, so production MUST set REDIS_URL.
+REDIS_URL = env('REDIS_URL', default='')
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [REDIS_URL],
+if REDIS_URL:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {'hosts': [REDIS_URL]},
         },
-    },
-}
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default': {'BACKEND': 'channels.layers.InMemoryChannelLayer'},
+    }
 
 # ==================== STATIC & MEDIA ====================
 STATIC_URL = '/static/'
