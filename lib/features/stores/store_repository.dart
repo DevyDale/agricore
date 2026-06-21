@@ -95,6 +95,10 @@ class StoreRepository {
     await _dio.patch('${Api.products}$id/', data: {'stock_quantity': qty});
   }
 
+  Future<void> releaseProduct(int id) async {
+    await _dio.patch('${Api.products}$id/release/');
+  }
+
   // ---- order mutations ----
   Future<void> updateOrderStatus(int id, String status) async {
     await _dio.patch('/orders/$id/', data: {'status': status});

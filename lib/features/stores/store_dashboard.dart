@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../core/network/dio_client.dart';
@@ -16,6 +17,8 @@ import '../../widgets/state_views.dart';
 import 'store_bits.dart';
 import 'store_repository.dart';
 import '../wallet/wallet_screen.dart';
+import '../dale_ai/dale_chat.dart';
+import '../dale_ai/dale_models.dart';
 
 const Color _heroDark = Color(0xFF22432C);
 const Color _green = Color(0xFF2E7D46);
@@ -413,6 +416,19 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     }
   }
 
+  Future<void> _releaseProduct(Map<String, dynamic> p) async {
+    final id = (pickNum(p, ['id']) ?? 0).toInt();
+    try {
+      await _repo.releaseProduct(id);
+      if (!mounted) return;
+      showToast(context, 'Product released.');
+      _loadTab(1, force: true);
+      _loaded.remove(0);
+    } catch (e) {
+      if (mounted) showToast(context, friendlyError(e), success: false);
+    }
+  }
+
   Future<void> _deleteProduct(Map<String, dynamic> p) async {
     if (!await _confirm('Delete product?', 'This permanently removes it from your store.', danger: true)) return;
     final id = (pickNum(p, ['id']) ?? 0).toInt();
@@ -731,14 +747,17 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     );
     if (r == null) return;
     final imagePath = r.remove('_imagePath') as String?;
+    final audioPath = r.remove('_audioPath') as String?;
+    final audioName = r.remove('_audioName') as String?;
     try {
       r['store'] = _id;
       r['is_active'] = true;
       dynamic data = r;
-      if (imagePath != null) {
+      if (imagePath != null || audioPath != null) {
         data = FormData.fromMap({
           ...r.map((k, v) => MapEntry(k, v is bool ? '$v' : v)),
-          'image': MultipartFile.fromFileSync(imagePath, filename: imagePath.split('/').last),
+          if (imagePath != null) 'image': MultipartFile.fromFileSync(imagePath, filename: imagePath.split('/').last),
+          if (audioPath != null) 'audio': MultipartFile.fromFileSync(audioPath, filename: audioName ?? audioPath.split('/').last),
         });
       }
       await _repo.createAd(data);
@@ -756,8 +775,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     final name = pickString(_store, ['name', 'store_name', 'title']) ?? 'Store';
     final verified = _store['is_verified'] == true;
     final value = pickNum(_store, ['total_value']);
+    // Tell Dale it's on the digital-store dashboard so its answers are store-aware.
+    context.read<DaleController>().setPage('digital_store');
     return Scaffold(
       backgroundColor: context.palette.surface,
+      floatingActionButton: const DaleOrb(),
       body: MaxWidthBody(
         child: CustomScrollView(
           slivers: [
@@ -1333,6 +1355,10 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     final unit = pickString(p, ['unit']) ?? '';
     final published = p['is_published'] != false;
     final selected = _prodSelected.contains(pid);
+    final expiry = pickString(p, ['expiration_date']) ?? '';
+    final dropship = p['is_dropshippable'] == true;
+    final active = p['is_active'] != false;
+    final canRelease = dropship && !(published && active);
     return GestureDetector(
       onTap: _prodSelect
           ? () => setState(() {
@@ -1396,6 +1422,25 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                 ),
               ],
             ]),
+            if (dropship || expiry.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Wrap(spacing: 8, runSpacing: 6, children: [
+                if (dropship)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(color: const Color(0xFFEFF6FF), borderRadius: BorderRadius.circular(999)),
+                    child: const Text('Dropshippable',
+                        style: TextStyle(fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w700, color: Color(0xFF075985))),
+                  ),
+                if (expiry.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(color: const Color(0xFFFAEEDA), borderRadius: BorderRadius.circular(999)),
+                    child: Text('Expires ${expiry.length >= 10 ? expiry.substring(0, 10) : expiry}',
+                        style: const TextStyle(fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w700, color: Color(0xFF854F0B))),
+                  ),
+              ]),
+            ],
             if (!_prodSelect) ...[
               const SizedBox(height: 10),
               Row(children: [
@@ -1424,6 +1469,13 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
                   _smallBtn(Icons.delete_outline_rounded, 'Delete', () => _deleteProduct(p), danger: true),
                 ],
               ),
+              if (canRelease) ...[
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: _smallBtn(Icons.rocket_launch_rounded, 'Release', () => _releaseProduct(p), color: const Color(0xFF075985)),
+                ),
+              ],
             ],
           ],
         ),
@@ -2485,6 +2537,8 @@ class _ProductSheetState extends State<_ProductSheet> {
   String _category = 'Produce';
   String _unit = 'kg';
   bool _published = true;
+  bool _dropshippable = false;
+  DateTime? _expiry;
   String? _err;
   final ImagePicker _picker = ImagePicker();
   String? _imagePath;
@@ -2507,6 +2561,9 @@ class _ProductSheetState extends State<_ProductSheet> {
       final u = pickString(e, ['unit']);
       if (u != null && _units.contains(u)) _unit = u;
       _published = e['is_published'] != false;
+      _dropshippable = e['is_dropshippable'] == true;
+      final exp = pickString(e, ['expiration_date']);
+      if (exp != null && exp.length >= 10) _expiry = DateTime.tryParse(exp.substring(0, 10));
       _existingImage = pickString(e, ['image', 'image_url']);
     }
   }
@@ -2536,8 +2593,24 @@ class _ProductSheetState extends State<_ProductSheet> {
       'unit': _unit,
       'description': _desc.text.trim(),
       'is_published': _published,
+      'is_dropshippable': _dropshippable,
+      if (_expiry != null) 'expiration_date': _fmtDate(_expiry!),
       '_imagePath': _imagePath,
     });
+  }
+
+  String _fmtDate(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  Future<void> _pickExpiry() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _expiry ?? now,
+      firstDate: DateTime(now.year - 1),
+      lastDate: DateTime(now.year + 10),
+    );
+    if (picked != null) setState(() => _expiry = picked);
   }
 
   Future<void> _pickImage() async {
@@ -2639,10 +2712,34 @@ class _ProductSheetState extends State<_ProductSheet> {
               const SizedBox(height: 10),
               _field(_desc, 'Description (optional)', lines: 2),
               const SizedBox(height: 12),
+              GestureDetector(
+                onTap: _pickExpiry,
+                child: Container(
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.palette.line)),
+                  child: Row(children: [
+                    const Icon(Icons.event_rounded, size: 16, color: _green),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(_expiry == null ? 'Expiration date (optional)' : 'Expires ${_fmtDate(_expiry!)}',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: _expiry == null ? context.palette.muted : context.palette.ink)),
+                    ),
+                    if (_expiry != null)
+                      GestureDetector(onTap: () => setState(() => _expiry = null), child: Icon(Icons.close_rounded, size: 18, color: context.palette.muted)),
+                  ]),
+                ),
+              ),
+              const SizedBox(height: 12),
               Row(children: [
                 Text('Publish to marketplace', style: TextStyle(fontFamily: 'Inter', fontSize: 13.5, fontWeight: FontWeight.w600, color: context.palette.muted3)),
                 const Spacer(),
                 Switch(value: _published, activeThumbColor: _green, onChanged: (v) => setState(() => _published = v)),
+              ]),
+              Row(children: [
+                Text('Allow dropshipping', style: TextStyle(fontFamily: 'Inter', fontSize: 13.5, fontWeight: FontWeight.w600, color: context.palette.muted3)),
+                const Spacer(),
+                Switch(value: _dropshippable, activeThumbColor: _green, onChanged: (v) => setState(() => _dropshippable = v)),
               ]),
               const SizedBox(height: 12),
               GestureDetector(
@@ -2709,12 +2806,15 @@ class _AdSheetState extends State<_AdSheet> {
   final _title = TextEditingController();
   final _desc = TextEditingController();
   final _cta = TextEditingController(text: 'Shop Now');
+  final _link = TextEditingController();
   int _days = 7;
   String _bg = '#2E7D46';
   String _textMode = 'auto'; // auto | light | dark
   String? _err;
   final ImagePicker _picker = ImagePicker();
   String? _imagePath;
+  String? _audioPath;
+  String? _audioName;
 
   static const _durations = [
     [1, '1 day'],
@@ -2722,6 +2822,20 @@ class _AdSheetState extends State<_AdSheet> {
     [14, '2 weeks'],
     [30, '1 month'],
   ];
+
+  // duration_days -> price (UGX)
+  static const Map<int, int> _priceTiers = {1: 500, 7: 3000, 14: 5500, 30: 10000};
+
+  int get _price {
+    if (_priceTiers.containsKey(_days)) return _priceTiers[_days]!;
+    // nearest tier at or below the chosen duration, else the lowest tier
+    final keys = _priceTiers.keys.toList()..sort();
+    int chosen = keys.first;
+    for (final k in keys) {
+      if (k <= _days) chosen = k;
+    }
+    return _priceTiers[chosen]!;
+  }
 
   static const _swatches = [
     '#2E7D46', '#0F7A4B', '#22432C', '#075985',
@@ -2741,6 +2855,7 @@ class _AdSheetState extends State<_AdSheet> {
     _title.dispose();
     _desc.dispose();
     _cta.dispose();
+    _link.dispose();
     super.dispose();
   }
 
@@ -2781,14 +2896,19 @@ class _AdSheetState extends State<_AdSheet> {
       setState(() => _err = 'Add a headline and a description.');
       return;
     }
+    final link = _link.text.trim();
     Navigator.pop(context, <String, dynamic>{
       'title': title,
       'description': desc,
       'cta_text': _cta.text.trim().isEmpty ? 'Shop Now' : _cta.text.trim(),
       'duration_days': _days,
+      'price_paid': '$_price',
       'background_color': _bg,
       'text_color': _textHex,
+      if (link.isNotEmpty) 'link_url': link,
       '_imagePath': _imagePath,
+      '_audioPath': _audioPath,
+      '_audioName': _audioName,
     });
   }
 
@@ -2798,6 +2918,21 @@ class _AdSheetState extends State<_AdSheet> {
       if (x != null) setState(() => _imagePath = x.path);
     } catch (e) {
       logSwallowed('AdSheet.pickImage', e);
+    }
+  }
+
+  Future<void> _pickAudio() async {
+    try {
+      final r = await FilePicker.platform.pickFiles(type: FileType.audio);
+      final f = r?.files.isNotEmpty == true ? r!.files.first : null;
+      if (f?.path != null) {
+        setState(() {
+          _audioPath = f!.path;
+          _audioName = f.name;
+        });
+      }
+    } catch (e) {
+      logSwallowed('AdSheet.pickAudio', e);
     }
   }
 
@@ -2865,6 +3000,8 @@ class _AdSheetState extends State<_AdSheet> {
               _field(_desc, 'Description', lines: 2),
               const SizedBox(height: 10),
               _field(_cta, 'Button text'),
+              const SizedBox(height: 10),
+              _field(_link, 'Link URL (optional)'),
               const SizedBox(height: 14),
               _label('Background colour'),
               const SizedBox(height: 8),
@@ -2922,6 +3059,19 @@ class _AdSheetState extends State<_AdSheet> {
                   );
                 }).toList(),
               ),
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                decoration: BoxDecoration(color: const Color(0xFFEAF7EC), borderRadius: BorderRadius.circular(11), border: Border.all(color: const Color(0xFFBBF0CC))),
+                child: Row(children: [
+                  const Icon(Icons.payments_rounded, size: 16, color: Color(0xFF166534)),
+                  const SizedBox(width: 8),
+                  const Text('Cost', style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF166534))),
+                  const Spacer(),
+                  Text(_money(_price), style: const TextStyle(fontFamily: 'Fraunces', fontSize: 15, fontWeight: FontWeight.w900, color: Color(0xFF166534))),
+                ]),
+              ),
               const SizedBox(height: 14),
               _label('Image (optional)'),
               const SizedBox(height: 8),
@@ -2939,6 +3089,36 @@ class _AdSheetState extends State<_AdSheet> {
                     if (_imagePath != null) ...[
                       const SizedBox(width: 10),
                       GestureDetector(onTap: () => setState(() => _imagePath = null), child: Icon(Icons.close_rounded, size: 18, color: context.palette.muted)),
+                    ],
+                  ]),
+                ),
+              ),
+              const SizedBox(height: 14),
+              _label('Audio (optional)'),
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: _pickAudio,
+                child: Container(
+                  height: 44,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.palette.line)),
+                  child: Row(children: [
+                    Icon(_audioPath == null ? Icons.audiotrack_rounded : Icons.check_circle_rounded, size: 16, color: _green),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(_audioPath == null ? 'Add audio clip' : (_audioName ?? 'Audio added'),
+                          maxLines: 1, overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: _green)),
+                    ),
+                    if (_audioPath != null) ...[
+                      const SizedBox(width: 10),
+                      GestureDetector(
+                          onTap: () => setState(() {
+                                _audioPath = null;
+                                _audioName = null;
+                              }),
+                          child: Icon(Icons.close_rounded, size: 18, color: context.palette.muted)),
                     ],
                   ]),
                 ),
