@@ -13,7 +13,6 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/json_utils.dart';
 import '../../core/utils/log.dart';
 import '../../widgets/app_toast.dart';
-import '../../widgets/farmland_background.dart';
 import '../../widgets/state_views.dart';
 import 'store_bits.dart';
 import 'store_profile_edit.dart';
@@ -802,11 +801,28 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  RepaintBoundary(child: FarmlandBackground(showPins: false, child: const SizedBox.expand())),
-                  const DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x4D14301F), Color(0xF20E2018)]),
+                  const Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Color(0xFF15663F), Color(0xFF0F3D28), Color(0xFF0A2519)],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // soft glow for depth
+                  Positioned(
+                    top: -60,
+                    right: -50,
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(colors: [Color(0x4459E08F), Color(0x0059E08F)]),
+                      ),
                     ),
                   ),
                   LayoutBuilder(

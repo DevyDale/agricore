@@ -120,7 +120,9 @@ class _WalletScreenState extends State<WalletScreen> with SecureScreenMixin {
   }
 
   String get _balanceText {
-    final code = pickString(_wallet ?? {}, ['currency']) ?? 'USD';
+    // Use the same currency the rest of the wallet (escrows/activity) is in so
+    // the headline balance can't disagree with the transactions below it.
+    final code = pickString(_wallet ?? {}, ['currency']) ?? _curr;
     final bal = pickNum(_wallet ?? {}, ['balance']) ?? 0;
     return money(bal, code: code, decimals: 2);
   }
