@@ -13,6 +13,11 @@ class SecureScreen {
   static int _count = 0;
 
   static Future<void> _apply(bool on) async {
+    // FLAG_SECURE renders as an all-black window on the Android emulator (its
+    // GPU can't composite secure surfaces), which breaks development. Only
+    // enforce screenshot protection in release builds — production still gets
+    // it, dev/emulator isn't blacked out.
+    if (!kReleaseMode) return;
     if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
     try {
       await _ch.invokeMethod('setSecure', {'on': on});
