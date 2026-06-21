@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -786,7 +787,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
           slivers: [
           SliverAppBar(
             pinned: true,
-            expandedHeight: 168,
+            expandedHeight: 208,
             toolbarHeight: 56,
             backgroundColor: _heroDark,
             foregroundColor: Colors.white,
@@ -796,58 +797,61 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
               icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
               onPressed: () => Navigator.of(context).maybePop(),
             ),
-            flexibleSpace: Stack(
-              fit: StackFit.expand,
-              children: [
-                RepaintBoundary(child: FarmlandBackground(showPins: false, child: const SizedBox.expand())),
-                const DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x330E2018), Color(0xE60E2018)]),
+            flexibleSpace: ClipRRect(
+              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(26)),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  RepaintBoundary(child: FarmlandBackground(showPins: false, child: const SizedBox.expand())),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x4D14301F), Color(0xF20E2018)]),
+                    ),
                   ),
-                ),
-                LayoutBuilder(
-                  builder: (context, c) {
-                    final top = MediaQuery.of(context).padding.top;
-                    final maxH = 168.0 + top;
-                    final minH = kToolbarHeight + 50.0 + top;
-                    final t = ((c.maxHeight - minH) / (maxH - minH)).clamp(0.0, 1.0);
-                    final titleOpacity = ((0.4 - t) / 0.4).clamp(0.0, 1.0);
-                    return Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Positioned.fill(
-                          child: IgnorePointer(child: Opacity(opacity: titleOpacity, child: const ColoredBox(color: _heroDark))),
-                        ),
-                        Positioned(
-                          left: 18,
-                          right: 18,
-                          bottom: 58,
-                          child: Opacity(opacity: t, child: _heroContent(name, verified, value)),
-                        ),
-                        Positioned(
-                          top: top,
-                          left: 56,
-                          right: 16,
-                          height: kToolbarHeight,
-                          child: IgnorePointer(
-                            child: Opacity(
-                              opacity: titleOpacity,
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(name,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 18, color: Colors.white)),
+                  LayoutBuilder(
+                    builder: (context, c) {
+                      final top = MediaQuery.of(context).padding.top;
+                      final maxH = 208.0 + top;
+                      final minH = kToolbarHeight + 50.0 + top;
+                      final t = ((c.maxHeight - minH) / (maxH - minH)).clamp(0.0, 1.0);
+                      final titleOpacity = ((0.4 - t) / 0.4).clamp(0.0, 1.0);
+                      return Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Positioned.fill(
+                            child: IgnorePointer(child: Opacity(opacity: titleOpacity, child: const ColoredBox(color: _heroDark))),
+                          ),
+                          Positioned(
+                            left: 18,
+                            right: 18,
+                            bottom: 60,
+                            child: Opacity(opacity: t, child: _heroContent(name, verified, value)),
+                          ),
+                          Positioned(
+                            top: top,
+                            left: 56,
+                            right: 16,
+                            height: kToolbarHeight,
+                            child: IgnorePointer(
+                              child: Opacity(
+                                opacity: titleOpacity,
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 18, color: Colors.white)),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ],
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           SliverPersistentHeader(pinned: true, delegate: _TabStripDelegate(_tabStrip())),
@@ -859,43 +863,128 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
     );
   }
 
+  String _storeInitials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) return 'S';
+    if (parts.length == 1) {
+      final p = parts.first;
+      return (p.length >= 2 ? p.substring(0, 2) : p).toUpperCase();
+    }
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
+  Widget _storeAvatar(String name, {double size = 56}) {
+    final logo = absoluteUrl(pickString(_store, ['logo']));
+    final placeholder = Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        gradient: AppColors.emeraldGrad,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white.withValues(alpha: 0.55), width: 2),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 12, offset: const Offset(0, 4))],
+      ),
+      child: Text(_storeInitials(name),
+          style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: size * 0.36, color: Colors.white)),
+    );
+    if (logo == null || logo.isEmpty) return placeholder;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white.withValues(alpha: 0.55), width: 2),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 12, offset: const Offset(0, 4))],
+      ),
+      child: ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: logo,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          placeholder: (_, __) => placeholder,
+          errorWidget: (_, __, ___) => placeholder,
+        ),
+      ),
+    );
+  }
+
+  Widget _heroMiniMetric(IconData icon, String label, String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+      ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Icon(icon, size: 15, color: Colors.white.withValues(alpha: 0.9)),
+        const SizedBox(width: 8),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label.toUpperCase(),
+                style: TextStyle(
+                    fontFamily: 'Inter', fontSize: 9, letterSpacing: 0.6, fontWeight: FontWeight.w700, color: Colors.white.withValues(alpha: 0.72))),
+            const SizedBox(height: 1),
+            Text(value,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontFamily: 'Fraunces', fontSize: 14, fontWeight: FontWeight.w800, color: Colors.white)),
+          ],
+        ),
+      ]),
+    );
+  }
+
   Widget _heroContent(String name, bool verified, num? value) {
+    final incoming = _orders.where((o) => _ordStore(o) == _id).length;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Flexible(
-              child: Text(name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 25, height: 1.05, color: Colors.white)),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: verified ? const Color(0x3334D399) : Colors.white.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: verified ? const Color(0xFF9FE1CB) : Colors.white24),
+            _storeAvatar(name),
+            const SizedBox(width: 13),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 23, height: 1.05, color: Colors.white)),
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: verified ? const Color(0x3334D399) : Colors.white.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(color: verified ? const Color(0xFF9FE1CB) : Colors.white24),
+                    ),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      Icon(verified ? Icons.verified_rounded : Icons.schedule_rounded,
+                          size: 12, color: verified ? const Color(0xFFBBF7D0) : Colors.white70),
+                      const SizedBox(width: 4),
+                      Text(verified ? 'Verified store' : 'Pending review',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w700, color: verified ? const Color(0xFFBBF7D0) : Colors.white70)),
+                    ]),
+                  ),
+                ],
               ),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(verified ? Icons.verified_rounded : Icons.schedule_rounded,
-                    size: 12, color: verified ? const Color(0xFFBBF7D0) : Colors.white70),
-                const SizedBox(width: 4),
-                Text(verified ? 'Verified' : 'Pending',
-                    style: TextStyle(fontFamily: 'Inter', fontSize: 10.5, fontWeight: FontWeight.w700, color: verified ? const Color(0xFFBBF7D0) : Colors.white70)),
-              ]),
             ),
           ],
         ),
-        const SizedBox(height: 7),
+        const SizedBox(height: 14),
         Row(children: [
-          Icon(Icons.sell_rounded, size: 14, color: Colors.white.withValues(alpha: 0.82)),
-          const SizedBox(width: 6),
-          Text('Store value ${_money(value)}',
-              style: TextStyle(fontFamily: 'Inter', fontSize: 12.5, fontWeight: FontWeight.w600, color: Colors.white.withValues(alpha: 0.9))),
+          Flexible(child: _heroMiniMetric(Icons.sell_rounded, 'Revenue', _money(value))),
+          const SizedBox(width: 10),
+          Flexible(child: _heroMiniMetric(Icons.receipt_long_rounded, 'Orders', incoming.toString())),
         ]),
       ],
     );
@@ -904,25 +993,34 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
   Widget _tabStrip() {
     return Container(
       color: _heroDark,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: const EdgeInsets.fromLTRB(12, 7, 12, 9),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _tabs.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, __) => const SizedBox(width: 9),
         itemBuilder: (_, i) {
           final on = i == _tab;
           return GestureDetector(
             onTap: () => _select(i),
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
               alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 18),
               decoration: BoxDecoration(
-                color: on ? Colors.white : Colors.white.withValues(alpha: 0.12),
+                color: on ? Colors.white : Colors.transparent,
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: on ? Colors.white : Colors.white24),
+                border: Border.all(color: on ? Colors.white : Colors.white.withValues(alpha: 0.28)),
+                boxShadow: on
+                    ? [BoxShadow(color: Colors.black.withValues(alpha: 0.18), blurRadius: 8, offset: const Offset(0, 2))]
+                    : null,
               ),
               child: Text(_tabs[i],
-                  style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13, color: on ? _heroDark : Colors.white)),
+                  style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: on ? FontWeight.w800 : FontWeight.w600,
+                      fontSize: 13,
+                      color: on ? _heroDark : Colors.white.withValues(alpha: 0.88))),
             ),
           );
         },
@@ -959,8 +1057,15 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
   Widget _card({required Widget child, EdgeInsets? padding}) {
     return Container(
       width: double.infinity,
-      padding: padding ?? const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.palette.line)),
+      padding: padding ?? const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.palette.card,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: context.palette.line),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 12, offset: const Offset(0, 4)),
+        ],
+      ),
       child: child,
     );
   }
@@ -970,6 +1075,12 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
+          Container(
+            width: 4,
+            height: 18,
+            margin: const EdgeInsets.only(right: 10),
+            decoration: BoxDecoration(gradient: AppColors.emeraldGrad, borderRadius: BorderRadius.circular(99)),
+          ),
           Expanded(
             child: Text(title,
                 style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w800, fontSize: 18, color: context.palette.ink)),
@@ -1018,25 +1129,44 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Secure
 
   Widget _statCard(String label, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: context.palette.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.palette.line)),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.palette.card,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: context.palette.line),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 12, offset: const Offset(0, 4)),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
-            child: Icon(icon, color: Colors.white, size: 18),
+          Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(color: color.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(12)),
+                child: Icon(icon, color: color, size: 19),
+              ),
+              const Spacer(),
+              Container(width: 6, height: 6, decoration: BoxDecoration(color: color.withValues(alpha: 0.5), shape: BoxShape.circle)),
+            ],
           ),
-          const SizedBox(height: 10),
-          Text(value,
+          const SizedBox(height: 12),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(value,
+                maxLines: 1,
+                style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 21, color: context.palette.ink)),
+          ),
+          const SizedBox(height: 3),
+          Text(label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontFamily: 'Fraunces', fontWeight: FontWeight.w900, fontSize: 18, color: context.palette.ink)),
-          const SizedBox(height: 2),
-          Text(label, style: TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w600, color: context.palette.muted)),
+              style: TextStyle(fontFamily: 'Inter', fontSize: 11.5, fontWeight: FontWeight.w600, color: context.palette.muted)),
         ],
       ),
     );
