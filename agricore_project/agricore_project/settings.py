@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     'expenses.apps.ExpensesConfig',
     'notifications.apps.NotificationsConfig',
     'weather.apps.WeatherConfig',
+    'payments.apps.PaymentsConfig',
 ]
 
 MIDDLEWARE = [
@@ -278,3 +279,15 @@ INTASEND_TEST = os.environ.get("INTASEND_TEST", "True").strip().lower() not in (
 
 # --- Agricore IntaSend webhook (idempotent) ---
 INTASEND_WEBHOOK_CHALLENGE = os.environ.get("INTASEND_WEBHOOK_CHALLENGE", "")
+
+
+# --- Agricore Pesapal API 3.0 (idempotent) ---
+# One switch (PESAPAL_ENV: "sandbox" | "live") moves the whole flow to live.
+PESAPAL_ENV = os.environ.get("PESAPAL_ENV", "sandbox")
+PESAPAL_CONSUMER_KEY = os.environ.get("PESAPAL_CONSUMER_KEY", "")
+PESAPAL_CONSUMER_SECRET = os.environ.get("PESAPAL_CONSUMER_SECRET", "")
+# Filled in once, after registering the IPN (manage.py register_pesapal_ipn).
+PESAPAL_IPN_ID = os.environ.get("PESAPAL_IPN_ID", "")
+# Optional: public base URL (e.g. your ngrok/host) used to build the IPN URL.
+PESAPAL_BASE_PUBLIC_URL = os.environ.get("PESAPAL_BASE_PUBLIC_URL", "")
+PESAPAL_COUNTRY_CODE = os.environ.get("PESAPAL_COUNTRY_CODE", "UG")

@@ -271,6 +271,10 @@ urlpatterns = [
     path('api/rider-link/<str:token>/deliver/', RiderLinkDeliverView.as_view()),
     path('api/ussd/', ussd_callback),
     path('api/payments/flutterwave/webhook/', FlutterwaveWebhookView.as_view(), name='flw_webhook'),
+
+    # Pesapal API 3.0 (browser redirect flow): /payments/start|callback|ipn
+    path('', include('payments.urls')),
+
     path('api/', include(farms_router.urls)),
 
     # Dale AI chat
