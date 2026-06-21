@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from marketplace.models import Order, Payment, Store
+from marketplace.models import Order, OrderItem, Payment, Product, Store
 
 from payments.models import PesapalPayment
 
@@ -123,3 +123,40 @@ class PesapalFlowTests(TestCase):
             {"OrderTrackingId": "NOPE", "OrderMerchantReference": "NOPE"},
         )
         self.assertEqual(resp.status_code, 200)
+
+    # ---- mock pay (dev/demo) ----
+    def test_mock_pay_fulfils_with_stock_and_notification(self):
+        from notifications.models import Notification
+
+        product = Product.objects.create(
+            store=self.store, title="Maize", category="Crops",
+            price=Decimal("500.00"), stock_quantity=Decimal("10"), unit="kg",
+        )
+        OrderItem.objects.create(
+            order=self.order, product=product, quantity=Decimal("3"),
+            price_per_unit=Decimal("500.00"), subtotal=Decimal("1500.00"),
+        )
+        with self.settings(PESAPAL_ALLOW_MOCK=True):
+            self.client.force_login(self.buyer)
+            resp = self.client.get(reverse("payments:mock_pay", args=[self.order.id]))
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["status"], "paid")
+
+        self.order.refresh_from_db()
+        product.refresh_from_db()
+        self.assertEqual(self.order.status, "paid")
+        self.assertEqual(product.stock_quantity, Decimal("7"))  # 10 - 3
+        self.assertEqual(Payment.objects.filter(order=self.order).count(), 1)
+        self.assertTrue(
+            Notification.objects.filter(
+                recipient=self.store.owner, category="payment", related_id=self.order.id
+            ).exists()
+        )
+
+    def test_mock_pay_disabled_returns_403(self):
+        with self.settings(PESAPAL_ALLOW_MOCK=False):
+            self.client.force_login(self.buyer)
+            resp = self.client.get(reverse("payments:mock_pay", args=[self.order.id]))
+        self.assertEqual(resp.status_code, 403)
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, "pending")

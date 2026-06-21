@@ -291,3 +291,8 @@ PESAPAL_IPN_ID = os.environ.get("PESAPAL_IPN_ID", "")
 # Optional: public base URL (e.g. your ngrok/host) used to build the IPN URL.
 PESAPAL_BASE_PUBLIC_URL = os.environ.get("PESAPAL_BASE_PUBLIC_URL", "")
 PESAPAL_COUNTRY_CODE = os.environ.get("PESAPAL_COUNTRY_CODE", "UG")
+# Dev/demo "mock pay" endpoint (marks an order paid without the gateway).
+# Defaults to DEBUG so it can never fire in production unless explicitly enabled.
+PESAPAL_ALLOW_MOCK = (
+    os.environ.get("PESAPAL_ALLOW_MOCK", "").strip().lower() in ("1", "true", "yes")
+) or DEBUG

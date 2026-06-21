@@ -5,6 +5,7 @@ adapted to Agricore's real ``marketplace.Order`` (``total_amount`` / ``buyer`` /
 ``currency``). The IPN — not the callback — is the source of truth for fulfilment.
 """
 import uuid
+from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -84,6 +85,38 @@ def start_payment(request, order_id):
     return redirect(result["redirect_url"])
 
 
+@login_required
+def mock_pay(request, order_id):
+    """DEV/DEMO ONLY: mark an order paid and run the real fulfilment path without
+    going through Pesapal. Lets you demo the full buyer -> seller -> stock/notify
+    flow when the gateway is unavailable or you have no merchant account yet.
+
+    Guarded by settings.PESAPAL_ALLOW_MOCK (defaults to DEBUG) so it can never
+    fire in production, plus the usual buyer-ownership check.
+    """
+    if not getattr(settings, "PESAPAL_ALLOW_MOCK", False):
+        return HttpResponseForbidden("Mock payments are disabled.")
+    order = get_object_or_404(Order, id=order_id)
+    if order.buyer_id != request.user.id:
+        return HttpResponseForbidden("You can only pay for your own order.")
+    if order.status == "paid":
+        return JsonResponse({"status": "paid", "order": order.id, "detail": "already paid"})
+
+    PesapalPayment.objects.create(
+        order=order,
+        merchant_ref=f"MOCK-{order.id}-{uuid.uuid4().hex[:10]}",
+        order_tracking_id=f"MOCK-{uuid.uuid4().hex[:12]}",
+        amount=order.total_amount,
+        currency=order.currency or "UGX",
+        status="COMPLETED",
+        raw={"mock": True},
+    )
+    _fulfil(order)
+    return JsonResponse(
+        {"status": "paid", "order": order.id, "amount": str(order.total_amount), "currency": order.currency}
+    )
+
+
 def payment_callback(request):
     """Buyer is redirected here after paying. Show a result; do NOT fulfil here."""
     tracking_id = request.GET.get("OrderTrackingId")
@@ -156,18 +189,23 @@ def _ipn_ack(tracking_id, merchant_ref):
 
 
 def _fulfil(order):
-    """Agricore-specific logic once payment is confirmed. Runs at most once per
-    order: the IPN's COMPLETED guard above ensures it isn't repeated."""
+    """Agricore order fulfilment once payment is confirmed. Idempotent: the IPN's
+    COMPLETED guard plus the in-transaction status check ensure it runs once.
+
+    Marks the order paid, writes a ledger row, decrements stock for each item,
+    then flags the seller. The same body runs for a real Pesapal IPN and for the
+    dev-only mock_pay path, so the demo behaves exactly like production."""
+    from marketplace.models import Payment
+
     with transaction.atomic():
         order = Order.objects.select_for_update().get(pk=order.pk)
         if order.status == "paid":
             return  # already fulfilled
         order.status = "paid"
         order.save(update_fields=["status", "updated_at"])
+
         # Record the money movement against the marketplace Payment ledger.
         try:
-            from marketplace.models import Payment
-
             pp = order.pesapal_payments.filter(status="COMPLETED").first()
             Payment.objects.create(
                 order=order,
@@ -180,4 +218,32 @@ def _fulfil(order):
         except Exception:
             # Ledger write is best-effort; the order status is the authority.
             pass
-    # TODO: decrement stock, notify the seller, send the buyer a receipt.
+
+        # Decrement stock for each ordered item, never below zero.
+        try:
+            for item in order.orderitem_set.select_related("product").all():
+                product = item.product
+                if product is None:
+                    continue
+                have = Decimal(str(product.stock_quantity or 0))
+                sold = Decimal(str(item.quantity or 0))
+                product.stock_quantity = max(Decimal("0"), have - sold)
+                product.save(update_fields=["stock_quantity", "updated_at"])
+        except Exception:
+            pass
+
+    # Flag the seller (store owner) that they have a paid order. Best-effort,
+    # outside the transaction so a notifications hiccup can't undo fulfilment.
+    try:
+        from notifications.models import Notification
+
+        Notification.objects.create(
+            recipient=order.store.owner,
+            category="payment",
+            title="Payment received",
+            body=f"Order #{order.id} has been paid ({order.currency} {order.total_amount}).",
+            related_table="order",
+            related_id=order.id,
+        )
+    except Exception:
+        pass
