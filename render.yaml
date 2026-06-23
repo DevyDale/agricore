@@ -10,6 +10,9 @@ services:
   - type: web
     name: agricore
     runtime: python
+    # The current, complete app lives on `dev` (the monorepo). `main` is an older,
+    # separate backend-only history and must NOT be used for deploys.
+    branch: dev
     rootDir: agricore_project
     plan: free
     healthCheckPath: /auth/

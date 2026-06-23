@@ -7,13 +7,17 @@ work) and a **Redis** Key-Value store (the Channels layer).
 Payments stay in **sandbox** (`PESAPAL_ENV=sandbox`) — real-money checkout needs a
 KYC'd merchant account, which is a later step. Everything else runs for real.
 
-## 1. Get the code on the deploy branch
-The Blueprint deploys the repo's **default branch (`main`)**. Our work is on `dev`:
+## 1. Deploy branch — use `dev`, NOT `main`
+⚠️ `main` is an **old, separate backend-only history** (unrelated to `dev`, and
+missing whole apps: payments, escrow, notifications, templates, …). Do **not**
+deploy it. The current, complete app is on **`dev`**, and `render.yaml` already
+pins `branch: dev`. Nothing to merge — just make sure `dev` is pushed:
 
 ```bash
-git checkout main && git merge dev && git push origin main
+git push origin dev
 ```
-(or point the Render service at `dev` in its Settings after creating it.)
+(One day you may want to reset `main` to match `dev` for convention, but that's a
+destructive history change — skip it for now; deploying from `dev` is correct.)
 
 ## 2. Create the Blueprint on Render
 1. Render Dashboard → **New +** → **Blueprint** → connect the GitHub repo.
@@ -58,3 +62,20 @@ The build runs `pip install` → `collectstatic` → `migrate`, then starts daph
   don't unset `REDIS_URL`.
 - **Production payments later:** set `PESAPAL_ENV=live` + live keys, register the
   live IPN against `https://<domain>/payments/ipn/`, once a merchant account exists.
+
+## Making edits over time (continuous deploy)
+Render auto-deploys on every push to the connected branch (`dev`). So the loop is:
+
+```bash
+# make changes...
+git add -A && git commit -m "…" && git push origin dev
+```
+
+Each push triggers a build (`pip install` → `collectstatic` → `migrate`) and a
+zero-downtime swap. New DB migrations apply automatically on deploy.
+
+Tips:
+- Watch the build in the Render dashboard; a failed migrate/build won't swap in.
+- For risky changes, test locally first (`runserver`) — the live site only updates
+  on a successful build.
+- Env-var/secret changes are made in the Render dashboard (not in git).
