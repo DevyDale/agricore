@@ -25,11 +25,8 @@ services:
         generateValue: true        # Render generates a strong key
       - key: DEBUG
         value: "False"
-      - key: REDIS_URL              # auto-wired from the Key Value store below
-        fromService:
-          type: redis
-          name: agricore-redis
-          property: connectionString
+      - key: REDIS_URL              # reuse the existing account Redis (leadgenius);
+        value: "redis://red-d4nnc8ggjchc73buvgfg:6379"   # free tier allows only 1 Redis/account
       # ---- Secrets you set in the dashboard (not in git) ----
       - key: ALLOWED_HOSTS          # e.g. agricore.onrender.com,yourdomain.com
         sync: false
@@ -58,9 +55,5 @@ services:
       - key: AT_API_KEY
         sync: false
 
-  # Channels layer for realtime chat/notifications.
-  - type: redis
-    name: agricore-redis
-    plan: free
-    maxmemoryPolicy: allkeys-lru
-    ipAllowList: []   # internal only — reachable from the web service, not the public internet
+# Redis is NOT managed by this Blueprint (free tier allows only one Key Value per
+# account, already used by `leadgenius`). REDIS_URL above points at that instance.
